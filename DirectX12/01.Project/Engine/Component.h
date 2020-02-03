@@ -57,6 +57,8 @@ public:
 	virtual void SaveToScene( FILE* pFile ) = 0;
 	virtual void LoadFromScene( FILE* pFile ) = 0;
 
+	virtual CComponent* Clone() = 0;
+
 public:
 	COMPONENT_TYPE	GetComponentType();
 	CGameObject*	GetGameObject();

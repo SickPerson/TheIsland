@@ -52,6 +52,9 @@ using DirectX::SimpleMath::Matrix;
 extern D3D12_RASTERIZER_DESC g_arrRSDesc[( UINT )RS_TYPE::END];
 extern D3D12_BLEND_DESC g_arrBlendDesc[( UINT )BLEND_TYPE::END];
 
+// Max Layer
+#define MAX_LAYER 32
+
 // PathKey
 #define	BASE_PATH		"BasePath"
 #define	SHADER_PATH		"ShaderPath"

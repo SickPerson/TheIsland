@@ -3,6 +3,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Shader.h"
+#include "Texture.h"
 
 CResourceManager::CResourceManager()
 {
@@ -633,10 +634,10 @@ inline void CResourceManager::AddResource( const wstring & strKey, Ptr<T> pRes )
 
 	static RES_TYPE eType = RES_TYPE::END;
 
-	Ptr<T> pRes = FindRes<T>( strKey );
+	Ptr<T> pResource = FindRes<T>( strKey );
 
 	// 중복키 문제
-	if ( nullptr != pRes )
+	if ( nullptr != pResource )
 		assert( nullptr );
 
 	if ( typeid( T ).hash_code() == mesh.hash_code() )

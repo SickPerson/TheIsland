@@ -52,6 +52,9 @@
     <Filter Include="00. etc\Entity">
       <UniqueIdentifier>{50f02240-c8b4-440f-8c6a-3c470025d03f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameObject\Component\Camera">
+      <UniqueIdentifier>{ca223626-e947-4678-8d2d-bca75b542c4e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -135,6 +138,18 @@
     <ClInclude Include="Mesh.h">
       <Filter>05. Resource</Filter>
     </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>03. Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>03. Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>06. GameObject\Component\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>06. GameObject\Component\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -196,6 +211,18 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>05. Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>03. Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>03. Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>06. GameObject\Component\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>06. GameObject\Component\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
