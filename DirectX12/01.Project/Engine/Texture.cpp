@@ -14,36 +14,33 @@ CTexture::~CTexture()
 {
 }
 
-void CTexture::Load( const wchar_t * pFileName )
-{
-	const wchar_t* pPath = GET_SINGLE( CPathManager )->FindPath( TEXTURE_PATH );
-	wstring strFullPath = pPath;
-	strFullPath += pFileName;
+void CTexture::Load( const wstring & _strFullPath )
+{	
+	// 확장자명 얻기
+	wchar_t szExt[50] = L"";	
+	_wsplitpath_s(_strFullPath.c_str(), nullptr, 0, nullptr, 0, nullptr, 0, szExt, 50);
 
-	wchar_t szExt[50] = L"";
-	_wsplitpath_s( strFullPath.c_str(), nullptr, 0, nullptr, 0, nullptr, 0, szExt, 50 );
+	wstring strExt = szExt;
 
-	if ( lstrcmp( szExt, L".DDS" ) == 0 || lstrcmp( szExt, L".dds" ) == 0 )
+	if (L".dds" == strExt || L".DDS" == strExt)
 	{
-		if ( FAILED( LoadFromDDSFile( strFullPath.c_str(), DDS_FLAGS_NONE, NULL, m_Image ) ) )
+		if(FAILED(LoadFromDDSFile(_strFullPath.c_str(), DDS_FLAGS_NONE, nullptr, m_Image)))
 		{
-			assert( nullptr );
+			assert(nullptr);
 		}
 	}
-
-	else if ( lstrcmp( szExt, L".TGA" ) == 0 || lstrcmp( szExt, L".tga" ) == 0 )
+	else if (L".tga" == strExt || L".TGA" == strExt)
 	{
-		if ( FAILED( LoadFromTGAFile( strFullPath.c_str(), NULL, m_Image ) ) )
+		if (FAILED(LoadFromTGAFile(_strFullPath.c_str(), nullptr, m_Image)))
 		{
-			assert( nullptr );
+			assert(nullptr);
 		}
 	}
-
 	else // png, jpg, jpeg, bmp (WIC)
 	{
-		if ( FAILED( LoadFromWICFile( strFullPath.c_str(), WIC_FLAGS_NONE, NULL, m_Image ) ) )
+		if (FAILED(LoadFromWICFile(_strFullPath.c_str(), WIC_FLAGS_NONE, nullptr, m_Image)))
 		{
-			assert( nullptr );
+			assert(nullptr);
 		}
 	}
 

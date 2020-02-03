@@ -8,7 +8,7 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //-------------------------------------------------------------------------------------
-#include "global.h"
+#include "Engine.h"
 #include "SimpleMath.h"
 
 /****************************************************************************

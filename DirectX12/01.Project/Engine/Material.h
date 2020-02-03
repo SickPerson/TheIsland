@@ -21,10 +21,14 @@ private:
 public:
 	void SetShader( Ptr<CShader> pShader );
 	void SetData( SHADER_PARAM eParam, void* pData );
-	void DisableileSave();
+	void DisableFileSave();
 	void UpdateData();
 
 	virtual void Load( const wstring& strFullPath );
+	virtual void Save( const wstring& strFullPath );
 
+	Ptr<CShader> GetShader();
+
+	virtual CMaterial* Clone();
 };
 

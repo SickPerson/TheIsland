@@ -11,6 +11,11 @@ struct VTX
 {
 	Vec3 vPos;
 	Vec4 vColor;
+	Vec2 vUV;
+
+	Vec3 vTangent;
+	Vec3 vNormal;
+	Vec3 vBinormal;
 };
 
 // 상수버퍼 메모리

@@ -6,7 +6,7 @@ class CMesh :
 {
 public:
 	CMesh();
-	virtual ~CMesh();
+	virtual virtual ~CMesh();
 
 private:
 	ComPtr<ID3D12Resource>		m_pVB;

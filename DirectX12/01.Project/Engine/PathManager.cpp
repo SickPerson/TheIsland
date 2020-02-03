@@ -12,70 +12,135 @@ CPathManager::~CPathManager()
 {
 }
 
+
+wchar_t CPathManager::g_szSolutionPath[255] = L"";
+wchar_t CPathManager::g_szResPath[255] = L"";
+wchar_t CPathManager::g_szIncPath[255] = L"";
+wchar_t CPathManager::g_szProjPath[255] = L"";
+wchar_t CPathManager::g_szRelativePath[255] = L"";
+wchar_t CPathManager::g_szFile[255] = L"";
+wchar_t CPathManager::g_szExt[50] = L"";
+
 void CPathManager::Init()
 {
-	TCHAR	strPath[MAX_PATH] = {};
-	GetModuleFileName( NULL, strPath, MAX_PATH );
+	// Resources 폴더까지의 경로를 구한다.
+	GetCurrentDirectory( 255, g_szSolutionPath );
 
-	for ( int i = lstrlen( strPath ) - 1; i >= 0; --i )
+	size_t iCount = 0;
+	for ( size_t i = wcslen( g_szSolutionPath ) - 1; i > 0; --i )
 	{
-		if ( strPath[i] == '\\' || strPath[i] == '/' )
+		if ( '\\' == g_szSolutionPath[i] )
 		{
-			memset( &strPath[i + 1], 0, sizeof( TCHAR ) * ( MAX_PATH - ( i + 1 ) ) );
-			break;
+			g_szSolutionPath[i + 1] = 0;
+			++iCount;
 		}
+
+		if ( iCount == 2 )
+			break;
 	}
 
-	m_mapPath.insert( make_pair( BASE_PATH, strPath ) );
+	// SolutionPath -> copy -> ResPath
+	wcscpy_s( g_szResPath, 255, g_szSolutionPath );
 
-	AddPath( SHADER_PATH, L"Shader\\" );
-	AddPath( TEXTURE_PATH, L"Texture\\" );
-	AddPath( DATA_PATH, L"Data\\" );
-	AddPath( SOUND_PATH, L"Sound\\" );
-	AddPath( MESH_PATH, L"Mesh\\" );
+	// -> bin -> Resources
+	wcscat_s( g_szResPath, L"02. File\\bin\\content\\" );
+
+	// Inc 폴더 경로 
+	GetCurrentDirectory( 255, g_szIncPath );
+
+	iCount = 0;
+	for ( size_t i = wcslen( g_szIncPath ) - 1; i > 0; --i )
+	{
+		if ( '\\' == g_szIncPath[i] )
+		{
+			g_szIncPath[i + 1] = 0;
+			++iCount;
+		}
+
+		if ( iCount == 2 )
+			break;
+	}
+
+	wcscat_s( g_szIncPath, L"Project\\Include\\" );
+
+
+	// Proj 폴더 경로 
+	GetCurrentDirectory( 255, g_szProjPath );
+
+	iCount = 0;
+	for ( size_t i = wcslen( g_szProjPath ) - 1; i > 0; --i )
+	{
+		if ( '\\' == g_szProjPath[i] )
+		{
+			g_szProjPath[i + 1] = 0;
+			++iCount;
+		}
+
+		if ( iCount == 2 )
+			break;
+	}
+
+	wcscat_s( g_szProjPath, L"01. Project\\" );
 }
 
-bool CPathManager::AddPath( const string & strKey, TCHAR * pPath, const string & strBaseKey )
+wchar_t * CPathManager::GetResPath()
 {
-	if(FindPath(strKey) )
-		return false;
-
-	const wchar_t* pBasePath = FindPath( strBaseKey );
-
-	wstring strPath;
-
-	if ( pBasePath )
-		strPath = pBasePath;
-
-	strPath += pPath;
-
-	m_mapPath.insert( make_pair( strKey, strPath ) );
-
-	return true;
+	return g_szResPath;
 }
 
-const wchar_t * CPathManager::FindPath( const string & strKey )
+wchar_t * CPathManager::GetIncludePath()
 {
-	unordered_map<string, wstring>::iterator	iter = m_mapPath.find( strKey );
-
-	if ( iter == m_mapPath.end() )
-		return NULL;
-
-	return iter->second.c_str();
+	return g_szIncPath;
 }
 
-const char * CPathManager::FindPathToMultiByte( const string & strKey )
+wchar_t * CPathManager::GetProjectPath()
 {
-	const wchar_t* pPath = FindPath( strKey );
+	return g_szProjPath;
+}
 
-	if ( !pPath )
-		return NULL;
+wchar_t * CPathManager::GetFileName( const wchar_t * _strPath )
+{
+	_wsplitpath_s( _strPath, NULL, 0, NULL, 0, g_szFile, 255, NULL, 0 );
+	return g_szFile;
+}
 
-	char	strPath[MAX_PATH] = {};
-	WideCharToMultiByte( CP_ACP, 0, pPath, -1, strPath, lstrlen( pPath ),
-		NULL, NULL );
+wchar_t * CPathManager::GetExt( const wchar_t * _strPath )
+{
+	_wsplitpath_s( _strPath, NULL, 0, NULL, 0, nullptr, 0, g_szExt, 50 );
+	return g_szExt;
+}
 
-	m_strFindPath = strPath;
+wchar_t * CPathManager::GetRelativePath( const wchar_t * _pFullPath )
+{
+	wmemset( g_szRelativePath, 0, 255 );
 
-	return m_strFindPath.c_str();
+	wstring str = _pFullPath;
+	size_t iLen = wcslen( g_szResPath );
+	str = str.substr( iLen, str.length() - iLen ).c_str();
+	wcscpy_s( g_szRelativePath, 255, str.c_str() );
+	return g_szRelativePath;
+}
+
+wchar_t * CPathManager::GetSolutionPath()
+{
+	return g_szSolutionPath;
+}
+
+void CPathManager::SaveWString( FILE * pFile, const wstring & str )
+{
+	BYTE c = ( BYTE )str.length();
+	fwrite( &c, 1, 1, pFile );
+	fwrite( str.c_str(), 2, c, pFile );
+}
+
+wchar_t * CPathManager::LoadWString( FILE * pFile )
+{
+	static wchar_t szStr[255] = {};
+
+	BYTE c = 0;
+	fread( &c, 1, 1, pFile );
+	fread( szStr, 2, c, pFile );
+	szStr[c] = 0;
+
+	return szStr;
 }
