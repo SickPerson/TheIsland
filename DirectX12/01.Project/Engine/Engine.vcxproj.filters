@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="01. Core">
+      <UniqueIdentifier>{a84b0f1e-31be-467f-ac06-61862fb3767e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Device">
+      <UniqueIdentifier>{e6a0e8c8-7c14-4520-a937-3762f0b39c85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Manager">
+      <UniqueIdentifier>{8b311ca8-6b38-4aff-a3dc-31e09e6f3287}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Shader">
+      <UniqueIdentifier>{85042201-4831-4cab-8025-85b2130e186c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Resource">
+      <UniqueIdentifier>{a10c8955-93cb-452e-ae2e-3dfc917f5167}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. etc">
+      <UniqueIdentifier>{a70ed72a-3714-44b2-adb1-da86e4ec0236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Manager\Scene">
+      <UniqueIdentifier>{f559f401-b9ec-4fdd-8238-3f605882fe57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject">
+      <UniqueIdentifier>{f6ec12e6-4cb7-4b27-8eeb-6a2eb69a3ecd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\Component">
+      <UniqueIdentifier>{82039eea-aa5f-40fb-84d7-3972ca533070}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. etc\추가시킨 cpp, h">
+      <UniqueIdentifier>{315f0093-182c-4121-883c-ac8ccb7d58fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\Component\Transform">
+      <UniqueIdentifier>{6812077c-476f-427a-b394-4a1adbabc581}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\Component\MeshRender">
+      <UniqueIdentifier>{21fe20a2-edc0-4758-b98c-d9ba470f413b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>01. Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="Flag.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="Macro.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>02. Device</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyManager.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeManager.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="PathManager.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>02. Device</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>05. Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>05. Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>03. Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>06. GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>06. GameObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMath.h">
+      <Filter>00. etc\추가시킨 cpp, h</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>00. etc\추가시킨 cpp, h</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>06. GameObject\Component\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRender.h">
+      <Filter>06. GameObject\Component\MeshRender</Filter>
+    </ClInclude>
+    <ClInclude Include="Ptr.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>05. Resource</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>01. Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <Filter>02. Device</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyManager.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeManager.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="PathManager.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantBuffer.cpp">
+      <Filter>02. Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>05. Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>05. Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>00. etc</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>03. Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>06. GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>06. GameObject\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMath.cpp">
+      <Filter>00. etc\추가시킨 cpp, h</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>06. GameObject\Component\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRender.cpp">
+      <Filter>06. GameObject\Component\MeshRender</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>05. Resource</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\02.File\bin\content\Shader\std.fx">
+      <Filter>04. Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleMath.inl">
+      <Filter>00. etc\추가시킨 cpp, h</Filter>
+    </None>
+  </ItemGroup>
+</Project>
