@@ -31,13 +31,13 @@
 #define CMDLIST_RES CDevice::GetInst()->GetCmdListRes()
 #define ROOTSIGNATURE(Type) CDevice::GetInst()->GetRootSignature(Type)
 
-#define KEY(Key, State) (CKeyMgr::GetInst()->GetKeyState(Key) == State)
+#define KEY(Key, State) (CKeyManager::GetInst()->GetKeyState(Key) == State)
 #define KEY_HOLD(Key) KEY(Key, KEY_STATE::STATE_HOLD)
 #define KEY_TAB(Key) KEY(Key, KEY_STATE::STATE_TAB)
 #define KEY_AWAY(Key) KEY(Key, KEY_STATE::STATE_AWAY)
 #define KEY_NONE(Key) KEY(Key, KEY_STATE::STATE_NONE)
 
-#define DT CTimeMgr::GetInst()->GetDeltaTime()
+#define DT CTimeManager::GetInst()->GetDeltaTime()
 
 #define CLONE(Type) public: Type* Clone() { return new Type(*this); }
 #define CLONE_DISABLE(Type) Type* Clone() { assert(NULL); return NULL; }\

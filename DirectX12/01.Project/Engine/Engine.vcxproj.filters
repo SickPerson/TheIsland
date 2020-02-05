@@ -55,6 +55,15 @@
     <Filter Include="06. GameObject\Component\Camera">
       <UniqueIdentifier>{ca223626-e947-4678-8d2d-bca75b542c4e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameObject\Component\Collider">
+      <UniqueIdentifier>{1bc40c03-f4a3-4a5d-9e99-17f0d6558de6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\Component\Script">
+      <UniqueIdentifier>{fe972038-7d6f-4095-9bb6-cb1a366a082e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Shader\ShaderCode">
+      <UniqueIdentifier>{a50daada-102e-476b-941c-f8bdc98c44be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -150,6 +159,21 @@
     <ClInclude Include="Frustum.h">
       <Filter>06. GameObject\Component\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider2D.h">
+      <Filter>06. GameObject\Component\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>05. Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -224,15 +248,39 @@
     <ClCompile Include="Frustum.cpp">
       <Filter>06. GameObject\Component\Camera</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\std.fx">
-      <Filter>04. Shader</Filter>
-    </FxCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider2D.cpp">
+      <Filter>06. GameObject\Component\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>05. Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl">
       <Filter>00. etc\추가시킨 cpp, h</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\02.File\bin\content\Shader\func.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\02.File\bin\content\Shader\std.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\02.File\bin\content\Shader\std3d.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\02.File\bin\content\Shader\value.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "Frustum.h"
 
 enum class PROJ_TYPE
 {
@@ -30,7 +31,7 @@ private:
 	Matrix			m_matProj;			// 투영행렬
 	Matrix			m_matProjInv;		// 투영역행렬
 
-	PROJ_TYPE		m_eProType;			// 카메라 유형 
+	PROJ_TYPE		m_eProjType;			// 카메라 유형 
 	UINT			m_iLayerCheck;		// 카메라가 찍는 Layer 비트값
 
 public:

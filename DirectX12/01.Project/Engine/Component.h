@@ -22,7 +22,7 @@ private:
 	friend class CEventManager;
 	friend void ComponentSetChange( CComponent*, bool );
 
-protected:
+public:
 	CComponent(COMPONENT_TYPE eType);
 	virtual ~CComponent();
 

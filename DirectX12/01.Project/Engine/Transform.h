@@ -23,7 +23,6 @@ private:
 public:
 	const Vec3& GetLocalPos();
 	Vec3 GetWorldPos();
-
 	
 	const Vec3& GetLocalScale();
 	Vec3 GetWorldScale();
@@ -40,7 +39,7 @@ public:
 	void SetLocalRot( const Vec3& vRot );
 
 	bool IsCasting( const Vec3& vPos );
-	float GetMatScale();
+	float GetMaxScale();
 
 	// Transform 정보를 상수데이터 및 레지스터로 전달
 	void UpdateDate();

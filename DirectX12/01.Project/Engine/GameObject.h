@@ -18,9 +18,9 @@ class CGameObject :
 {
 private:
 	friend class CLayer;
-	friend class CEvnetManager;
+	friend class CEventManager;
 
-private:
+public:
 	CGameObject();
 	virtual ~CGameObject();
 

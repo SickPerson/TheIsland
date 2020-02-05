@@ -103,7 +103,7 @@ bool CTransform::IsCasting( const Vec3 & vPos )
 	return false;
 }
 
-float CTransform::GetMatScale()
+float CTransform::GetMaxScale()
 {
 	Vec3 vWorldScale = GetWorldScale();
 	float fMax = max( vWorldScale.x, vWorldScale.y );

@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "GameObject.h"
 #include "Component.h"
-#include "SceneManager.h"
 #include "Layer.h"
+#include "Scene.h"
+#include "SceneManager.h"
 
 CGameObject::CGameObject() : 
 	m_arrCom{ },
@@ -155,6 +156,7 @@ CLight3D * CGameObject::Light3D()
 const vector<CScript*>& CGameObject::GetScripts() const
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
+	return m_vecScript;
 }
 
 void CGameObject::AddChild( CGameObject * pChildObj )
@@ -211,7 +213,7 @@ void CGameObject::ClearParent( CGameObject * pNextParent )
 		// 최상위 부모 오브젝트, 다음 부모가 지정됨 (Layer ParentList에서 빠짐)
 		if ( -1 != m_iLayerIdx )
 		{
-			CLayer* pCurLayer = GET_SINGLE(CSceneManager)
+			CLayer* pCurLayer = GET_SINGLE( CSceneManager )->GetCurScene()->GetLayer( m_iLayerIdx );
 		}
 	}
 }
@@ -224,6 +226,7 @@ CGameObject * CGameObject::GetParent()
 const vector<CGameObject*>& CGameObject::GetChild()
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
+	return m_vecChild;
 }
 
 void CGameObject::RegisterToLayer()

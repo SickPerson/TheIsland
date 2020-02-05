@@ -9,7 +9,7 @@ class CLayer :
 private:
 	friend class CScene;
 
-private:
+public:
 	CLayer();
 	virtual ~CLayer();
 

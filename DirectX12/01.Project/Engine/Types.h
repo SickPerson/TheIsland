@@ -1,4 +1,5 @@
 #pragma once
+#include "Macro.h"
 
 typedef struct tResolution
 {
@@ -29,6 +30,9 @@ struct tTransform
 	Matrix matWVP;
 };
 
+// Transform extern
+extern tTransform	g_tTransform;
+
 // Material
 struct tMtrlParam
 {
@@ -43,4 +47,48 @@ struct tMtrlParam
 	Matrix			m_arrMat[( UINT )SHADER_PARAM::MATRIX_END - ( UINT )SHADER_PARAM::MATRIX_0];
 
 	int				m_iArrTex[( UINT )SHADER_PARAM::TEX_END - ( UINT )SHADER_PARAM::TEX_0];
+};
+
+// Light
+struct tLight2D
+{
+	Vec4	vLightPos;
+	Vec4	vLightColor;
+	Vec4	vLightDir;
+	int		iLightType;
+	float	fRange;
+	float	fAngle;
+	int		iPadding;
+};
+
+struct tLight2DInfo
+{
+	tLight2D	arrLight2D[100];
+	UINT		iCount;
+};
+
+struct tLightColor
+{
+	Vec4 vDiff;
+	Vec4 vSpec;
+	Vec4 vAmb;
+};
+
+struct tLight3D
+{
+	tLightColor	tColor;
+	Vec4		vLightPos;
+	Vec4		vLightDir;
+	int			iLightType;
+	float		fRange;
+	float		fAngle;
+	int			iPadding;
+};
+
+// 여긴 왜 static이지?
+static struct tLight3DInfo
+{
+	tLight3D	arrLight3D[100];
+	UINT		iCurCount;
+	Vec3		vPadding;
 };

@@ -22,7 +22,7 @@ void CSceneManager::Update()
 
 CScene * CSceneManager::GetCurScene()
 {
-	return nullptr;
+	return m_pCurScene;
 }
 
 void CSceneManager::ChangeScene( CScene * pNextScene )

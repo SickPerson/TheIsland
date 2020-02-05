@@ -28,13 +28,15 @@ int CLayer::GetLayerIdx() const
 const vector<CGameObject*>& CLayer::GetParentObj() const
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
+	return m_vecParentObj;
 }
 
 const vector<CGameObject*>& CLayer::GetObjects() const
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
+	return m_vecLayerObj;
 }
-
+	
 void CLayer::RegisterObject( CGameObject * pObj )
 {
 }
