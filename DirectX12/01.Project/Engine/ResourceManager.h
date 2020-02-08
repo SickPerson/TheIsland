@@ -2,9 +2,6 @@
 #include "Engine.h"
 
 class CResource;
-class CTexture;
-class CSound;
-class CMesh;
 
 class CResourceManager
 {

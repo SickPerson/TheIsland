@@ -306,16 +306,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\..\..\assortrock\3D12\강의자료\DX12_4th_4(TestScene Sample)\02. File\bin\content\Shader\std.fx">
+    <FxCompile Include="..\..\02.File\bin\content\Shader\std3d.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\..\..\assortrock\3D12\강의자료\DX12_4th_4(TestScene Sample)\02. File\bin\content\Shader\std3d.fx">
+    <FxCompile Include="..\..\02.File\bin\content\Shader\value.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\..\..\assortrock\3D12\강의자료\DX12_4th_4(TestScene Sample)\02. File\bin\content\Shader\value.fx">
+    <FxCompile Include="..\..\02.File\bin\content\Shader\func.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\..\..\assortrock\3D12\강의자료\DX12_4th_4(TestScene Sample)\02. File\bin\content\Shader\func.fx">
+    <FxCompile Include="..\..\02.File\bin\content\Shader\std.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
   </ItemGroup>

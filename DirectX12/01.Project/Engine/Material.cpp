@@ -2,10 +2,8 @@
 #include "Material.h"
 #include "Device.h"
 #include "ConstantBuffer.h"
-#include "Shader.h"
 #include "PathManager.h"
 #include "ResourceManager.h"
-#include "Texture.h"
 
 CMaterial::CMaterial() :
 	CResource( RES_TYPE::MATERIAL ),

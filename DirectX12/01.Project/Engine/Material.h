@@ -1,8 +1,8 @@
 #pragma once
 #include "Resource.h"
 
-class CShader;
-class CTexture;
+#include "Shader.h"
+#include "Texture.h"
 
 class CMaterial :
 	public CResource

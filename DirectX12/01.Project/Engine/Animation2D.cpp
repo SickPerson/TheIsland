@@ -3,6 +3,7 @@
 #include "TimeManager.h"
 #include "ConstantBuffer.h"
 #include "Device.h"
+#include "Texture.h"
 
 CAnimation2D::CAnimation2D() : 
 	m_pAnimator(NULL),

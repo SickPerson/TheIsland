@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "ConstantBuffer.h"
 #include "Light3D.h"
+#include "Texture.h"
 
 DEFINITION_SINGLE(CRenderManager)
 

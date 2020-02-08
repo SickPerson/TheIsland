@@ -9,6 +9,8 @@
 #include <dxgi.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
+#include "SimpleMath.h"
+
 
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
@@ -19,12 +21,18 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
 
+typedef DirectX::SimpleMath::Vector2 Vec2;
+typedef DirectX::SimpleMath::Vector3 Vec3;
+typedef DirectX::SimpleMath::Vector4 Vec4;
+using DirectX::SimpleMath::Matrix;
+
 
 #include <string>
 #include <vector>
 #include <list>
 #include <map>
 #include <unordered_map>
+#include <algorithm>
 
 using namespace std;
 
@@ -32,4 +40,5 @@ using namespace std;
 #include "Flag.h"
 #include "Types.h"
 #include "d3dx12.h"
+#include "Ptr.h"
 

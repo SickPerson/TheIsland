@@ -2,6 +2,7 @@
 #include "Animator2D.h"
 #include "Animation2D.h"
 #include "PathManager.h"
+#include "Texture.h"
 
 CAnimator2D::CAnimator2D() : 
 	CComponent(COMPONENT_TYPE::ANIMATOR2D),
@@ -22,7 +23,7 @@ CAnimator2D::CAnimator2D( const CAnimator2D & ani ) :
 
 	if ( ani.m_pCurAni )
 	{
-		PlayAnimation( ani.m_pCurAni->GetName, m_bRepeat );
+		PlayAnimation( ani.m_pCurAni->GetName(), m_bRepeat );
 	}
 }
 

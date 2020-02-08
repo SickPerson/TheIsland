@@ -1,8 +1,9 @@
 #pragma once
 #include "Component.h"
 
-class CMesh;
-class CMaterial;
+#include "Material.h"
+#include "Mesh.h"
+
 
 class CCollider2D :
 	public CComponent

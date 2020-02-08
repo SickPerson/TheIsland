@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "ResourceManager.h"
 #include "Mesh.h"
-#include "Material.h"
-#include "Shader.h"
 #include "Texture.h"
 #include "Sound.h"
+#include "Material.h"
+#include "Shader.h"
 
 DEFINITION_SINGLE(CResourceManager)
 
