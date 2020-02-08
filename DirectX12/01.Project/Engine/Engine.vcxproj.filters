@@ -64,6 +64,18 @@
     <Filter Include="04. Shader\ShaderCode">
       <UniqueIdentifier>{a50daada-102e-476b-941c-f8bdc98c44be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameObject\Component\Light">
+      <UniqueIdentifier>{e7c84702-154f-4a96-9189-16d40ad76288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\Component\Animation">
+      <UniqueIdentifier>{78ef2d3f-58ac-42fb-8ce2-a86314204203}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\Component\Animation\2D">
+      <UniqueIdentifier>{85d01313-6df6-4335-aca9-d3a848091419}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\Component\Animation\3D">
+      <UniqueIdentifier>{617b2507-2828-4ced-8322-0453404af9c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -174,6 +186,18 @@
     <ClInclude Include="Sound.h">
       <Filter>05. Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Light2D.h">
+      <Filter>06. GameObject\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Light3D.h">
+      <Filter>06. GameObject\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation2D.h">
+      <Filter>06. GameObject\Component\Animation\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator2D.h">
+      <Filter>06. GameObject\Component\Animation\2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -263,6 +287,18 @@
     <ClCompile Include="Sound.cpp">
       <Filter>05. Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Light3D.cpp">
+      <Filter>06. GameObject\Component\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Light2D.cpp">
+      <Filter>06. GameObject\Component\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation2D.cpp">
+      <Filter>06. GameObject\Component\Animation\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator2D.cpp">
+      <Filter>06. GameObject\Component\Animation\2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl">
@@ -270,16 +306,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\func.fx">
+    <FxCompile Include="..\..\..\..\assortrock\3D12\강의자료\DX12_4th_4(TestScene Sample)\02. File\bin\content\Shader\std.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\std.fx">
+    <FxCompile Include="..\..\..\..\assortrock\3D12\강의자료\DX12_4th_4(TestScene Sample)\02. File\bin\content\Shader\std3d.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\std3d.fx">
+    <FxCompile Include="..\..\..\..\assortrock\3D12\강의자료\DX12_4th_4(TestScene Sample)\02. File\bin\content\Shader\value.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\value.fx">
+    <FxCompile Include="..\..\..\..\assortrock\3D12\강의자료\DX12_4th_4(TestScene Sample)\02. File\bin\content\Shader\func.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
   </ItemGroup>

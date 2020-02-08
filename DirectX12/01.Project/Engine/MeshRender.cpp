@@ -2,9 +2,9 @@
 #include "MeshRender.h"
 
 #include "Transform.h"
-#include "ResourceManager.h"
-#include "Material.h"
 #include "Mesh.h"
+#include "Material.h"
+#include "ResourceManager.h"
 #include "PathManager.h"
 
 CMeshRender::CMeshRender() :

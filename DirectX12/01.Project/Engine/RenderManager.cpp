@@ -3,6 +3,7 @@
 #include "Device.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"
+#include "Light3D.h"
 
 DEFINITION_SINGLE(CRenderManager)
 

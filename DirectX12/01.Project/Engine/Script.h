@@ -11,6 +11,8 @@ enum class SCRIPT_TYPE
 };
 
 class CGameObject;
+class CCollider2D;
+
 class CScript :
 	public CComponent
 {

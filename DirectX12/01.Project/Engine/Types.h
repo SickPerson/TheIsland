@@ -92,3 +92,12 @@ static struct tLight3DInfo
 	UINT		iCurCount;
 	Vec3		vPadding;
 };
+
+struct tAnimation2D
+{
+	Vec2	vLT;				// Left Top UV
+	Vec2	vLen;				// UV길이
+	Vec2	vOffset;			// Offset Pos
+	int		IsAnimation2D;		// Animation2D 컴포넌트 사용여부
+	int		iPadding;
+};
