@@ -41,10 +41,12 @@ enum class BLEND_TYPE
 // DepthStencil Type
 enum class DEPTH_STENCIL_TYPE
 {
-	DEFAULT,
+	LESS,
 	LESS_EQUAL,
 	GRATER,
 	GRATER_EQUAL,
+	NO_DEPTHTEST,			// ±Ì¿Ã ∆«¡§ æ»«œ¡ˆ∏∏ ±Ì¿Ã∏¶ ≥≤±Ë 
+	NO_DEPTHTEST_NO_WRITE,	// ±Ì¿Ã ∆«¡§µµ æ»«œ∞Ì ±Ì¿Ãµµ æ»≥≤±Ë
 	END,
 };
 

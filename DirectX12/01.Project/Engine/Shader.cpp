@@ -39,12 +39,11 @@ void CShader::Create( D3D_PRIMITIVE_TOPOLOGY eTopology )
 
 
 	m_tPipeline.InputLayout = { inputElementDescs, _countof( inputElementDescs ) };
-	m_tPipeline.pRootSignature = CDevice::GetInst()->GetRootSignature( ROOT_SIG_TYPE::INPUT_ASSEM ).Get();
+	m_tPipeline.pRootSignature = ROOTSIGNATURE( ROOT_SIG_TYPE::INPUT_ASSEM ).Get();
 
-	m_tPipeline.RasterizerState = g_arrRSDesc[( UINT )RS_TYPE::CULL_BACK];
-	m_tPipeline.BlendState = g_arrBlendDesc[( UINT )BLEND_TYPE::DEFAULT];
-	m_tPipeline.DepthStencilState.DepthEnable = FALSE;
-	m_tPipeline.DepthStencilState.StencilEnable = FALSE;
+	m_tPipeline.RasterizerState = g_arrRSDesc[( UINT )m_eRSType];
+	m_tPipeline.BlendState = g_arrBlendDesc[( UINT )m_eBlendType];
+	m_tPipeline.DepthStencilState = g_arrDepthStencilDesc[( UINT )m_eDSType];
 	m_tPipeline.SampleMask = UINT_MAX;
 	m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	m_tPipeline.NumRenderTargets = 1;

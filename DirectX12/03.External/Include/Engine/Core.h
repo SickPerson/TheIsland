@@ -13,8 +13,6 @@ private:
 	void ChangeWindowSize( HWND hWnd, const RESOLUTION& resolution );
 
 	void Update();
-	void LateUpdate();
-	void FinalUpdate();
 	void Render();
 
 	DECLARE_SINGLE(CCore)

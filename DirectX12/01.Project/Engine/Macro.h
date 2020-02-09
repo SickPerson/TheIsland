@@ -1,5 +1,4 @@
 #pragma once
-#include "Flag.h"
 
 #define	SAFE_DELETE(p)	if(p)	{ delete p; p = NULL; }
 #define	SAFE_RELEASE(p)	if(p)	{ p->Release(); p = NULL; }
@@ -51,6 +50,7 @@ using DirectX::SimpleMath::Matrix;
 // State Description
 extern D3D12_RASTERIZER_DESC g_arrRSDesc[( UINT )RS_TYPE::END];
 extern D3D12_BLEND_DESC g_arrBlendDesc[( UINT )BLEND_TYPE::END];
+extern D3D12_DEPTH_STENCIL_DESC g_arrDepthStencilDesc[( UINT )DEPTH_STENCIL_TYPE::END];
 
 // Max Layer
 #define MAX_LAYER 32

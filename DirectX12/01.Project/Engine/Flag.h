@@ -33,18 +33,20 @@ enum class RS_TYPE
 enum class BLEND_TYPE
 {
 	DEFAULT,
-	ALPHABLEND,
-	ONEBLEND,
+	ALPHABLEND,				// 알파 블렌딩
+	ONEBLEND,				// 검은색 뺄때 사용
 	END
 };
 
 // DepthStencil Type
 enum class DEPTH_STENCIL_TYPE
 {
-	DEFAULT,
+	LESS,
 	LESS_EQUAL,
 	GRATER,
 	GRATER_EQUAL,
+	NO_DEPTHTEST,			// 깊이 판정 안하지만 깊이를 남김 
+	NO_DEPTHTEST_NO_WRITE,	// 깊이 판정도 안하고 깊이도 안남김
 	END,
 };
 

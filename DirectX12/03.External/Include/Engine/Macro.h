@@ -1,5 +1,4 @@
 #pragma once
-#include "Flag.h"
 
 #define	SAFE_DELETE(p)	if(p)	{ delete p; p = NULL; }
 #define	SAFE_RELEASE(p)	if(p)	{ p->Release(); p = NULL; }
@@ -43,9 +42,15 @@
 #define CLONE_DISABLE(Type) Type* Clone() { assert(NULL); return NULL; }\
 							Type(const Type& type) { assert(NULL); }
 
+typedef DirectX::SimpleMath::Vector2 Vec2;
+typedef DirectX::SimpleMath::Vector3 Vec3;
+typedef DirectX::SimpleMath::Vector4 Vec4;
+using DirectX::SimpleMath::Matrix;
+
 // State Description
 extern D3D12_RASTERIZER_DESC g_arrRSDesc[( UINT )RS_TYPE::END];
 extern D3D12_BLEND_DESC g_arrBlendDesc[( UINT )BLEND_TYPE::END];
+extern D3D12_DEPTH_STENCIL_DESC g_arrDepthStencilDesc[( UINT )DEPTH_STENCIL_TYPE::END];
 
 // Max Layer
 #define MAX_LAYER 32

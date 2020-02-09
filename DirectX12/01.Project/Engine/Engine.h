@@ -36,8 +36,8 @@ using DirectX::SimpleMath::Matrix;
 
 using namespace std;
 
-#include "Macro.h" // 매크로
 #include "Flag.h"
+#include "Macro.h" // 매크로
 #include "Types.h"
 #include "d3dx12.h"
 #include "Ptr.h"

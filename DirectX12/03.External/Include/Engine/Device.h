@@ -27,9 +27,13 @@ private:
 	ComPtr<IDXGIFactory>					m_pFactory;
 	ComPtr<ID3D12Debug>						m_pDbgCtrl;		// 디버그 관리	
 
+	// SwapChain
 	ComPtr<IDXGISwapChain>					m_pSwapChain;
+
+	// RenderTarget
 	ComPtr<ID3D12Resource>					m_RenderTargets[2];
 	ComPtr<ID3D12DescriptorHeap>			m_pRTV;
+	size_t									m_iRTVHeapSize;
 
 	// DepthStencil
 	ComPtr<ID3D12Resource>					m_pDepthStencilTex;
@@ -41,7 +45,6 @@ private:
 	HANDLE									m_hFenceEvent;
 	size_t									m_iFenceValue;
 	UINT									m_iCurTargetIdx;
-	size_t									m_iRTVHeapSize;
 
 	vector<ComPtr<ID3D12DescriptorHeap>>	m_vecDummyDescriptor;
 	ComPtr<ID3D12DescriptorHeap>			m_pInitDescriptor;

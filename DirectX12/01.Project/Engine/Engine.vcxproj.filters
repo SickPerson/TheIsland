@@ -306,16 +306,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\std3d.fx">
-      <Filter>04. Shader\ShaderCode</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\value.fx">
-      <Filter>04. Shader\ShaderCode</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\02.File\bin\content\Shader\func.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
     <FxCompile Include="..\..\02.File\bin\content\Shader\std.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\02.File\bin\content\Shader\std3d.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\02.File\bin\content\Shader\value.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
   </ItemGroup>

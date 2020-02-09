@@ -1,5 +1,4 @@
 #pragma once
-#include "Macro.h"
 
 typedef struct tResolution
 {

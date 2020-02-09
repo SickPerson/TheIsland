@@ -24,7 +24,7 @@ private:
 	ComPtr<ID3D12DescriptorHeap>	m_pSRV;
 
 public:
-	virtual void Load( const wchar_t* pFileName );
+	virtual void Load( const wstring & _strFullPath );
 
 	ComPtr<ID3D12DescriptorHeap> GetSRV();
 
