@@ -51,6 +51,11 @@ void CLight3D::SetAmbient( const Vec3 & vAmb )
 	m_tLightInfo.tColor.vAmb = vAmb;
 }
 
+void CLight3D::SetSpecular( const Vec3 & vSpec )
+{
+	m_tLightInfo.tColor.vSpec = vSpec;
+}
+
 const tLight3D & CLight3D::GetLight3DInfo()
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.

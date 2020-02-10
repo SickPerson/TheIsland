@@ -14,6 +14,17 @@ enum class KEY_TYPE
 	KEY_LALT,
 	KEY_ESC,
 
+	KEY_1,
+	KEY_2,
+	KEY_3,
+	KEY_4,
+	KEY_5,
+	KEY_6,
+	KEY_7,
+	KEY_8,
+	KEY_9,
+	KEY_0,
+
 	KEY_Q,
 	KEY_W,
 	KEY_S,
@@ -21,6 +32,8 @@ enum class KEY_TYPE
 	KEY_D,
 	KEY_R,
 	KEY_Z,
+
+	KEY_Y,
 
 	KEY_LBTN,
 	KEY_RBTN,
@@ -61,6 +74,7 @@ private:
 	vector<tKeyState>			m_vecKey;
 	POINT						m_ptMouse;
 	POINT						m_ptOldMouse;
+	Vec2						m_vDragDir;
 
 public:
 	void Init();
@@ -70,6 +84,7 @@ public:
 	KEY_STATE GetKeyState( KEY_TYPE _eKey );
 	const POINT& GetMousePos();
 	const POINT& GetPrevMousePos();
+	Vec2	GetDragDir();
 
 	DECLARE_SINGLE(CKeyManager)
 };

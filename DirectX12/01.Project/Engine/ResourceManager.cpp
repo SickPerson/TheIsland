@@ -470,7 +470,6 @@ void CResourceManager::CreateDefaultMesh()
 
 void CResourceManager::CreateDefaultShader()
 {
-
 	//=============
 	// TestShader
 	// int 1 개 필요
@@ -615,9 +614,23 @@ void CResourceManager::CreateDefaultMaterial()
 	AddResource( L"SkyboxMtrl", pMtrl );
 }
 
+
+FMOD_RESULT CHANNEL_CALLBACK( FMOD_CHANNELCONTROL *channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype
+	, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype
+	, void *commanddata1, void *commanddata2 );
+
 void CResourceManager::InitSound()
 {
 	// FMOD
+	FMOD::System_Create( &CSound::g_pFMOD );
+
+	if ( !CSound::g_pFMOD )
+	{
+		assert( NULL );
+	}
+
+	// 32개 채널 생성
+	CSound::g_pFMOD->init( 32, FMOD_DEFAULT, NULL );
 }
 
 const map<wstring, CResource*>& CResourceManager::GetResource( RES_TYPE eType )

@@ -28,16 +28,13 @@ private:
 	vector<CCamera*>		m_vecCamera;
 
 	bool					m_bWindow;
+	HWND					m_hWnd;
 
 public:
 	void Init( HWND hWnd, const tResolution& res, bool bWindow );
 	void Render();
 
 private:
-	void CreateSamplerState();
-	void CreateBlendState();
-	void CreateDepthStencilState();
-
 	void UpdateLight2D();
 	void UpdateLight3D();
 
@@ -50,6 +47,7 @@ public:
 	void RegisterCamera( CCamera* pCamera );
 	void ClearCamera();
 	tResolution GetResolution();
+	HWND	GetHwnd();
 
 	DECLARE_SINGLE(CRenderManager)
 };

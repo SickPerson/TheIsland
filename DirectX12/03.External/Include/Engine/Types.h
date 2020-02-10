@@ -84,8 +84,7 @@ struct tLight3D
 	int			iPadding;
 };
 
-// 여긴 왜 static이지?
-static struct tLight3DInfo
+struct tLight3DInfo
 {
 	tLight3D	arrLight3D[100];
 	UINT		iCurCount;

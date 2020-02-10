@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "KeyManager.h"
+#include "RenderManager.h"
 
 DEFINITION_SINGLE( CKeyManager )
 
@@ -18,6 +19,17 @@ int arrVK[( UINT )KEY_TYPE::KEY_END] =
 	VK_MENU,	// KEY_LALT,
 	VK_ESCAPE,	// KEY_ESC,
 
+	'1',//KEY_1,
+	'2',//KEY_2,
+	'3',//KEY_3,
+	'4',//KEY_4,
+	'5',//KEY_5,
+	'6',//KEY_6,
+	'7',//KEY_7,
+	'8',//KEY_8,
+	'9',//KEY_9,
+	'0',//KEY_0,
+
 	'Q',		// KEY_Q,
 	'W',
 	'S',
@@ -25,6 +37,7 @@ int arrVK[( UINT )KEY_TYPE::KEY_END] =
 	'D',
 	'E',
 	'Z',
+	'Y',
 
 	VK_LBUTTON,
 	VK_RBUTTON,
@@ -104,6 +117,13 @@ void CKeyManager::Update()
 			m_vecKey[i].bPrevPress = false;
 		}
 	}
+
+	// 마우스 좌표
+	m_ptOldMouse = m_ptMouse;
+	GetCursorPos( &m_ptMouse );
+	ScreenToClient( GET_SINGLE( CRenderManager )->GetHwnd(), &m_ptMouse );
+
+	m_vDragDir = Vec2( ( float )( m_ptMouse.x - m_ptOldMouse.x ), ( float )( m_ptOldMouse.y - m_ptMouse.y ) );
 }
 
 KEY_STATE CKeyManager::GetKeyState( KEY_TYPE _eKey )
@@ -121,4 +141,9 @@ const POINT & CKeyManager::GetPrevMousePos()
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
 	return m_ptOldMouse;
+}
+
+Vec2 CKeyManager::GetDragDir()
+{
+	return m_vDragDir;
 }

@@ -4,7 +4,7 @@
 class CTransform :
 	public CComponent
 {
-private:
+public:
 	CTransform();
 	virtual ~CTransform();
 

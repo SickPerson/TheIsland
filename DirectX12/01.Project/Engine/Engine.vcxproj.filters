@@ -198,6 +198,12 @@
     <ClInclude Include="Animator2D.h">
       <Filter>06. GameObject\Component\Animation\2D</Filter>
     </ClInclude>
+    <ClInclude Include="Desc.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolCameraScript.h">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -298,6 +304,9 @@
     </ClCompile>
     <ClCompile Include="Animator2D.cpp">
       <Filter>06. GameObject\Component\Animation\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolCameraScript.cpp">
+      <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

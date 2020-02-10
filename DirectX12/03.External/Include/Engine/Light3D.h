@@ -21,6 +21,7 @@ public:
 	void SetLightDir( const Vec3& vDir );
 	void SetDiffuseColor( const Vec3& vColor );
 	void SetAmbient( const Vec3& vAmb );
+	void SetSpecular( const Vec3& vSpec );
 
 public:
 	const tLight3D& GetLight3DInfo();

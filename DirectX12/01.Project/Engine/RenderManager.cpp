@@ -5,6 +5,7 @@
 #include "ConstantBuffer.h"
 #include "Light3D.h"
 #include "Texture.h"
+#include "Device.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -23,12 +24,7 @@ void CRenderManager::Init( HWND hWnd, const tResolution & res, bool bWindow )
 {
 	m_tResolution = res;
 	m_bWindow = bWindow;
-
-	CreateSamplerState();
-
-	CreateBlendState();
-
-	CreateDepthStencilState();
+	m_hWnd = hWnd;
 }
 
 void CRenderManager::Render()
@@ -50,18 +46,6 @@ void CRenderManager::Render()
 
 	// Ãâ·Â
 	GET_SINGLE( CDevice )->Render_Present();
-}
-
-void CRenderManager::CreateSamplerState()
-{
-}
-
-void CRenderManager::CreateBlendState()
-{
-}
-
-void CRenderManager::CreateDepthStencilState()
-{
 }
 
 void CRenderManager::UpdateLight2D()
@@ -128,4 +112,9 @@ void CRenderManager::ClearCamera()
 tResolution CRenderManager::GetResolution()
 {
 	return m_tResolution;
+}
+
+HWND CRenderManager::GetHwnd()
+{
+	return m_hWnd;
 }
