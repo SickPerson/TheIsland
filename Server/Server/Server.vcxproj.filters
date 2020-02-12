@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="99.default">
+      <UniqueIdentifier>{325c34ad-c0c7-45fc-b103-fe7f25e64602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.default\00.sources">
+      <UniqueIdentifier>{995e5a26-01dc-44e9-9f42-5c0c0488e640}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.default\01.header">
+      <UniqueIdentifier>{c672b47d-3472-456f-8bfe-df939fd55cd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Network">
+      <UniqueIdentifier>{f6ac9f18-6d40-4727-9390-c5547a186473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Main">
+      <UniqueIdentifier>{d5e9c22c-7b4f-4f71-9437-a54038569cdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Main\01. Core">
+      <UniqueIdentifier>{f80b38c7-fbb7-4e04-b29f-f568eb21995a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Network\02.PacketMgr">
+      <UniqueIdentifier>{c692f4a0-5c97-4cf9-a439-ad87e6273d91}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99.default\00.sources</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>01. Main</Filter>
+    </ClCompile>
+    <ClCompile Include="iocp_server.cpp">
+      <Filter>02. Network</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketMgr.cpp">
+      <Filter>02. Network\02.PacketMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>01. Main\01. Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>02. Network</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>99.default\01.header</Filter>
+    </ClInclude>
+    <ClInclude Include="iocp_server.h">
+      <Filter>02. Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleTon.h">
+      <Filter>99.default\01.header</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketMgr.h">
+      <Filter>02. Network\02.PacketMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>99.default\01.header</Filter>
+    </ClInclude>
+    <ClInclude Include="struct.h">
+      <Filter>99.default\01.header</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>99.default\01.header</Filter>
+    </ClInclude>
+    <ClInclude Include="extern.h">
+      <Filter>99.default\01.header</Filter>
+    </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>01. Main\01. Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>02. Network</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
