@@ -19,8 +19,23 @@
     <Filter Include="01. Main\01. Core">
       <UniqueIdentifier>{f80b38c7-fbb7-4e04-b29f-f568eb21995a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Network\02.PacketMgr">
+    <Filter Include="08. DB">
+      <UniqueIdentifier>{be5d1fb1-5b30-4c9c-af0d-09f510b84319}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Process">
+      <UniqueIdentifier>{835044db-1b7c-481a-be8b-2a3768b9cbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Object">
+      <UniqueIdentifier>{22dc28f2-a272-43d1-a4ca-84d36ddcaed6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Network\01.PacketMgr">
       <UniqueIdentifier>{c692f4a0-5c97-4cf9-a439-ad87e6273d91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Process\01. Process">
+      <UniqueIdentifier>{a2ae356d-6948-4e91-b531-90863949d3b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Process\02. Player">
+      <UniqueIdentifier>{04ced422-0a38-4cdc-a826-c2b1d14be0e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,11 +45,8 @@
     <ClCompile Include="main.cpp">
       <Filter>01. Main</Filter>
     </ClCompile>
-    <ClCompile Include="iocp_server.cpp">
-      <Filter>02. Network</Filter>
-    </ClCompile>
     <ClCompile Include="PacketMgr.cpp">
-      <Filter>02. Network\02.PacketMgr</Filter>
+      <Filter>02. Network\01.PacketMgr</Filter>
     </ClCompile>
     <ClCompile Include="Core.cpp">
       <Filter>01. Main\01. Core</Filter>
@@ -42,19 +54,25 @@
     <ClCompile Include="Network.cpp">
       <Filter>02. Network</Filter>
     </ClCompile>
+    <ClCompile Include="DataBase.cpp">
+      <Filter>08. DB</Filter>
+    </ClCompile>
+    <ClCompile Include="Process.cpp">
+      <Filter>03. Process\01. Process</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerProcess.cpp">
+      <Filter>03. Process\02. Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>99.default\01.header</Filter>
     </ClInclude>
-    <ClInclude Include="iocp_server.h">
-      <Filter>02. Network</Filter>
-    </ClInclude>
     <ClInclude Include="SingleTon.h">
       <Filter>99.default\01.header</Filter>
     </ClInclude>
     <ClInclude Include="PacketMgr.h">
-      <Filter>02. Network\02.PacketMgr</Filter>
+      <Filter>02. Network\01.PacketMgr</Filter>
     </ClInclude>
     <ClInclude Include="protocol.h">
       <Filter>99.default\01.header</Filter>
@@ -65,14 +83,20 @@
     <ClInclude Include="types.h">
       <Filter>99.default\01.header</Filter>
     </ClInclude>
-    <ClInclude Include="extern.h">
-      <Filter>99.default\01.header</Filter>
-    </ClInclude>
     <ClInclude Include="Core.h">
       <Filter>01. Main\01. Core</Filter>
     </ClInclude>
     <ClInclude Include="Network.h">
       <Filter>02. Network</Filter>
+    </ClInclude>
+    <ClInclude Include="DataBase.h">
+      <Filter>08. DB</Filter>
+    </ClInclude>
+    <ClInclude Include="Process.h">
+      <Filter>03. Process\01. Process</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerProcess.h">
+      <Filter>03. Process\02. Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

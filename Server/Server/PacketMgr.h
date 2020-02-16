@@ -4,16 +4,11 @@
 
 class PacketMgr
 {
-private:
-	map<int, PLAYER_INFO*>	m_clients;
+	DECLARE_SINGLE(PacketMgr)
+
 public:
-	bool Init();
-public:
-	void Send_Packet(const unsigned int& id, void* buf);
+	static void Send_Packet(const unsigned short& id, void* buf);
 
 public:
 	void Send_Login_Ok_Packet(const int& id);
-private:
-	DECLARE_SINGLE(PacketMgr)
 };
-

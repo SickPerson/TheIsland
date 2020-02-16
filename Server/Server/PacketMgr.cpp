@@ -3,7 +3,7 @@
 DEFINITION_SINGLE(PacketMgr)
 
 PacketMgr::PacketMgr()
-{
+{	
 }
 
 
@@ -11,24 +11,19 @@ PacketMgr::~PacketMgr()
 {
 }
 
-bool PacketMgr::Init()
+void PacketMgr::Send_Packet(const unsigned short & id, void * buf)
 {
-	return true;
-}
-
-void PacketMgr::Send_Packet(const unsigned int & id, void * buf)
-{
-	char* packet = reinterpret_cast<char*>(buf);
+	unsigned char* packet = reinterpret_cast<unsigned char*>(buf);
 	int packet_size = packet[0];
-	SOCKET	client_s = m_clients[id]->socket;
 
 	OVER_EX* send_over = new OVER_EX;
 	memset(send_over, 0x00, sizeof(OVER_EX));
-	send_over->event = EV_SEND;
-	memcpy(send_over->net_buf, packet, packet_size);
-	send_over->wsabuf[0].buf = send_over->net_buf;
-	send_over->wsabuf[0].len = packet_size;
-	if (WSASend(client_s, send_over->wsabuf, 1, 0, 0, &send_over->overlapped, 0) == SOCKET_ERROR) {
+	send_over->m_Event = EV_SEND;
+	memcpy(send_over->m_MessageBuffer, packet, packet_size);
+	send_over->m_DataBuffer.buf = reinterpret_cast<char*>(send_over->m_MessageBuffer);
+	send_over->m_DataBuffer.len = packet_size;
+
+	if (WSASend(client_s, &send_over->m_DataBuffer, 1, 0, 0, &send_over->m_Overlapped, 0) == SOCKET_ERROR) {
 		if (WSAGetLastError() != WSA_IO_PENDING) {
 			cout << "Error - Fail WSASend(error_code : " << WSAGetLastError << " ) " << endl;
 		}

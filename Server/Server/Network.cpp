@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "Network.h"
 
-
+DEFINITION_SINGLE(CNetwork);
 
 CNetwork::CNetwork()
 {
+	GetServerIpAddress();
 	m_bRunningServer = true;
 	this->Initialize();
 }
@@ -14,18 +15,40 @@ CNetwork::~CNetwork()
 {
 }
 
+void CNetwork::GetServerIpAddress()
+{
+	PHOSTENT	hostinfo;
+	char				hostname[50];
+	char				ipaddr[50];
+	memset(hostname, 0, sizeof(hostname));
+	memset(ipaddr, 0, sizeof(ipaddr));
+
+	int err_no = gethostname(hostname, sizeof(hostname));
+	if (err_no == 0) {
+		hostinfo = gethostbyname(hostname);
+		strcpy_s(ipaddr, inet_ntoa(*reinterpret_cast<struct in_addr*>(hostinfo->h_addr_list[0])));
+	}
+	WSACleanup();
+	cout << "Server IP Address" << ipaddr << endl;
+}
+
 bool CNetwork::InitWinSock()
 {
-	// 윈속 초기화
 	WSADATA	wsa;
 
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return false;
-	else return true;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		return false;
+	else
+		return true;
 }
 
 bool CNetwork::InitCompletionPort()
 {
-	return false;
+	m_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
+	if (m_hIocp == NULL)
+		return false;
+	else
+		return true;
 }
 
 bool CNetwork::InitSock()
@@ -33,41 +56,53 @@ bool CNetwork::InitSock()
 	int retval;
 
 	m_ListenSock = WSASocketW(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
-	if (!m_ListenSock == INVALID_SOCKET)
+	if (!m_ListenSock == INVALID_SOCKET) {
+		int err_no = WSAGetLastError();
+		Err_quit("Socket Err", err_no);
 		return false;
+	}
 
 	SOCKADDR_IN	serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serveraddr.sin_port = htons(SERVER_PORT);
-	retval = bind(m_ListenSock, reinterpret_cast<SOCKADDR*>(&serveraddr), sizeof(serveraddr));
+	retval = ::bind(m_ListenSock, reinterpret_cast<SOCKADDR*>(&serveraddr), sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) {
-		Err_quit("bind()");
+		int err_no = WSAGetLastError();
+		Err_quit("bind()", err_no);
 		return false;
 	}
 
 	retval = listen(m_ListenSock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) {
-		Err_display("listen()");
+		int err_no = WSAGetLastError();
+		Err_display("listen()", err_no);
 		return false;
 	}
 	return true;
 }
 
-void CNetwork::Initialize()
+bool CNetwork::Initialize()
 {
 	if (!InitWinSock()) {
-		Err_display("InitWinSock() err");
+		int err_no = WSAGetLastError();
+		Err_display("InitWinSock() err", err_no);
+		return false;
 	}
 
 	if (!InitCompletionPort()) {
-		Err_display("InitCompletionPort() err");
+		int err_no = WSAGetLastError();
+		Err_display("InitCompletionPort() err", err_no);
+		return false;
 	}
 
 	if (!InitSock()) {
-		Err_display("InitSock() err");
+		int err_no = WSAGetLastError();
+		Err_display("InitSock() err", err_no);
+		return false;
 	}
+	return true;
 }
 
 void CNetwork::Disconnect()
@@ -79,16 +114,41 @@ void CNetwork::Disconnect()
 
 void CNetwork::WorkerThread()
 {
-	DWORD size;
-	DWORD flag = 0;
-	ULONGLONG key;
-	int err_code;
+	while (true == (!m_bRunningServer)) {
+		DWORD io_byte;
+		ULONGLONG key;
+		s_pOVER_EX	lpover_ex;
 
-	while (m_bRunningServer) {
-		err_code = 0;
-		s_pContext scontext = nullptr;
-		BOOL retval = iocp_server::GetInst()->Ge
+		BOOL	is_error = GetQueuedCompletionStatus(m_hIocp, &io_byte, &key, reinterpret_cast<LPWSAOVERLAPPED *>(&lpover_ex), INFINITE);
+
+		unsigned short id = reinterpret_cast<unsigned short&>(key);
+
+		if (FALSE == is_error || 0 == io_byte) {
+			if (FALSE == is_error) {
+				int err_no = WSAGetLastError();
+				Err_display("Woker_Thread Start - GetQueuedCompletionStatus", err_no);
+			}
+
+			//closesocket(/*클라이언트 소켓*/);
+		// 클라이언트 연결 끊기
+			std::cout << "[ Player: " << key << " ] Disconnect" << std::endl;
+			continue;
+		}
+
+		switch (lpover_ex.m_Event)
+		{
+		case EV_RECV:
+		{
+		}
+		break;
+		case EV_SEND:
+		{
+
+		}
+			break;
+		}
 	}
+	return;
 }
 
 void CNetwork::AcceptThread()

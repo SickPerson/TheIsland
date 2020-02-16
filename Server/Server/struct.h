@@ -3,16 +3,13 @@
 ///////////////////////////////////////
 // 통신을 위한 구조체
 ///////////////////////////////////////
-typedef struct _Context
+typedef struct OVER_EX
 {
-	WSAOVERLAPPED	m_sOverlapped;
-	WSABUF			m_sWsabuf;
-	BYTE			m_bType;
-	UCHAR			m_cBuf[MAX_BUF];
-	char			m_cState;
-	char			m_cMap;
-	unsigned short	m_usOtherID;
-}s_Context, s_pContext;
+	WSAOVERLAPPED	m_Overlapped;
+	WSABUF			m_DataBuffer;
+	UCHAR			m_MessageBuffer[MAX_BUF];
+	EVENT_TYPE		m_Event;
+}s_OVER_EX, s_pOVER_EX;
 
 typedef struct Position2d {
 	short x;
@@ -28,13 +25,6 @@ typedef struct Position3d {
 
 	Position3d(short _x, short _y, short _z) : x(_x), y(_y), z(_z) {}
 }POS3D, PPOS3D;
-
-struct OVER_EX {
-	WSAOVERLAPPED	overlapped;
-	WSABUF					wsabuf[1];
-	char							net_buf[MAX_BUF];
-	EVENT_TYPE			event;
-};
 
 struct PLAYER_INFO {
 	SOCKET				socket;

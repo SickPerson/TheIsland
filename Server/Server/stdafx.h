@@ -33,8 +33,5 @@ using namespace chrono;
 
 #include "extern.h"
 
-// iocp 서버의 몸통이 되는 가장 핵심적인 클래스의 선언이 들어 있다. (iocp와  boost 중 하나만 쓰면 된다.)
-#include "iocp_server.h"
-
 // boost asio 서버관련 라이브러리 (iocp와 boost 중 하나만 쓰면 된다.)
 // #include "boost_asio.h"

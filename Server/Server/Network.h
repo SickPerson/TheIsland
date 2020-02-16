@@ -3,11 +3,14 @@
 
 class CNetwork
 {
-	DECLARE_SINGLE(CNetwork);
+	DECLARE_SINGLE(CNetwork)
 
 private:
+	HANDLE	m_hIocp;
 	SOCKET	m_ListenSock = INVALID_SOCKET;
 	volatile bool	m_bRunningServer = true;
+
+private:
 	volatile unsigned short m_usUserID = 0;
 
 public:
@@ -15,7 +18,7 @@ public:
 	bool	InitCompletionPort();
 	bool	InitSock();
 
-	void Initialize();
+	bool Initialize();
 	void Disconnect();
 
 	void WorkerThread();
@@ -25,6 +28,7 @@ public:
 
 	void EndServer() { m_bRunningServer = false; }
 	bool GetServerState() { return m_bRunningServer; }
+	void GetServerIpAddress();
 
 public:
 	static void Err_quit(const char* msg, int err_no);

@@ -1,13 +1,21 @@
 #pragma once
 
-constexpr		int	MAX_USER = 10000;
-constexpr		int	MAX_STR_LEN = 50;
+/* ----------------------------------------
+[NETWORK]
+-----------------------------------------*/
+constexpr	int	SERVER_PORT = 9000;
+constexpr	unsigned short	MAX_USER	= 5000;
+constexpr	unsigned short	ANIMAL_BEAR = 50;
+constexpr	unsigned short	ANIMAL_WILD_PIG = 100;
+constexpr	unsigned short	ANIMAL_DEER = 150;
+constexpr	unsigned short	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_WILD_PIG + ANIMAL_DEER;
+constexpr	int	MAX_BUF = 1024;
+constexpr	int	MAX_STR_LEN = 50;
+
+using Packet = unsigned char;
 
 #define WORLD_WIDTH 800
 #define WORLD_HEIGHT 800
-#define SERVER_PORT 9000
-
-#define MAX_BUF 1024
 
 // Client -> Server Packet Protocol
 constexpr	char	CS_LOGIN = 0;
