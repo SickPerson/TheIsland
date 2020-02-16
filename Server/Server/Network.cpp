@@ -5,11 +5,10 @@ DEFINITION_SINGLE(CNetwork);
 
 CNetwork::CNetwork()
 {
-	GetServerIpAddress();
 	m_bRunningServer = true;
-	this->Initialize();
+	Initialize();
+	GetServerIpAddress();
 }
-
 
 CNetwork::~CNetwork()
 {
@@ -29,11 +28,12 @@ void CNetwork::GetServerIpAddress()
 		strcpy_s(ipaddr, inet_ntoa(*reinterpret_cast<struct in_addr*>(hostinfo->h_addr_list[0])));
 	}
 	WSACleanup();
-	cout << "Server IP Address" << ipaddr << endl;
+	cout << "Server IP Address: " << ipaddr << endl;
 }
 
 bool CNetwork::InitWinSock()
 {
+	// WinSock Initalize
 	WSADATA	wsa;
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -108,16 +108,17 @@ bool CNetwork::Initialize()
 void CNetwork::Disconnect()
 {
 	closesocket(m_ListenSock);
+	CloseHandle(m_hIocp);
 	WSACleanup();
 	m_ListenSock = INVALID_SOCKET;
 }
 
 void CNetwork::WorkerThread()
 {
-	while (true == (!m_bRunningServer)) {
+	while (m_bRunningServer) {
 		DWORD io_byte;
 		ULONGLONG key;
-		s_pOVER_EX	lpover_ex;
+		POVER_EX	lpover_ex;
 
 		BOOL	is_error = GetQueuedCompletionStatus(m_hIocp, &io_byte, &key, reinterpret_cast<LPWSAOVERLAPPED *>(&lpover_ex), INFINITE);
 
@@ -139,13 +140,13 @@ void CNetwork::WorkerThread()
 		{
 		case EV_RECV:
 		{
+			break;
 		}
-		break;
+
 		case EV_SEND:
 		{
-
-		}
 			break;
+		}
 		}
 	}
 	return;
@@ -154,14 +155,29 @@ void CNetwork::WorkerThread()
 void CNetwork::AcceptThread()
 {
 	while (m_bRunningServer) {
-		SOCKADDR_IN addr;
+		/*SOCKADDR_IN addr;
 		ZeroMemory(&addr, sizeof(SOCKADDR_IN));
 		addr.sin_family = AF_INET;
 		addr.sin_port = htons(SERVER_PORT);
 		addr.sin_addr.s_addr = INADDR_ANY;
-		int addrsize = sizeof(SOCKADDR_IN);
+		int addrsize = sizeof(SOCKADDR_IN);*/
 
-		auto client_sock = WSAAccept(m_ListenSock, reinterpret_cast<sockaddr*>(&addr), &addrsize, NULL, NULL);
+		/*auto client_sock = WSAAccept(m_ListenSock, reinterpret_cast<sockaddr*>(&addr), &addrsize, NULL, NULL);
+	
+		if (client_sock == INVALID_SOCKET) {
+			int err_no = WSAGetLastError();
+			Err_display("ACCEPT INVALID_SOCKET!", err_no);
+			break;
+		}
+		else {
+			if () {
+
+				continue;
+			}
+			else {
+				continue;
+			}
+		}*/
 	}
 }
 
