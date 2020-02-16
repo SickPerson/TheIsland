@@ -31,7 +31,5 @@ using namespace chrono;
 // struct 구조체 문
 #include "struct.h"
 
-#include "extern.h"
-
 // boost asio 서버관련 라이브러리 (iocp와 boost 중 하나만 쓰면 된다.)
 // #include "boost_asio.h"

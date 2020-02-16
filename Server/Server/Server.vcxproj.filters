@@ -16,9 +16,6 @@
     <Filter Include="01. Main">
       <UniqueIdentifier>{d5e9c22c-7b4f-4f71-9437-a54038569cdf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Main\01. Core">
-      <UniqueIdentifier>{f80b38c7-fbb7-4e04-b29f-f568eb21995a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="08. DB">
       <UniqueIdentifier>{be5d1fb1-5b30-4c9c-af0d-09f510b84319}</UniqueIdentifier>
     </Filter>
@@ -37,6 +34,18 @@
     <Filter Include="03. Process\02. Player">
       <UniqueIdentifier>{04ced422-0a38-4cdc-a826-c2b1d14be0e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Main\01. Core">
+      <UniqueIdentifier>{6ba2dd76-2494-43cd-a9a6-acbeb0a4fac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Process\02. Animal">
+      <UniqueIdentifier>{c655b8ec-3b79-4cc6-af96-3cfbe3d2a890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Object\01. Dynamic">
+      <UniqueIdentifier>{784145b7-bc7b-4d3e-95f1-91e9a62ba34a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Object\02. Static">
+      <UniqueIdentifier>{a9705cb4-007e-47ef-84eb-473a60747b8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -47,9 +56,6 @@
     </ClCompile>
     <ClCompile Include="PacketMgr.cpp">
       <Filter>02. Network\01.PacketMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Core.cpp">
-      <Filter>01. Main\01. Core</Filter>
     </ClCompile>
     <ClCompile Include="Network.cpp">
       <Filter>02. Network</Filter>
@@ -62,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="PlayerProcess.cpp">
       <Filter>03. Process\02. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>01. Main\01. Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,9 +92,6 @@
     <ClInclude Include="types.h">
       <Filter>99.default\01.header</Filter>
     </ClInclude>
-    <ClInclude Include="Core.h">
-      <Filter>01. Main\01. Core</Filter>
-    </ClInclude>
     <ClInclude Include="Network.h">
       <Filter>02. Network</Filter>
     </ClInclude>
@@ -98,5 +104,12 @@
     <ClInclude Include="PlayerProcess.h">
       <Filter>03. Process\02. Player</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Core.h">
+      <Filter>01. Main\01. Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Server.rc" />
   </ItemGroup>
 </Project>

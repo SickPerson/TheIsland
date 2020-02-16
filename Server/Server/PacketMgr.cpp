@@ -23,11 +23,11 @@ void PacketMgr::Send_Packet(const unsigned short & id, void * buf)
 	send_over->m_DataBuffer.buf = reinterpret_cast<char*>(send_over->m_MessageBuffer);
 	send_over->m_DataBuffer.len = packet_size;
 
-	if (WSASend(client_s, &send_over->m_DataBuffer, 1, 0, 0, &send_over->m_Overlapped, 0) == SOCKET_ERROR) {
+	/*if (WSASend(client_s, &send_over->m_DataBuffer, 1, 0, 0, &send_over->m_Overlapped, 0) == SOCKET_ERROR) {
 		if (WSAGetLastError() != WSA_IO_PENDING) {
 			cout << "Error - Fail WSASend(error_code : " << WSAGetLastError << " ) " << endl;
 		}
-	}
+	}*/
 }
 
 void PacketMgr::Send_Login_Ok_Packet(const int & id)

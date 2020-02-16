@@ -29,7 +29,7 @@ void CCore::CheckThisCpuCount()
 	GetSystemInfo(&si); // 시스템 정보를 받아온다.
 	m_iCpuCore = static_cast<int>(si.dwNumberOfProcessors);
 	m_iNumWorkerThread = static_cast<int>(m_iCpuCore * 2 - 2);
-	cout << "CPU Core Count: " << m_iCpuCore << "Thread: " << m_iNumWorkerThread << endl;
+	cout << "CPU Core Count: " << m_iCpuCore << "\tThread: " << m_iNumWorkerThread << endl;
 }
 
 void CCore::StartServer()
@@ -41,7 +41,7 @@ void CCore::StartServer()
 	std::cout << "UpdateThread Create" << std::endl;
 
 	for (int i = 0; i < m_iNumWorkerThread; ++i) {
-		m_vWorkerThread.emplace_back(std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } }));
+		m_vWorkerThread.push_back(std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } }));
 	}
 	std::cout << "WorkerThread Create" << std::endl;
 
