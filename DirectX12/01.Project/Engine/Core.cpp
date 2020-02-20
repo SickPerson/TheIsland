@@ -1,71 +1,89 @@
 #include "stdafx.h"
 #include "Core.h"
+
 #include "Device.h"
-#include "PathManager.h"
-#include "KeyManager.h"
-#include "TimeManager.h"
+#include "KeyMgr.h"
+#include "TimeMgr.h"
+#include "ResMgr.h"
 
-DEFINITION_SINGLE(CCore)
+#include "SceneMgr.h"
+#include "EventMgr.h"
+#include "RenderMgr.h"
 
-CCore::CCore() :
-	m_hMainHwnd(NULL)
+#include "PathMgr.h"
+#include "ConstantBuffer.h"
+
+
+CCore::CCore()
+	: m_hMainHwnd(nullptr)
 {
 }
-
 
 CCore::~CCore()
 {
-	DESTROY_SINGLE( CPathManager );
-	DESTROY_SINGLE( CKeyManager );
-	DESTROY_SINGLE( CTimeManager );
-	DESTROY_SINGLE( CDevice );
 }
 
-int CCore::Init( HWND hWnd, const RESOLUTION & resolution, bool bWindow )
+int CCore::init(HWND _hWnd, const tResolution & _resolution, bool _bWindow)
 {
-	m_hMainHwnd = hWnd;
-	ChangeWindowSize( m_hMainHwnd, resolution );
-	ShowWindow( hWnd, true );
+	m_hMainHwnd = _hWnd;
+	ChangeWindowSize(m_hMainHwnd, _resolution);
+	ShowWindow(_hWnd, true);
 
-	if ( FAILED( GET_SINGLE( CDevice )->Init( hWnd, resolution, bWindow ) ) )
+	if(FAILED(CDevice::GetInst()->init(_hWnd, _resolution, _bWindow)))
+	{
 		return E_FAIL;
+	}
 
-	// 상수버퍼
-	GET_SINGLE( CDevice )->CreateConstBuffer( L"GLOBAL_MATRIX", sizeof( Vec4 ), 512, CONST_REGISTER::b0 );
-	GET_SINGLE( CDevice )->CreateConstBuffer( L"GLOBAL_MATRIX2", sizeof( Vec4 ), 512, CONST_REGISTER::b1 );
+	// 상수버퍼 만들기
+	CDevice::GetInst()->CreateConstBuffer(L"TRANSFORM_MATRIX", sizeof(tTransform), 512, CONST_REGISTER::b0);
+	CDevice::GetInst()->CreateConstBuffer(L"MATERIAL_PARAM", sizeof(tMtrlParam), 512, CONST_REGISTER::b1);
+	CDevice::GetInst()->CreateConstBuffer(L"ANIM2D", sizeof(tMtrlParam), 512, CONST_REGISTER::b2);
+		
+	// b5 추가
+	CDevice::GetInst()->CreateConstBuffer(L"TEST", sizeof(Vec4), 512, CONST_REGISTER::b5);
 
-	GET_SINGLE( CPathManager )->Init();
-	GET_SINGLE( CKeyManager )->Init();
-	GET_SINGLE( CTimeManager )->Init();
+	// 전역 상수버퍼 변수(1프레임 동안 레지스터에서 지속되야함)
+	CDevice::GetInst()->CreateConstBuffer(L"LIGHT2D", sizeof(tLight2DInfo), 1, CONST_REGISTER::b3, true);
+	CDevice::GetInst()->CreateConstBuffer(L"LIGHT3D", sizeof(tLight3DInfo), 1, CONST_REGISTER::b4, true);	
+
+	// 전역 상수버퍼 등록
+	CDevice::GetInst()->SetGlobalConstBufferToRegister(CDevice::GetInst()->GetCB(CONST_REGISTER::b3), 0);
+	CDevice::GetInst()->SetGlobalConstBufferToRegister(CDevice::GetInst()->GetCB(CONST_REGISTER::b4), 0);
+		
+
+
+	CPathMgr::init();
+	CKeyMgr::GetInst()->init();
+	CTimeMgr::GetInst()->init();
+
+	CResMgr::GetInst()->init();
+
+	CSceneMgr::GetInst()->init();
+	CRenderMgr::GetInst()->init(_hWnd, _resolution, _bWindow);
+
+	//TestInit();
 
 	return S_OK;
 }
 
-void CCore::Run()
+void CCore::ChangeWindowSize(HWND _hWnd, const tResolution & _resolution)
 {
-	GET_SINGLE( CKeyManager )->Update();
-	GET_SINGLE( CTimeManager )->Update();
+	RECT rt = { 0, 0, (int)_resolution.fWidth, (int)_resolution.fHeight };
 
-	Update();
-
-	// LateUpdate, FinalUpdate는 SceneManager에서 해주기 때문에 삭제
-	
-	Render();
+	AdjustWindowRect(&rt, WS_OVERLAPPEDWINDOW, false);
+	SetWindowPos(_hWnd, nullptr, 10, 10, rt.right - rt.left, rt.bottom - rt.top, 0);
 }
 
-void CCore::ChangeWindowSize( HWND hWnd, const RESOLUTION & resolution )
+void CCore::progress()
 {
-	RECT rt = { 0, 0, ( int )resolution.fWidth, ( int )resolution.fHeight };
+	CKeyMgr::GetInst()->update();
+	CTimeMgr::GetInst()->update();
+	CSound::g_pFMOD->update();
 
-	AdjustWindowRect( &rt, WS_OVERLAPPEDWINDOW, false );
-	SetWindowPos( hWnd, NULL, 10, 10, rt.right - rt.left, rt.bottom - rt.top, 0 );
-}
-
-void CCore::Update()
-{
-
-}
-
-void CCore::Render()
-{
+	CEventMgr::GetInst()->clear();
+	{
+		CSceneMgr::GetInst()->update();
+		CRenderMgr::GetInst()->render();
+	}
+	CEventMgr::GetInst()->update();
 }

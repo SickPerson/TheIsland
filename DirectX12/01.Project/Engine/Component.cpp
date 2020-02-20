@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "Component.h"
 
+#include "EventMgr.h"
 
-CComponent::CComponent( COMPONENT_TYPE eType )
+CComponent::CComponent(COMPONENT_TYPE _eType)
+	: m_eComType(_eType)
+	, m_bChange(true)
+	, m_bActive(true)
 {
 }
 
@@ -10,80 +14,31 @@ CComponent::~CComponent()
 {
 }
 
-
-void ComponentSetChange( CComponent *, bool )
+void CComponent::SetActive(bool _bTrue)
 {
-}
+	if (m_bActive)
+	{
+		if (!_bTrue)
+		{
+			// 비활성화
+			tEvent event = {};
+			event.eType = EVENT_TYPE::DEACTIVATE_COMPONENT;
+			event.wParam = (DWORD_PTR)this;
 
+			CEventMgr::GetInst()->AddEvent(event);
+		}
+	}
+	else
+	{
+		if (_bTrue)
+		{
+			// 활성화
+			// 비활성화
+			tEvent event = {};
+			event.eType = EVENT_TYPE::ACTIVATE_COMPONENT;
+			event.wParam = (DWORD_PTR)this;
 
-void CComponent::SetGameObject( CGameObject * pObject )
-{
-}
-
-void CComponent::SetActive( bool bActive )
-{
-}
-
-bool CComponent::IsActive()
-{
-	return false;
-}
-
-bool CComponent::IsChanged()
-{
-	return false;
-}
-
-void CComponent::Changed()
-{
-}
-
-COMPONENT_TYPE CComponent::GetComponentType()
-{
-	return COMPONENT_TYPE();
-}
-
-CGameObject * CComponent::GetGameObject()
-{
-	return nullptr;
-}
-
-CTransform * CComponent::Transform()
-{
-	return nullptr;
-}
-
-CMeshRender * CComponent::MeshRender()
-{
-	return nullptr;
-}
-
-CCollider2D * CComponent::Collider2D()
-{
-	return nullptr;
-}
-
-CCollider3D * CComponent::Collider3D()
-{
-	return nullptr;
-}
-
-CAnimation2D * CComponent::Animation2D()
-{
-	return nullptr;
-}
-
-CCamera * CComponent::Camera()
-{
-	return nullptr;
-}
-
-CLight2D * CComponent::Light2D()
-{
-	return nullptr;
-}
-
-CLight3D * CComponent::Light3D()
-{
-	return nullptr;
+			CEventMgr::GetInst()->AddEvent(event);
+		}
+	}
 }

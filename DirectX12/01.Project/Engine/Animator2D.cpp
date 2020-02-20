@@ -1,172 +1,181 @@
 #include "stdafx.h"
 #include "Animator2D.h"
+
 #include "Animation2D.h"
-#include "PathManager.h"
-#include "Texture.h"
+#include "ConstantBuffer.h"
+#include "Device.h"
 
-CAnimator2D::CAnimator2D() : 
-	CComponent(COMPONENT_TYPE::ANIMATOR2D),
-	m_pCurAni(NULL)
+
+CAnimator2D::CAnimator2D()
+	: CComponent(COMPONENT_TYPE::ANIMATOR2D)
+	, m_pCurAnim(nullptr)
 {
 }
 
-CAnimator2D::CAnimator2D( const CAnimator2D & ani ) :
-	CComponent( ani ),
-	m_bRepeat( ani.m_bRepeat )
+CAnimator2D::CAnimator2D(const CAnimator2D & _origin)
+	: CComponent(_origin)
+	, m_bRepeat(_origin.m_bRepeat)
 {
-	for ( auto& pair : ani.m_mapAni )
-	{
-		CAnimation2D* pCopyAni = new CAnimation2D( *pair.second );
-		pCopyAni->SetAnimatior2D( this );
-		m_mapAni[pair.first] = pCopyAni;
+	for (auto& pair : _origin.m_mapAnim)
+	{			
+		CAnimation2D* pCopyAnim = new CAnimation2D(*pair.second);
+		pCopyAnim->SetAnimator2D(this);
+		m_mapAnim.insert(make_pair(pair.first, pCopyAnim));
 	}
 
-	if ( ani.m_pCurAni )
+	if (nullptr != _origin.m_pCurAnim)
 	{
-		PlayAnimation( ani.m_pCurAni->GetName(), m_bRepeat );
+		PlayAnimation(_origin.m_pCurAnim->GetName(), m_bRepeat);
 	}
 }
-
 
 CAnimator2D::~CAnimator2D()
 {
-	Safe_Delete_Map( m_mapAni );
+	Safe_Delete_Map(m_mapAnim);
 }
 
-bool CAnimator2D::AddAnimation( const wstring & strKey, Ptr<CTexture> pTex, Vec2 vLT, Vec2 vLen, int iFrameCount, int fDuration )
-{
-	CAnimation2D* pAni = FindAnimation( strKey );
 
-	if ( pAni )
+void CAnimator2D::finalupdate()
+{
+	if (!m_bPlay)
+		return;
+
+	if (nullptr != m_pCurAnim)
+	{
+		// 반복모드 이고 한번 재생이 끝에 도달하면
+		if (m_pCurAnim->IsFinish())
+		{
+			if (m_bRepeat)
+			{
+				m_pCurAnim->Play();
+			}
+			else
+			{
+				m_bPlay = false;
+			}
+		}
+
+		m_pCurAnim->finalupdate();
+	}	
+}
+
+bool CAnimator2D::AddAnimation(const wstring & _strAnimKey
+	, Ptr<CTexture> _pTex
+	, Vec2 _vLT, Vec2 _vGap
+	, int _iFrmCount, float _fDuration)
+{
+	CAnimation2D* pAnim = FindAnimation(_strAnimKey);
+
+	if (nullptr != pAnim)
 		return false;
 
-	pAni = new CAnimation2D;
+	pAnim = new CAnimation2D;
 
-	pAni->Create( pTex, vLT, vLen, iFrameCount, fDuration );
+	pAnim->Create(_pTex, _vLT, _vGap, _iFrmCount, _fDuration);
 
-	m_mapAni[strKey] = pAni;
-
-	pAni->SetAnimatior2D( this );
-	pAni->SetName( strKey );
+	m_mapAnim.insert(make_pair(_strAnimKey, pAnim));
+	pAnim->SetAnimator2D(this);
+	pAnim->SetName(_strAnimKey);
 
 	return true;
 }
 
-void CAnimator2D::PlayAnimation( const wstring & strKey, bool bRepeat )
+void CAnimator2D::PlayAnimation(const wstring & _strAnimKey, bool _bRepeat)
 {
-	m_pCurAni = FindAnimation( strKey );
+	m_pCurAnim = FindAnimation(_strAnimKey);
 
-	if ( !m_pCurAni )
+	if (nullptr == m_pCurAnim)
+	{
+		//DBG_WARNNING(L"Can't Find Animation");
 		return;
+	}
 
-	m_bRepeat = bRepeat;
-	m_bPlay = true;
-}
-
-void CAnimator2D::PlayAnimation()
-{
-	if ( m_pCurAni )
-		m_bPlay = true;
-}
-
-void CAnimator2D::PauseAniamtion()
-{
-	m_bPlay = false;
+	m_bRepeat = _bRepeat;
+	m_bPlay = true;	
 }
 
 void CAnimator2D::StopAnimation()
 {
 	m_bPlay = false;
-	if ( !m_pCurAni )
+	if (nullptr == m_pCurAnim)
 		return;
-
-	m_pCurAni->Play();
+	
+	m_pCurAnim->Play();	
 }
 
-bool CAnimator2D::IsPlay()
+CAnimation2D * CAnimator2D::FindAnimation(const wstring & _strKey)
 {
-	return m_bPlay;
-}
+	map<wstring, CAnimation2D*>::iterator iter = m_mapAnim.find(_strKey);
 
-bool CAnimator2D::IsRepeat()
-{
-	return m_bRepeat;
-}
-
-CAnimation2D * CAnimator2D::FindAnimation( const wstring & strKey )
-{
-	map<wstring, CAnimation2D*>::iterator iter = m_mapAni.find( strKey );
-
-	if(iter == m_mapAni.end() )
-		return nullptr;
+	if (iter == m_mapAnim.end())
+		return nullptr;	
 
 	return iter->second;
 }
 
-CAnimation2D * CAnimator2D::GetCurAnimation()
-{
-	return m_pCurAni;
-}
-
-const map<wstring, CAnimation2D*>& CAnimator2D::GetAnimations()
-{
-	// TODO: 여기에 반환 구문을 삽입합니다.
-
-	return m_mapAni;
-}
-
 void CAnimator2D::UpdateData()
 {
-	if ( m_pCurAni )
-		m_pCurAni->UpdateData();
+	if (m_pCurAnim) 
+	{
+		m_pCurAnim->UpdateData();
+	}		
 }
 
-void CAnimator2D::SaveToScene( FILE * pFile )
+//void CAnimator2D::ClearData()
+//{
+//	//static CConstantBuffer* pAnimBuffer = CDevice::GetInst()->FindConstBuffer(L"Anim2D");
+//	//
+//	//static tAnim2D data = {};
+//	//pAnimBuffer->SetData(&data);
+//	//pAnimBuffer->UpdateData((UINT)SHADER_TYPE::ST_VERTEX | (UINT)SHADER_TYPE::ST_PIXEL);
+//}
+
+void CAnimator2D::SaveToScene(FILE * _pFile)
 {
-	UINT iType = ( UINT )GetComponentType();
-	fwrite( &iType, sizeof( UINT ), 1, pFile );
+	UINT iType = (UINT)GetComponentType();
+	fwrite(&iType, sizeof(UINT), 1, _pFile);
 
-	fwrite( &m_bRepeat, 1, 1, pFile );
+	fwrite(&m_bRepeat, 1, 1, _pFile);
 
-	size_t iAnimCount = m_mapAni.size();
-	fwrite( &iAnimCount, 4, 1, pFile );
+	size_t iAnimCount = m_mapAnim.size();
+	fwrite(&iAnimCount, 4, 1, _pFile);
 
-	for ( auto& pair : m_mapAni )
+	for (auto& pair : m_mapAnim)
 	{
-		GET_SINGLE(CPathManager)->SaveWString( pFile, pair.first );
-		pair.second->SaveToScene( pFile );
+		SaveWString(_pFile, pair.first);
+		pair.second->SaveToScene(_pFile);
 	}
 
-	fwrite( &m_pCurAni, sizeof( void* ), 1, pFile );
-	if ( nullptr != m_pCurAni )
+	fwrite(&m_pCurAnim, sizeof(void*), 1, _pFile);
+	if (nullptr != m_pCurAnim)
 	{
-		GET_SINGLE( CPathManager )->SaveWString( pFile, m_pCurAni->GetName() );
-	}
+		SaveWString(_pFile, m_pCurAnim->GetName());
+	}	
 }
 
-void CAnimator2D::LoadFromScene( FILE * pFile )
+void CAnimator2D::LoadFromScene(FILE * _pFile)
 {
-	fread( &m_bRepeat, 1, 1, pFile );
+	fread(&m_bRepeat, 1, 1, _pFile);
 
 	UINT iAnimCount = 0;
-	fread( &iAnimCount, 4, 1, pFile );
+	fread(&iAnimCount, 4, 1, _pFile);
 
-	for ( UINT i = 0; i < iAnimCount; ++i )
+	for (UINT i = 0; i < iAnimCount; ++i)
 	{
-		wstring strAnimName = GET_SINGLE( CPathManager )->LoadWString( pFile );
+		wstring strAnimName = LoadWString(_pFile);
 		CAnimation2D* pAnim = new CAnimation2D;
-		pAnim->SetName( strAnimName );
-		pAnim->LoadFromScene( pFile );
-		m_mapAni.insert( make_pair( strAnimName, pAnim ) );
+		pAnim->SetName(strAnimName);
+		pAnim->LoadFromScene(_pFile);
+		m_mapAnim.insert(make_pair(strAnimName, pAnim));
 	}
 
 	void* pData = nullptr;
-	fread( &pData, sizeof( void* ), 1, pFile );
+	fread(&pData, sizeof(void*), 1, _pFile);
 
-	if ( pData )
+	if (pData)
 	{
-		wstring strCurAni = GET_SINGLE( CPathManager )->LoadWString( pFile );
-		m_pCurAni = FindAnimation( strCurAni );
-		assert( m_pCurAni );
+		wstring strCurAnim = LoadWString(_pFile);		
+		m_pCurAnim = FindAnimation(strCurAnim);
+		assert(m_pCurAnim);
 	}
 }

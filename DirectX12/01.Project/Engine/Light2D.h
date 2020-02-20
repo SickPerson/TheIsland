@@ -4,31 +4,30 @@
 class CLight2D :
 	public CComponent
 {
-public:
-	CLight2D();
-	virtual ~CLight2D();
-
 private:
-	tLight2D		m_tLightInfo;
+	tLight2D   m_LightInfo;
+	
+public:	
+	virtual void finalupdate();
 
-public:
-	virtual void FinalUpdate();
 	void UpdateData();
 
 public:
-	void SetLightColor( const Vec3& vColor );
-	void SetLightRange( float fRange );
-	void SetLightType( LIGHT_TYPE eType );
+	void SetLightColor(const Vec3& _vColor) { m_LightInfo.vLightColor = _vColor; Changed(); }
+	void SetLightRange(float _fRange) { m_LightInfo.fRange = _fRange; Changed();}
+	void SetLightType(LIGHT_TYPE _eType) { m_LightInfo.iLightType = (int)_eType; Changed();}
+
+	Vec3 GetLightColor() { return m_LightInfo.vLightColor; }
+	float GetLightRange() { return m_LightInfo.fRange; }
+	LIGHT_TYPE GetLightType() { return (LIGHT_TYPE)m_LightInfo.iLightType; }
 
 public:
-	Vec3 GetLightColor();
-	float GetLightRange();
-	LIGHT_TYPE GetLightType();
+	CLONE(CLight2D);
+	virtual void SaveToScene(FILE* _pFile);
+	virtual void LoadFromScene(FILE* _pFile);
 
 public:
-	CLONE( CLight2D );
-
-	virtual void SaveToScene( FILE* pFile );
-	virtual void LoadFromScene( FILE* pFile );
+	CLight2D();
+	virtual ~CLight2D();
 };
 

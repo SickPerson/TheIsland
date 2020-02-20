@@ -4,30 +4,21 @@
 class CComponent;
 class CTransform;
 class CMeshRender;
-class CScript;
-class CCamera;
 class CCollider2D;
 class CCollider3D;
-class CAnimation2D;
-class CAnimation3D;
+class CAnimator2D;
+class CAnimator3D;
+class CScript;
 class CLight2D;
 class CLight3D;
+class CCamera;
+class CLandScape;
 
 class CGameObject :
 	public CEntity
 {
 private:
-	friend class CLayer;
-	friend class CEventManager;
-
-public:
-	CGameObject();
-	virtual ~CGameObject();
-
-	CGameObject( const CGameObject& obj );
-
-private:
-	CComponent*				m_arrCom[( UINT )COMPONENT_TYPE::END];
+	CComponent*				m_arrCom[(UINT)COMPONENT_TYPE::END];
 	vector<CScript*>		m_vecScript;
 	vector<CGameObject*>	m_vecChild;
 	CGameObject*			m_pParentObj;
@@ -35,71 +26,77 @@ private:
 	bool					m_bDead;
 	bool					m_bActive;
 	bool					m_bFrustumCheck;
-
-private:
-	void SetLayerIdx( int iLayerIdx );
+public:
+	void awake();
+	void start();
+	void update();
+	void lateupdate();
+	void finalupdate();
+	void enable();
+	void disable();
 
 public:
-	void Awake();
-	void Start();
-	void Update();
-	void LateUpdate();
-	void FinalUpdate();
-	void Enable();
-	void Disable();
+	void SetActive(bool _bTrue);
+	bool IsActive() { return m_bActive; }
 
+	void FrustumCheck(bool _bCheck) { m_bFrustumCheck = _bCheck; }
+	bool GetFrustumCheck() { return m_bFrustumCheck; }
 public:
-	void SetActive( bool bActive );
-	bool IsActive() const;
+	void AddComponent(CComponent* _pCom);
+	CComponent* GetComponent(COMPONENT_TYPE _eType) { assert(_eType != COMPONENT_TYPE::SCRIPT); return m_arrCom[(UINT)_eType]; }
+	CTransform* Transform() { return (CTransform*)m_arrCom[(UINT)COMPONENT_TYPE::TRANSFORM]; }
+	CMeshRender* MeshRender() { return (CMeshRender*)m_arrCom[(UINT)COMPONENT_TYPE::MESHRENDER]; }
+	CCollider2D* Collider2D() { return (CCollider2D*)m_arrCom[(UINT)COMPONENT_TYPE::COLLIDER2D]; }
+	CCollider3D* Collider3D() { return (CCollider3D*)m_arrCom[(UINT)COMPONENT_TYPE::COLLIDER3D]; }
+	CAnimator2D* Animator2D() { return (CAnimator2D*)m_arrCom[(UINT)COMPONENT_TYPE::ANIMATOR2D]; }
+	CCamera* Camera() { return (CCamera*)m_arrCom[(UINT)COMPONENT_TYPE::CAMERA]; }
+	CLight2D* Light2D() { return (CLight2D*)m_arrCom[(UINT)COMPONENT_TYPE::LIGHT2D]; }
+	CLight3D* Light3D() { return (CLight3D*)m_arrCom[(UINT)COMPONENT_TYPE::LIGHT3D]; }
+	CLandScape* LandScape() { return ( CLandScape* )m_arrCom[( UINT )COMPONENT_TYPE::LANDSCAPE]; }
 
-	void FrustumCheck( bool bFrustumCheck );
-	bool GetFrustumCheck() const;
-
-	bool IsDead();
-	void SetDead();
-
-	int GetLayerIdx();
-
-public:
-	void AddComponent( CComponent* pCom );
-	CComponent*		GetComponent( COMPONENT_TYPE eType );
-	CTransform*		Transform();
-	CMeshRender*	MeshRender();
-	CCollider2D*	Collider2D();
-	CCollider3D*	Collider3D();
-	CAnimation2D*	Animation2D();
-	CCamera*		Camera();
-	CLight2D*		Light2D();
-	CLight3D*		Light3D();
-
-	const vector<CScript*>& GetScripts() const;
+	const vector<CScript*>& GetScripts() const { return m_vecScript; }
 
 	template<typename T>
 	T* GetScript();
 
-public:
-	void AddChild( CGameObject* pChildObj );
-	bool IsAncestor( CGameObject* pObj );
-	void ClearParent( CGameObject* pNextParent = NULL );
-	CGameObject* GetParent();
-	
-	const vector<CGameObject*>& GetChild();
+	void AddChild(CGameObject* _pChildObj);
+	bool IsAncestor(CGameObject* _pObj);
+	void ClearParent(CGameObject* _pNextParent = nullptr);
+	CGameObject* GetParent() { return m_pParentObj; }
+	int GetLayerIdx() { return m_iLayerIdx; }
+	const vector<CGameObject*>& GetChild() { return m_vecChild; }
+	bool IsDead() { return m_bDead; }
+	void SetDead();
 
 	void RegisterToLayer();
 
+
 public:
-	CLONE( CGameObject );
+	CLONE(CGameObject);
+
+private:
+	CGameObject(const CGameObject& _origin);
+	void SetLayerIdx(int _iLayerIdx) { m_iLayerIdx = _iLayerIdx; }
+
+public:
+	CGameObject();
+	virtual ~CGameObject();
+
+	friend class CLayer;
+	friend class CEventMgr;
 };
 
 template<typename T>
 inline T * CGameObject::GetScript()
 {
-	T* pScript = NULL;
-	for ( size_t i = 0; i < m_vecScript.size(); ++i )
+	T* pScript = nullptr;
+	for (size_t i = 0; i < m_vecScript.size(); ++i)
 	{
-		pScript = dynamic_cast< T* >( m_vecScript[i] );
-		if ( NULL != pScript )
+		pScript = dynamic_cast<T*>(m_vecScript[i]);
+		if (nullptr != pScript)
+		{
 			return pScript;
+		}
 	}
 
 	return pScript;

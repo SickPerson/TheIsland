@@ -4,30 +4,29 @@
 class CMesh :
 	public CResource
 {
-public:
-	CMesh();
-	virtual virtual ~CMesh();
-
 private:
 	ComPtr<ID3D12Resource>		m_pVB;
-	D3D12_VERTEX_BUFFER_VIEW	m_tVtxView;
+	D3D12_VERTEX_BUFFER_VIEW	m_tVtxView; // 버텍스 버퍼 정보 구조체(stride, total size, 가상 GPU 주소)
+
+	ComPtr<ID3D12Resource>		m_pIB;
+	D3D12_INDEX_BUFFER_VIEW		m_tIdxView; // 버텍스 버퍼 정보 구조체(stride, total size, 가상 GPU 주소)
+	
 	UINT						m_iVtxSize;
 	UINT						m_iVtxCount;
 	void*						m_pVtxSysMem;
 
-	ComPtr<ID3D12Resource>		m_pIB;
-	D3D12_INDEX_BUFFER_VIEW		m_tIdxView;
 	DXGI_FORMAT					m_eIdxFormat;
 	UINT						m_iIdxCount;
 	void*						m_pIdxSysMem;
 
+
 public:
-	void Create( UINT iVtxSize, UINT iVtxCount, BYTE* pVtxSysMem,
-		DXGI_FORMAT eIdxFormat, UINT iIdxCount, BYTE* pIdxSysMem );
+	void Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem
+		, DXGI_FORMAT _iIdxFormat, UINT _iIdxCount, BYTE* _pIdxSysMem);
+	void render();
 
-	void Render();
-
-private:
-	int GetSizeofFormat( DXGI_FORMAT eFormat );
+public:
+	CMesh();
+	virtual ~CMesh();
 };
 

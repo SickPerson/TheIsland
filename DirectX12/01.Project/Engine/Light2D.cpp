@@ -1,78 +1,46 @@
 #include "stdafx.h"
 #include "Light2D.h"
 
-#include "RenderManager.h"
+#include "RenderMgr.h"
 #include "Transform.h"
 
-CLight2D::CLight2D() : 
-	CComponent(COMPONENT_TYPE::LIGHT2D),
-	m_tLightInfo{ }
+
+CLight2D::CLight2D()
+	: CComponent(COMPONENT_TYPE::LIGHT2D)
+	, m_LightInfo{}
 {
-	m_tLightInfo.iLightType = ( UINT )LIGHT_TYPE::END;
+	m_LightInfo.iLightType = (UINT)LIGHT_TYPE::END;
 }
 
 CLight2D::~CLight2D()
 {
 }
 
-void CLight2D::FinalUpdate()
+void CLight2D::finalupdate()
 {
-	if ( !IsActive() )
+	if (!IsActive())
 		return;
 
-	m_tLightInfo.vLightPos = Transform()->GetWorldPos();
+	m_LightInfo.vLightPos = Transform()->GetWorldPos();
 
-	// RenderManager에 등록
-	GET_SINGLE( CRenderManager )->RegisterLight2D( m_tLightInfo );
+	// rendermgr 에 등록
+	CRenderMgr::GetInst()->RegisterLight2D(m_LightInfo);
 }
 
 void CLight2D::UpdateData()
 {
 }
 
-void CLight2D::SetLightColor( const Vec3 & vColor )
-{
-	m_tLightInfo.vLightColor = vColor;
 
-	Changed();
+void CLight2D::SaveToScene(FILE * _pFile)
+{
+	UINT iType = (UINT)GetComponentType();
+	fwrite(&iType, sizeof(UINT), 1, _pFile);
+
+	fwrite(&m_LightInfo, sizeof(tLight2D), 1, _pFile);	
 }
 
-void CLight2D::SetLightRange( float fRange )
+void CLight2D::LoadFromScene(FILE * _pFile)
 {
-	m_tLightInfo.fRange = fRange;
-	Changed();
-}
-
-void CLight2D::SetLightType( LIGHT_TYPE eType )
-{
-	m_tLightInfo.iLightType = ( int )eType;
-	Changed();
-}
-
-Vec3 CLight2D::GetLightColor()
-{
-	return m_tLightInfo.vLightColor;
-}
-
-float CLight2D::GetLightRange()
-{
-	return m_tLightInfo.fRange;
-}
-
-LIGHT_TYPE CLight2D::GetLightType()
-{
-	return (LIGHT_TYPE)m_tLightInfo.iLightType;
-}
-
-void CLight2D::SaveToScene( FILE * pFile )
-{
-	UINT iType = ( UINT )GetComponentType();
-	fwrite( &iType, sizeof( UINT ), 1, pFile );
-
-	fwrite( &m_tLightInfo, sizeof( tLight2D ), 1, pFile );
-}
-
-void CLight2D::LoadFromScene( FILE * pFile )
-{
-	fread( &m_tLightInfo, sizeof( tLight2D ), 1, pFile );
+	fread(&m_LightInfo, sizeof(tLight2D), 1, _pFile);
 }

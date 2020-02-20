@@ -1,21 +1,22 @@
 #include "stdafx.h"
 #include "Sound.h"
-#include "ResourceManager.h"
+
+#include "ResMgr.h"
 
 
-FMOD_RESULT CHANNEL_CALLBACK( FMOD_CHANNELCONTROL *channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype
+FMOD_RESULT CHANNEL_CALLBACK(FMOD_CHANNELCONTROL *channelcontrol, FMOD_CHANNELCONTROL_TYPE controltype
 	, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype
-	, void *commanddata1, void *commanddata2 )
+	, void *commanddata1, void *commanddata2)
 {
-	FMOD::Channel *cppchannel = ( FMOD::Channel * )channelcontrol;
+	FMOD::Channel *cppchannel = (FMOD::Channel *)channelcontrol;
 	CSound* pSound = nullptr;
 
-	switch ( controltype )
+	switch (controltype)
 	{
 	case FMOD_CHANNELCONTROL_CALLBACK_END:
-	{
-		cppchannel->getUserData( ( void** )&pSound );
-		pSound->RemoveChannel( cppchannel );
+	{		
+		cppchannel->getUserData((void**)&pSound);
+		pSound->RemoveChannel(cppchannel);
 	}
 	break;
 	}
@@ -27,45 +28,45 @@ FMOD_RESULT CHANNEL_CALLBACK( FMOD_CHANNELCONTROL *channelcontrol, FMOD_CHANNELC
 FMOD::System* CSound::g_pFMOD = nullptr;
 
 CSound::CSound()
-	: CResource( RES_TYPE::SOUND )
-	, m_pSound( nullptr )
+	: CResource(RES_TYPE::SOUND)
+	, m_pSound(nullptr)	
 {
 }
 
 CSound::~CSound()
 {
-	if ( nullptr != m_pSound )
+	if (nullptr != m_pSound)
 	{
 		m_pSound->release();
 		m_pSound = nullptr;
 	}
 }
 
-void CSound::Play( int iLoopCount, bool bOverlap )
+void CSound::Play(int _iRoopCount, bool _bOverlap)
 {
-	if ( iLoopCount <= -1 )
+	if (_iRoopCount <= -1)
 	{
-		assert( nullptr );
+		assert(nullptr);
 	}
 
 	// 중복 재생 허용 안할 경우
-	if ( !bOverlap && !m_listChannel.empty() )
+	if (!_bOverlap && !m_listChannel.empty())
 	{
 		return;
 	}
 
-	iLoopCount -= 1;
+	_iRoopCount -= 1;
 
 	FMOD::Channel* pChannel = nullptr;
-	g_pFMOD->playSound( m_pSound, nullptr, false, &pChannel );
+	g_pFMOD->playSound(m_pSound, nullptr, false, &pChannel);
+		
+	pChannel->setCallback(CHANNEL_CALLBACK);
+	pChannel->setUserData(this);
 
-	pChannel->setCallback( CHANNEL_CALLBACK );
-	pChannel->setUserData( this );
+	pChannel->setMode(FMOD_LOOP_NORMAL);
+	pChannel->setLoopCount(_iRoopCount);
 
-	pChannel->setMode( FMOD_LOOP_NORMAL );
-	pChannel->setLoopCount( iLoopCount );
-
-	m_listChannel.push_back( pChannel );
+	m_listChannel.push_back(pChannel);
 
 	Stop();
 }
@@ -74,33 +75,33 @@ void CSound::Stop()
 {
 	list<FMOD::Channel*>::iterator iter;
 
-	while ( !m_listChannel.empty() )
+	while (!m_listChannel.empty())
 	{
 		iter = m_listChannel.begin();
-		( *iter )->stop();
-	}
+		(*iter)->stop();
+	}	
 }
 
-void CSound::RemoveChannel( FMOD::Channel * pTargetChannel )
+void CSound::RemoveChannel(FMOD::Channel * _pTargetChannel)
 {
 	list<FMOD::Channel*>::iterator iter = m_listChannel.begin();
-	for ( ; iter != m_listChannel.end(); ++iter )
+	for (; iter != m_listChannel.end(); ++iter)
 	{
-		if ( *iter == pTargetChannel )
+		if (*iter == _pTargetChannel)
 		{
-			m_listChannel.erase( iter );
+			m_listChannel.erase(iter);
 			return;
-		}
+		}		
 	}
 }
 
-void CSound::Load( const wstring& strFilePath )
+void CSound::Load(const wstring& _strFilePath)
 {
-	string path( strFilePath.begin(), strFilePath.end() );
+	string path(_strFilePath.begin(), _strFilePath.end());
 
-	if ( FMOD_OK != g_pFMOD->createSound( path.c_str(), FMOD_DEFAULT, nullptr, &m_pSound ) )
+	if (FMOD_OK != g_pFMOD->createSound(path.c_str(), FMOD_DEFAULT, nullptr, &m_pSound))
 	{
-		assert( nullptr );
+		assert(nullptr);
 	}
 }
 

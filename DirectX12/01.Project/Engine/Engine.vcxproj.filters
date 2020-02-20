@@ -76,6 +76,9 @@
     <Filter Include="06. GameObject\Component\Animation\3D">
       <UniqueIdentifier>{617b2507-2828-4ced-8322-0453404af9c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameObject\Component\LandScape">
+      <UniqueIdentifier>{f522658d-ce0e-4e41-a79d-4ec468d5eef8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -87,29 +90,8 @@
     <ClInclude Include="Core.h">
       <Filter>01. Core</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>00. etc</Filter>
-    </ClInclude>
-    <ClInclude Include="Flag.h">
-      <Filter>00. etc</Filter>
-    </ClInclude>
-    <ClInclude Include="Macro.h">
-      <Filter>00. etc</Filter>
-    </ClInclude>
-    <ClInclude Include="Types.h">
-      <Filter>00. etc</Filter>
-    </ClInclude>
     <ClInclude Include="Device.h">
       <Filter>02. Device</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyManager.h">
-      <Filter>03. Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="TimeManager.h">
-      <Filter>03. Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="PathManager.h">
-      <Filter>03. Manager</Filter>
     </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
       <Filter>02. Device</Filter>
@@ -150,17 +132,11 @@
     <ClInclude Include="Entity.h">
       <Filter>00. etc\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>03. Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>04. Shader</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>05. Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>03. Manager\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>03. Manager\Scene</Filter>
@@ -171,17 +147,11 @@
     <ClInclude Include="Frustum.h">
       <Filter>06. GameObject\Component\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="RenderManager.h">
-      <Filter>03. Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Collider2D.h">
       <Filter>06. GameObject\Component\Collider</Filter>
     </ClInclude>
     <ClInclude Include="Script.h">
       <Filter>06. GameObject\Component\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="EventManager.h">
-      <Filter>03. Manager</Filter>
     </ClInclude>
     <ClInclude Include="Sound.h">
       <Filter>05. Resource</Filter>
@@ -198,6 +168,63 @@
     <ClInclude Include="Animator2D.h">
       <Filter>06. GameObject\Component\Animation\2D</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionMgr.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="EventMgr.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyMgr.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="PathMgr.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderMgr.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ResMgr.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeMgr.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>03. Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="extern.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="func.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScript.h">
+      <Filter>03. Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LandScape.h">
+      <Filter>06. GameObject\Component\LandScape</Filter>
+    </ClInclude>
+    <ClInclude Include="GridScript.h">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterScript.h">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerScript.h">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolCamScript.h">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletScript.h">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -208,15 +235,6 @@
     </ClCompile>
     <ClCompile Include="Device.cpp">
       <Filter>02. Device</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyManager.cpp">
-      <Filter>03. Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="TimeManager.cpp">
-      <Filter>03. Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="PathManager.cpp">
-      <Filter>03. Manager</Filter>
     </ClCompile>
     <ClCompile Include="ConstantBuffer.cpp">
       <Filter>02. Device</Filter>
@@ -251,17 +269,11 @@
     <ClCompile Include="Entity.cpp">
       <Filter>00. etc\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>03. Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>04. Shader</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>05. Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>03. Manager\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>03. Manager\Scene</Filter>
@@ -272,17 +284,11 @@
     <ClCompile Include="Frustum.cpp">
       <Filter>06. GameObject\Component\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="RenderManager.cpp">
-      <Filter>03. Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Collider2D.cpp">
       <Filter>06. GameObject\Component\Collider</Filter>
     </ClCompile>
     <ClCompile Include="Script.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="EventManager.cpp">
-      <Filter>03. Manager</Filter>
     </ClCompile>
     <ClCompile Include="Sound.cpp">
       <Filter>05. Resource</Filter>
@@ -299,6 +305,63 @@
     <ClCompile Include="Animator2D.cpp">
       <Filter>06. GameObject\Component\Animation\2D</Filter>
     </ClCompile>
+    <ClCompile Include="CollisionMgr.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="EventMgr.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyMgr.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="PathMgr.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderMgr.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderMgrInit.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ResMgr.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ResMgrInit.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeMgr.cpp">
+      <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>03. Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="desc.cpp">
+      <Filter>00. etc</Filter>
+    </ClCompile>
+    <ClCompile Include="func.cpp">
+      <Filter>00. etc</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScript.cpp">
+      <Filter>03. Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="LandScape.cpp">
+      <Filter>06. GameObject\Component\LandScape</Filter>
+    </ClCompile>
+    <ClCompile Include="GridScript.cpp">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterScript.cpp">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerScript.cpp">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolCamScript.cpp">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletScript.cpp">
+      <Filter>06. GameObject\Component\LandScape</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl">
@@ -306,16 +369,19 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\func.fx">
+    <FxCompile Include="value.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\std.fx">
+    <FxCompile Include="tool.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\std3d.fx">
+    <FxCompile Include="std3d.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\02.File\bin\content\Shader\value.fx">
+    <FxCompile Include="std.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="func.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
   </ItemGroup>

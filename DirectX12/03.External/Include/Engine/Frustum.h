@@ -6,20 +6,20 @@ class CCamera;
 class CFrustum :
 	public CEntity
 {
-public:
-	CFrustum(CCamera* pCamera);
-	virtual ~CFrustum();
-
 private:
-	CCamera*	m_pCamera;
+	CCamera*	m_pCam;
 	Vec3		m_arrProj[8];
-	Vec4		m_arrFace[( UINT )FACE_TYPE::END];
+	Vec4		m_arrFace[(UINT)FACE_TYPE::FT_END];
+	
+public:
+	void init();
+	void finalupdate();
+
+	bool CheckFrustum(const Vec3& _vPos);
+	bool CheckFrustumSphere(const Vec3& _vPos, float _fRadius);
 
 public:
-	void Init();
-	void FinalUpdate();
-
-	bool CheckFrustum( const Vec3& vPos );
-	bool CheckFrustumSphere( const Vec3& vPos, float fRadius );
+	CFrustum(CCamera* _pCam);
+	virtual ~CFrustum();
 };
 

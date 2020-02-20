@@ -2,113 +2,91 @@
 #include "MeshRender.h"
 
 #include "Transform.h"
-#include "Mesh.h"
-#include "Material.h"
-#include "ResourceManager.h"
-#include "PathManager.h"
+#include "ResMgr.h"
 
-CMeshRender::CMeshRender() :
-	 CComponent(COMPONENT_TYPE::MESHRENDER)
+
+CMeshRender::CMeshRender()
+	: CComponent(COMPONENT_TYPE::MESHRENDER)
 {
 }
-
 
 CMeshRender::~CMeshRender()
 {
 }
 
-Ptr<CMesh> CMeshRender::GetMesh()
-{
-	return m_pMesh;
-}
 
-void CMeshRender::SetMesh( Ptr<CMesh> pMesh )
+void CMeshRender::render()
 {
-	m_pMesh = pMesh;
+	if (IsActive() == false || nullptr == m_pMesh || nullptr == m_pMtrl || nullptr == m_pMtrl->GetShader())
+		return;
+
+	Transform()->UpdateData();
+
+	m_pMtrl->UpdateData();
+	m_pMesh->render();
 }
 
 Ptr<CMaterial> CMeshRender::GetCloneMaterial()
 {
-	if ( NULL == m_pMtrl )
-		return NULL;
+	if (nullptr == m_pMtrl)
+		return nullptr;
 
 	m_pMtrl = m_pMtrl->Clone();
-	return m_pMtrl;
+	return m_pMtrl;	
 }
 
-Ptr<CMaterial> CMeshRender::GetSharedMaterial()
+void CMeshRender::SaveToScene(FILE * _pFile)
 {
-	return m_pMtrl;
-}
-
-void CMeshRender::SetMaterial( Ptr<CMaterial> pMtrl )
-{
-	m_pMtrl = pMtrl;
-}
-
-void CMeshRender::Render()
-{
-	if ( !IsActive() || NULL == m_pMesh || NULL == m_pMtrl || NULL == m_pMtrl->GetShader() )
-		return;
-
-	Transform()->UpdateDate();
-
-	m_pMtrl->UpdateData();
-	m_pMesh->Render();
-}
-
-void CMeshRender::SaveToScene( FILE * pFile )
-{
-	UINT iType = ( UINT )GetComponentType();
-	fwrite( &iType, sizeof( UINT ), 1, pFile );
+	UINT iType = (UINT)GetComponentType();
+	fwrite(&iType, sizeof(UINT), 1, _pFile);
 
 	// 존재여부 저장(nullptr 인지 아닌지)
-	fwrite( &m_pMesh, sizeof( void* ), 1, pFile );
+	fwrite(&m_pMesh, sizeof(void*), 1, _pFile);
 
-	if ( nullptr != m_pMesh )
+	if (nullptr != m_pMesh)
 	{
-		GET_SINGLE( CPathManager )->SaveWString( pFile, m_pMesh->GetName() );
-		GET_SINGLE( CPathManager )->SaveWString( pFile, m_pMesh->GetPath() );
+		SaveWString(_pFile, m_pMesh->GetName());
+		SaveWString(_pFile, m_pMesh->GetPath());
 	}
 
 	// 존재여부 저장(nullptr 인지 아닌지)
-	fwrite( &m_pMtrl, sizeof( void* ), 1, pFile );
+	fwrite(&m_pMtrl, sizeof(void*), 1, _pFile);
 
-	if ( nullptr != m_pMtrl )
+	if (nullptr != m_pMtrl)
 	{
-		GET_SINGLE( CPathManager )->SaveWString( pFile, m_pMtrl->GetName() );
-		GET_SINGLE( CPathManager )->SaveWString( pFile, m_pMtrl->GetPath() );
+		SaveWString(_pFile, m_pMtrl->GetName());
+		SaveWString(_pFile, m_pMtrl->GetPath());
 	}
 }
 
-void CMeshRender::LoadFromScene( FILE * pFile )
+void CMeshRender::LoadFromScene(FILE * _pFile)
 {
 	void* pData = nullptr;
-	fread( &pData, sizeof( void* ), 1, pFile );
+	fread(&pData, sizeof(void*), 1, _pFile);
 
-	if ( pData )
+	if (pData)
 	{
-		wstring strMesh = GET_SINGLE(CPathManager)->LoadWString( pFile );
-		wstring strPath = GET_SINGLE(CPathManager)->LoadWString( pFile );
-		m_pMesh = GET_SINGLE(CResourceManager)->FindRes<CMesh>( strMesh );
+		wstring strMesh = LoadWString(_pFile);
+		wstring strPath = LoadWString(_pFile);
+		m_pMesh = CResMgr::GetInst()->FindRes<CMesh>(strMesh);
 
-		if ( nullptr == m_pMesh )
+		if (nullptr == m_pMesh)
 		{
-			m_pMesh = GET_SINGLE( CResourceManager )->Load<CMesh>( strMesh, strPath );
+			m_pMesh = CResMgr::GetInst()->Load<CMesh>(strMesh, strPath);
 		}
 	}
 
-	fread( &pData, sizeof( void* ), 1, pFile );
+	fread(&pData, sizeof(void*), 1, _pFile);
 
-	if ( pData )
+	if (pData)
 	{
-		wstring strMtrl = GET_SINGLE(CPathManager)->LoadWString( pFile );
-		wstring strPath = GET_SINGLE(CPathManager)->LoadWString( pFile );
-		m_pMtrl = GET_SINGLE( CResourceManager )->FindRes<CMaterial>( strMtrl );
+		wstring strMtrl = LoadWString(_pFile);
+		wstring strPath = LoadWString(_pFile);
+		m_pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(strMtrl);
 
-		if ( nullptr == m_pMtrl )
+		if (nullptr == m_pMtrl)
 		{
-			m_pMtrl = GET_SINGLE( CResourceManager )->Load<CMaterial>( strMtrl, strPath );
+			m_pMtrl = CResMgr::GetInst()->Load<CMaterial>(strMtrl, strPath);
 		}
 	}
 }

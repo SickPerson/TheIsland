@@ -1,46 +1,48 @@
 #pragma once
 #include "Component.h"
 
+
+#include "Ptr.h"
+#include "Texture.h"
+
 class CAnimation2D;
-class CTexture;
 
 class CAnimator2D :
 	public CComponent
 {
-public:
-	CAnimator2D();
-	CAnimator2D( const CAnimator2D& ani );
-	virtual ~CAnimator2D();
-
-	CLONE( CAnimator2D );
-
 private:
-	map<wstring, CAnimation2D*>	m_mapAni;
-	CAnimation2D*				m_pCurAni;
+	map<wstring, CAnimation2D*> m_mapAnim;
+	CAnimation2D*				m_pCurAnim;
 	bool						m_bRepeat;
 	bool						m_bPlay;
 
-public:
-	virtual void FinalUpdate();
+public:	
+	virtual void finalupdate();
 
 public:
-	bool AddAnimation( const wstring& strKey, Ptr<CTexture> pTex, Vec2 vLT, Vec2 vLen, int iFrameCount, int fDuration );
-	void PlayAnimation( const wstring& strKey, bool bRepeat );
-	void PlayAnimation();
-	void PauseAniamtion();
+	bool AddAnimation(const wstring& _strAnimKey, Ptr<CTexture> _pTex, Vec2 _vLT, Vec2 _vGap, int _iFrmCount, float _fDuration);
+	void PlayAnimation(const wstring& _strAnimKey, bool _bRepeat);
+	void PlayAnimation() { if(nullptr != m_pCurAnim) m_bPlay = true; }
+	void PauseAnimation() { m_bPlay = false; }
 	void StopAnimation();
-	bool IsPlay();
-	bool IsRepeat();
+	bool IsPlay() { return m_bPlay; }
+	bool IsRepeat() { return m_bRepeat; }
 
-	CAnimation2D* FindAnimation( const wstring& strKey );
-	CAnimation2D* GetCurAnimation();
-	const map<wstring, CAnimation2D*>& GetAnimations();
+	CAnimation2D* FindAnimation(const wstring& _strKey);
+	void UpdateData();
+	//static void ClearData();
+
+	CAnimation2D* GetCurAnimation() {return m_pCurAnim;	}
+	const map<wstring, CAnimation2D*>& GetAnimations() { return m_mapAnim; }
 
 public:
-	void UpdateData();
-	virtual void SaveToScene( FILE* pFile );
-	virtual void LoadFromScene( FILE* pFile );
+	CLONE(CAnimator2D);
+	virtual void SaveToScene(FILE* _pFile);
+	virtual void LoadFromScene(FILE* _pFile);
 
-
+public:
+	CAnimator2D();
+	CAnimator2D(const CAnimator2D& _origin);
+	virtual ~CAnimator2D();
 };
 

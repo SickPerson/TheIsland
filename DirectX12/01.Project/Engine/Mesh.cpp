@@ -1,44 +1,52 @@
 #include "stdafx.h"
 #include "Mesh.h"
+
 #include "Device.h"
 
-
-CMesh::CMesh() :
-	CResource( RES_TYPE::MESH ),
-	m_pVB( NULL ), 
-	m_tVtxView{},
-	m_iVtxSize(0),
-	m_iVtxCount(0),
-	m_pVtxSysMem(NULL),
-	m_pIdxSysMem(NULL)
+CMesh::CMesh()
+	: CResource(RES_TYPE::MESH)
+	, m_pVB(nullptr)
+	, m_tVtxView{}	
+	, m_iVtxSize(0)
+	, m_iVtxCount(0)	
+    //, m_eIdxFormat(DXGI_FORMAT::DXGI_FORMAT_R32_UINT)
+    //, m_iIdxCount(0)
+    //, m_eIdxUsage(D3D11_USAGE::D3D11_USAGE_DEFAULT)
+    , m_pVtxSysMem(nullptr)
+    , m_pIdxSysMem(nullptr)
 {
 }
-
 
 CMesh::~CMesh()
 {
-	SAFE_DELETE( m_pVtxSysMem );
-	SAFE_DELETE( m_pIdxSysMem );
+	SAFE_DELETE(m_pVtxSysMem);
+	SAFE_DELETE(m_pIdxSysMem);
+
+	//SAFE_RELEASE(m_pVB);
+	//SAFE_RELEASE(m_pIB);
+	//SAFE_RELEASE(m_pLayout);
 }
 
-void CMesh::Create( UINT iVtxSize, UINT iVtxCount, BYTE * pVtxSysMem, DXGI_FORMAT eIdxFormat, UINT iIdxCount, BYTE * pIdxSysMem )
+void CMesh::Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem
+	, DXGI_FORMAT _eIdxFormat, UINT _iIdxCount, BYTE* _pIdxSysMem)
 {
-	m_iVtxSize = iVtxSize;
-	m_iVtxCount = iVtxCount;
-	m_pVtxSysMem = pVtxSysMem;
+	m_iVtxSize = _iVtxSize;
+	m_iVtxCount = _iVtxCount;
 
-	m_eIdxFormat = eIdxFormat;
-	m_iIdxCount = iIdxCount;
-	m_pIdxSysMem = pIdxSysMem;
+	m_eIdxFormat = _eIdxFormat;
+	m_iIdxCount = _iIdxCount;
 
-	D3D12_HEAP_PROPERTIES tHeapProperty{};
+
+	D3D12_HEAP_PROPERTIES tHeapProperty = {};
+		
 	tHeapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
 	tHeapProperty.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
 	tHeapProperty.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 	tHeapProperty.CreationNodeMask = 1;
 	tHeapProperty.VisibleNodeMask = 1;
+	
+	D3D12_RESOURCE_DESC tResDesc = {};
 
-	D3D12_RESOURCE_DESC tResDesc{};
 	tResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 	tResDesc.Alignment = 0;
 	tResDesc.Width = m_iVtxSize * m_iVtxCount;
@@ -51,19 +59,26 @@ void CMesh::Create( UINT iVtxSize, UINT iVtxCount, BYTE * pVtxSysMem, DXGI_FORMA
 	tResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	tResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-	DEVICE->CreateCommittedResource( &tHeapProperty, D3D12_HEAP_FLAG_NONE,
-		&tResDesc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, IID_PPV_ARGS( &m_pVB ) );
+	DEVICE->CreateCommittedResource(
+		&tHeapProperty,
+		D3D12_HEAP_FLAG_NONE,
+		&tResDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&m_pVB));
 
-	UINT8* pVertexDataBegin = NULL;
-	D3D12_RANGE readRange{ 0, 0 };
-	m_pVB->Map( 0, &readRange, reinterpret_cast< void** >( &pVertexDataBegin ) );
-	memcpy( pVertexDataBegin, pVtxSysMem, ( tResDesc.Width * tResDesc.Height ) );
-	m_pVB->Unmap( 0, NULL );
+	// Copy the triangle data to the vertex buffer.
+	UINT8* pVertexDataBegin = nullptr;
+	D3D12_RANGE readRange{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
+	m_pVB->Map(0, &readRange, reinterpret_cast<void**>(&pVertexDataBegin));
+	memcpy(pVertexDataBegin, _pVtxSysMem, (tResDesc.Width * tResDesc.Height) );
+	m_pVB->Unmap(0, nullptr);
 
+	// Initialize the vertex buffer view.
 	m_tVtxView.BufferLocation = m_pVB->GetGPUVirtualAddress();
-	m_tVtxView.StrideInBytes = sizeof( VTX );
-	m_tVtxView.SizeInBytes = tResDesc.Width;
-
+	m_tVtxView.StrideInBytes = sizeof(VTX);
+	m_tVtxView.SizeInBytes = (UINT)tResDesc.Width;
+	   
 	// IdxBuffer
 	tHeapProperty = {};
 	tHeapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -75,7 +90,7 @@ void CMesh::Create( UINT iVtxSize, UINT iVtxCount, BYTE * pVtxSysMem, DXGI_FORMA
 	tResDesc = {};
 	tResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 	tResDesc.Alignment = 0;
-	tResDesc.Width = GetSizeofFormat( m_eIdxFormat ) * m_iIdxCount;
+	tResDesc.Width = GetSizeofFormat(m_eIdxFormat) * m_iIdxCount;
 	tResDesc.Height = 1;
 	tResDesc.DepthOrArraySize = 1;
 	tResDesc.MipLevels = 1;
@@ -85,151 +100,36 @@ void CMesh::Create( UINT iVtxSize, UINT iVtxCount, BYTE * pVtxSysMem, DXGI_FORMA
 	tResDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	tResDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-	DEVICE->CreateCommittedResource( &tHeapProperty, D3D12_HEAP_FLAG_NONE,
-		&tResDesc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL,
-		IID_PPV_ARGS( &m_pIB ) );
+	DEVICE->CreateCommittedResource(
+		&tHeapProperty,
+		D3D12_HEAP_FLAG_NONE,
+		&tResDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&m_pIB));
 
-	UINT8*	pIdxDataBegin = NULL;
-	readRange = D3D12_RANGE{ 0, 0 };
-	m_pIB->Map( 0, &readRange, reinterpret_cast< void** >( &pIdxDataBegin ) );
-	memcpy( pIdxDataBegin, pIdxSysMem, ( tResDesc.Width * tResDesc.Height ) );
-	m_pIB->Unmap( 0, NULL );
+	// Copy the Index data to the Index buffer.
+	UINT8* pIdxDataBegin = nullptr;
+	readRange = D3D12_RANGE{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
+	m_pIB->Map(0, &readRange, reinterpret_cast<void**>(&pIdxDataBegin));
+	memcpy(pIdxDataBegin, _pIdxSysMem, (tResDesc.Width * tResDesc.Height) );
+	m_pIB->Unmap(0, nullptr);
 
+	// Initialize the Index buffer view.
 	m_tIdxView.BufferLocation = m_pIB->GetGPUVirtualAddress();
 	m_tIdxView.Format = DXGI_FORMAT_R32_UINT;
-	m_tIdxView.SizeInBytes = tResDesc.Width * tResDesc.Height;
+	m_tIdxView.SizeInBytes = (UINT)(tResDesc.Width * tResDesc.Height);
 
-	GET_SINGLE( CDevice )->WaitForFenceEvent();
+	CDevice::GetInst()->WaitForFenceEvent();
 }
 
-void CMesh::Render()
+void CMesh::render()
 {
-	GET_SINGLE( CDevice )->UpdateTable();
-	CMDLIST->IASetPrimitiveTopology( D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-	CMDLIST->IASetVertexBuffers( 0, 1, &m_tVtxView );
-	CMDLIST->IASetIndexBuffer( &m_tIdxView );
-	CMDLIST->DrawIndexedInstanced( m_iIdxCount, 1, 0, 0, 0 );
-}
+	CDevice::GetInst()->UpdateTable();	
+		
+	CMDLIST->IASetVertexBuffers(0, 1, &m_tVtxView);
+	CMDLIST->IASetIndexBuffer(&m_tIdxView);
 
-int CMesh::GetSizeofFormat( DXGI_FORMAT eFormat )
-{
-	int iRetByte = 0;
-	switch ( eFormat )
-	{
-	case DXGI_FORMAT_R32G32B32A32_TYPELESS:
-	case DXGI_FORMAT_R32G32B32A32_FLOAT:
-	case DXGI_FORMAT_R32G32B32A32_UINT:
-	case DXGI_FORMAT_R32G32B32A32_SINT:
-		iRetByte = 128;
-		break;
-
-	case DXGI_FORMAT_R32G32B32_TYPELESS:
-	case DXGI_FORMAT_R32G32B32_FLOAT:
-	case DXGI_FORMAT_R32G32B32_UINT:
-	case DXGI_FORMAT_R32G32B32_SINT:
-		iRetByte = 96;
-		break;
-	case DXGI_FORMAT_R16G16B16A16_TYPELESS:
-	case DXGI_FORMAT_R16G16B16A16_FLOAT:
-	case DXGI_FORMAT_R16G16B16A16_UNORM:
-	case DXGI_FORMAT_R16G16B16A16_UINT:
-	case DXGI_FORMAT_R16G16B16A16_SNORM:
-	case DXGI_FORMAT_R16G16B16A16_SINT:
-	case DXGI_FORMAT_R32G32_TYPELESS:
-	case DXGI_FORMAT_R32G32_FLOAT:
-	case DXGI_FORMAT_R32G32_UINT:
-	case DXGI_FORMAT_R32G32_SINT:
-	case DXGI_FORMAT_R32G8X24_TYPELESS:
-	case DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
-	case DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS:
-	case DXGI_FORMAT_X32_TYPELESS_G8X24_UINT:
-		iRetByte = 64;
-		break;
-	case DXGI_FORMAT_R10G10B10A2_TYPELESS:
-	case DXGI_FORMAT_R10G10B10A2_UNORM:
-	case DXGI_FORMAT_R10G10B10A2_UINT:
-	case DXGI_FORMAT_R11G11B10_FLOAT:
-	case DXGI_FORMAT_R8G8B8A8_TYPELESS:
-	case DXGI_FORMAT_R8G8B8A8_UNORM:
-	case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
-	case DXGI_FORMAT_R8G8B8A8_UINT:
-	case DXGI_FORMAT_R8G8B8A8_SNORM:
-	case DXGI_FORMAT_R8G8B8A8_SINT:
-	case DXGI_FORMAT_R16G16_TYPELESS:
-	case DXGI_FORMAT_R16G16_FLOAT:
-	case DXGI_FORMAT_R16G16_UNORM:
-	case DXGI_FORMAT_R16G16_UINT:
-	case DXGI_FORMAT_R16G16_SNORM:
-	case DXGI_FORMAT_R16G16_SINT:
-	case DXGI_FORMAT_R32_TYPELESS:
-	case DXGI_FORMAT_D32_FLOAT:
-	case DXGI_FORMAT_R32_FLOAT:
-	case DXGI_FORMAT_R32_UINT:
-	case DXGI_FORMAT_R32_SINT:
-	case DXGI_FORMAT_R24G8_TYPELESS:
-	case DXGI_FORMAT_D24_UNORM_S8_UINT:
-	case DXGI_FORMAT_R24_UNORM_X8_TYPELESS:
-	case DXGI_FORMAT_X24_TYPELESS_G8_UINT:
-	case DXGI_FORMAT_B8G8R8A8_UNORM:
-	case DXGI_FORMAT_B8G8R8X8_UNORM:
-		iRetByte = 32;
-		break;
-	case DXGI_FORMAT_R8G8_TYPELESS:
-	case DXGI_FORMAT_R8G8_UNORM:
-	case DXGI_FORMAT_R8G8_UINT:
-	case DXGI_FORMAT_R8G8_SNORM:
-	case DXGI_FORMAT_R8G8_SINT:
-	case DXGI_FORMAT_R16_TYPELESS:
-	case DXGI_FORMAT_R16_FLOAT:
-	case DXGI_FORMAT_D16_UNORM:
-	case DXGI_FORMAT_R16_UNORM:
-	case DXGI_FORMAT_R16_UINT:
-	case DXGI_FORMAT_R16_SNORM:
-	case DXGI_FORMAT_R16_SINT:
-	case DXGI_FORMAT_B5G6R5_UNORM:
-	case DXGI_FORMAT_B5G5R5A1_UNORM:
-		iRetByte = 16;
-		break;
-	case DXGI_FORMAT_R8_TYPELESS:
-	case DXGI_FORMAT_R8_UNORM:
-	case DXGI_FORMAT_R8_UINT:
-	case DXGI_FORMAT_R8_SNORM:
-	case DXGI_FORMAT_R8_SINT:
-	case DXGI_FORMAT_A8_UNORM:
-		iRetByte = 8;
-		break;
-	case DXGI_FORMAT_BC2_TYPELESS:
-	case DXGI_FORMAT_BC2_UNORM:
-	case DXGI_FORMAT_BC2_UNORM_SRGB:
-	case DXGI_FORMAT_BC3_TYPELESS:
-	case DXGI_FORMAT_BC3_UNORM:
-	case DXGI_FORMAT_BC3_UNORM_SRGB:
-	case DXGI_FORMAT_BC5_TYPELESS:
-	case DXGI_FORMAT_BC5_UNORM:
-	case DXGI_FORMAT_BC5_SNORM:
-		iRetByte = 128;
-		break;
-	case DXGI_FORMAT_R1_UNORM:
-	case DXGI_FORMAT_BC1_TYPELESS:
-	case DXGI_FORMAT_BC1_UNORM:
-	case DXGI_FORMAT_BC1_UNORM_SRGB:
-	case DXGI_FORMAT_BC4_TYPELESS:
-	case DXGI_FORMAT_BC4_UNORM:
-	case DXGI_FORMAT_BC4_SNORM:
-		iRetByte = 64;
-		break;
-	case DXGI_FORMAT_R9G9B9E5_SHAREDEXP:
-		iRetByte = 32;
-		break;
-		// These are compressed, but bit-size information is unclear.
-	case DXGI_FORMAT_R8G8_B8G8_UNORM:
-	case DXGI_FORMAT_G8R8_G8B8_UNORM:
-		iRetByte = 32;
-		break;
-	case DXGI_FORMAT_UNKNOWN:
-	default:
-		return -1;
-	}
-
-	return iRetByte / 8;
+	//CMDLIST->DrawInstanced(3, 1, 0, 0);
+	CMDLIST->DrawIndexedInstanced(m_iIdxCount, 1, 0, 0, 0);
 }

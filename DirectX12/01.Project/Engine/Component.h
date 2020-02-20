@@ -1,74 +1,63 @@
 #pragma once
-#include "Entity.h"
 
-class CGameObject;
-
-class CTransform;
-class CMeshRender;
-class CScript;
-class CCamera;
-class CCollider2D;
-class CCollider3D;
-class CAnimation2D;
-class CAnimation3D;
-class CLight2D;
-class CLight3D;
+#include "GameObject.h"
 
 class CComponent :
 	public CEntity
 {
 private:
-	friend class CGameObject;
-	friend class CEventManager;
-	friend void ComponentSetChange( CComponent*, bool );
+	CGameObject*		m_pObject;
+	COMPONENT_TYPE		m_eComType;
+	bool				m_bChange;
+	bool				m_bActive;
 
 public:
-	CComponent(COMPONENT_TYPE eType);
-	virtual ~CComponent();
+	virtual void awake() {};
+	virtual void start() {};
+	virtual void update() {};
+	virtual void lateupdate() {}
+	virtual void finalupdate() {}
 
-private:
-	CGameObject*			m_pObject;
-	COMPONENT_TYPE			m_eComType;
-	bool					m_bChange;
-	bool					m_bActive;
+	virtual void enable() {}
+	virtual void disable() {}
 
-private:
-	void SetGameObject( CGameObject* pObject );
+	virtual void SaveToScene(FILE* _pFile) = 0;
+	virtual void LoadFromScene(FILE* _pFile) = 0;
 
 public:
-	void SetActive( bool bActive );
-	bool IsActive();
+	void SetActive(bool _bTrue);
+	bool IsActive() { return m_bActive; }
 
-	bool IsChanged();
+public:
+	COMPONENT_TYPE GetComponentType() { return m_eComType; }
+	CGameObject* GetObj() { return m_pObject; }
+
+	CTransform* Transform() { return m_pObject->Transform(); }
+	CMeshRender* MeshRender() { return m_pObject->MeshRender(); }
+	CAnimator2D* Animator2D() { return m_pObject->Animator2D(); }
+	CCollider2D* Collider2D() { return m_pObject->Collider2D(); }
+	CLight2D* Light2D() { return m_pObject->Light2D(); }
+	CLight3D* Light3D() { return m_pObject->Light3D(); }
+	CCamera* Camera() { return m_pObject->Camera(); }
+
+private:
+	void SetGameObject(CGameObject* _pObject) { m_pObject = _pObject; }
 
 protected:
-	void Changed();
+	void Changed() { m_bChange = true; }
 
 public:
-	virtual void Awake() {};
-	virtual void Start() {};
-	virtual void Update(){};
-	virtual void LateUpdate() {};
-	virtual void FinalUpdate(){};
+	bool IsChanged() { return m_bChange; }
 
-	virtual void Enable() {};
-	virtual void Disable(){};
-
-	virtual void SaveToScene( FILE* pFile ) = 0;
-	virtual void LoadFromScene( FILE* pFile ) = 0;
-
+public:
 	virtual CComponent* Clone() = 0;
 
 public:
-	COMPONENT_TYPE	GetComponentType();
-	CGameObject*	GetGameObject();
-	CTransform*		Transform();
-	CMeshRender*	MeshRender();
-	CCollider2D*	Collider2D();
-	CCollider3D*	Collider3D();
-	CAnimation2D*	Animation2D();
-	CCamera*		Camera();
-	CLight2D*		Light2D();
-	CLight3D*		Light3D();
+	CComponent(COMPONENT_TYPE _eType);
+	virtual ~CComponent();
+
+	friend class CGameObject;
+	friend class CEventMgr;
+	friend void ComponentSetChange(CComponent*, bool);
 };
 

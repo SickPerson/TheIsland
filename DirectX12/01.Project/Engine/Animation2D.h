@@ -1,49 +1,57 @@
 #pragma once
 #include "Entity.h"
 
-class CTexture;
-class CAnimator2D;
+#include "Animator2D.h"
 
-// 2D Animation 1 Frame Info
-struct tAnimation2DFrame
+// 2D  Animation 1 프레임 정보
+struct tAnim2DFrm
 {
-	Ptr<CTexture>		pTex;		// Texture
-	Vec2				vLT;		// Left Top UV
-	Vec2				vLen;		// UV Legth
-	Vec2				vOffsetPos;	// 출력위치 상대 이동값
-	float				fDuration;	// 프레임 지속시간	
+	Ptr<CTexture>	pTex;		// 참조 텍스쳐
+	Vec2			vLT;		// Left Top UV
+	Vec2			vLen;		// UV Length
+	Vec2			vOffsetPos; // 출력위치 상대 이동값
+	float			fDuration;	// 프레임 지속시간
 };
+
 
 class CAnimation2D :
 	public CEntity
 {
+private:
+	CAnimator2D*		m_pAnimator;
+	vector<tAnim2DFrm>  m_vecFrm;
+	int                 m_iCurFrm;
+
+	float				m_fAccTime;
+	bool				m_bFinish;
+
+public:
+	void finalupdate();
+	void UpdateData();
+
+	void Play()
+	{
+		m_iCurFrm = 0;
+		m_bFinish = false;
+		m_fAccTime = 0.f;
+	}
+
+	bool IsFinish() { return m_bFinish; }
+
+public:
+	void Create(Ptr<CTexture> _pTex, Vec2 _vLT, Vec2 _vGap, int _iFrmCount, float fDuration);
+	CLONE(CAnimation2D);
+	void SaveToScene(FILE* _pFile);
+	void LoadFromScene(FILE* _pFile);
+
+private:
+	void SetAnimator2D(CAnimator2D* _pAnimator2D){m_pAnimator = _pAnimator2D;}
+	
+
 public:
 	CAnimation2D();
 	virtual ~CAnimation2D();
 
-	CLONE( CAnimation2D );
-
-private:
-	CAnimator2D*				m_pAnimator;
-	vector<tAnimation2DFrame>	m_vecFrame;
-	int							m_iCurFrame;
-	float						m_fAccTime;
-	bool						m_bFinish;
-
-public:
-	void FinalUpdate();
-	void UpdateData();
-
-	void Play();
-	bool IsFinish();	
-
-public:
-	void Create( Ptr<CTexture> pTex, Vec2& vLT, Vec2& vLen, int iFrameCount, float fDuration );
-	
-	void SaveToScene( FILE* pFile );
-	void LoadFromScene( FILE* pFile );
-
-public:
-	void SetAnimatior2D( CAnimator2D* pAnimator2D );
+	friend class CAnimator2D;
 };
 
