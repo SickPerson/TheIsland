@@ -170,6 +170,7 @@ call EngineCopy.bat</Command>
     <ClInclude Include="Collider2D.h" />
     <ClInclude Include="Desc.h" />
     <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Extern.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="Light2D.h" />
     <ClInclude Include="Light3D.h" />

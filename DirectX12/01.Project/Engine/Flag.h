@@ -45,8 +45,10 @@ enum class DEPTH_STENCIL_TYPE
 	LESS_EQUAL,
 	GRATER,
 	GRATER_EQUAL,
-	NO_DEPTHTEST,			// 깊이 판정 안하지만 깊이를 남김 
-	NO_DEPTHTEST_NO_WRITE,	// 깊이 판정도 안하고 깊이도 안남김
+
+	NO_DEPTHTEST,	//깊이 테스트 X, 깊이기록 o
+	NO_DEPTHTEST_NO_WRITE, // 깊이테스트 X, 깊이기록 X
+	LESS_NO_WRITE,	// Less 깊이테스트, 깊이기록 X
 	END,
 };
 

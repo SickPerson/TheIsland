@@ -1,7 +1,8 @@
 #pragma once
+#include "Engine.h"
 
 // RASTERIZER STATE
-extern D3D12_RASTERIZER_DESC g_arrRSDesc[(UINT )RS_TYPE::END] = 
+D3D12_RASTERIZER_DESC g_arrRSDesc[( UINT )RS_TYPE::END] =
 {
 	// CULL_BACK
 	D3D12_RASTERIZER_DESC
@@ -18,10 +19,58 @@ extern D3D12_RASTERIZER_DESC g_arrRSDesc[(UINT )RS_TYPE::END] =
 		0,
 		D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF
 	},
+
+	// CULL_FRONT
+		D3D12_RASTERIZER_DESC
+	{
+		  D3D12_FILL_MODE_SOLID // FillMode
+		, D3D12_CULL_MODE_FRONT	//CullMode
+		, FALSE //FrontCounterClockwise
+		, D3D12_DEFAULT_DEPTH_BIAS //DepthBias
+		, D3D12_DEFAULT_DEPTH_BIAS_CLAMP //DepthBiasClamp
+		, D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS	//SlopeScaledDepthBias
+		, TRUE	//DepthClipEnable
+		, FALSE	//MultisampleEnable
+		, FALSE	//AntialiasedLineEnable
+		, 0		//ForcedSampleCount
+		, D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF	//ConservativeRaster
+	},
+
+	// CULL_NONE
+	D3D12_RASTERIZER_DESC
+	{
+		  D3D12_FILL_MODE_SOLID // FillMode
+		, D3D12_CULL_MODE_NONE	//CullMode
+		, FALSE //FrontCounterClockwise
+		, D3D12_DEFAULT_DEPTH_BIAS //DepthBias
+		, D3D12_DEFAULT_DEPTH_BIAS_CLAMP //DepthBiasClamp
+		, D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS	//SlopeScaledDepthBias
+		, TRUE	//DepthClipEnable
+		, FALSE	//MultisampleEnable
+		, FALSE	//AntialiasedLineEnable
+		, 0		//ForcedSampleCount
+		, D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF	//ConservativeRaster
+	},
+
+	// WIRE_FRAME
+	D3D12_RASTERIZER_DESC
+	{
+		  D3D12_FILL_MODE_WIREFRAME // FillMode
+		, D3D12_CULL_MODE_NONE	//CullMode
+		, FALSE //FrontCounterClockwise
+		, D3D12_DEFAULT_DEPTH_BIAS //DepthBias
+		, D3D12_DEFAULT_DEPTH_BIAS_CLAMP //DepthBiasClamp
+		, D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS	//SlopeScaledDepthBias
+		, TRUE	//DepthClipEnable
+		, FALSE	//MultisampleEnable
+		, FALSE	//AntialiasedLineEnable
+		, 0		//ForcedSampleCount
+		, D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF	//ConservativeRaster
+	},
 };
 
 // BLEND STATE
-extern D3D12_BLEND_DESC g_arrBlendDesc[( UINT )BLEND_TYPE::END] =
+D3D12_BLEND_DESC g_arrBlendDesc[( UINT )BLEND_TYPE::END] =
 {
 	// DEFAULT
 	D3D12_BLEND_DESC
@@ -71,7 +120,7 @@ extern D3D12_BLEND_DESC g_arrBlendDesc[( UINT )BLEND_TYPE::END] =
 };
 
 // DEPTH STENCIL STATE
-extern D3D12_DEPTH_STENCIL_DESC g_arrDepthStencilDesc[(UINT )DEPTH_STENCIL_TYPE::END] =
+D3D12_DEPTH_STENCIL_DESC g_arrDepthStencilDesc[(UINT )DEPTH_STENCIL_TYPE::END] =
 {
 	// LESS
 	D3D12_DEPTH_STENCIL_DESC
@@ -105,17 +154,23 @@ extern D3D12_DEPTH_STENCIL_DESC g_arrDepthStencilDesc[(UINT )DEPTH_STENCIL_TYPE:
 		D3D12_COMPARISON_FUNC_GREATER_EQUAL
 	},
 	
-	// NO_DEPTHTEST
-	D3D12_DEPTH_STENCIL_DESC
-	{
+	//NO_DEPTHTEST, ±Ì¿Ã ≈◊Ω∫∆Æ X, ±Ì¿Ã±‚∑œ o
+	D3D12_DEPTH_STENCIL_DESC{
 		FALSE,
 		D3D12_DEPTH_WRITE_MASK_ALL,
-		D3D12_COMPARISON_FUNC_NEVER
+		D3D12_COMPARISON_FUNC_LESS,
 	},
 
-	// NO_DEPTHTEST_NO_WRITE
-	D3D12_DEPTH_STENCIL_DESC
-	{
+	// NO_DEPTHTEST_NO_WRITE, ±Ì¿Ã≈◊Ω∫∆Æ X, ±Ì¿Ã±‚∑œ X
+	D3D12_DEPTH_STENCIL_DESC{
 		FALSE,
+		D3D12_DEPTH_WRITE_MASK_ZERO,
 	},
+
+	//LESS_NO_WRITE, // ±Ì¿Ã≈◊Ω∫∆Æ o (Less), ±Ì¿Ã±‚∑œ X
+	D3D12_DEPTH_STENCIL_DESC{
+		TRUE,
+		D3D12_DEPTH_WRITE_MASK_ZERO,
+		D3D12_COMPARISON_FUNC_LESS,
+	}
 };
