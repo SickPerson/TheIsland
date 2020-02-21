@@ -8,7 +8,7 @@ private:
 	tLight2D   m_LightInfo;
 	
 public:	
-	virtual void finalupdate();
+	virtual void finalUpdate();
 
 	void UpdateData();
 

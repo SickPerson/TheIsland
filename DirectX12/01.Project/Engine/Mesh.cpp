@@ -123,7 +123,7 @@ void CMesh::Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem
 	CDevice::GetInst()->WaitForFenceEvent();
 }
 
-void CMesh::render()
+void CMesh::Render()
 {
 	CDevice::GetInst()->UpdateTable();	
 		

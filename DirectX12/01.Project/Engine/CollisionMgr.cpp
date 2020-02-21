@@ -22,7 +22,7 @@ void CCollisionMgr::init()
 {
 }
 
-void CCollisionMgr::update()
+void CCollisionMgr::Update()
 {
 	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
 

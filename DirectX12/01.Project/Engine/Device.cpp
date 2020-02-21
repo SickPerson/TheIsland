@@ -93,7 +93,7 @@ int CDevice::init(HWND _hWnd, const tResolution & _res, bool _bWindow)
 }
 
 
-void CDevice::render_start(float(&_arrFloat)[4])
+void CDevice::Render_Start(float(&_arrFloat)[4])
 {
 	m_iCurDummyIdx = 0;
 
@@ -108,7 +108,7 @@ void CDevice::render_start(float(&_arrFloat)[4])
 	m_pCmdListGraphic->RSSetViewports(1, &m_tVP);
 	m_pCmdListGraphic->RSSetScissorRects(1, &m_tScissorRect);
 
-	// Indicate that the back buffer will be used as a render target.
+	// Indicate that the back buffer will be used as a Render target.
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE; ;
@@ -134,7 +134,7 @@ void CDevice::render_start(float(&_arrFloat)[4])
 	ClearDymmyDescriptorHeap(0);
 }
 
-void CDevice::render_present()
+void CDevice::Render_present()
 {
 	// Indicate that the back buffer will now be used to present.
 	D3D12_RESOURCE_BARRIER barrier = {};

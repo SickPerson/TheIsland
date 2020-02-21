@@ -35,7 +35,7 @@ void CFrustum::init()
 	m_arrProj[7] = Vec3(-1.f, -1.f, 1.f);
 }
 
-void CFrustum::finalupdate()
+void CFrustum::finalUpdate()
 {
 	Matrix matViewInv = m_pCam->GetViewMatInv();
 	Matrix matProjInv = m_pCam->GetProjMatInv();

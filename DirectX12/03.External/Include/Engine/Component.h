@@ -12,11 +12,11 @@ private:
 	bool				m_bActive;
 
 public:
-	virtual void awake() {};
-	virtual void start() {};
-	virtual void update() {};
-	virtual void lateupdate() {}
-	virtual void finalupdate() {}
+	virtual void Awake() {};
+	virtual void Start() {};
+	virtual void Update() {};
+	virtual void LateUpdate() {}
+	virtual void finalUpdate() {}
 
 	virtual void enable() {}
 	virtual void disable() {}

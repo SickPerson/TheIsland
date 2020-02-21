@@ -20,7 +20,7 @@ public:
 
 
 public:
-	virtual void finalupdate();
+	virtual void finalUpdate();
 
 
 	virtual void SaveToScene(FILE* _pFile);

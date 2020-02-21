@@ -61,8 +61,6 @@ int CCore::init(HWND _hWnd, const tResolution & _resolution, bool _bWindow)
 	CSceneMgr::GetInst()->init();
 	CRenderMgr::GetInst()->init(_hWnd, _resolution, _bWindow);
 
-	//TestInit();
-
 	return S_OK;
 }
 
@@ -76,14 +74,14 @@ void CCore::ChangeWindowSize(HWND _hWnd, const tResolution & _resolution)
 
 void CCore::progress()
 {
-	CKeyMgr::GetInst()->update();
-	CTimeMgr::GetInst()->update();
+	CKeyMgr::GetInst()->Update();
+	CTimeMgr::GetInst()->Update();
 	CSound::g_pFMOD->update();
 
 	CEventMgr::GetInst()->clear();
 	{
-		CSceneMgr::GetInst()->update();
-		CRenderMgr::GetInst()->render();
+		CSceneMgr::GetInst()->Update();
+		CRenderMgr::GetInst()->Render();
 	}
-	CEventMgr::GetInst()->update();
+	CEventMgr::GetInst()->Update();
 }

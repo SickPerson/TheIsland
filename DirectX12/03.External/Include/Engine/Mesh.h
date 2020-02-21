@@ -23,7 +23,7 @@ private:
 public:
 	void Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem
 		, DXGI_FORMAT _iIdxFormat, UINT _iIdxCount, BYTE* _pIdxSysMem);
-	void render();
+	void Render();
 
 public:
 	CMesh();

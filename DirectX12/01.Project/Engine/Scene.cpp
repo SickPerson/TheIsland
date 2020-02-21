@@ -21,50 +21,50 @@ CScene::~CScene()
 	Safe_Delete_Array(m_arrLayer);
 }
 
-void CScene::awake()
+void CScene::Awake()
 {
 	for (UINT i = 0; i < MAX_LAYER; ++i)
 	{
 		if (nullptr != m_arrLayer[i])
-			m_arrLayer[i]->awake();
+			m_arrLayer[i]->Awake();
 	}
 }
 
-void CScene::start()
+void CScene::Start()
 {
 	for (UINT i = 0; i < MAX_LAYER; ++i)
 	{
 		if (nullptr != m_arrLayer[i])
-			m_arrLayer[i]->start();
+			m_arrLayer[i]->Start();
 	}
 
 	
 }
 
-void CScene::update()
+void CScene::Update()
 {
 	for (UINT i = 0; i < MAX_LAYER ; ++i)
 	{
 		if(nullptr != m_arrLayer[i])
-			m_arrLayer[i]->update();
+			m_arrLayer[i]->Update();
 	}
 }
 
-void CScene::lateupdate()
+void CScene::LateUpdate()
 {
 	for (UINT i = 0; i < MAX_LAYER; ++i)
 	{
 		if (nullptr != m_arrLayer[i])
-			m_arrLayer[i]->lateupdate();
+			m_arrLayer[i]->LateUpdate();
 	}
 }
 
-void CScene::finalupdate()
+void CScene::finalUpdate()
 {
 	for (UINT i = 0; i < MAX_LAYER; ++i)
 	{
 		if (nullptr != m_arrLayer[i])
-			m_arrLayer[i]->finalupdate();
+			m_arrLayer[i]->finalUpdate();
 	}
 }
 

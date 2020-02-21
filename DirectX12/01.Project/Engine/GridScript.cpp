@@ -16,7 +16,7 @@ CGridScript::~CGridScript()
 {
 }
 
-void CGridScript::update()
+void CGridScript::Update()
 {
 	m_vToolCamPos = m_pToolCam->Transform()->GetWorldPos();
 	Transform()->SetLocalPos(Vec3(m_vToolCamPos.x, 0.f, m_vToolCamPos.z));

@@ -19,7 +19,7 @@ CTransform::~CTransform()
 {
 }
 
-void CTransform::finalupdate()
+void CTransform::finalUpdate()
 {
 	Matrix matTranslation = XMMatrixTranslation(m_vLocalPos.x, m_vLocalPos.y, m_vLocalPos.z);
 	Matrix matScale = XMMatrixScaling(m_vLocalScale.x, m_vLocalScale.y, m_vLocalScale.z);

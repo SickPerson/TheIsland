@@ -6,7 +6,7 @@
 
 
 CMeshRender::CMeshRender()
-	: CComponent(COMPONENT_TYPE::MESHRENDER)
+	: CComponent(COMPONENT_TYPE::MESHRender)
 {
 }
 
@@ -15,7 +15,7 @@ CMeshRender::~CMeshRender()
 }
 
 
-void CMeshRender::render()
+void CMeshRender::Render()
 {
 	if (IsActive() == false || nullptr == m_pMesh || nullptr == m_pMtrl || nullptr == m_pMtrl->GetShader())
 		return;
@@ -23,7 +23,7 @@ void CMeshRender::render()
 	Transform()->UpdateData();
 
 	m_pMtrl->UpdateData();
-	m_pMesh->render();
+	m_pMesh->Render();
 }
 
 Ptr<CMaterial> CMeshRender::GetCloneMaterial()

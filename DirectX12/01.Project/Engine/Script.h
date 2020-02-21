@@ -34,7 +34,7 @@ public:
 	UINT GetScriptType() { return m_iScriptType; }
 
 public:
-	virtual void update() = 0;
+	virtual void Update() = 0;
 
 public:
 	static void CreateObject(CGameObject* _pNewObject, int _iLayerIdx);

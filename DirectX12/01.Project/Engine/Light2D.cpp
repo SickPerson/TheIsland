@@ -16,14 +16,14 @@ CLight2D::~CLight2D()
 {
 }
 
-void CLight2D::finalupdate()
+void CLight2D::finalUpdate()
 {
 	if (!IsActive())
 		return;
 
 	m_LightInfo.vLightPos = Transform()->GetWorldPos();
 
-	// rendermgr 에 등록
+	// Rendermgr 에 등록
 	CRenderMgr::GetInst()->RegisterLight2D(m_LightInfo);
 }
 

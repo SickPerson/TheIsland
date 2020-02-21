@@ -92,43 +92,43 @@ void CLayer::RemoveParentObj(CGameObject * _pObject)
 	assert(nullptr);
 }
 
-void CLayer::awake()
+void CLayer::Awake()
 {
 	for (UINT i = 0; i < m_vecParentObj.size(); ++i)
 	{
 		if(m_vecParentObj[i]->IsActive())
-			m_vecParentObj[i]->awake();
+			m_vecParentObj[i]->Awake();
 	}
 }
 
-void CLayer::start()
+void CLayer::Start()
 {
 	for (UINT i = 0; i < m_vecParentObj.size(); ++i)
 	{
 		if (m_vecParentObj[i]->IsActive())
-			m_vecParentObj[i]->start();
+			m_vecParentObj[i]->Start();
 	}
 }
 
-void CLayer::update()
+void CLayer::Update()
 {
 	for (UINT i = 0; i < m_vecParentObj.size(); ++i)
 	{
 		if (m_vecParentObj[i]->IsActive())
-			m_vecParentObj[i]->update();
+			m_vecParentObj[i]->Update();
 	}	
 }
 
-void CLayer::lateupdate()
+void CLayer::LateUpdate()
 {
 	for (UINT i = 0; i < m_vecParentObj.size(); ++i)
 	{
 		if (m_vecParentObj[i]->IsActive())
-			m_vecParentObj[i]->lateupdate();
+			m_vecParentObj[i]->LateUpdate();
 	}
 }
 
-void CLayer::finalupdate()
+void CLayer::finalUpdate()
 {
 	m_vecLayerObj.clear();
 
@@ -139,7 +139,7 @@ void CLayer::finalupdate()
 		if ((*iter)->IsActive())
 		{
 			// 전체목록에 등록 (삭제 예정 오브젝트 마지막으로 충돌처리 마무리 하기 위해서)
-			(*iter)->finalupdate();
+			(*iter)->finalUpdate();
 		}
 
 		(*iter)->RegisterToLayer();
@@ -151,10 +151,10 @@ void CLayer::finalupdate()
 	}
 }
 
-void CLayer::render()
+void CLayer::Render()
 {
 	//for (UINT i = 0; i < m_vecLayerObj.size(); ++i)
 	//{
-	//	m_vecLayerObj[i]->render();
+	//	m_vecLayerObj[i]->Render();
 	//}
 }

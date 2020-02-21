@@ -14,7 +14,7 @@ CToolCamScript::~CToolCamScript()
 {
 }
 
-void CToolCamScript::update()
+void CToolCamScript::Update()
 {
 	Vec3 vPos = Transform()->GetLocalPos();
 	float fScale = Camera()->GetScale();

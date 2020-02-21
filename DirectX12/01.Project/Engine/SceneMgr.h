@@ -14,13 +14,16 @@ private:
 public:
 	void init();
 
-	void update();	 // Player Mod 일때
-	void update_tool(); 
+	void Update();	 // Player Mod 일때
+	void Update_tool(); 
 
 public:
 	CScene* GetCurScene();
 	void ChangeScene(CScene* _pNextScene);
 	void FindGameObjectByTag( const wstring& _strTag, vector<CGameObject*>& _vecFindObj);
 	//void FindGameObjectByPoint(POINT _point, vector<CGameObject*>& _vecFindObj, CCamera* _pToolCam = nullptr);
+
+public:
+	void CreateScene( const wstring& _strTag );
 };
 

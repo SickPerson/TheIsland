@@ -22,11 +22,11 @@ CRenderMgr::~CRenderMgr()
 {	
 }
 
-void CRenderMgr::render()
+void CRenderMgr::Render()
 {
 	// 초기화
 	float arrColor[4] = { 0.f,0.f, 0.f, 1.f };
-	CDevice::GetInst()->render_start(arrColor);
+	CDevice::GetInst()->Render_Start(arrColor);
 
 	// 광원 정보 업데이트
 	UpdateLight2D();
@@ -34,14 +34,14 @@ void CRenderMgr::render()
 
 	for (size_t i = 0; i < m_vecCam.size(); ++i)
 	{
-		m_vecCam[i]->render();
+		m_vecCam[i]->Render();
 	}	
 
 	// 출력
-	CDevice::GetInst()->render_present();
+	CDevice::GetInst()->Render_present();
 }
 
-void CRenderMgr::render_tool()
+void CRenderMgr::Render_tool()
 {
 	// 초기화
 	float arrColor[4] = { 0.f, 0.f, 0.f, 1.f };

@@ -14,7 +14,7 @@ private:
 	float			m_fAlpha;		// 그리드 투명도
 
 public:
-	virtual void update();	
+	virtual void Update();	
 
 public:
 	void SetToolCamera(CGameObject* _pToolCam) { m_pToolCam = _pToolCam; }

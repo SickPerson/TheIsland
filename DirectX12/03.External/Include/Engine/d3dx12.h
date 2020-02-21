@@ -690,12 +690,12 @@ struct CD3DX12_SUBRESOURCE_TILING : public D3D12_SUBRESOURCE_TILING
         UINT widthInTiles, 
         UINT16 heightInTiles, 
         UINT16 depthInTiles, 
-        UINT startTileIndexInOverallResource ) 
+        UINT StartTileIndexInOverallResource ) 
     {
         WidthInTiles = widthInTiles;
         HeightInTiles = heightInTiles;
         DepthInTiles = depthInTiles;
-        StartTileIndexInOverallResource = startTileIndexInOverallResource;
+        StartTileIndexInOverallResource = StartTileIndexInOverallResource;
     }
 };
 
@@ -774,12 +774,12 @@ struct CD3DX12_PACKED_MIP_INFO : public D3D12_PACKED_MIP_INFO
         UINT8 numStandardMips, 
         UINT8 numPackedMips, 
         UINT numTilesForPackedMips, 
-        UINT startTileIndexInOverallResource ) 
+        UINT StartTileIndexInOverallResource ) 
     {
         NumStandardMips = numStandardMips;
         NumPackedMips = numPackedMips;
         NumTilesForPackedMips = numTilesForPackedMips;
-        StartTileIndexInOverallResource = startTileIndexInOverallResource;
+        StartTileIndexInOverallResource = StartTileIndexInOverallResource;
     }
 };
 

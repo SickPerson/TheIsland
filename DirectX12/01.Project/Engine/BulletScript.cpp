@@ -11,7 +11,7 @@ CBulletScript::~CBulletScript()
 {
 }
 
-void CBulletScript::update()
+void CBulletScript::Update()
 {
 	Vec3 vPos = Transform()->GetLocalPos();
 	vPos.y += 400.f * DT;

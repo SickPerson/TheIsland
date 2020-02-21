@@ -35,7 +35,7 @@ CAnimator2D::~CAnimator2D()
 }
 
 
-void CAnimator2D::finalupdate()
+void CAnimator2D::finalUpdate()
 {
 	if (!m_bPlay)
 		return;
@@ -55,7 +55,7 @@ void CAnimator2D::finalupdate()
 			}
 		}
 
-		m_pCurAnim->finalupdate();
+		m_pCurAnim->finalUpdate();
 	}	
 }
 

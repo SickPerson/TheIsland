@@ -9,8 +9,8 @@ private:
 	Ptr<CMaterial>		m_pCloneMtrl;
 	
 public:
-	virtual void awake();	
-	virtual void update();
+	virtual void Awake();	
+	virtual void Update();
 
 public:
 	CLONE(CPlayerScript);

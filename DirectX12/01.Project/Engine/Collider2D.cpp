@@ -50,11 +50,11 @@ CCollider2D::~CCollider2D()
 {
 }
 
-void CCollider2D::update()
+void CCollider2D::Update()
 {
 }
 
-void CCollider2D::finalupdate()
+void CCollider2D::finalUpdate()
 {
 	if (!IsActive())
 		return;
@@ -69,7 +69,7 @@ void CCollider2D::finalupdate()
 	m_matColWorld *= Transform()->GetWorldMat();
 }
 
-void CCollider2D::render()
+void CCollider2D::Render()
 {
 	if (!IsActive())
 		return;
@@ -80,7 +80,7 @@ void CCollider2D::render()
 	CDevice::GetInst()->SetConstBufferToRegister(pCB, pCB->AddData(&g_transform));	
 	
 	m_pColMtrl->UpdateData();
-	m_pColMesh->render();
+	m_pColMesh->Render();
 
 	memset(&m_matColWorld, 0, sizeof(Matrix));
 }

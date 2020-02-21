@@ -32,7 +32,7 @@ void CLight3D::SetLightDir(const Vec3& _vDir)
 	// Transform()->LookAt(_vDir);
 }
 
-void CLight3D::finalupdate()
+void CLight3D::finalUpdate()
 {
 	m_tLightInfo.vLightPos = Transform()->GetWorldPos();
 	CRenderMgr::GetInst()->RegisterLight3D(this);

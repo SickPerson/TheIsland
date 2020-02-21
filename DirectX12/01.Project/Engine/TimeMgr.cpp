@@ -23,7 +23,7 @@ void CTimeMgr::init()
 	QueryPerformanceCounter(&m_llOldCount);
 }
 
-void CTimeMgr::update()
+void CTimeMgr::Update()
 {
 	QueryPerformanceCounter(&m_llCurCount);
 	
@@ -51,7 +51,7 @@ void CTimeMgr::update()
 	SetWindowText(CCore::GetInst()->m_hMainHwnd, szFPS);
 }
 //
-//void CTimeMgr::render(HDC _dc)
+//void CTimeMgr::Render(HDC _dc)
 //{	
 //	if (m_fAccTime > 1.f)
 //	{

@@ -31,8 +31,8 @@ private:
 
 	 
 public:	
-	virtual void finalupdate();
-	void render();
+	virtual void finalUpdate();
+	void Render();
 
 public:
 	void SetProjType(PROJ_TYPE _eType) { m_eProjType = _eType; Changed(); }

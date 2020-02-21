@@ -12,7 +12,7 @@ CMonsterScript::~CMonsterScript()
 }
 
 
-void CMonsterScript::update()
+void CMonsterScript::Update()
 {
 	// Transform 월드 좌표정보 얻기
 	Vec3 vPos = Transform()->GetLocalPos();

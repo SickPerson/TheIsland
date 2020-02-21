@@ -60,9 +60,9 @@ public:
 		, size_t _iMaxCount, CONST_REGISTER _eRegisterNum
 		, bool _bGlobal = false);
 
-	void render_start(float(&_arrFloat)[4]); 	
+	void Render_Start(float(&_arrFloat)[4]); 	
 
-	void render_present();
+	void Render_present();
 	void WaitForFenceEvent();
 
 	void SetConstBufferToRegister(CConstantBuffer* _pCB, UINT _iOffset);	

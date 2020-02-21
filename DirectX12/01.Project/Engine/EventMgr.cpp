@@ -16,7 +16,7 @@ CEventMgr::~CEventMgr()
 {
 }
 
-void CEventMgr::update()
+void CEventMgr::Update()
 {
 	// 삭제 예정 Objects 메모리 해제
 	for (size_t i = 0; i < m_vecDead.size(); ++i)

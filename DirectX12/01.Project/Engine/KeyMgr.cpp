@@ -70,7 +70,7 @@ void CKeyMgr::init()
 	}
 }
 
-void CKeyMgr::update()
+void CKeyMgr::Update()
 {
 	// 현재 윈도우가 Active(활성화, 포커싱) 상태가 아니라면, 
 	// 모든 키 상태를 초기상태로 변경한다.
@@ -86,7 +86,7 @@ void CKeyMgr::update()
 		return;
 	}
 
-	// 윈도우가 활성상태라면 키를 정상적으로 update 한다.
+	// 윈도우가 활성상태라면 키를 정상적으로 Update 한다.
 	for (UINT i = 0; i < (UINT)KEY_TYPE::KEY_END; ++i)
 	{
 		// 현재 키가 눌려있다.

@@ -13,7 +13,7 @@ private:
 	
 public:
 	void init();
-	void finalupdate();
+	void finalUpdate();
 
 	bool CheckFrustum(const Vec3& _vPos);
 	bool CheckFrustumSphere(const Vec3& _vPos, float _fRadius);

@@ -30,7 +30,7 @@ CCamera::~CCamera()
 {
 }
 
-void CCamera::finalupdate()
+void CCamera::finalUpdate()
 {
 	// ºäÇà·Ä
 	Vec3 vPos = Transform()->GetWorldPos();
@@ -65,12 +65,12 @@ void CCamera::finalupdate()
 	m_matViewInv = XMMatrixInverse(nullptr, m_matView);
 	m_matProjInv = XMMatrixInverse(nullptr, m_matProj);
 
-	m_frustum.finalupdate();
+	m_frustum.finalUpdate();
 
 	CRenderMgr::GetInst()->RegisterCamera(this);
 }
 
-void CCamera::render()
+void CCamera::Render()
 {
 	g_transform.matView = GetViewMat();
 	g_transform.matProj = GetProjMat();
@@ -90,12 +90,12 @@ void CCamera::render()
 				{
 					if (vecObj[i]->MeshRender())
 					{
-						vecObj[i]->MeshRender()->render();
+						vecObj[i]->MeshRender()->Render();
 					}
 
 					if (vecObj[i]->Collider2D())
 					{
-						vecObj[i]->Collider2D()->render();
+						vecObj[i]->Collider2D()->Render();
 					}
 				}
 			}

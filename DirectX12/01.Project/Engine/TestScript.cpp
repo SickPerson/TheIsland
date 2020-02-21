@@ -11,7 +11,7 @@ CTestScript::~CTestScript()
 {
 }
 
-void CTestScript::update()
+void CTestScript::Update()
 {
 
 }

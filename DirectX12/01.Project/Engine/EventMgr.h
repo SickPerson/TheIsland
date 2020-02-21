@@ -18,7 +18,7 @@ private:
 	vector<CGameObject*>	m_vecDead; // 삭제 예정 오브젝트
 
 public:
-	void update();
+	void Update();
 	void clear() { m_vecEvent.clear(); }
 	void AddEvent(tEvent& _event){	m_vecEvent.push_back(_event);}
 

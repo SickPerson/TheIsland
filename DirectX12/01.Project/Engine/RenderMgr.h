@@ -34,8 +34,8 @@ private:
 
 public:
 	void init(HWND _hWnd, const tResolution & _res, bool _bWindow);
-	void render();
-	void render_tool();			
+	void Render();
+	void Render_tool();			
 
 private:
 	void CreateSamplerState();

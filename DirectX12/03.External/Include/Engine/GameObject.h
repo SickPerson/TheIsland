@@ -27,11 +27,11 @@ private:
 	bool					m_bActive;
 	bool					m_bFrustumCheck;
 public:
-	void awake();
-	void start();
-	void update();
-	void lateupdate();
-	void finalupdate();
+	void Awake();
+	void Start();
+	void Update();
+	void LateUpdate();
+	void finalUpdate();
 	void enable();
 	void disable();
 
@@ -45,7 +45,7 @@ public:
 	void AddComponent(CComponent* _pCom);
 	CComponent* GetComponent(COMPONENT_TYPE _eType) { assert(_eType != COMPONENT_TYPE::SCRIPT); return m_arrCom[(UINT)_eType]; }
 	CTransform* Transform() { return (CTransform*)m_arrCom[(UINT)COMPONENT_TYPE::TRANSFORM]; }
-	CMeshRender* MeshRender() { return (CMeshRender*)m_arrCom[(UINT)COMPONENT_TYPE::MESHRENDER]; }
+	CMeshRender* MeshRender() { return (CMeshRender*)m_arrCom[(UINT)COMPONENT_TYPE::MESHRender]; }
 	CCollider2D* Collider2D() { return (CCollider2D*)m_arrCom[(UINT)COMPONENT_TYPE::COLLIDER2D]; }
 	CCollider3D* Collider3D() { return (CCollider3D*)m_arrCom[(UINT)COMPONENT_TYPE::COLLIDER3D]; }
 	CAnimator2D* Animator2D() { return (CAnimator2D*)m_arrCom[(UINT)COMPONENT_TYPE::ANIMATOR2D]; }

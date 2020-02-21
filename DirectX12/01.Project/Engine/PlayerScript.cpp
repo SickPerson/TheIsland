@@ -15,7 +15,7 @@ CPlayerScript::~CPlayerScript()
 {
 }
 
-void CPlayerScript::awake()
+void CPlayerScript::Awake()
 {
 	m_pOriginMtrl = MeshRender()->GetSharedMaterial();
 	m_pCloneMtrl = m_pOriginMtrl->Clone();
@@ -24,7 +24,7 @@ void CPlayerScript::awake()
 	m_pCloneMtrl->SetData(SHADER_PARAM::INT_0, &a);
 }
 
-void CPlayerScript::update()
+void CPlayerScript::Update()
 {
 	Vec3 vPos = Transform()->GetLocalPos();
 	Vec3 vRot = Transform()->GetLocalRot();

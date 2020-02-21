@@ -13,11 +13,11 @@ private:
 
 
 public:
-	void awake();
-	void start();
-	void update();
-	void lateupdate();
-	void finalupdate();	
+	void Awake();
+	void Start();
+	void Update();
+	void LateUpdate();
+	void finalUpdate();	
 
 public:
 	void SetLayerName(int _iIdx, const wstring& _strName);

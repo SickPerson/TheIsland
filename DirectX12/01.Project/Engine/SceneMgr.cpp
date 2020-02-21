@@ -236,29 +236,29 @@ void CSceneMgr::init()
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Monster");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Bullet", L"Monster");
 	
-	m_pCurScene->awake();
-	m_pCurScene->start();
+	m_pCurScene->Awake();
+	m_pCurScene->Start();
 }
 
-void CSceneMgr::update()
+void CSceneMgr::Update()
 {		
-	m_pCurScene->update();
-	m_pCurScene->lateupdate();
+	m_pCurScene->Update();
+	m_pCurScene->LateUpdate();
 
-	// rendermgr 카메라 초기화
+	// Rendermgr 카메라 초기화
 	CRenderMgr::GetInst()->ClearCamera();
 
-	m_pCurScene->finalupdate();
+	m_pCurScene->finalUpdate();
 	   
 	// 충돌 처리
-	CCollisionMgr::GetInst()->update();
+	CCollisionMgr::GetInst()->Update();
 }
 
-void CSceneMgr::update_tool()
+void CSceneMgr::Update_tool()
 {
-	// rendermgr 카메라 초기화
+	// Rendermgr 카메라 초기화
 	CRenderMgr::GetInst()->ClearCamera();
-	m_pCurScene->finalupdate();
+	m_pCurScene->finalUpdate();
 }
 
 void CSceneMgr::FindGameObjectByTag(const wstring& _strTag, vector<CGameObject*>& _vecFindObj)
@@ -274,6 +274,12 @@ void CSceneMgr::FindGameObjectByTag(const wstring& _strTag, vector<CGameObject*>
 			}
 		}
 	}	
+}
+
+void CSceneMgr::CreateScene( const wstring & _strTag )
+{
+	CScene* pScene = new CScene;
+	pScene->SetName( _strTag );
 }
 
 bool Compare(CGameObject* _pLeft, CGameObject* _pRight)

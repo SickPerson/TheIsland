@@ -204,9 +204,6 @@
     <ClInclude Include="global.h">
       <Filter>00. etc</Filter>
     </ClInclude>
-    <ClInclude Include="TestScript.h">
-      <Filter>03. Manager\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="LandScape.h">
       <Filter>06. GameObject\Component\LandScape</Filter>
     </ClInclude>
@@ -224,6 +221,12 @@
     </ClInclude>
     <ClInclude Include="BulletScript.h">
       <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScript.h">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneScript.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -341,9 +344,6 @@
     <ClCompile Include="func.cpp">
       <Filter>00. etc</Filter>
     </ClCompile>
-    <ClCompile Include="TestScript.cpp">
-      <Filter>03. Manager\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="LandScape.cpp">
       <Filter>06. GameObject\Component\LandScape</Filter>
     </ClCompile>
@@ -361,6 +361,12 @@
     </ClCompile>
     <ClCompile Include="BulletScript.cpp">
       <Filter>06. GameObject\Component\LandScape</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScript.cpp">
+      <Filter>06. GameObject\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneScript.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

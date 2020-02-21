@@ -6,7 +6,7 @@ class CBulletScript :
 	public CScript
 {
 public:
-	virtual void update();
+	virtual void Update();
 	virtual void OnCollisionEnter(CCollider2D* _pOther);
 
 

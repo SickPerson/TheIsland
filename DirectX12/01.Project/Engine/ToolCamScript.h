@@ -9,7 +9,7 @@ private:
 	float		m_fScaleSpeed;
 
 public:	
-	virtual void update();
+	virtual void Update();
 
 public:
 	CLONE(CToolCamScript);

@@ -162,98 +162,98 @@ void CGameObject::AddComponent(CComponent * _pCom)
 	_pCom->SetGameObject(this);
 }
 
-void CGameObject::awake()
+void CGameObject::Awake()
 {
 	for (UINT i = 0; i < (UINT)COMPONENT_TYPE::END; ++i)
 	{
 		if (nullptr != m_arrCom[i])
-			m_arrCom[i]->awake();
+			m_arrCom[i]->Awake();
 	}
 
 	for (size_t i = 0; i < m_vecChild.size(); ++i)
 	{
 		if (m_vecChild[i]->IsActive())
-			m_vecChild[i]->awake();
+			m_vecChild[i]->Awake();
 	}
 
 	for (size_t i = 0; i < m_vecScript.size(); ++i)
 	{
-		m_vecScript[i]->awake();
+		m_vecScript[i]->Awake();
 	}
 }
 
-void CGameObject::start()
+void CGameObject::Start()
 {
 	for (UINT i = 0; i < (UINT)COMPONENT_TYPE::END; ++i)
 	{
 		if (nullptr != m_arrCom[i])
-			m_arrCom[i]->start();
+			m_arrCom[i]->Start();
 	}
 
 	for (size_t i = 0; i < m_vecChild.size(); ++i)
 	{
 		if (m_vecChild[i]->IsActive())
-			m_vecChild[i]->start();
+			m_vecChild[i]->Start();
 	}
 
 	for (size_t i = 0; i < m_vecScript.size(); ++i)
 	{
-		m_vecScript[i]->start();
+		m_vecScript[i]->Start();
 	}
 }
 
-void CGameObject::update()
+void CGameObject::Update()
 {
 	for (UINT i = 0; i < (UINT)COMPONENT_TYPE::END; ++i)
 	{
 		if (nullptr != m_arrCom[i])
-			m_arrCom[i]->update();
+			m_arrCom[i]->Update();
 	}
 
 	for (size_t i = 0; i < m_vecChild.size(); ++i)
 	{
 		if (m_vecChild[i]->IsActive())
-			m_vecChild[i]->update();
+			m_vecChild[i]->Update();
 	}
 
 	for (size_t i = 0; i < m_vecScript.size(); ++i)
 	{
-		m_vecScript[i]->update();
+		m_vecScript[i]->Update();
 	}
 }
 
-void CGameObject::lateupdate()
+void CGameObject::LateUpdate()
 {
 	for (UINT i = 0; i < (UINT)COMPONENT_TYPE::END; ++i)
 	{
 		if (nullptr != m_arrCom[i])
-			m_arrCom[i]->lateupdate();
+			m_arrCom[i]->LateUpdate();
 	}
 
 	for (size_t i = 0; i < m_vecChild.size(); ++i)
 	{
 		if (m_vecChild[i]->IsActive())
-			m_vecChild[i]->lateupdate();
+			m_vecChild[i]->LateUpdate();
 	}
 
 	for (size_t i = 0; i < m_vecScript.size(); ++i)
 	{
-		m_vecScript[i]->lateupdate();
+		m_vecScript[i]->LateUpdate();
 	}
 }
 
-void CGameObject::finalupdate()
+void CGameObject::finalUpdate()
 {
 	for (UINT i = 0; i < (UINT)COMPONENT_TYPE::END; ++i)
 	{
 		if (nullptr != m_arrCom[i])
-			m_arrCom[i]->finalupdate();
+			m_arrCom[i]->finalUpdate();
 	}
 
 	for (size_t i = 0; i < m_vecChild.size(); ++i)
 	{
 		if (m_vecChild[i]->IsActive())
-			m_vecChild[i]->finalupdate();
+			m_vecChild[i]->finalUpdate();
 	}
 }
 
