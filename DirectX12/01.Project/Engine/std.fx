@@ -75,6 +75,42 @@ float4 PS_Test(VS_OUTPUT _input) : SV_Target
     return vOutColor;
 }
 
+VS_OUTPUT VS_UI_Test(VS_INPUT _input)
+{
+	VS_OUTPUT output = (VS_OUTPUT)0;
+
+	output.vOutPos = mul(float4(_input.vPos, 1.f), g_matWVP);
+	output.vViewPos = mul(float4(_input.vPos, 1.f), g_matWV).xyz;
+	output.vViewNormal = normalize(mul(float4(_input.vNormal, 0.f), g_matWV)).xyz;
+	output.vOutColor = _input.vColor;
+
+
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
+float4 PS_UI_Test(VS_OUTPUT _input) : SV_Target
+{
+	if (g_int_0 == 1)
+		return float4(0.4f, 0.4f, 0.4f, 0.5f);
+	if (g_int_0 == 2)
+		return float4(0.8f, 0.9f, 0.8f, 1.f);
+	if (g_int_0 == 3)
+		return float4(0.2f, 0.2f, 0.8f, 1.f);
+	if (g_int_0 == 4)
+		return float4(0.6f, 0.6f, 0.6f, 0.5f);
+	if (g_int_0 == 5)
+		return float4(0.2f, 0.6f, 0.2f, 1.f);
+	if (g_int_0 == 6)
+		return float4(0.7f, 0.4f, 0.f, 1.f);
+
+	float4 color = g_tex_0.Sample(g_sam_0, _input.vUV);
+	color[3] = color[3] * g_float_0;
+	color[3] = color[3] - 0.2f;
+
+	return color;
+}
 
 struct VS_COL_INPUT
 {

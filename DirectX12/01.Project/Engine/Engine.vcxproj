@@ -173,6 +173,7 @@ call EngineCopy.bat</Command>
     <ClInclude Include="define.h" />
     <ClInclude Include="EventMgr.h" />
     <ClInclude Include="extern.h" />
+    <ClInclude Include="FPSCamScript.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="func.h" />
     <ClInclude Include="global.h" />
@@ -196,6 +197,7 @@ call EngineCopy.bat</Command>
     <ClInclude Include="PathMgr.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="Ptr.h" />
+    <ClInclude Include="QuickSlotScript.h" />
     <ClInclude Include="RenderMgr.h" />
     <ClInclude Include="ResMgr.h" />
     <ClInclude Include="Resource.h" />
@@ -206,6 +208,7 @@ call EngineCopy.bat</Command>
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="Sound.h" />
+    <ClInclude Include="StatusScript.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestScript.h" />
@@ -223,6 +226,7 @@ call EngineCopy.bat</Command>
     <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="desc.cpp" />
     <ClCompile Include="EventMgr.cpp" />
+    <ClCompile Include="FPSCamScript.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="func.cpp" />
     <ClCompile Include="GridScript.cpp" />
@@ -243,6 +247,7 @@ call EngineCopy.bat</Command>
     <ClCompile Include="MonsterScript.cpp" />
     <ClCompile Include="PathMgr.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
+    <ClCompile Include="QuickSlotScript.cpp" />
     <ClCompile Include="RenderMgr.cpp" />
     <ClCompile Include="RenderMgrInit.cpp" />
     <ClCompile Include="ResMgr.cpp" />
@@ -255,6 +260,7 @@ call EngineCopy.bat</Command>
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="StatusScript.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

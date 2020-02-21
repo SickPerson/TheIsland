@@ -33,6 +33,10 @@
 #include "ToolCamScript.h"
 #include "GridScript.h"
 
+#include "FPSCamScript.h"
+#include "StatusScript.h"
+#include "QuickSlotScript.h"
+
 CScene* CSceneMgr::GetCurScene()
 {
 	return m_pCurScene;
@@ -69,6 +73,11 @@ void CSceneMgr::init()
 	Ptr<CTexture> pColor = CResMgr::GetInst()->Load<CTexture>(L"Tile", L"Texture\\Tile\\TILE_03.tga");
 	Ptr<CTexture> pNormal = CResMgr::GetInst()->Load<CTexture>(L"Tile_n", L"Texture\\Tile\\TILE_03_N.tga");
 
+	Ptr<CTexture> pUITex = CResMgr::GetInst()->Load<CTexture>(L"UITex", L"Texture\\Image2.png");
+	Ptr<CTexture> pTexHealth = CResMgr::GetInst()->Load<CTexture>(L"HealthIconTex", L"Texture\\Health01.png");
+	Ptr<CTexture> pTexHungry = CResMgr::GetInst()->Load<CTexture>(L"HungryIconTex", L"Texture\\Hungry01.png");
+	Ptr<CTexture> pTexThirst = CResMgr::GetInst()->Load<CTexture>(L"ThirstIconTex", L"Texture\\Thirst01.png");
+
 
 	
 	// ===============
@@ -84,9 +93,36 @@ void CSceneMgr::init()
 	m_pCurScene->GetLayer(1)->SetName(L"Player");
 	m_pCurScene->GetLayer(2)->SetName(L"Monster");
 	m_pCurScene->GetLayer(3)->SetName(L"Bullet");
+	m_pCurScene->GetLayer(4)->SetName(L"UI");
 	m_pCurScene->GetLayer(31)->SetName(L"Tool");
 
 	CGameObject* pObject = nullptr;
+	CGameObject* pChildObject = nullptr;
+
+	// ===================
+	// Player 오브젝트 생성
+	// ===================
+	pObject = new CGameObject;
+	pObject->SetName(L"Player Object");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	// Transform 설정
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 25.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(50.f, 50.f, 50.f));
+	//pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
+
+	// MeshRender 설정
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"CubeMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TestMtrl"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+
+	// Script 설정
+	pObject->AddComponent(new CPlayerScript);
+
+	// AddGameObject
+	m_pCurScene->FindLayer(L"Player")->AddGameObject(pObject);
 
 	// ==================
 	// Camera Object 생성
@@ -95,14 +131,200 @@ void CSceneMgr::init()
 	pMainCam->SetName(L"MainCam");
 	pMainCam->AddComponent(new CTransform);
 	pMainCam->AddComponent(new CCamera);
-	pMainCam->AddComponent(new CToolCamScript);
+	pMainCam->AddComponent(new CFPSCamScript);
 
+	pMainCam->Transform()->SetLocalPos(Vec3(0.f, 100.f, 0.f));
 	pMainCam->Camera()->SetProjType(PROJ_TYPE::PERSPECTIVE);
 	pMainCam->Camera()->SetFar(100000.f);
 	pMainCam->Camera()->SetLayerAllCheck();
-
+	pMainCam->Camera()->SetLayerCheck(4, false);
+	pObject->GetScript<CPlayerScript>()->SetCamera(pMainCam->Camera());
 	m_pCurScene->FindLayer(L"Default")->AddGameObject(pMainCam);
+
+	// ====================
+	// UI Camera
+	// ====================
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CCamera);
+
+	pObject->Camera()->SetProjType(PROJ_TYPE::ORTHGRAPHIC); // 직교 투영
+	pObject->Camera()->SetFar(10000.f);
+	pObject->Camera()->SetLayerCheck(4, true);
+
+	m_pCurScene->GetLayer(0)->AddGameObject(pObject);
 	
+	// ===================
+	// UI 오브젝트 생성
+	// ===================
+	// UI QuickSlot BackGround
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+	pObject->FrustumCheck(false);
+
+	pObject->Transform()->SetLocalPos(Vec3(0.f, -320.f, 1000.f));
+	pObject->Transform()->SetLocalScale(Vec3(500.f, 80.f, 1.f));
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+
+	int a = 1;
+	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+	pObject->AddComponent(new CQuickSlotScript);
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pObject);
+
+	// UI QuickSlot slot
+	for (int i = 0; i < 5; ++i)
+	{
+		pChildObject = new CGameObject;
+		pChildObject->AddComponent(new CTransform);
+		pChildObject->AddComponent(new CMeshRender);
+
+		//pChildObject->Transform()->SetLocalPos(Vec3(-190.f + (i * 95.f), -330.f, 500.f));
+		pChildObject->Transform()->SetLocalPos(Vec3(-0.4f + (i * 0.2f), -0.1f, -100.f));
+		pChildObject->Transform()->SetLocalScale(Vec3(75.f / 500.f, 75.f / 80.f, 1.f));
+
+		pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+
+		a = 2;
+		pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+
+		pObject->AddChild(pChildObject);
+		m_pCurScene->FindLayer(L"UI")->AddGameObject(pChildObject);
+	}
+	//
+	// PlayerStatus BackGround
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+	pObject->SetName(L"Player Status");
+	pObject->Transform()->SetLocalPos(Vec3(490.f, -300.f, 1500.f));
+	pObject->Transform()->SetLocalScale(Vec3(250.f, 135.f, 1.f));
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+
+	a = 4; // White
+	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+	pObject->AddComponent(new CStatusScript);
+
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pObject);
+
+	// PlayerStatus HealthBar
+	pChildObject = new CGameObject;
+	pChildObject->AddComponent(new CTransform);
+	pChildObject->AddComponent(new CMeshRender);
+	//pChildObject->Transform()->SetLocalPos(Vec3(510.f, -260.f, 1000.f));
+	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, 0.3f, -100.f));
+	pChildObject->Transform()->SetLocalScale(Vec3(190.f / 250.f, 30.f / 135.f, 1.f));
+	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+	a = 5; // Green
+	pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+	pObject->AddChild(pChildObject);
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pChildObject);
+
+	// PlayerStatus HungryBar
+	pChildObject = new CGameObject;
+	pChildObject->AddComponent(new CTransform);
+	pChildObject->AddComponent(new CMeshRender);
+	//pChildObject->Transform()->SetLocalPos(Vec3(510.f, -300.f, 1000.f));
+	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, 0.f, -100.f));
+	pChildObject->Transform()->SetLocalScale(Vec3(190.f / 250.f, 30.f / 135.f, 1.f));
+	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+	a = 6; // Brown
+	pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+	pObject->AddChild(pChildObject);
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pChildObject);
+	// PlayerStatus ThirstBar
+	pChildObject = new CGameObject;
+	pChildObject->AddComponent(new CTransform);
+	pChildObject->AddComponent(new CMeshRender);
+	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, -0.3f, -100.f));
+	pChildObject->Transform()->SetLocalScale(Vec3(190.f / 250.f, 30.f / 135.f, 1.f));
+	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+	a = 3; // Blue
+	pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+	pObject->AddChild(pChildObject);
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pChildObject);
+
+	// =================================
+	pChildObject = new CGameObject;
+	pChildObject->SetName(L"Screen Damage");
+	pChildObject->AddComponent(new CTransform);
+	pChildObject->AddComponent(new CMeshRender);
+
+	// Transform 설정
+	pChildObject->Transform()->SetLocalPos(Vec3(-1.95f, 2.25f, -1400.f));
+	pChildObject->Transform()->SetLocalScale(Vec3(5.2f, 5.8f, 1.f));
+
+	// MeshRender 설정
+	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+	pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, pUITex.GetPointer());
+	float health = 1.f;
+	pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &health);
+	// AddGameObject
+	pObject->AddChild(pChildObject);
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pChildObject);
+
+	//
+	// Health Icon
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	pObject->Transform()->SetLocalPos(Vec3(390.f, -260.f, 500.f));
+	pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"IconMtrl"));
+
+	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, pTexHealth.GetPointer());
+	float fa = 1.f;
+
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fa);
+
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pObject);
+	//
+	// Hungry Icon
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	pObject->Transform()->SetLocalPos(Vec3(390.f, -300.f, 500.f));
+	pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"IconMtrl"));
+
+	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, pTexHungry.GetPointer());
+
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fa);
+
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pObject);
+	//
+	// Thirst Icon
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	pObject->Transform()->SetLocalPos(Vec3(390.f, -340.f, 500.f));
+	pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"IconMtrl"));
+
+	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, pTexThirst.GetPointer());
+
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fa);
+
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pObject);
+
 	// ====================
 	// 3D Light Object 추가
 	// ====================
@@ -121,10 +343,10 @@ void CSceneMgr::init()
 	m_pCurScene->FindLayer(L"Default")->AddGameObject(pObject);
 
 	// ===================
-	// Player 오브젝트 생성
+	// Test 오브젝트 생성
 	// ===================
 	pObject = new CGameObject;
-	pObject->SetName(L"Player Object");
+	pObject->SetName(L"Test Object");
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);	
 
@@ -139,11 +361,9 @@ void CSceneMgr::init()
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
 	
-	// Script 설정
-	pObject->AddComponent(new CPlayerScript);
 
 	// AddGameObject
-	m_pCurScene->FindLayer(L"Player")->AddGameObject(pObject);
+	m_pCurScene->FindLayer(L"Monster")->AddGameObject(pObject);
 
 
 	// ====================
@@ -199,6 +419,7 @@ void CSceneMgr::init()
 	//pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pSky01.GetPointer() );
 	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
 	pObject->Transform()->SetLocalScale( Vec3( 15.f, 15.f, 15.f ) );
+	pObject->FrustumCheck(false);
 
 	m_pCurScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
