@@ -25,3 +25,6 @@
 #else
 #pragma comment(lib, "Engine/Engine.lib")
 #endif
+
+
+#include <Engine/global.h>

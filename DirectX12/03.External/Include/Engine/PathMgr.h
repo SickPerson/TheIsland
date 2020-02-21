@@ -14,7 +14,7 @@ private:
 	static wchar_t g_szExt[50];
 
 public:
-	static void init();
+	static void Init();
 	static wchar_t* GetResPath();
 	static wchar_t* GetIncludePath();
 	static wchar_t* GetProjectPath();

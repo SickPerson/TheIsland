@@ -26,7 +26,7 @@ CResMgr::~CResMgr()
 	}
 }
 
-void CResMgr::init()
+void CResMgr::Init()
 {
 	CreateDefaultMesh();
 

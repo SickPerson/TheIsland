@@ -30,7 +30,7 @@ CCamera::~CCamera()
 {
 }
 
-void CCamera::finalUpdate()
+void CCamera::FinalUpdate()
 {
 	// ºäÇà·Ä
 	Vec3 vPos = Transform()->GetWorldPos();
@@ -65,7 +65,7 @@ void CCamera::finalUpdate()
 	m_matViewInv = XMMatrixInverse(nullptr, m_matView);
 	m_matProjInv = XMMatrixInverse(nullptr, m_matProj);
 
-	m_frustum.finalUpdate();
+	m_frustum.FinalUpdate();
 
 	CRenderMgr::GetInst()->RegisterCamera(this);
 }

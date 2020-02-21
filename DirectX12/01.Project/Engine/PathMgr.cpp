@@ -9,7 +9,7 @@ wchar_t CPathMgr::g_szRelativePath[255] = L"";
 wchar_t CPathMgr::g_szFile[255] = L"";
 wchar_t CPathMgr::g_szExt[50] = L"";
 
-void CPathMgr::init()
+void CPathMgr::Init()
 {
 	// Resources 폴더까지의 경로를 구한다.
 	GetCurrentDirectory(255, g_szSolutionPath);

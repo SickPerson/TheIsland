@@ -39,7 +39,7 @@ public:
 	void UpdateData();
 
 public:
-	virtual void finalUpdate();
+	virtual void FinalUpdate();
 
 	virtual void SaveToScene(FILE* _pFile);
 	virtual void LoadFromScene(FILE* _pFile);

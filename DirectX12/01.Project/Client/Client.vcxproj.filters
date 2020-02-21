@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="SceneScript">
+      <UniqueIdentifier>{feb81222-9514-42bf-b049-7a81133e97e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript">
+      <UniqueIdentifier>{2f1659d4-5d30-44a2-a9aa-db1ed73be212}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -27,6 +33,15 @@
     <ClInclude Include="Client.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="IngameScene.h">
+      <Filter>SceneScript</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatScript.h">
+      <Filter>ComponentScript</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginScene.h">
+      <Filter>SceneScript</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -34,6 +49,15 @@
     </ClCompile>
     <ClCompile Include="Client.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="IngameScene.cpp">
+      <Filter>SceneScript</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatScript.cpp">
+      <Filter>ComponentScript</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginScene.cpp">
+      <Filter>SceneScript</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

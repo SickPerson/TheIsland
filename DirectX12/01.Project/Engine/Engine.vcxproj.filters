@@ -225,9 +225,6 @@
     <ClInclude Include="TestScript.h">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClInclude>
-    <ClInclude Include="SceneScript.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="StatusScript.h">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClInclude>
@@ -236,6 +233,9 @@
     </ClInclude>
     <ClInclude Include="FPSCamScript.h">
       <Filter>06. GameObject\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneScript.h">
+      <Filter>03. Manager\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -374,9 +374,6 @@
     <ClCompile Include="TestScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
-    <ClCompile Include="SceneScript.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="QuickSlotScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
@@ -385,6 +382,9 @@
     </ClCompile>
     <ClCompile Include="FPSCamScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneScript.cpp">
+      <Filter>03. Manager\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

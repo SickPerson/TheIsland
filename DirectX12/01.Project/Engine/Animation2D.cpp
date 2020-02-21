@@ -20,7 +20,7 @@ CAnimation2D::~CAnimation2D()
 {
 }
 
-void CAnimation2D::finalUpdate()
+void CAnimation2D::FinalUpdate()
 {
 	if (m_bFinish)
 		return;

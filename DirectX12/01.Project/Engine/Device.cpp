@@ -30,7 +30,7 @@ CDevice::~CDevice()
 	}
 }
 
-int CDevice::init(HWND _hWnd, const tResolution & _res, bool _bWindow)
+int CDevice::Init(HWND _hWnd, const tResolution & _res, bool _bWindow)
 {
 	m_hWnd = _hWnd;
 	m_tResolution = _res;

@@ -62,7 +62,7 @@ CKeyMgr::~CKeyMgr()
 {
 }
 
-void CKeyMgr::init()
+void CKeyMgr::Init()
 {
 	for (UINT i = 0; i < (UINT)KEY_TYPE::KEY_END; ++i)
 	{

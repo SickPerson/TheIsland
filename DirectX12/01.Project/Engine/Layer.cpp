@@ -128,7 +128,7 @@ void CLayer::LateUpdate()
 	}
 }
 
-void CLayer::finalUpdate()
+void CLayer::FinalUpdate()
 {
 	m_vecLayerObj.clear();
 
@@ -139,7 +139,7 @@ void CLayer::finalUpdate()
 		if ((*iter)->IsActive())
 		{
 			// 전체목록에 등록 (삭제 예정 오브젝트 마지막으로 충돌처리 마무리 하기 위해서)
-			(*iter)->finalUpdate();
+			(*iter)->FinalUpdate();
 		}
 
 		(*iter)->RegisterToLayer();

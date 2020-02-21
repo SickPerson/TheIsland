@@ -5,7 +5,12 @@
 #include "Client.h"
 
 #include <Engine/global.h>
-#include <Engine/core.h>
+#include <Engine/Core.h>
+#include <Engine/Scene.h>
+#include <Engine/SceneMgr.h>
+
+#include "LoginScene.h"
+#include "ChatScript.h"
 
 #define MAX_LOADSTRING 100
 
@@ -16,10 +21,10 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름�
 HWND	g_hWnd;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+ATOM                MyRegisterClass( HINSTANCE hInstance );
+BOOL                InitInstance( HINSTANCE, int );
+LRESULT CALLBACK    WndProc( HWND, UINT, WPARAM, LPARAM );
+INT_PTR CALLBACK    About( HWND, UINT, WPARAM, LPARAM );
 
 int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -40,10 +45,13 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	if ( FAILED( CCore::GetInst()->init( g_hWnd, tResolution{ 1280, 768 }, true ) ) )
+	if ( FAILED( CCore::GetInst()->Init( g_hWnd, tResolution{ 1280, 768 }, true ) ) )
 	{
 		return 0;
 	}
+
+	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+	CLoginScene* pLoginScene = pScene->CreateSceneScript<CLoginScene>( L"LoginScene" );
 
 	HACCEL hAccelTable = LoadAccelerators( hInstance, MAKEINTRESOURCE( IDC_CLIENT ) );
 	MSG msg;
@@ -63,7 +71,7 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 		}
 
 		// Game Running
-		CCore::GetInst()->progress();
+		CCore::GetInst()->Progress();
 	}
 
 	return ( int )msg.wParam;
@@ -131,6 +139,7 @@ BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
 //
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
+	static wstring strID;
 	switch ( message )
 	{
 	case WM_COMMAND:
@@ -148,6 +157,26 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 		default:
 			return DefWindowProc( hWnd, message, wParam, lParam );
 		}
+	}
+	break;
+	case WM_CHAR:
+	{
+		if ( VK_BACK == wParam )
+		{
+			strID.pop_back();
+		}
+
+		else if ( VK_RETURN != wParam )
+		{
+			strID += ( wchar_t* )&wParam;
+		}
+
+		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+		CLoginScene* pLoginScene = pScene->GetCurSceneScript<CLoginScene>();
+		CChatScript* pID = pLoginScene->GetID();
+
+		pID->SetChatting( strID );
+
 	}
 	break;
 	case WM_PAINT:

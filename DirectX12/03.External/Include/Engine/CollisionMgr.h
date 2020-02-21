@@ -20,7 +20,7 @@ private:
 	map<DWORD_PTR, bool>	m_mapCol;
 
 public:
-	void init();
+	void Init();
 	void Update();
 	
 public:

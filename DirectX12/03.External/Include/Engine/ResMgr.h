@@ -23,7 +23,7 @@ private:
 	void InitSound();
 
 public:
-	void init();
+	void Init();
 
 	template<typename T>
 	void AddRes(const wstring& _strKey, Ptr<T> _pRes);

@@ -54,7 +54,7 @@ private:
 	ComPtr<ID3D12RootSignature>				m_arrSig[(UINT)ROOT_SIG_TYPE::END];
 
 public:
-	int init(HWND _hWnd, const tResolution& _res, bool _bWindow);
+	int Init(HWND _hWnd, const tResolution& _res, bool _bWindow);
 
 	void CreateConstBuffer(const wstring& _strName, size_t _iBufferSize
 		, size_t _iMaxCount, CONST_REGISTER _eRegisterNum

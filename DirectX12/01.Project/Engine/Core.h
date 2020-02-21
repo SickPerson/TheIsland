@@ -8,8 +8,8 @@ public:
 	HWND	m_hMainHwnd;
 
 public:
-	int init(HWND _hWnd, const tResolution& _resolution, bool _bWindow);
-	void progress();
+	int Init(HWND _hWnd, const tResolution& _resolution, bool _bWindow);
+	void Progress();
 
 private:
 	void ChangeWindowSize(HWND _hWnd, const tResolution& _resolution);

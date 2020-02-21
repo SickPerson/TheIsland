@@ -18,7 +18,7 @@ CCollisionMgr::~CCollisionMgr()
 {
 }
 
-void CCollisionMgr::init()
+void CCollisionMgr::Init()
 {
 }
 

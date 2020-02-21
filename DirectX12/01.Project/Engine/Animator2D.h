@@ -17,7 +17,7 @@ private:
 	bool						m_bPlay;
 
 public:	
-	virtual void finalUpdate();
+	virtual void FinalUpdate();
 
 public:
 	bool AddAnimation(const wstring& _strAnimKey, Ptr<CTexture> _pTex, Vec2 _vLT, Vec2 _vGap, int _iFrmCount, float _fDuration);

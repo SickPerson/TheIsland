@@ -2747,7 +2747,7 @@ public:
             // Store new location in array so we can redirect pointers contained in subobjects 
             Iter->pSubobjectArrayLocation = &m_SubobjectArray.back(); 
         }
-        // For subobjects with pointer fields, create a new copy of those subobject definitions
+        // For subobjects with pointer fields, create a new copy of those subobject defInitions
         // with fixed pointers
         for (UINT i = 0; i < m_Desc.NumSubobjects; i++)
         {

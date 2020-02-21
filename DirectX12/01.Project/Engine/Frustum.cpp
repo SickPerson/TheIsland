@@ -6,14 +6,14 @@
 CFrustum::CFrustum(CCamera* _pCam)
 	: m_pCam(_pCam)
 {
-	init();
+	Init();
 }
 
 CFrustum::~CFrustum()
 {
 }
 
-void CFrustum::init()
+void CFrustum::Init()
 {
 	// 투영좌표계 기준 점 8개 찍어놓기
 
@@ -35,7 +35,7 @@ void CFrustum::init()
 	m_arrProj[7] = Vec3(-1.f, -1.f, 1.f);
 }
 
-void CFrustum::finalUpdate()
+void CFrustum::FinalUpdate()
 {
 	Matrix matViewInv = m_pCam->GetViewMatInv();
 	Matrix matProjInv = m_pCam->GetProjMatInv();

@@ -27,7 +27,7 @@ private:
 
 public:
 	virtual void Update();
-	virtual void finalUpdate();
+	virtual void FinalUpdate();
 	void Render();
 
 	void OnCollisionEnter(CCollider2D* _pOther); // 충돌체가 처음 충돌

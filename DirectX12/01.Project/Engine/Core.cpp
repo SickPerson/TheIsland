@@ -23,13 +23,13 @@ CCore::~CCore()
 {
 }
 
-int CCore::init(HWND _hWnd, const tResolution & _resolution, bool _bWindow)
+int CCore::Init(HWND _hWnd, const tResolution & _resolution, bool _bWindow)
 {
 	m_hMainHwnd = _hWnd;
 	ChangeWindowSize(m_hMainHwnd, _resolution);
 	ShowWindow(_hWnd, true);
 
-	if(FAILED(CDevice::GetInst()->init(_hWnd, _resolution, _bWindow)))
+	if(FAILED(CDevice::GetInst()->Init(_hWnd, _resolution, _bWindow)))
 	{
 		return E_FAIL;
 	}
@@ -52,14 +52,14 @@ int CCore::init(HWND _hWnd, const tResolution & _resolution, bool _bWindow)
 		
 
 
-	CPathMgr::init();
-	CKeyMgr::GetInst()->init();
-	CTimeMgr::GetInst()->init();
+	CPathMgr::Init();
+	CKeyMgr::GetInst()->Init();
+	CTimeMgr::GetInst()->Init();
 
-	CResMgr::GetInst()->init();
+	CResMgr::GetInst()->Init();
 
-	CSceneMgr::GetInst()->init();
-	CRenderMgr::GetInst()->init(_hWnd, _resolution, _bWindow);
+	CSceneMgr::GetInst()->Init();
+	CRenderMgr::GetInst()->Init(_hWnd, _resolution, _bWindow);
 
 	return S_OK;
 }
@@ -72,7 +72,7 @@ void CCore::ChangeWindowSize(HWND _hWnd, const tResolution & _resolution)
 	SetWindowPos(_hWnd, nullptr, 10, 10, rt.right - rt.left, rt.bottom - rt.top, 0);
 }
 
-void CCore::progress()
+void CCore::Progress()
 {
 	CKeyMgr::GetInst()->Update();
 	CTimeMgr::GetInst()->Update();

@@ -26,7 +26,7 @@ public:
 	void Start();
 	void Update();
 	void LateUpdate();
-	void finalUpdate();
+	void FinalUpdate();
 	void Render();
 
 

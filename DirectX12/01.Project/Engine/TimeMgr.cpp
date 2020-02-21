@@ -17,7 +17,7 @@ CTimeMgr::~CTimeMgr()
 {
 }
 
-void CTimeMgr::init()
+void CTimeMgr::Init()
 {
 	QueryPerformanceFrequency(&m_llFrequency);
 	QueryPerformanceCounter(&m_llOldCount);

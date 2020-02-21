@@ -79,7 +79,7 @@ private:
 	Vec2				m_vDragDir;
 
 public:
-	void init();
+	void Init();
 	void Update();
 
 public:

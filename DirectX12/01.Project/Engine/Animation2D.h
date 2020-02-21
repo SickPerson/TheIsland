@@ -26,7 +26,7 @@ private:
 	bool				m_bFinish;
 
 public:
-	void finalUpdate();
+	void FinalUpdate();
 	void UpdateData();
 
 	void Play()

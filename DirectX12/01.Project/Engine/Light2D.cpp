@@ -16,7 +16,7 @@ CLight2D::~CLight2D()
 {
 }
 
-void CLight2D::finalUpdate()
+void CLight2D::FinalUpdate()
 {
 	if (!IsActive())
 		return;

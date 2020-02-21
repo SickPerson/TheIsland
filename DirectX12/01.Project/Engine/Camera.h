@@ -31,7 +31,7 @@ private:
 
 	 
 public:	
-	virtual void finalUpdate();
+	virtual void FinalUpdate();
 	void Render();
 
 public:

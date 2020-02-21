@@ -12,8 +12,8 @@ private:
 	Vec4		m_arrFace[(UINT)FACE_TYPE::FT_END];
 	
 public:
-	void init();
-	void finalUpdate();
+	void Init();
+	void FinalUpdate();
 
 	bool CheckFrustum(const Vec3& _vPos);
 	bool CheckFrustumSphere(const Vec3& _vPos, float _fRadius);

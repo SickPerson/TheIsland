@@ -54,7 +54,7 @@ void CCollider2D::Update()
 {
 }
 
-void CCollider2D::finalUpdate()
+void CCollider2D::FinalUpdate()
 {
 	if (!IsActive())
 		return;

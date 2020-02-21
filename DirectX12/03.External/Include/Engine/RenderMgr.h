@@ -33,7 +33,7 @@ private:
 	bool					m_bWindowed;
 
 public:
-	void init(HWND _hWnd, const tResolution & _res, bool _bWindow);
+	void Init(HWND _hWnd, const tResolution & _res, bool _bWindow);
 	void Render();
 	void Render_tool();			
 

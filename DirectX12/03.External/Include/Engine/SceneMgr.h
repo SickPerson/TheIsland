@@ -12,7 +12,7 @@ private:
 	CScene*		m_pCurScene;	
 
 public:
-	void init();
+	void Init();
 
 	void Update();	 // Player Mod ¿œ∂ß
 	void Update_tool(); 
@@ -24,6 +24,6 @@ public:
 	//void FindGameObjectByPoint(POINT _point, vector<CGameObject*>& _vecFindObj, CCamera* _pToolCam = nullptr);
 
 public:
-	void CreateScene( const wstring& _strTag );
+	CScene* CreateScene( const wstring& _strTag );
 };
 
