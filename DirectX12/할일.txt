@@ -1,5 +1,21 @@
-1. desc.h 추가
-2. extern.h 추가
-3. SceneManager 완성
-4. Core 수정
-5. 
+ResMgr수정
+
+MRT 추가
+
+RenderMgrInit에 디퍼드 MRT추가
+
+RenderMgrInit에 light MRT 추가
+
+RenderMgr::Render()
+
+define.h SHADER_POV (호출시점) 을 추가하고 Shader에 멤버 변수로 추가
+
+struct transform 수정
+
+shader class 수정
+
+std3d.fx 수정
+
+SeneMgr에 UI용 카메라 하나 추가
+
+Light3D::Render()추가

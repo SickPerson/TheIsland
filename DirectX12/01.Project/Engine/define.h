@@ -287,4 +287,10 @@ enum class MRT_TYPE
 	END,
 };
 
-
+enum class SHADER_POV
+{
+	DEFERRED,
+	FORWARD,
+	POST_EFFECT,
+	LIGHTING,
+};

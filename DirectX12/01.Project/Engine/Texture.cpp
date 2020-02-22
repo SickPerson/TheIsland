@@ -21,7 +21,7 @@ CTexture::~CTexture()
 }
 
 void CTexture::Create(UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
-	, const D3D12_HEAP_PROPERTIES & _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag)
+	, const D3D12_HEAP_PROPERTIES & _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag, D3D12_RESOURCE_FLAGS _eResFlag, Vec4 _vClearColor )
 {	
 	m_tDesc.MipLevels = 1;
 	m_tDesc.Format = _eFormat;
@@ -40,7 +40,7 @@ void CTexture::Create(UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 		CD3DX12_CLEAR_VALUE depthOptimizedClearValue(DXGI_FORMAT_D32_FLOAT, 1.0f, 0);
 		pValue = &depthOptimizedClearValue;
 	}	
-
+	
 	HRESULT hr = DEVICE->CreateCommittedResource(
 		&_HeapProperty,
 		_eHeapFlag,
