@@ -11,6 +11,7 @@
 
 #include "LoginScene.h"
 #include "ChatScript.h"
+#include "IngameScene.h"
 
 #define MAX_LOADSTRING 100
 
@@ -52,6 +53,7 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 
 	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 	CLoginScene* pLoginScene = pScene->CreateSceneScript<CLoginScene>( L"LoginScene" );
+	//CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");
 
 	HACCEL hAccelTable = LoadAccelerators( hInstance, MAKEINTRESOURCE( IDC_CLIENT ) );
 	MSG msg;
