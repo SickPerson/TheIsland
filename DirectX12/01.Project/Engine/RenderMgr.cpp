@@ -12,14 +12,17 @@
 
 #include "Light3D.h"
 
+#include "MRT.h"
+
 CRenderMgr::CRenderMgr()
-	: m_arrRT{}
+	: m_iRTVHeapSize(0)
 	, m_arrMRT{}		
 {	
 }
 
 CRenderMgr::~CRenderMgr()
 {	
+	Safe_Delete_Array( m_arrMRT );
 }
 
 void CRenderMgr::Render()
@@ -32,9 +35,31 @@ void CRenderMgr::Render()
 	UpdateLight2D();
 	UpdateLight3D();
 
+	// SwapChain MRT 초기화
+	UINT iIdx = CDevice::GetInst()->GetSwapchainIdx();
+	m_arrMRT[( UINT )MRT_TYPE::SWAPCHAIN]->Clear( iIdx );
+
+	// DeferredMRT 초기화
+	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->Clear();
+
+	// 카메라 반복문 돌면서
 	for (size_t i = 0; i < m_vecCam.size(); ++i)
 	{
-		m_vecCam[i]->Render();
+		// 물체 분류 작업 forward로 출력할것인지 deffered로 출력할 것인지
+		m_vecCam[i]->SortGameObject();
+
+		// Deferred MRT 셋팅
+		m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->OMSet();
+		m_vecCam[i]->Render_Deferred();
+
+		// Light MRT 셋팅
+
+		// SwapChain MRT 셋팅		
+		m_arrMRT[( UINT )MRT_TYPE::SWAPCHAIN]->OMSet( 1, iIdx );
+		m_vecCam[i]->Render_Forward();
+		// 타겟이 SwapChain으로 바꼈으니 카메라 Render도 Forward로 변경해서 Rendering
+
+		// Merge (Diffuse Target, Diffuse Light Target, Specular Light Target)
 	}	
 
 	// 출력
@@ -79,4 +104,14 @@ void CRenderMgr::UpdateLight3D()
 	CDevice::GetInst()->SetConstBufferToRegister(pLight3DBuffer, iOffsetPos);
 	
 	m_vecLight3D.clear();
+}
+
+CMRT * CRenderMgr::GetMRT( MRT_TYPE eType )
+{
+	return m_arrMRT[(UINT)eType];
+}
+
+UINT CRenderMgr::GetRTVHeapSize()
+{
+	return m_iRTVHeapSize;
 }

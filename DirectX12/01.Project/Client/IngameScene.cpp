@@ -109,9 +109,9 @@ void CIngameScene::Init()
 	pObject->AddComponent( new CTransform );
 	pObject->AddComponent( new CCamera );
 
-	pObject->Camera()->SetProjType( PROJ_TYPE::ORTHGRAPHIC ); // 직교 투영
-	pObject->Camera()->SetFar( 10000.f );
-	pObject->Camera()->SetLayerCheck( 4, true );
+	pObject->Camera()->SetProjType( PROJ_TYPE::ORTHGRAPHIC );
+	pObject->Camera()->SetFar( 100.f );
+	pObject->Camera()->SetLayerCheck( 30, true );
 
 	m_pScene->GetLayer( 0 )->AddGameObject( pObject );
 

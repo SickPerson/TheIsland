@@ -14,6 +14,10 @@
 class CTexture :
 	public CResource
 {
+public:
+	CTexture();
+	virtual ~CTexture();
+
 private:
 	ScratchImage			 	 m_Image;
 	D3D12_RESOURCE_DESC			 m_tDesc;
@@ -26,7 +30,7 @@ private:
 public:
 	void Create(UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 		, const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
-		, D3D12_RESOURCE_FLAGS _eResFlag);
+		, D3D12_RESOURCE_FLAGS _eResFlag, Vec4 _vClearColor = Vec4::Zero);
 
 	void CreateFromResource(ComPtr<ID3D12Resource> _pTex2D);
 
@@ -40,9 +44,5 @@ public:
 
 	virtual void Load(const wstring& _strFullPath);
 	virtual void Save(const wstring& _strPath/*최종 경로*/);
-
-public:
-	CTexture();
-	virtual ~CTexture();
 };
 

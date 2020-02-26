@@ -1,5 +1,0 @@
-1. desc.h 추가
-2. extern.h 추가
-3. SceneManager 완성
-4. Core 수정
-5. 

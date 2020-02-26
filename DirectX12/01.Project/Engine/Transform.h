@@ -5,6 +5,13 @@
 class CTransform :
 	public CComponent
 {
+public:
+	CTransform();
+	virtual ~CTransform();
+
+public:
+	virtual CTransform* Clone() { return new CTransform( *this ); }
+	
 private:
 	Vec3		m_vLocalPos;	// GameObject ÁÂÇ¥
 	Vec3		m_vLocalScale;	// GameObject Å©±â
@@ -44,11 +51,5 @@ public:
 	virtual void SaveToScene(FILE* _pFile);
 	virtual void LoadFromScene(FILE* _pFile);
 
-public:
-	virtual CTransform* Clone() { return new CTransform(*this); }
-
-public:
-	CTransform();
-	virtual ~CTransform();
 };
 

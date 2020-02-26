@@ -47,6 +47,7 @@ VS_OUTPUT VS_Test(VS_INPUT _input)
     return output;
 }
 
+// 포워드 셰이더
 float4 PS_Test(VS_OUTPUT _input) : SV_Target
 {
     float4 vOutColor = g_tex_0.Sample(g_sam_0, _input.vUV);

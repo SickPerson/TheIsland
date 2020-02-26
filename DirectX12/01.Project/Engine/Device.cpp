@@ -5,13 +5,15 @@
 #include "Texture.h"
 
 #include "ResMgr.h"
+#include "RenderMgr.h"
+#include "MRT.h"
 
 CDevice::CDevice()
 	: m_pDevice(nullptr)
 	, m_pFence(nullptr)
 	, m_pFactory(nullptr)
-	, m_iCurTargetIdx(0)
 	, m_hFenceEvent(nullptr)
+	, m_iCurTargetIdx(0)
 	, m_iFenceValue(0)
 	, m_iCurDummyIdx(0)
 {
@@ -80,9 +82,6 @@ int CDevice::Init(HWND _hWnd, const tResolution & _res, bool _bWindow)
 	// SwapChain 만들기
 	CreateSwapChain();
 
-	// View 만들기
-	CreateView();
-
 	// ViewPort 만들기
 	CreateViewPort();
 		
@@ -108,39 +107,32 @@ void CDevice::Render_Start(float(&_arrFloat)[4])
 	m_pCmdListGraphic->RSSetViewports(1, &m_tVP);
 	m_pCmdListGraphic->RSSetScissorRects(1, &m_tScissorRect);
 
+	CMRT* pSwapchainMRT = CRenderMgr::GetInst()->GetMRT( MRT_TYPE::SWAPCHAIN );
+
 	// Indicate that the back buffer will be used as a Render target.
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE; ;
-	barrier.Transition.pResource = m_arrRenderTargets[m_iCurTargetIdx]->GetTex2D().Get();
+	barrier.Transition.pResource = pSwapchainMRT->GetRTTex( m_iCurTargetIdx )->GetTex2D().Get();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;		// 출력에서
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 다시 백버퍼로 지정
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
 	m_pCmdListGraphic->ResourceBarrier(1, &barrier);
-	
-	// RenderTarget 과 DepthStencilView 를 연결
-	D3D12_CPU_DESCRIPTOR_HANDLE hRTVHandle = m_arrRenderTargets[m_iCurTargetIdx]->GetRTV()->GetCPUDescriptorHandleForHeapStart();
-	D3D12_CPU_DESCRIPTOR_HANDLE hDSVHandle = m_pDSTex->GetDSV()->GetCPUDescriptorHandleForHeapStart();	
-			
-	// 타겟 지정	
-	m_pCmdListGraphic->OMSetRenderTargets(1, &hRTVHandle, FALSE, &hDSVHandle);
-
-	// 타겟 클리어	
-	m_pCmdListGraphic->ClearRenderTargetView(hRTVHandle, _arrFloat, 0, nullptr);
-	m_pCmdListGraphic->ClearDepthStencilView(hDSVHandle, D3D12_CLEAR_FLAG_DEPTH , 1.f, 0, 0, nullptr);	
-
+		
 	// 첫번째 더미 Descriptor Heap 초기화
 	ClearDymmyDescriptorHeap(0);
 }
 
 void CDevice::Render_present()
 {
+	CMRT* pSwapchainMRT = CRenderMgr::GetInst()->GetMRT( MRT_TYPE::SWAPCHAIN );
+
 	// Indicate that the back buffer will now be used to present.
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE; ;
-	barrier.Transition.pResource = m_arrRenderTargets[m_iCurTargetIdx]->GetTex2D().Get();
+	barrier.Transition.pResource = pSwapchainMRT->GetRTTex( m_iCurTargetIdx )->GetTex2D().Get();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;	// 백버퍼에서
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;			// 다시 출력으로 지정
 
@@ -164,6 +156,9 @@ void CDevice::Render_present()
 	{
 		m_vecCB[i]->Clear();
 	}
+
+	// 백버퍼 타겟 인덱스 변경
+	m_iCurTargetIdx == 0 ? m_iCurDummyIdx = 1 : m_iCurDummyIdx = 0;
 }
 
 void CDevice::WaitForFenceEvent()
@@ -208,28 +203,6 @@ void CDevice::CreateSwapChain()
 		
 	HRESULT hr = m_pFactory->CreateSwapChain(m_pCmdQueue.Get(), &tDesc, &m_pSwapChain);
 }
-
-void CDevice::CreateView()
-{
-	wchar_t szRTVName[50] = {};
-
-	for (UINT i = 0; i < 2; ++i)
-	{
-		wsprintf(szRTVName, L"SwapchainTargetTex_%d", i);
-		ComPtr<ID3D12Resource> pTarget;
-		m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&pTarget));
-		m_arrRenderTargets[i] = CResMgr::GetInst()->CreateTextureFromResource(szRTVName, pTarget);
-	}
-
-	m_pDSTex = CResMgr::GetInst()->CreateTexture(L"DepthStencilTex"
-		, (UINT)m_tResolution.fWidth, (UINT)m_tResolution.fHeight
-		, DXGI_FORMAT_D32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
-		, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-
-	// RenderTargetViewHeap 의 메모리 사이즈
-	m_iRTVHeapSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-}
-
 void CDevice::CreateViewPort()
 {
 	// DirectX 로 그려질 화면 크기를 설정한다.
@@ -306,10 +279,9 @@ void CDevice::CreateRootSignature()
 		m_vecDummyDescriptor.push_back(pDummyDescriptor);
 	}
 	
-	// 초기화요 더미 디스크립터 힙 작성	
+	// 초기화용 더미 디스크립터 힙 작성	
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	DEVICE->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor));
-
 }
 
 void CDevice::CreateSamplerDesc()

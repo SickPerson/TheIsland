@@ -10,148 +10,116 @@ void CResMgr::CreateDefaultShader()
 	Ptr<CShader> pShader = nullptr;
 
 	pShader = new CShader;
-	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Test", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Test", "ps_5_0");
+	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Test", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Test", "ps_5_0" );
 
 	// BlendState 설정
 	//pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
 
-	pShader->Create();
+	pShader->Create( SHADER_POV::FORWARD );
 
-	pShader->AddShaderParam(tShaderParam{ L"Test Value", SHADER_PARAM::INT_0 });
+	pShader->AddShaderParam( tShaderParam{ L"Test Value", SHADER_PARAM::INT_0 } );
 
-	AddRes(L"TestShader", pShader);
-
-	// UI
-	//
-	//
-	pShader = new CShader;
-	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Test", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Test", "ps_5_0");
-
-	// BlendState 설정
-	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
-	pShader->Create();
-
-	pShader->AddShaderParam(tShaderParam{ L"Test Value", SHADER_PARAM::INT_0 });
-	pShader->AddShaderParam(tShaderParam{ L"Test float", SHADER_PARAM::FLOAT_0 });
-
-	AddRes(L"UIShader", pShader);
-
-	// UI
-	//
-	//
-	pShader = new CShader;
-	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Test", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Test", "ps_5_0");
-
-	// BlendState 설정
-	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
-	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE);
-	pShader->Create();
-
-	pShader->AddShaderParam(tShaderParam{ L"Test Value", SHADER_PARAM::INT_0 });
-	pShader->AddShaderParam(tShaderParam{ L"Test float", SHADER_PARAM::FLOAT_0 });
-	pShader->AddShaderParam(tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 });
-
-	AddRes(L"IconShader", pShader);
-
+	AddRes( L"TestShader", pShader );
 
 	// ==============
 	// Texture Shader
 	// ==============
 	pShader = new CShader;
-	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Tex", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Tex", "ps_5_0");
+	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Tex", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Tex", "ps_5_0" );
 
 	// BlendState 설정
-	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+	// pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+
+	// DSState
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE );
 
 	// Shader Parameter 알림
-	pShader->AddShaderParam(tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 });
+	pShader->AddShaderParam( tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 } );
 
-	pShader->Create();
+	pShader->Create( SHADER_POV::FORWARD );
 
-	AddRes(L"TexShader", pShader);
+	AddRes( L"TexShader", pShader );
 
 	// =================
 	// Collider2D Shader
 	// =================
 	pShader = new CShader;
-	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Collider2D", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Collider2D", "ps_5_0");
+	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Collider2D", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Collider2D", "ps_5_0" );
 
 	// DepthStencilState 설정
-	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::NO_DEPTHTEST);
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST );
 
-	pShader->Create(D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
-	AddRes(L"Collider2DShader", pShader);
+	pShader->Create( SHADER_POV::FORWARD, D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINESTRIP );
+	AddRes( L"Collider2DShader", pShader );
 
 	// =================
 	// STD2D Shader
 	// =================
 	pShader = new CShader;
-	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Std2D", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Std2D", "ps_5_0");
+	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Std2D", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Std2D", "ps_5_0" );
 
 	// BlendState 설정
-	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+	pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
 
 	// Parameter 설정
-	pShader->AddShaderParam(tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 });
-	pShader->AddShaderParam(tShaderParam{ L"Anim Tex", SHADER_PARAM::TEX_3 });
+	pShader->AddShaderParam( tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 } );
+	pShader->AddShaderParam( tShaderParam{ L"Anim Tex", SHADER_PARAM::TEX_3 } );
 
-	pShader->Create();
-	AddRes(L"Std2DShader", pShader);
+	pShader->Create( SHADER_POV::FORWARD );
+	AddRes( L"Std2DShader", pShader );
 
 	// =================
 	// 2DShadow Shader
 	// =================
 	pShader = new CShader;
-	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_2DShadow", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_2DShadow", "ps_5_0");
+	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_2DShadow", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_2DShadow", "ps_5_0" );
 
 	// BlendState 설정
-	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+	pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
 
 	// Parameter 설정
-	pShader->AddShaderParam(tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 });
-	pShader->Create();
-	AddRes(L"2DShadowShader", pShader);
+	pShader->AddShaderParam( tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 } );
+	pShader->Create( SHADER_POV::FORWARD );
+	AddRes( L"2DShadowShader", pShader );
 
 	// ============
 	// Std3D Shader
 	// ============
 	pShader = new CShader;
-	pShader->CreateVertexShader(L"Shader\\std3d.fx", "VS_Std3D", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\std3d.fx", "PS_Std3D", "ps_5_0");
-	//pShader->SetRSType(RS_TYPE::WIRE_FRAME);
-	pShader->Create();
-	AddRes(L"Std3DShader", pShader);
+	pShader->CreateVertexShader( L"Shader\\std3d.fx", "VS_Std3D", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std3d.fx", "PS_Std3D", "ps_5_0" );
+
+	pShader->Create( SHADER_POV::DEFERRED );
+	AddRes( L"Std3DShader", pShader );
 
 	// ============
 	// Skybox Shader
 	// ============
 	pShader = new CShader;
-	pShader->CreateVertexShader(L"Shader\\std3d.fx", "VS_Skybox", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\std3d.fx", "PS_Skybox", "ps_5_0");
-	pShader->SetRasterizerType(RS_TYPE::CULL_FRONT);
-	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::LESS_EQUAL);
-	pShader->Create();
-	AddRes(L"SkyboxShader", pShader);
+	pShader->CreateVertexShader( L"Shader\\std3d.fx", "VS_Skybox", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std3d.fx", "PS_Skybox", "ps_5_0" );
+	pShader->SetRasterizerType( RS_TYPE::CULL_FRONT );
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::LESS_EQUAL );
+	pShader->Create( SHADER_POV::FORWARD );
+	AddRes( L"SkyboxShader", pShader );
 
 	// ============
 	// GridShader
 	// ============
 	pShader = new CShader;
 
-	pShader->CreateVertexShader(L"Shader\\tool.fx", "VS_Grid", "vs_5_0");
-	pShader->CreatePixelShader(L"Shader\\tool.fx", "PS_Grid", "ps_5_0");
-	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
-	pShader->SetRasterizerType(RS_TYPE::CULL_NONE);
-	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::LESS_NO_WRITE);
-	pShader->Create();
-	AddRes(L"GridShader", pShader);	
+	pShader->CreateVertexShader( L"Shader\\tool.fx", "VS_Grid", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\tool.fx", "PS_Grid", "ps_5_0" );
+	pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
+	pShader->SetRasterizerType( RS_TYPE::CULL_NONE );
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::LESS_NO_WRITE );
+	pShader->Create( SHADER_POV::FORWARD );
+	AddRes( L"GridShader", pShader );
 
 	// ================
 	// LandScape Shader
@@ -160,7 +128,7 @@ void CResMgr::CreateDefaultShader()
 	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Tex", "vs_5_0" );
 	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Tex", "ps_5_0" );
 	pShader->SetRasterizerType( RS_TYPE::WIRE_FRAME );
-	pShader->Create();
+	pShader->Create( SHADER_POV::FORWARD );
 	AddRes( L"LandScapeShader", pShader );
 }
 
