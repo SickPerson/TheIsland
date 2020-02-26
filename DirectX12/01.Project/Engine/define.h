@@ -14,6 +14,7 @@ static type* GetInst()\
 #define DEVICE CDevice::GetInst()->GetDevice()
 #define CMDLIST CDevice::GetInst()->GetCmdList()
 #define CMDLIST_RES CDevice::GetInst()->GetCmdListRes()
+#define DXSWAPCHAIN	 CDevice::GetInst()->GetSwapchain()
 
 #define KEY(Key, State) (CKeyMgr::GetInst()->GetKeyState(Key) == State)
 #define KEY_HOLD(Key) KEY(Key, KEY_STATE::STATE_HOLD)
@@ -293,4 +294,5 @@ enum class SHADER_POV
 	FORWARD,
 	POST_EFFECT,
 	LIGHTING,
+	COMPUTE,
 };

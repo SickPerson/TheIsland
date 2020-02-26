@@ -40,23 +40,14 @@ struct tTransform
 	Matrix matWorld;
 	Matrix matView;
 	Matrix matProj;
-
 	Matrix matWV;
 	Matrix matWVP;
+	Matrix matWorldInv;
+	Matrix matViewInv;
+	Matrix matProjInv;
 };
 
 extern tTransform g_transform;
-
-//struct tTransform
-//{
-//	Matrix matWorld;
-//	Matrix matView;
-//	Matrix matProj;
-//
-//	Matrix matWV;
-//	Matrix matWVP;
-//};
-
 
 struct tMtrlParam
 {

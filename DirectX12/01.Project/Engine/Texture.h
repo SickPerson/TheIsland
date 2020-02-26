@@ -14,6 +14,10 @@
 class CTexture :
 	public CResource
 {
+public:
+	CTexture();
+	virtual ~CTexture();
+
 private:
 	ScratchImage			 	 m_Image;
 	D3D12_RESOURCE_DESC			 m_tDesc;
@@ -40,9 +44,5 @@ public:
 
 	virtual void Load(const wstring& _strFullPath);
 	virtual void Save(const wstring& _strPath/*최종 경로*/);
-
-public:
-	CTexture();
-	virtual ~CTexture();
 };
 

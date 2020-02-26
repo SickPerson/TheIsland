@@ -85,6 +85,9 @@
     <Filter Include="03. Manager\Rendering\MRT">
       <UniqueIdentifier>{44d7bc16-198f-4317-86e1-a4c725eadad9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Manager\Resource">
+      <UniqueIdentifier>{429fd413-a3c0-4796-a0e6-ff1f1d4562e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -186,9 +189,6 @@
     <ClInclude Include="PathMgr.h">
       <Filter>03. Manager</Filter>
     </ClInclude>
-    <ClInclude Include="ResMgr.h">
-      <Filter>03. Manager</Filter>
-    </ClInclude>
     <ClInclude Include="TimeMgr.h">
       <Filter>03. Manager</Filter>
     </ClInclude>
@@ -245,6 +245,12 @@
     </ClInclude>
     <ClInclude Include="MRT.h">
       <Filter>03. Manager\Rendering\MRT</Filter>
+    </ClInclude>
+    <ClInclude Include="struct.h">
+      <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="ResMgr.h">
+      <Filter>03. Manager\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -338,12 +344,6 @@
     <ClCompile Include="PathMgr.cpp">
       <Filter>03. Manager</Filter>
     </ClCompile>
-    <ClCompile Include="ResMgr.cpp">
-      <Filter>03. Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="ResMgrInit.cpp">
-      <Filter>03. Manager</Filter>
-    </ClCompile>
     <ClCompile Include="TimeMgr.cpp">
       <Filter>03. Manager</Filter>
     </ClCompile>
@@ -397,6 +397,12 @@
     </ClCompile>
     <ClCompile Include="MRT.cpp">
       <Filter>03. Manager\Rendering\MRT</Filter>
+    </ClCompile>
+    <ClCompile Include="ResMgr.cpp">
+      <Filter>03. Manager\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ResMgrInit.cpp">
+      <Filter>03. Manager\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

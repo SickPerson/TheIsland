@@ -70,6 +70,80 @@ void CCamera::FinalUpdate()
 	CRenderMgr::GetInst()->RegisterCamera(this);
 }
 
+// 렌더링 시점 분류
+void CCamera::SortGameObject()
+{
+	m_vecDeferred.clear();
+	m_vecForward.clear();
+
+	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
+
+	for ( UINT i = 0; i < MAX_LAYER; ++i )
+	{
+		if ( m_iLayerCheck & ( 1 << i ) )
+		{
+			const vector<CGameObject*>& vecObj = pCurScene->GetLayer( i )->GetObjects();
+
+			for ( UINT i = 0; i < vecObj.size(); ++i )
+			{
+				if ( !vecObj[i]->GetFrustumCheck() ||
+					m_frustum.CheckFrustumSphere( vecObj[i]->Transform()->GetWorldPos(), vecObj[i]->Transform()->GetMaxScale() ) )
+				{
+					if ( vecObj[i]->MeshRender() &&
+						vecObj[i]->MeshRender()->GetMesh() != NULL &&
+						vecObj[i]->MeshRender()->GetSharedMaterial() != NULL &&
+						vecObj[i]->MeshRender()->GetSharedMaterial()->GetShader() != NULL )
+					{
+						if ( SHADER_POV::DEFERRED == vecObj[i]->MeshRender()->GetSharedMaterial()->GetShader()->GetShaderPOV() )
+							m_vecDeferred.push_back( vecObj[i] );
+						else if ( SHADER_POV::FORWARD == vecObj[i]->MeshRender()->GetSharedMaterial()->GetShader()->GetShaderPOV() )
+							m_vecForward.push_back( vecObj[i] );
+					}
+				}
+			}
+		}
+	}
+}
+
+void CCamera::Render_Deferred()
+{
+	g_transform.matView = GetViewMat();
+	g_transform.matProj = GetProjMat();
+	g_transform.matViewInv = m_matViewInv;
+	g_transform.matProjInv = m_matProjInv;
+
+	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
+
+	for ( UINT i = 0; i < m_vecDeferred.size(); ++i )
+	{
+		m_vecDeferred[i]->MeshRender()->Render();
+	}
+}
+
+void CCamera::Render_Forward()
+{
+	g_transform.matView = GetViewMat();
+	g_transform.matProj = GetProjMat();
+	g_transform.matViewInv = m_matViewInv;
+	g_transform.matProjInv = m_matProjInv;
+
+	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
+
+	for ( size_t i = 0; i < m_vecForward.size(); ++i )
+	{
+		m_vecForward[i]->MeshRender()->Render();
+
+		if ( m_vecForward[i]->Collider2D() )
+			m_vecForward[i]->Collider2D()->Render();
+	}
+
+	for ( size_t i = 0; i < m_vecDeferred.size(); ++i )
+	{
+		if ( m_vecDeferred[i]->Collider2D() )
+			m_vecDeferred[i]->Collider2D()->Render();
+	}
+}
+
 void CCamera::Render()
 {
 	g_transform.matView = GetViewMat();

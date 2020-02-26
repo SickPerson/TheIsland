@@ -14,6 +14,7 @@ class CMRT;
 class CRenderMgr
 {
 	SINGLE(CRenderMgr);
+	friend class CSceneMgr;
 
 private:	
 	Ptr<CTexture>			m_pRenderTargetTex;
@@ -21,8 +22,9 @@ private:
 		
 	tResolution				m_tResolution;
 
-	CRenderTarget24*		m_arrRT[(UINT)RT_TYPE::END];
+	//CRenderTarget24*		m_arrRT[(UINT)RT_TYPE::END];
 	CMRT*					m_arrMRT[(UINT)MRT_TYPE::END];	
+	UINT					m_iRTVHeapSize;
 
 	tLight2DInfo			m_tLight2DInfo;
 
@@ -38,9 +40,7 @@ public:
 	void Render_tool();			
 
 private:
-	void CreateSamplerState();
-	void CreateBlendState();
-	void CreateDepthStencilState();
+	void CreateMRT();
 	
 	void UpdateLight2D();
 	void UpdateLight3D();
@@ -64,7 +64,8 @@ public:
 	tResolution GetResolution() { return m_tResolution; }
 	HWND GetHwnd() { return m_hWnd; }
 
-	friend class CSceneMgr;
+	CMRT*	GetMRT( MRT_TYPE eType );
+	UINT	GetRTVHeapSize();
 };
 
 

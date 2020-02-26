@@ -10,6 +10,7 @@
 #include <Engine/SceneMgr.h>
 
 #include "LoginScene.h"
+#include "IngameScene.h"
 #include "ChatScript.h"
 
 #define MAX_LOADSTRING 100
@@ -51,7 +52,7 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	}
 
 	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
-	CLoginScene* pLoginScene = pScene->CreateSceneScript<CLoginScene>( L"LoginScene" );
+	CIngameScene* pLoginScene = pScene->CreateSceneScript<CIngameScene>( L"LoginScene" );
 
 	HACCEL hAccelTable = LoadAccelerators( hInstance, MAKEINTRESOURCE( IDC_CLIENT ) );
 	MSG msg;
@@ -171,11 +172,11 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 			strID += ( wchar_t* )&wParam;
 		}
 
-		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+		/*CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		CLoginScene* pLoginScene = pScene->GetCurSceneScript<CLoginScene>();
 		CChatScript* pID = pLoginScene->GetID();
 
-		pID->SetChatting( strID );
+		pID->SetChatting( strID );*/
 
 	}
 	break;

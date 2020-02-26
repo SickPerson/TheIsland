@@ -40,10 +40,10 @@ void CResMgr::Init()
 
 Ptr<CTexture> CResMgr::CreateTexture(const wstring& _strName, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 	, const D3D12_HEAP_PROPERTIES & _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
-	, D3D12_RESOURCE_FLAGS _eResFlag)
+	, D3D12_RESOURCE_FLAGS _eResFlag, Vec4 vClearColor )
 {
 	Ptr<CTexture> pNewTexture = new CTexture;
-	pNewTexture->Create(_iWidth, _iHeight, _eFormat, _HeapProperty, _eHeapFlag, _eResFlag);	
+	pNewTexture->Create(_iWidth, _iHeight, _eFormat, _HeapProperty, _eHeapFlag, _eResFlag, vClearColor);	
 	AddRes<CTexture>(_strName, pNewTexture);
 
 	return pNewTexture;
