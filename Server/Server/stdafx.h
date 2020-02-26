@@ -12,6 +12,8 @@
 #include <cstdlib>
 #include <mutex>
 
+#include <concurrent_queue.h>
+
 #include <vector>
 #include <set>
 #include <map>

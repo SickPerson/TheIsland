@@ -1,7 +1,7 @@
 #pragma once
 
 /*_____________________________________________
-[통신을 위한 구조체]
+			[통신을 위한 구조체]
 _______________________________________________*/
 typedef struct Over_ex
 {
@@ -43,5 +43,27 @@ struct T_EVENT {
 
 	constexpr bool operator <(const T_EVENT& _Left) const {
 		return (start_time > _Left.start_time);
+	}
+};
+
+/*_____________________________________________
+			[DataBase Event]
+_______________________________________________*/
+typedef struct _DataBase_Event {
+	char	state;
+	unsigned short client_num;
+	wchar_t	id[MAX_STR_LEN];
+	wchar_t	password[MAX_STR_LEN];
+};
+
+struct User_Data {
+	std::string m_sID;
+	unsigned short m_usID;
+	int m_iPlayerNum;
+
+	User_Data(std::string sID, unsigned short usNum, int iPlayerNum) {
+		m_sID = sID;
+		m_usID = usNum;
+		m_iPlayerNum = iPlayerNum;
 	}
 };
