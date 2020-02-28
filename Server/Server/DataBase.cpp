@@ -10,6 +10,8 @@ CDataBase::CDataBase()
 	else {
 		m_ccqDataBaseQueue.clear();
 		m_ccqSaveStateQueue.clear();
+		m_UserData.clear();
+		BindDataBaseFP();
 	}
 }
 
@@ -49,9 +51,27 @@ bool CDataBase::ConnectDataBase()
 			ret = SQLAllocHandle(SQL_HANDLE_DBC, m_hEnv, &m_hDbc);
 			if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 				ret = SQLSetConnectAttr(m_hDbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)(5), 0);
-				ret = SQLConnect(m_hDbc, (SQLWCHAR*)L"20")
+				ret = SQLConnect(m_hDbc, (SQLWCHAR*)L"2015180031", SQL_NTS, (SQLCHAR*)NULL, 0, NULL, 0);
+				if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
+					ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
+					return true;
+				}
+				else {
+					HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
+					return false;
+				}
+			}
+			else {
+				HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
+				return false;
 			}
 		}
+		else {
+			HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
+			return false;
+		}
+		HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
+		return false;
 	}
 	return false;
 }
@@ -63,14 +83,83 @@ void CDataBase::DisConnectDataBase()
 	SQLDisconnect(m_hDbc);
 }
 
-void CDataBase::RunDataBase(DATABASE_TYPE & event)
+void CDataBase::RunDataBase(DataBase_Event & event)
+{
+	m_fpDataBaseProcess[event.state](event);
+}
+
+void CDataBase::LogInPorcess(DataBase_Event & event)
 {
 }
 
-void CDataBase::LogInPorcess(DATABASE_TYPE & event)
+void CDataBase::LogOutPorcess(DataBase_Event & event)
 {
 }
 
-void CDataBase::LogOutPorcess(DATABASE_TYPE & event)
+void CDataBase::BindDataBaseFP()
 {
+	m_fpDataBaseProcess[DB_LOGIN] = [&](DataBase_Event& event) {LogInPorcess(event); };
+	m_fpDataBaseProcess[DB_LOGOUT] = [&](DataBase_Event& event) {LogOutPorcess(event); };
+}
+
+bool CDataBase::DataBaseQueueIsEmpty()
+{
+	return m_ccqDataBaseQueue.empty();
+}
+
+void CDataBase::InsertToDataBaseQueue(DataBase_Event & event)
+{
+	m_ccqDataBaseQueue.push(event);
+}
+
+bool CDataBase::PopFromDataBaseQueue(DataBase_Event & event)
+{
+	return m_ccqDataBaseQueue.try_pop(event);
+}
+
+void CDataBase::InsertToStateQueue(DataBase_Event & event)
+{
+	m_ccqSaveStateQueue.push(event);
+}
+
+bool CDataBase::PopFromStateQueue(DataBase_Event & event)
+{
+	return m_ccqSaveStateQueue.try_pop(event);
+}
+
+bool CDataBase::GetIsLogin(std::string sID)
+{
+	for (auto& player : m_UserData) {
+		if (player.m_sID == sID)
+			return true;
+	}
+	return false;
+}
+
+bool CDataBase::GetIsLogin(unsigned short usID)
+{
+	for (auto& player : m_UserData) {
+		if (player.m_usID == usID) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void CDataBase::SetIsLogin(int iPlayerNum, unsigned short usID, std::string ID)
+{
+	m_UserData.emplace_back(User_Data{ ID, usID, iPlayerNum });
+}
+
+int CDataBase::FindIsLogin(unsigned short usID, wchar_t * user_id, bool bDelete)
+{
+	std::vector<User_Data>::iterator	iter;
+	for (iter = m_UserData.begin(); iter != m_UserData.end();) {
+		if (iter->m_usID == usID) {
+			return iter->m_iPlayerNum;
+		}
+		else
+			++iter;
+	}
+	return static_cast<int>(MAX_USER);
 }

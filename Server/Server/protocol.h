@@ -35,9 +35,9 @@ constexpr	char	SC_REMOVE_OBJECT = 5;
 #define		SC_LOGIN_OK				1
 #define		SC_LOGIN_FAIL			2
 #define		SC_POSITION				3
-#define		SC_CHAT						4
-#define		SC_STAT_CHANGE		5
-#define		SC_REMOVE_OBJECT	6
+#define		SC_CHAT					4
+#define		SC_STAT_CHANGE			5
+#define		SC_REMOVE_OBJECT		6
 #define		SC_ADD_OBJECT			7
 
 #pragma	pack(push, 1)

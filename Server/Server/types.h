@@ -11,7 +11,7 @@ enum EVENT_TYPE {
 };
 
 enum DATABASE_TYPE {
-	DT_LOGIN,
-	DT_LOGIOUT,
-	DT_END
+	DB_LOGIN,
+	DB_LOGOUT,
+	DB_END
 };

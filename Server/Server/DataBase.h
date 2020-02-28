@@ -10,24 +10,32 @@ private:
 	SQLHDBC		m_hDbc;
 	SQLHSTMT	m_hStmt;
 
-	concurrency::concurrent_queue<DATABASE_TYPE>m_ccqDataBaseQueue;
-	concurrency::concurrent_queue<DATABASE_TYPE>m_ccqSaveStateQueue;
+	concurrency::concurrent_queue<DataBase_Event>m_ccqDataBaseQueue;
+	concurrency::concurrent_queue<DataBase_Event>m_ccqSaveStateQueue;
+
+	std::function<void(DataBase_Event&)>m_fpDataBaseProcess[DB_END];
+	std::vector<User_Data> m_UserData;
 
 public:
 	void HandleDiagnosticRecord(SQLHANDLE _hHandle, SQLSMALLINT _hType, RETCODE RetCode);
 	bool ConnectDataBase();
 	void DisConnectDataBase();
-	void RunDataBase(DATABASE_TYPE& event);
+	void RunDataBase(DataBase_Event& event);
 public:
-	void LogInPorcess(DATABASE_TYPE& event);
-	void LogOutPorcess(DATABASE_TYPE& event);
+	void LogInPorcess(DataBase_Event& event);
+	void LogOutPorcess(DataBase_Event& event);
 
 public:
 	void BindDataBaseFP();
 	bool DataBaseQueueIsEmpty();
-	void InsertToDataBaseQueue(DATABASE_TYPE& event);
-	bool PopFromDataBaseQueue(DATABASE_TYPE& event);
-	void InsertToStateQueue(DATABASE_TYPE& event);
-	bool PopFromStateQueue(DATABASE_TYPE& event);
+	void InsertToDataBaseQueue(DataBase_Event& event);
+	bool PopFromDataBaseQueue(DataBase_Event& event);
+	void InsertToStateQueue(DataBase_Event& event);
+	bool PopFromStateQueue(DataBase_Event& event);
+
+	bool	GetIsLogin(std::string sID);
+	bool	GetIsLogin(unsigned short usID);
+	void	SetIsLogin(int iPlayerNum, unsigned short usID, std::string ID);
+	int		FindIsLogin(unsigned short usID, wchar_t* user_id, bool bDelete = false);
 };
 

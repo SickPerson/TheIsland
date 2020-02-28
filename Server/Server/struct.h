@@ -49,7 +49,7 @@ struct T_EVENT {
 /*_____________________________________________
 			[DataBase Event]
 _______________________________________________*/
-typedef struct _DataBase_Event {
+typedef struct DataBase_Event {
 	char	state;
 	unsigned short client_num;
 	wchar_t	id[MAX_STR_LEN];
