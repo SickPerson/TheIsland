@@ -25,5 +25,8 @@ public:
 
 public:
 	CScene* CreateScene( const wstring& _strTag );
+
+private:
+	void CreateMRTUI();
 };
 

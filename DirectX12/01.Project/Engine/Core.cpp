@@ -29,37 +29,36 @@ int CCore::Init(HWND _hWnd, const tResolution & _resolution, bool _bWindow)
 	ChangeWindowSize(m_hMainHwnd, _resolution);
 	ShowWindow(_hWnd, true);
 
-	if(FAILED(CDevice::GetInst()->Init(_hWnd, _resolution, _bWindow)))
+
+	if ( FAILED( CDevice::GetInst()->Init( _hWnd, _resolution, _bWindow ) ) )
 	{
 		return E_FAIL;
 	}
 
+	CRenderMgr::GetInst()->Init( _hWnd, _resolution, _bWindow );
+
 	// 상수버퍼 만들기
-	CDevice::GetInst()->CreateConstBuffer(L"TRANSFORM_MATRIX", sizeof(tTransform), 512, CONST_REGISTER::b0);
-	CDevice::GetInst()->CreateConstBuffer(L"MATERIAL_PARAM", sizeof(tMtrlParam), 512, CONST_REGISTER::b1);
-	CDevice::GetInst()->CreateConstBuffer(L"ANIM2D", sizeof(tMtrlParam), 512, CONST_REGISTER::b2);
-		
+	CDevice::GetInst()->CreateConstBuffer( L"TRANSFORM_MATRIX", sizeof( tTransform ), 512, CONST_REGISTER::b0 );
+	CDevice::GetInst()->CreateConstBuffer( L"MATERIAL_PARAM", sizeof( tMtrlParam ), 512, CONST_REGISTER::b1 );
+	CDevice::GetInst()->CreateConstBuffer( L"ANIM2D", sizeof( tMtrlParam ), 512, CONST_REGISTER::b2 );
+
 	// b5 추가
-	CDevice::GetInst()->CreateConstBuffer(L"TEST", sizeof(Vec4), 512, CONST_REGISTER::b5);
+	CDevice::GetInst()->CreateConstBuffer( L"TEST", sizeof( Vec4 ), 512, CONST_REGISTER::b5 );
 
 	// 전역 상수버퍼 변수(1프레임 동안 레지스터에서 지속되야함)
-	CDevice::GetInst()->CreateConstBuffer(L"LIGHT2D", sizeof(tLight2DInfo), 1, CONST_REGISTER::b3, true);
-	CDevice::GetInst()->CreateConstBuffer(L"LIGHT3D", sizeof(tLight3DInfo), 1, CONST_REGISTER::b4, true);	
+	CDevice::GetInst()->CreateConstBuffer( L"LIGHT2D", sizeof( tLight2DInfo ), 1, CONST_REGISTER::b3, true );
+	CDevice::GetInst()->CreateConstBuffer( L"LIGHT3D", sizeof( tLight3DInfo ), 1, CONST_REGISTER::b4, true );
 
 	// 전역 상수버퍼 등록
-	CDevice::GetInst()->SetGlobalConstBufferToRegister(CDevice::GetInst()->GetCB(CONST_REGISTER::b3), 0);
-	CDevice::GetInst()->SetGlobalConstBufferToRegister(CDevice::GetInst()->GetCB(CONST_REGISTER::b4), 0);
-		
+	CDevice::GetInst()->SetGlobalConstBufferToRegister( CDevice::GetInst()->GetCB( CONST_REGISTER::b3 ), 0 );
+	CDevice::GetInst()->SetGlobalConstBufferToRegister( CDevice::GetInst()->GetCB( CONST_REGISTER::b4 ), 0 );
 
 
 	CPathMgr::Init();
 	CKeyMgr::GetInst()->Init();
 	CTimeMgr::GetInst()->Init();
-
 	CResMgr::GetInst()->Init();
-
 	CSceneMgr::GetInst()->Init();
-	CRenderMgr::GetInst()->Init(_hWnd, _resolution, _bWindow);
 
 	return S_OK;
 }

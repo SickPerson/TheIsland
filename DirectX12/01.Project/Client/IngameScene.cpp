@@ -50,13 +50,6 @@ void CIngameScene::Init()
 	Ptr<CTexture> pTexHungry = CResMgr::GetInst()->Load<CTexture>( L"HungryIconTex", L"Texture\\Hungry01.png" );
 	Ptr<CTexture> pTexThirst = CResMgr::GetInst()->Load<CTexture>( L"ThirstIconTex", L"Texture\\Thirst01.png" );
 
-	m_pScene->GetLayer( 0 )->SetName( L"Default" );
-	m_pScene->GetLayer( 1 )->SetName( L"Player" );
-	m_pScene->GetLayer( 2 )->SetName( L"Monster" );
-	m_pScene->GetLayer( 3 )->SetName( L"Bullet" );
-	m_pScene->GetLayer( 4 )->SetName( L"UI" );
-	m_pScene->GetLayer( 31 )->SetName( L"Tool" );
-
 	CGameObject* pObject = nullptr;
 	CGameObject* pChildObject = nullptr;
 

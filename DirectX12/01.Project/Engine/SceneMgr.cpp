@@ -61,6 +61,15 @@ CSceneMgr::~CSceneMgr()
 void CSceneMgr::Init()
 {
 	m_pCurScene = CreateScene( L"Test Scene" );
+
+	m_pCurScene->GetLayer( 0 )->SetName( L"Default" );
+	m_pCurScene->GetLayer( 1 )->SetName( L"Player" );
+	m_pCurScene->GetLayer( 2 )->SetName( L"Monster" );
+	m_pCurScene->GetLayer( 3 )->SetName( L"Bullet" );
+	m_pCurScene->GetLayer( 4 )->SetName( L"UI" );
+	m_pCurScene->GetLayer( 31 )->SetName( L"Tool" );
+
+	CreateMRTUI();
 }
 
 void CSceneMgr::Update()
@@ -107,6 +116,41 @@ CScene * CSceneMgr::CreateScene( const wstring & _strTag )
 	pScene->Start();
 
 	return pScene;
+}
+
+void CSceneMgr::CreateMRTUI()
+{
+	Vec3 vScale( 150.f, 150.f, 1.f );
+
+	Ptr<CTexture> arrTex[3] = { CResMgr::GetInst()->FindRes<CTexture>( L"DiffuseTargetTex" ),
+	CResMgr::GetInst()->FindRes<CTexture>( L"NormalTargetTex" ),
+	CResMgr::GetInst()->FindRes<CTexture>( L"PositionTargetTex" ) };
+
+	for ( UINT i = 0; i < 3; ++i )
+	{
+		CGameObject* pObject = new CGameObject;
+		pObject->SetName( L"UI Object" );
+		pObject->FrustumCheck( false );
+		pObject->AddComponent( new CTransform );
+		pObject->AddComponent( new CMeshRender );
+
+		tResolution res = CRenderMgr::GetInst()->GetResolution();
+
+		pObject->Transform()->SetLocalPos( Vec3( -( res.fWidth / 2.f ) + ( vScale.x / 2.f ) + ( i * vScale.x )
+			, ( res.fHeight / 2.f ) - ( vScale.y / 2.f )
+			, 1.f ) );
+
+		pObject->Transform()->SetLocalScale( vScale );
+
+		// MeshRender ¼³Á¤
+		pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
+		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"TexMtrl" );
+		pObject->MeshRender()->SetMaterial( pMtrl->Clone() );
+		pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, arrTex[i].GetPointer() );
+
+		// AddGameObject
+		m_pCurScene->FindLayer( L"UI" )->AddGameObject( pObject );
+	}
 }
 
 bool Compare(CGameObject* _pLeft, CGameObject* _pRight)
