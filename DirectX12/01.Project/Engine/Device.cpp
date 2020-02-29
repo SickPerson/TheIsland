@@ -124,7 +124,7 @@ void CDevice::Render_Start(float(&_arrFloat)[4])
 	ClearDymmyDescriptorHeap(0);
 }
 
-void CDevice::Render_present()
+void CDevice::Render_Present()
 {
 	CMRT* pSwapchainMRT = CRenderMgr::GetInst()->GetMRT( MRT_TYPE::SWAPCHAIN );
 

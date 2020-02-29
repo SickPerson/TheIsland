@@ -66,7 +66,8 @@ void CSceneMgr::Init()
 	m_pCurScene->GetLayer( 1 )->SetName( L"Player" );
 	m_pCurScene->GetLayer( 2 )->SetName( L"Monster" );
 	m_pCurScene->GetLayer( 3 )->SetName( L"Bullet" );
-	m_pCurScene->GetLayer( 4 )->SetName( L"UI" );
+
+	m_pCurScene->GetLayer( 30 )->SetName( L"UI" );
 	m_pCurScene->GetLayer( 31 )->SetName( L"Tool" );
 
 	CreateMRTUI();

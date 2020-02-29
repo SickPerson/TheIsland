@@ -62,7 +62,7 @@ public:
 
 	void Render_Start(float(&_arrFloat)[4]); 	
 
-	void Render_present();
+	void Render_Present();
 	void WaitForFenceEvent();
 
 	void SetConstBufferToRegister(CConstantBuffer* _pCB, UINT _iOffset);	

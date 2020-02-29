@@ -63,7 +63,7 @@ void CRenderMgr::Render()
 	}	
 
 	// Ãâ·Â
-	CDevice::GetInst()->Render_present();
+	CDevice::GetInst()->Render_Present();
 }
 
 void CRenderMgr::Render_tool()
