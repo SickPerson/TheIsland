@@ -54,19 +54,19 @@ void CRenderMgr::CreateMRT()
 	{
 		tRT arrRT[8] = {};
 
-		arrRT[0].vClearColor = Vec4( 0.f, 0.f, 0.f, 0.f );
+		arrRT[0].vClearColor = Vec4( 1.f, 0.f, 0.f, 0.f );
 		arrRT[0].pTarget = CResMgr::GetInst()->CreateTexture( L"DiffuseTargetTex"
 			, ( UINT )m_tResolution.fWidth, ( UINT )m_tResolution.fHeight
 			, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES( D3D12_HEAP_TYPE_DEFAULT ), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClearColor );
 
-		arrRT[1].vClearColor = Vec4( 0.f, 0.f, 0.f, 0.f );
+		arrRT[1].vClearColor = Vec4( 0.f, 1.f, 0.f, 0.f );
 		arrRT[1].pTarget = CResMgr::GetInst()->CreateTexture( L"NormalTargetTex"
 			, ( UINT )m_tResolution.fWidth, ( UINT )m_tResolution.fHeight
 			, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES( D3D12_HEAP_TYPE_DEFAULT ), D3D12_HEAP_FLAG_NONE
 			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClearColor );
 
-		arrRT[2].vClearColor = Vec4( 0.f, 0.f, 0.f, 0.f );
+		arrRT[2].vClearColor = Vec4( 0.f, 0.f, 1.f, 0.f );
 		arrRT[2].pTarget = CResMgr::GetInst()->CreateTexture( L"PositionTargetTex"
 			, ( UINT )m_tResolution.fWidth, ( UINT )m_tResolution.fHeight
 			, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES( D3D12_HEAP_TYPE_DEFAULT ), D3D12_HEAP_FLAG_NONE
