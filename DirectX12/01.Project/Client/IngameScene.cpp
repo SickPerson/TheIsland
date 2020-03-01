@@ -445,7 +445,7 @@ void CIngameScene::CreatePlayerStatusUI()
 
 void CIngameScene::CreateInventoryUI()
 {
-	Vec3 vScale(150.f, 150.f, 1.f);
+	Vec3 vScale(150.f, 350.f, 1.f);
 
 	Ptr<CTexture> PlayerTex = CResMgr::GetInst()->FindRes<CTexture>(L"PlayerTex");
 
@@ -455,7 +455,7 @@ void CIngameScene::CreateInventoryUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 100.f));
+	pObject->Transform()->SetLocalPos(Vec3(-200.f, 0.f, 100.f));
 
 	pObject->Transform()->SetLocalScale(vScale);
 
