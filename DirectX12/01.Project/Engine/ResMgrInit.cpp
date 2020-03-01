@@ -22,6 +22,40 @@ void CResMgr::CreateDefaultShader()
 
 	AddRes( L"TestShader", pShader );
 
+	// =================
+	// UI Shader
+	// =================
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Test", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Test", "ps_5_0");
+
+	// BlendState 설정
+	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+	pShader->Create(SHADER_POV::FORWARD);
+
+	pShader->AddShaderParam(tShaderParam{ L"Test Value", SHADER_PARAM::INT_0 });
+	pShader->AddShaderParam(tShaderParam{ L"Test float", SHADER_PARAM::FLOAT_0 });
+
+	AddRes(L"UIShader", pShader);
+
+	// ====================
+	// UI Icon Shader
+	// ====================
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Test", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Test", "ps_5_0");
+
+	// BlendState 설정
+	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE);
+	pShader->Create(SHADER_POV::FORWARD);
+
+	pShader->AddShaderParam(tShaderParam{ L"Test Value", SHADER_PARAM::INT_0 });
+	pShader->AddShaderParam(tShaderParam{ L"Test float", SHADER_PARAM::FLOAT_0 });
+	pShader->AddShaderParam(tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 });
+
+	AddRes(L"IconShader", pShader);
+
 	// ==============
 	// Texture Shader
 	// ==============

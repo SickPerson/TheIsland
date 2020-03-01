@@ -41,6 +41,7 @@ void CRenderMgr::Render()
 
 	// DeferredMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->Clear();
+	m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
 
 	// 카메라 반복문 돌면서
 	for (size_t i = 0; i < m_vecCam.size(); ++i)
@@ -48,18 +49,34 @@ void CRenderMgr::Render()
 		// 물체 분류 작업 forward로 출력할것인지 deffered로 출력할 것인지
 		m_vecCam[i]->SortGameObject();
 
-		// Deferred MRT 셋팅
-		m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->OMSet();
-		m_vecCam[i]->Render_Deferred();
+		// 일반적인 카메라
+		if (CAM_TYPE::BASIC == m_vecCam[i]->GetCamType())
+		{
+			// Deferred MRT 셋팅
+			m_arrMRT[(UINT)MRT_TYPE::DEFERRED]->OMSet();
+			m_vecCam[i]->Render_Deferred();
 
-		// Light MRT 셋팅
+			// Light MRT 셋팅
 
-		// SwapChain MRT 셋팅		
-		m_arrMRT[( UINT )MRT_TYPE::SWAPCHAIN]->OMSet( 1, iIdx );
-		m_vecCam[i]->Render_Forward();
-		// 타겟이 SwapChain으로 바꼈으니 카메라 Render도 Forward로 변경해서 Rendering
+			// SwapChain MRT 셋팅		
+			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
+			m_vecCam[i]->Render_Forward();
+			// 타겟이 SwapChain으로 바꼈으니 카메라 Render도 Forward로 변경해서 Rendering
 
-		// Merge (Diffuse Target, Diffuse Light Target, Specular Light Target)
+			// Merge (Diffuse Target, Diffuse Light Target, Specular Light Target)
+		}
+		else if (CAM_TYPE::INVENTORY == m_vecCam[i]->GetCamType())
+		{
+			// Deferred MRT 셋팅
+			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
+			m_vecCam[i]->Render_Deferred();
+
+			// Light MRT 셋팅
+
+			// SwapChain MRT 셋팅		
+			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
+			m_vecCam[i]->Render_Forward();
+		}
 	}	
 
 	// 출력

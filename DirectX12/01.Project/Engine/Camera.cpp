@@ -23,6 +23,7 @@ CCamera::CCamera()
 	, m_fScale(1.f)
 	, m_eProjType(PROJ_TYPE::ORTHGRAPHIC)
 	, m_iLayerCheck(0)
+	, m_eCamType(CAM_TYPE::BASIC)
 {		
 }
 

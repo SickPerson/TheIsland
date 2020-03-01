@@ -71,6 +71,11 @@ void CFPSCamScript::Update()
 	vRot.x -= vDrag.y * DT * 3.f;
 	vRot.y += vDrag.x * DT * 1.5f;
 
+	if (vRot.y > 360.f)
+		vRot.y -= 360.f;
+	if (vRot.x > 360.f)
+		vRot.x -= 360.f;
+
 	Transform()->SetLocalRot(vRot);
 
 	Transform()->SetLocalPos(vPos);

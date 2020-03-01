@@ -9,6 +9,13 @@ enum class PROJ_TYPE
 	PERSPECTIVE,
 };
 
+enum class CAM_TYPE
+{
+	BASIC,
+	INVENTORY,
+	END
+};
+
 class CCamera :
 	public CComponent
 {
@@ -32,7 +39,7 @@ private:
 	vector<CGameObject*>			m_vecDeferred;
 	vector<CGameObject*>			m_vecForward;
 
-	 
+	CAM_TYPE	m_eCamType;	// 일반 카메라인지 플레이어만 보는 특수한 카메라인지
 public:	
 	virtual void FinalUpdate();
 	void SortGameObject();
@@ -68,6 +75,9 @@ public:
 	const Matrix& GetViewMatInv() { return m_matViewInv; }
 	const Matrix& GetProjMat() { return m_matProj; }
 	const Matrix& GetProjMatInv() { return m_matProjInv; }
+
+	void SetCamType(CAM_TYPE _eType) { m_eCamType = _eType; }
+	CAM_TYPE GetCamType() { return m_eCamType; }
 
 public:
 	CLONE(CCamera);
