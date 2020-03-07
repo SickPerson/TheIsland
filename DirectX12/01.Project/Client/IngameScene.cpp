@@ -219,7 +219,7 @@ void CIngameScene::Init()
 	pObject->LandScape()->CreateLandScape( L"Texture/TestLandScape.bmp", 219, 219 );
 	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"LandScapeMesh" ) );
 	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" ) );
-	//pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pSky01.GetPointer() );
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pSky01.GetPointer() );
 	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
 	pObject->Transform()->SetLocalScale( Vec3( 15.f, 15.f, 15.f ) );
 	pObject->FrustumCheck( false );

@@ -150,7 +150,9 @@ void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNum
 	ComputeTangent( vecVtx, vecIndex );
 
 	Ptr<CMesh>	pMesh = new CMesh;
-	pMesh->Create( sizeof( VTX ), ( UINT )vecVtx.size(), ( BYTE* )vecVtx.data(), DXGI_FORMAT_R32_UINT, ( UINT )vecIndex.size(), ( BYTE* )vecIndex.data() );
+	pMesh->Create( sizeof( VTX ), ( UINT )vecVtx.size(), 
+		( BYTE* )vecVtx.data(), DXGI_FORMAT_R32_UINT, 
+		( UINT )vecIndex.size(), ( BYTE* )vecIndex.data() );
 	
 	CResMgr::GetInst()->AddRes( L"LandScapeMesh", pMesh );
 

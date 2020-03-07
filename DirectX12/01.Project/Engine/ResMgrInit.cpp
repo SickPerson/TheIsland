@@ -161,7 +161,9 @@ void CResMgr::CreateDefaultShader()
 	pShader = new CShader;
 	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Tex", "vs_5_0" );
 	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Tex", "ps_5_0" );
-	pShader->SetRasterizerType( RS_TYPE::WIRE_FRAME );
+	
+	pShader->SetRasterizerType( RS_TYPE::CULL_NONE );
+	pShader->AddShaderParam( tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 } );
 	pShader->Create( SHADER_POV::FORWARD );
 	AddRes( L"LandScapeShader", pShader );
 }

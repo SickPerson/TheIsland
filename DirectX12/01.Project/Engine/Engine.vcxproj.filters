@@ -371,9 +371,6 @@
     <ClCompile Include="ToolCamScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
-    <ClCompile Include="BulletScript.cpp">
-      <Filter>06. GameObject\Component\LandScape</Filter>
-    </ClCompile>
     <ClCompile Include="TestScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
@@ -403,6 +400,9 @@
     </ClCompile>
     <ClCompile Include="ResMgrInit.cpp">
       <Filter>03. Manager\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletScript.cpp">
+      <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
