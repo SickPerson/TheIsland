@@ -27,6 +27,7 @@
 
 #include "PlayerCamScript.h"
 #include "InventoryScript.h"
+#include <Engine/TestScript.h>
 
 CIngameScene::CIngameScene()
 {
@@ -54,27 +55,49 @@ void CIngameScene::Init()
 	// ===================
 	// Player 오브젝트 생성
 	// ===================
-	pObject = new CGameObject;
-	pObject->SetName( L"Player Object" );
-	pObject->AddComponent( new CTransform );
-	pObject->AddComponent( new CMeshRender );
+	CGameObject* pPlayer = new CGameObject;
+	pPlayer->SetName( L"Player Object" );
+	pPlayer->AddComponent( new CTransform );
+	pPlayer->AddComponent( new CMeshRender );
 
 	// Transform 설정
-	pObject->Transform()->SetLocalPos( Vec3( 0.f, 25.f, 0.f ) );
-	pObject->Transform()->SetLocalScale( Vec3( 50.f, 50.f, 50.f ) );
+	pPlayer->Transform()->SetLocalPos( Vec3( 0.f, 25.f, 0.f ) );
+	pPlayer->Transform()->SetLocalScale( Vec3( 50.f, 50.f, 50.f ) );
 	//pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
 
 	// MeshRender 설정
-	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"SphereMesh" ) );
-	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"PlayerMtrl" ) );
-	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pColor.GetPointer() );
-	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_1, pNormal.GetPointer() );
+	pPlayer->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"SphereMesh" ) );
+	pPlayer->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"PlayerMtrl" ) );
+	pPlayer->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pColor.GetPointer() );
+	pPlayer->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_1, pNormal.GetPointer() );
 
 	// Script 설정
-	pObject->AddComponent( new CPlayerScript );
+	pPlayer->AddComponent( new CPlayerScript );
 
 	// AddGameObject
-	m_pScene->FindLayer( L"Player" )->AddGameObject( pObject );
+	m_pScene->FindLayer( L"Player" )->AddGameObject(pPlayer);
+
+	pObject = new CGameObject;
+	pObject->SetName(L"Player Object");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+	pObject->AddComponent(new CTestScript);
+	pObject->GetScript<CTestScript>()->SetTestObject(*&pPlayer);
+	// Transform 설정
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 25.f, 150.f));
+	pObject->Transform()->SetLocalScale(Vec3(5.f, 5.f, 100.f));
+	pObject->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
+
+	// MeshRender 설정
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"CubeMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+
+	// AddGameObject
+	m_pScene->FindLayer(L"Player")->AddGameObject(pObject);
+
+
 	// ==================
 	// Camera Object 생성
 	// ==================
@@ -92,7 +115,7 @@ void CIngameScene::Init()
 	pMainCam->Camera()->SetLayerAllCheck();
 	pMainCam->Camera()->SetLayerCheck( 30, false );
 	pMainCam->Camera()->SetLayerCheck( 29, false );
-	pObject->GetScript<CPlayerScript>()->SetCamera( pMainCam->Camera() );
+	pPlayer->GetScript<CPlayerScript>()->SetCamera( pMainCam->Camera() );
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pMainCam );
 
 	// ====================
@@ -102,7 +125,7 @@ void CIngameScene::Init()
 	pPlayerCam->AddComponent(new CTransform);
 	pPlayerCam->AddComponent(new CCamera);
 	pPlayerCam->AddComponent(new CPlayerCamScript);
-	pPlayerCam->GetScript<CPlayerCamScript>()->SetPlayer(pObject);
+	pPlayerCam->GetScript<CPlayerCamScript>()->SetPlayer(pPlayer);
 	
 	//pPlayerCam->Transform()->SetLocalPos(Vec3(0.f, 25.f, 150.f));
 	pPlayerCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
@@ -127,8 +150,6 @@ void CIngameScene::Init()
 
 	m_pScene->FindLayer(L"Default")->AddGameObject(pUICam);
 
-
-	CreateQuickSlotUI();
 	CreatePlayerStatusUI();
 	CreateInventoryUI();
 
@@ -265,7 +286,7 @@ void CIngameScene::Init()
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Bullet", L"Monster" );
 }
 
-void CIngameScene::CreateQuickSlotUI()
+void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
 {
 	// ===================
 	// UI 오브젝트 생성
@@ -305,6 +326,7 @@ void CIngameScene::CreateQuickSlotUI()
 
 		pObject->AddChild(pChildObject);
 		m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
+		_pInventory->GetScript<CInventoryScript>()->AddSlot(pChildObject);
 	}
 }
 
@@ -472,6 +494,8 @@ void CIngameScene::CreateInventoryUI()
 	// AddGameObject
 	m_pScene->FindLayer(L"UI")->AddGameObject(pInventory);
 
+	CreateQuickSlotUI(pInventory);
+
 	{
 		CGameObject* pObject = new CGameObject;
 		pObject->SetName(L"Inventory Player Object");
@@ -523,6 +547,7 @@ void CIngameScene::CreateInventoryUI()
 				// AddGameObject
 				pInventory->AddChild(pItemSlot);
 				m_pScene->FindLayer(L"Invisible")->AddGameObject(pItemSlot);
+				pInventory->GetScript<CInventoryScript>()->AddSlot(pItemSlot);
 			}
 		}
 

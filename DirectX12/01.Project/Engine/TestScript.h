@@ -6,6 +6,8 @@ class CTestScript :
 private:
 	int		m_iLifeCount;
 
+	CGameObject* m_pTestObject;
+
 public:	
 	virtual void Update();
 	virtual void OnCollisionEnter(CCollider2D* _pOther);
@@ -16,5 +18,8 @@ public:
 public:
 	CTestScript();
 	virtual ~CTestScript();
+
+public:
+	void SetTestObject(CGameObject* pObject) { m_pTestObject = pObject; }
 };
 
