@@ -53,7 +53,7 @@ void CFPSCamScript::Update()
 		vPos.y = 100.f;
 	}
 
-	if (KEY_HOLD(KEY_TYPE::KEY_1))
+	/*if (KEY_HOLD(KEY_TYPE::KEY_1))
 	{
 		fScale -= m_fScaleSpeed * DT;
 		Camera()->SetScale(fScale);
@@ -63,7 +63,7 @@ void CFPSCamScript::Update()
 	{
 		fScale += m_fScaleSpeed * DT;
 		Camera()->SetScale(fScale);
-	}
+	}*/
 
 	Vec2 vDrag = CKeyMgr::GetInst()->GetDragDir();
 	Vec3 vRot = Transform()->GetLocalRot();

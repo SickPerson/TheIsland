@@ -156,6 +156,7 @@
     <ClInclude Include="ChatScript.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="IngameScene.h" />
+    <ClInclude Include="InventoryScript.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="PlayerCamScript.h" />
     <ClInclude Include="Resource.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="ChatScript.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="IngameScene.cpp" />
+    <ClCompile Include="InventoryScript.cpp" />
     <ClCompile Include="LoginScene.cpp" />
     <ClCompile Include="PlayerCamScript.cpp" />
     <ClCompile Include="stdafx.cpp">

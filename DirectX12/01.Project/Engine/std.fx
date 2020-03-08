@@ -96,15 +96,20 @@ float4 PS_UI_Test(VS_OUTPUT _input) : SV_Target
 	if (g_int_0 == 1) // 배경색
 		return float4(0.4f, 0.4f, 0.4f, 0.5f);
 	if (g_int_0 == 2) // 퀵슬릇색
-		return float4(0.7f, 0.7f, 0.7f, 0.8f);
+		return float4(0.7f, 0.7f, 0.7f, 1.f);
 	if (g_int_0 == 3) // 갈증 상태바
 		return float4(0.4f, 0.4f, 0.8f, 1.f);
 	if (g_int_0 == 4) // 배경색
-		return float4(0.6f, 0.6f, 0.6f, 0.5f);
+		return float4(0.8f, 0.8f, 0.8f, 0.5f);
 	if (g_int_0 == 5) // HP
 		return float4(0.2f, 0.6f, 0.2f, 1.f);
 	if (g_int_0 == 6) // 배고픔
 		return float4(0.7f, 0.4f, 0.f, 1.f);
+	if (g_int_0 == 7)
+		return float4(0.2f, 0.2f, 0.2f, 0.8f);
+
+	//if(g_int_0 != 0)
+		//return g_vec_0;
 
 	float4 color = g_tex_0.Sample(g_sam_0, _input.vUV);
 	color[3] = color[3] * g_float_0;

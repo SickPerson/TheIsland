@@ -67,6 +67,7 @@ void CSceneMgr::Init()
 	m_pCurScene->GetLayer( 2 )->SetName( L"Monster" );
 	m_pCurScene->GetLayer( 3 )->SetName( L"Bullet" );
 
+	m_pCurScene->GetLayer( 29 )->SetName( L"Invisible" );
 	m_pCurScene->GetLayer( 30 )->SetName( L"UI" );
 	m_pCurScene->GetLayer( 31 )->SetName( L"Tool" );
 
