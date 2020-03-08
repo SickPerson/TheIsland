@@ -14,6 +14,8 @@ constexpr	int	MAX_STR_LEN = 50;
 
 using Packet = unsigned char;
 
+char SERVERIP[20];
+
 #define WORLD_WIDTH 800
 #define WORLD_HEIGHT 800
 
@@ -95,7 +97,8 @@ struct sc_packet_add_object {
 struct cs_packet_login {
 	char	size;
 	char	type;
-	char player_id[10];
+	wchar_t	player_id[10];
+	wchar_t	player_pw[10];
 };
 
 struct cs_packet_move {
