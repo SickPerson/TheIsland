@@ -12,6 +12,10 @@ private:
 	WSABUF	m_wbRecvWsaBuf;
 public:
 	void SendLoginPacket(wchar_t* _wcPlayerID, wchar_t* _wcPlayerPW);
+
+public:
+	bool GetLoginSend() {}
+	void SetloginSend() {}
 public:
 	CPacketMgr();
 	~CPacketMgr();

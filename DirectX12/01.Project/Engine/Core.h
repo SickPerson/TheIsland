@@ -12,6 +12,12 @@ public:
 	void Progress();
 
 private:
+	std::shared_ptr<std::thread>	m_tNetworkThread = nullptr;
+public:
+	void InitNetwork();
+	void RunNetwork();
+	bool GetStartLoop();
+private:
 	void ChangeWindowSize(HWND _hWnd, const tResolution& _resolution);
 };
 
