@@ -88,12 +88,6 @@
     <Filter Include="03. Manager\Resource">
       <UniqueIdentifier>{429fd413-a3c0-4796-a0e6-ff1f1d4562e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="07. NetWork">
-      <UniqueIdentifier>{fe725b2d-e8af-4b04-84bd-c0ffcc1d6414}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="07. NetWork\PacketMgr">
-      <UniqueIdentifier>{613c3086-8649-438e-a26c-194cd974d18a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -258,15 +252,6 @@
     <ClInclude Include="ResMgr.h">
       <Filter>03. Manager\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Network.h">
-      <Filter>07. NetWork</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketMgr.h">
-      <Filter>07. NetWork\PacketMgr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Server\Server\protocol.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -418,12 +403,6 @@
     </ClCompile>
     <ClCompile Include="BulletScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="Network.cpp">
-      <Filter>07. NetWork</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketMgr.cpp">
-      <Filter>07. NetWork\PacketMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
