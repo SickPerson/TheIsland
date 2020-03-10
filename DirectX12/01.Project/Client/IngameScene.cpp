@@ -77,25 +77,25 @@ void CIngameScene::Init()
 	// AddGameObject
 	m_pScene->FindLayer( L"Player" )->AddGameObject(pPlayer);
 
-	//pObject = new CGameObject; // 지금 먼가 안되서 테스트하려고 임시로 만들어둔 오브젝트
-	//pObject->SetName(L"Player Object");
-	//pObject->AddComponent(new CTransform);
-	//pObject->AddComponent(new CMeshRender);
-	//pObject->AddComponent(new CTestScript);
-	//pObject->GetScript<CTestScript>()->SetTestObject(pPlayer);
-	//// Transform 설정
-	//pObject->Transform()->SetLocalPos(Vec3(0.f, 25.f, 150.f));
-	//pObject->Transform()->SetLocalScale(Vec3(5.f, 5.f, 100.f));
-	//pObject->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
+	pObject = new CGameObject;
+	pObject->SetName(L"Player Object");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+	pObject->AddComponent(new CTestScript);
+	pObject->GetScript<CTestScript>()->SetTestObject(*&pPlayer);
+	// Transform 설정
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 25.f, 150.f));
+	pObject->Transform()->SetLocalScale(Vec3(5.f, 5.f, 100.f));
+	pObject->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
 
-	//// MeshRender 설정
-	//pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"CubeMesh"));
-	//pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
-	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
-	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+	// MeshRender 설정
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"CubeMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
 
-	//// AddGameObject
-	//m_pScene->FindLayer(L"Player")->AddGameObject(pObject);
+	// AddGameObject
+	m_pScene->FindLayer(L"Player")->AddGameObject(pObject);
 
 
 	// ==================
