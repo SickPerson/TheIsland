@@ -21,8 +21,8 @@
 using namespace std;
 using namespace chrono;
 
-// SingleTon
-#include "SingleTon.h"
+// define
+#include "define.h"
 
 // enum ¹®
 #include "types.h"

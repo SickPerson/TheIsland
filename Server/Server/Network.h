@@ -14,9 +14,9 @@ private:
 	volatile unsigned short m_usUserID = 0;
 
 public:
-	bool	InitWinSock();
-	bool	InitCompletionPort();
-	bool	InitSock();
+	bool InitWinSock();
+	bool InitCompletionPort();
+	bool InitSock();
 
 	bool Initialize();
 	void Disconnect();
