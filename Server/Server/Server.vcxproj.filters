@@ -55,6 +55,9 @@
     <Filter Include="07. Util\01. TimerMgr">
       <UniqueIdentifier>{59a9c072-505c-4400-96ea-e48947eb2901}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Object\01. Dynamic\01. Player">
+      <UniqueIdentifier>{9f6fec07-7d74-412f-a54d-bd43b4f153f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -84,6 +87,10 @@
     <ClCompile Include="TimerMgr.cpp">
       <Filter>07. Util\01. TimerMgr</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>04. Object\01. Dynamic\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Playerpool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -123,6 +130,10 @@
     <ClInclude Include="define.h">
       <Filter>99.default\01.header</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>04. Object\01. Dynamic\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Playerpool.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Server.rc" />

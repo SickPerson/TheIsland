@@ -144,6 +144,8 @@
     <ClInclude Include="define.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="PacketMgr.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Playerpool.h" />
     <ClInclude Include="PlayerProcess.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="protocol.h" />
@@ -159,6 +161,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="PacketMgr.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Playerpool.cpp" />
     <ClCompile Include="PlayerProcess.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="stdafx.cpp" />

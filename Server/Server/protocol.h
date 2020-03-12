@@ -22,9 +22,11 @@ char SERVERIP[20];
 // Client -> Server Packet Protocol
 constexpr	char	CS_LOGIN = 0;
 constexpr	char	CS_LOGOUT = 1;
-constexpr	char	CS_MOVE = 2;
-constexpr	char	CS_ATTACK = 3;
-constexpr	char	CS_CHAT = 4;
+constexpr	char	CS_LOOK = 2;
+constexpr	char	CS_POS = 3;
+constexpr	char	CS_ATTACK = 4;
+constexpr	char	CS_IDLE = 5;
+constexpr	int		CS_END = 6;
 
 // Server -> Client Packet Protocol
 constexpr	char	SC_LOGIN_OK = 0;

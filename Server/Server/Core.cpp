@@ -1,18 +1,14 @@
 #include "Core.h"
 #include "Network.h"
 
-DEFINITION_SINGLE(CCore)
-
 CCore::CCore()
 {
 	m_iNumWorkerThread = 0;
 	m_vWorkerThread.clear();
 }
 
-
 CCore::~CCore()
 {
-	CNetwork::DestroyInst();
 }
 
 void CCore::Initalize()

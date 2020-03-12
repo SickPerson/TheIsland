@@ -11,8 +11,10 @@
 
 #include <cstdlib>
 #include <mutex>
+#include <shared_mutex>
 
 #include <concurrent_queue.h>
+#include <concurrent_unordered_set.h>
 
 #include <vector>
 #include <set>

@@ -5,7 +5,7 @@
 			type();\
 			~type();\
 		public:\
-			static	Type*	GetInst()\
+			static	type*	GetInst()\
 			{\
 					static type mgr;\
 					return &mgr;\
