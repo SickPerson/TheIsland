@@ -13,8 +13,6 @@
 #include "PathMgr.h"
 #include "ConstantBuffer.h"
 
-#include "../Engine/Network.h"
-
 
 CCore::CCore()
 	: m_hMainHwnd(nullptr)
@@ -85,19 +83,4 @@ void CCore::Progress()
 		CRenderMgr::GetInst()->Render();
 	}
 	CEventMgr::GetInst()->Update();
-}
-
-void CCore::InitNetwork()
-{
-	CNetwork::GetInst();
-}
-
-void CCore::RunNetwork()
-{
-	m_tNetworkThread = std::make_shared<std::thread>([]() {CNetwork::GetInst()->RecvPacket(); });
-}
-
-bool CCore::GetStartLoop()
-{
-	return CNetwork::GetInst()->GetLoopStart();
 }

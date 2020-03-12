@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "Network.h"
 
-DEFINITION_SINGLE(CNetwork);
-
 CNetwork::CNetwork()
 {
+	m_ListenSock = INVALID_SOCKET;
 	m_bRunningServer = true;
+	m_pPlayerProcess = nullptr;
+	m_usUserID = 0;
 	Initialize();
 	GetServerIpAddress();
 }
@@ -17,8 +18,8 @@ CNetwork::~CNetwork()
 void CNetwork::GetServerIpAddress()
 {
 	PHOSTENT	hostinfo;
-	char				hostname[50];
-	char				ipaddr[50];
+	char		hostname[50];
+	char		ipaddr[50];
 	memset(hostname, 0, sizeof(hostname));
 	memset(ipaddr, 0, sizeof(ipaddr));
 
@@ -58,7 +59,7 @@ bool CNetwork::InitSock()
 	m_ListenSock = WSASocketW(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 	if (!m_ListenSock == INVALID_SOCKET) {
 		int err_no = WSAGetLastError();
-		Err_quit("Socket Err", err_no);
+		Err_display("Socket Err", err_no);
 		return false;
 	}
 
@@ -70,7 +71,7 @@ bool CNetwork::InitSock()
 	retval = ::bind(m_ListenSock, reinterpret_cast<SOCKADDR*>(&serveraddr), sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) {
 		int err_no = WSAGetLastError();
-		Err_quit("bind()", err_no);
+		Err_display("bind()", err_no);
 		return false;
 	}
 
@@ -85,6 +86,8 @@ bool CNetwork::InitSock()
 
 bool CNetwork::Initialize()
 {
+	m_pPlayerProcess = new CPlayerProcess();
+
 	if (!InitWinSock()) {
 		int err_no = WSAGetLastError();
 		Err_display("InitWinSock() err", err_no);
