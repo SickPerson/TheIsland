@@ -3,7 +3,7 @@
 
 class CDataBase
 {
-	DECLARE_SINGLE(CDataBase)
+	SINGLE(CDataBase)
 
 private:
 	SQLHENV		m_hEnv;

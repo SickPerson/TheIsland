@@ -46,6 +46,21 @@
     <Filter Include="04. Object\02. Static">
       <UniqueIdentifier>{a9705cb4-007e-47ef-84eb-473a60747b8a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Map">
+      <UniqueIdentifier>{8976ded3-ab4c-42e9-ba02-aac31a225773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Util">
+      <UniqueIdentifier>{b68fe45f-e641-437e-a918-4e9c1bdbc0c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. Util\01. TimerMgr">
+      <UniqueIdentifier>{59a9c072-505c-4400-96ea-e48947eb2901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Object\01. Dynamic\01. Player">
+      <UniqueIdentifier>{9f6fec07-7d74-412f-a54d-bd43b4f153f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Object\01. Dynamic\01. Player\Playerpool">
+      <UniqueIdentifier>{f968f2b4-682d-4c2c-81ef-dcb2d2a1148a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,12 +87,21 @@
     <ClCompile Include="Core.cpp">
       <Filter>01. Main\01. Core</Filter>
     </ClCompile>
+    <ClCompile Include="TimerMgr.cpp">
+      <Filter>07. Util\01. TimerMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>04. Object\01. Dynamic\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Playerpool.cpp">
+      <Filter>04. Object\01. Dynamic\01. Player\Playerpool</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>04. Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
-      <Filter>99.default\01.header</Filter>
-    </ClInclude>
-    <ClInclude Include="SingleTon.h">
       <Filter>99.default\01.header</Filter>
     </ClInclude>
     <ClInclude Include="PacketMgr.h">
@@ -107,6 +131,21 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Core.h">
       <Filter>01. Main\01. Core</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerMgr.h">
+      <Filter>07. Util\01. TimerMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>99.default\01.header</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>04. Object\01. Dynamic\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Playerpool.h">
+      <Filter>04. Object\01. Dynamic\01. Player\Playerpool</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>04. Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
