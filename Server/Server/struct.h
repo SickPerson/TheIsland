@@ -7,7 +7,7 @@ typedef struct Over_ex
 {
 	WSAOVERLAPPED	m_Overlapped;
 	WSABUF			m_DataBuffer;
-	UCHAR			m_MessageBuffer[MAX_BUF];
+	char			m_MessageBuffer[MAX_BUF];
 	EVENT_TYPE		m_Event;
 }OVER_EX, POVER_EX;
 
@@ -33,6 +33,22 @@ typedef struct User_info {
 	POS3D				pos;
 	set<unsigned int>	near_id;
 	mutex				near_lock;
+};
+
+/*_____________________________________________
+			[Timer Event]
+_______________________________________________*/
+struct Object_Event {
+	std::chrono::high_resolution_clock::time_point wakeup_time;
+	EVENT_TYPE	m_EventType;
+	EVENT_TYPE	m_OverType;
+	unsigned short m_usID;
+	unsigned short m_usOtherID;
+
+	constexpr bool operator <(const Object_Event& _left) const
+	{
+		return wakeup_time > _left.wakeup_time;
+	}
 };
 
 struct T_EVENT {

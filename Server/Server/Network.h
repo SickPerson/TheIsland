@@ -1,22 +1,34 @@
 #pragma once
 #include "stdafx.h"
+#include "PlayerProcess.h"
+
+#include "PacketMgr.h"
+#include "TimerMgr.h"
+#include "DataBase.h"
 
 class CNetwork
 {
-	DECLARE_SINGLE(CNetwork)
+	SINGLE(CNetwork)
 
 private:
-	HANDLE	m_hIocp;
-	SOCKET	m_ListenSock = INVALID_SOCKET;
-	volatile bool	m_bRunningServer = true;
+	HANDLE			m_hIocp;
+	SOCKET			m_ListenSock;
+	volatile bool	m_bRunningServer;
 
 private:
-	volatile unsigned short m_usUserID = 0;
+	CPlayerProcess*	m_pPlayerProcess;
+
+private:
+	volatile unsigned short m_usUserID;
 
 public:
-	bool	InitWinSock();
-	bool	InitCompletionPort();
-	bool	InitSock();
+	bool CreateSocket(SOCKET& _sClientSocket, unsigned short _usID);
+	bool Associate(HANDLE _hDevice, unsigned short _usID);
+
+public:
+	bool InitWinSock();
+	bool InitCompletionPort();
+	bool InitSock();
 
 	bool Initialize();
 	void Disconnect();
