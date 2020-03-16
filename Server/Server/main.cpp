@@ -15,6 +15,7 @@ int main() {
 	CCore::GetInst()->Initalize();
 	CCore::GetInst()->StartServer();
 	CCore::GetInst()->CloseServer();
+	CCore::GetInst()->DestroyInst();
 
 	_CrtDumpMemoryLeaks();
 }

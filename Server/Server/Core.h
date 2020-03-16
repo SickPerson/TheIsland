@@ -3,7 +3,7 @@
 
 class CCore
 {
-	SINGLE(CCore)
+	DECLARE_SINGLE(CCore)
 
 private:
 	int		m_iCpuCore;

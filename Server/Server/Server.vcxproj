@@ -141,19 +141,15 @@
   <ItemGroup>
     <ClInclude Include="Core.h" />
     <ClInclude Include="DataBase.h" />
-    <ClInclude Include="define.h" />
     <ClInclude Include="Network.h" />
-    <ClInclude Include="Object.h" />
     <ClInclude Include="PacketMgr.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Playerpool.h" />
     <ClInclude Include="PlayerProcess.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="protocol.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SingleTon.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="struct.h" />
-    <ClInclude Include="TimerMgr.h" />
     <ClInclude Include="types.h" />
   </ItemGroup>
   <ItemGroup>
@@ -161,14 +157,10 @@
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Network.cpp" />
-    <ClCompile Include="Object.cpp" />
     <ClCompile Include="PacketMgr.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Playerpool.cpp" />
     <ClCompile Include="PlayerProcess.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="TimerMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Server.rc" />

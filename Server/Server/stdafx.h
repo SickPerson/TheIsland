@@ -4,46 +4,25 @@
 #include <WinSock2.h>
 #include <Windows.h>
 
-#include <sql.h>
-#include <sqlext.h>
-
-#include <tchar.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <cstdlib>
-#include <ctime>
+#include <sqlext.h>  
 
 #include <iostream>
 #include <thread>
+
+#include <cstdlib>
 #include <mutex>
-#include <shared_mutex>
 
 #include <concurrent_queue.h>
-#include <concurrent_unordered_set.h>
-#include <concurrent_unordered_map.h>
-#include <concurrent_priority_queue.h>
 
 #include <vector>
 #include <set>
 #include <map>
 
-/*///////////////////////////////
-	다렉 관련 필요 헤더 파일.
-*////////////////////////////////
-#include <d3d12.h>
-#include <dxgi1_4.h>
-#include <D3Dcompiler.h>
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
-#include <DirectXColors.h>
-#include <DirectXCollision.h>
-
 using namespace std;
 using namespace chrono;
-using namespace concurrency;
 
-// define
-#include "define.h"
+// SingleTon
+#include "SingleTon.h"
 
 // enum 문
 #include "types.h"
