@@ -35,21 +35,6 @@ typedef struct User_info {
 	mutex				near_lock;
 };
 
-/*_____________________________________________
-			[Timer Event]
-_______________________________________________*/
-struct Object_Event {
-	std::chrono::high_resolution_clock::time_point wakeup_time;
-	EVENT_TYPE	m_EventType;
-	unsigned short m_usID;
-	unsigned short m_usOtherID;
-
-	constexpr bool operator <(const Object_Event& _left) const
-	{
-		return wakeup_time > _left.wakeup_time;
-	}
-};
-
 struct T_EVENT {
 	int do_object;
 	EVENT_TYPE event_type;
