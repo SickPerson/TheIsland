@@ -19,9 +19,6 @@
     <Filter Include="ComponentScript">
       <UniqueIdentifier>{2f1659d4-5d30-44a2-a9aa-db1ed73be212}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Network">
-      <UniqueIdentifier>{3f83644d-babb-4beb-a550-0f4a5bd742cb}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -51,12 +48,6 @@
     <ClInclude Include="InventoryScript.h">
       <Filter>ComponentScript</Filter>
     </ClInclude>
-    <ClInclude Include="Network.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketMgr.h">
-      <Filter>Network</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -79,12 +70,6 @@
     </ClCompile>
     <ClCompile Include="InventoryScript.cpp">
       <Filter>ComponentScript</Filter>
-    </ClCompile>
-    <ClCompile Include="Network.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketMgr.cpp">
-      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
