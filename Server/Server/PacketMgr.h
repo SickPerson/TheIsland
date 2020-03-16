@@ -4,7 +4,7 @@
 
 class PacketMgr
 {
-	DECLARE_SINGLE(PacketMgr)
+	SINGLE(PacketMgr)
 
 public:
 	static void Send_Packet(const unsigned short& id, void* buf);

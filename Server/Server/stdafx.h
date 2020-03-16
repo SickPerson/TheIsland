@@ -11,8 +11,10 @@
 
 #include <cstdlib>
 #include <mutex>
+#include <shared_mutex>
 
 #include <concurrent_queue.h>
+#include <concurrent_unordered_set.h>
 
 #include <vector>
 #include <set>
@@ -21,8 +23,8 @@
 using namespace std;
 using namespace chrono;
 
-// SingleTon
-#include "SingleTon.h"
+// define
+#include "define.h"
 
 // enum ¹®
 #include "types.h"
