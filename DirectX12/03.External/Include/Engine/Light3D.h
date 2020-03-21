@@ -1,11 +1,20 @@
 #pragma once
 #include "Component.h"
 
+#include "Mesh.h"
+#include "Material.h"
+#include "Ptr.h"
+
 class CLight3D :
 	public CComponent
 {
 private:
-	tLight3D m_tLightInfo;
+	tLight3D		m_tLightInfo;
+
+	Ptr<CMesh>		m_pVolumeMesh;
+	Ptr<CMaterial>	m_pLightMtrl;
+
+	int				m_iArrIdx;
 
 public:
 	void SetLightType(LIGHT_TYPE _eType);
@@ -17,11 +26,9 @@ public:
 	void SetLightRange(float _fRange) { m_tLightInfo.fRange = _fRange; }
 	const tLight3D& GetLight3DInfo() { return m_tLightInfo; }
 
-
-
 public:
 	virtual void FinalUpdate();
-
+	void Render();
 
 	virtual void SaveToScene(FILE* _pFile);
 	virtual void LoadFromScene(FILE* _pFile);

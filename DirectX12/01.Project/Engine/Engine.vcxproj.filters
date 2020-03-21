@@ -22,9 +22,6 @@
     <Filter Include="03. Manager">
       <UniqueIdentifier>{8b311ca8-6b38-4aff-a3dc-31e09e6f3287}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Shader">
-      <UniqueIdentifier>{85042201-4831-4cab-8025-85b2130e186c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Resource">
       <UniqueIdentifier>{a10c8955-93cb-452e-ae2e-3dfc917f5167}</UniqueIdentifier>
     </Filter>
@@ -61,9 +58,6 @@
     <Filter Include="06. GameObject\Component\Script">
       <UniqueIdentifier>{fe972038-7d6f-4095-9bb6-cb1a366a082e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Shader\ShaderCode">
-      <UniqueIdentifier>{a50daada-102e-476b-941c-f8bdc98c44be}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. GameObject\Component\Light">
       <UniqueIdentifier>{e7c84702-154f-4a96-9189-16d40ad76288}</UniqueIdentifier>
     </Filter>
@@ -87,6 +81,15 @@
     </Filter>
     <Filter Include="03. Manager\Resource">
       <UniqueIdentifier>{429fd413-a3c0-4796-a0e6-ff1f1d4562e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Shader">
+      <UniqueIdentifier>{85042201-4831-4cab-8025-85b2130e186c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Shader\ShaderCode">
+      <UniqueIdentifier>{a50daada-102e-476b-941c-f8bdc98c44be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Resource\FbxLoader">
+      <UniqueIdentifier>{084a25dc-68de-401c-a0e0-1091e1720450}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -201,9 +204,6 @@
     <ClInclude Include="extern.h">
       <Filter>00. etc</Filter>
     </ClInclude>
-    <ClInclude Include="func.h">
-      <Filter>00. etc</Filter>
-    </ClInclude>
     <ClInclude Include="global.h">
       <Filter>00. etc</Filter>
     </ClInclude>
@@ -251,6 +251,18 @@
     </ClInclude>
     <ClInclude Include="ResMgr.h">
       <Filter>03. Manager\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshData.h">
+      <Filter>05. Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="FBXLoader.h">
+      <Filter>05. Resource\FbxLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator3D.h">
+      <Filter>06. GameObject\Component\Animation\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="func.h">
+      <Filter>00. etc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -353,9 +365,6 @@
     <ClCompile Include="desc.cpp">
       <Filter>00. etc</Filter>
     </ClCompile>
-    <ClCompile Include="func.cpp">
-      <Filter>00. etc</Filter>
-    </ClCompile>
     <ClCompile Include="LandScape.cpp">
       <Filter>06. GameObject\Component\LandScape</Filter>
     </ClCompile>
@@ -404,6 +413,18 @@
     <ClCompile Include="BulletScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
+    <ClCompile Include="MeshData.cpp">
+      <Filter>05. Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXLoader.cpp">
+      <Filter>05. Resource\FbxLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator3D.cpp">
+      <Filter>06. GameObject\Component\Animation\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="func.cpp">
+      <Filter>00. etc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl">
@@ -424,6 +445,9 @@
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
     <FxCompile Include="func.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="light.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
   </ItemGroup>

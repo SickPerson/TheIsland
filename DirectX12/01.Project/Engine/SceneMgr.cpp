@@ -124,18 +124,21 @@ void CSceneMgr::CreateMRTUI()
 {
 	Vec3 vScale( 150.f, 150.f, 1.f );
 
-	Ptr<CTexture> arrTex[3] = { CResMgr::GetInst()->FindRes<CTexture>( L"DiffuseTargetTex" ),
-	CResMgr::GetInst()->FindRes<CTexture>( L"NormalTargetTex" ),
-	CResMgr::GetInst()->FindRes<CTexture>( L"PositionTargetTex" ) };
+	Ptr<CTexture> arrTex[5] = { CResMgr::GetInst()->FindRes<CTexture>( L"DiffuseTargetTex" )
+		, CResMgr::GetInst()->FindRes<CTexture>( L"NormalTargetTex" )
+		, CResMgr::GetInst()->FindRes<CTexture>( L"PositionTargetTex" )
+		, CResMgr::GetInst()->FindRes<CTexture>( L"DiffuseLightTargetTex" )
+		, CResMgr::GetInst()->FindRes<CTexture>( L"SpecularLightTargetTex" ) };
 
-	for ( UINT i = 0; i < 3; ++i )
+	for ( UINT i = 0; i < 5; ++i )
 	{
 		CGameObject* pObject = new CGameObject;
 		pObject->SetName( L"UI Object" );
-		pObject->FrustumCheck( false );
+		pObject->FrustumCheck( false );	// 절두체 컬링 사용하지 않음
 		pObject->AddComponent( new CTransform );
 		pObject->AddComponent( new CMeshRender );
 
+		// Transform 설정
 		tResolution res = CRenderMgr::GetInst()->GetResolution();
 
 		pObject->Transform()->SetLocalPos( Vec3( -( res.fWidth / 2.f ) + ( vScale.x / 2.f ) + ( i * vScale.x )

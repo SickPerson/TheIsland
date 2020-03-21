@@ -19,6 +19,12 @@ enum class CAM_TYPE
 class CCamera :
 	public CComponent
 {
+public:
+	CCamera();
+	virtual ~CCamera();
+
+	CLONE( CCamera );
+
 private:	
 	CFrustum	m_frustum;
 
@@ -80,13 +86,7 @@ public:
 	CAM_TYPE GetCamType() { return m_eCamType; }
 
 public:
-	CLONE(CCamera);
 	virtual void SaveToScene(FILE* _pFile);
 	virtual void LoadFromScene(FILE* _pFile);
-
-	
-public:
-	CCamera();
-	virtual ~CCamera();
 };
 

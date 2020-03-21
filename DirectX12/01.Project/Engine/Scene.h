@@ -9,6 +9,10 @@ class CSceneScript;
 class CScene :
 	public CEntity
 {
+public:
+	CScene();
+	virtual ~CScene();
+
 private:
 	CLayer*				m_arrLayer[MAX_LAYER];	
 	CSceneScript*		m_pCurSceneScript;
@@ -26,9 +30,7 @@ public:
 	void AddGameObject(int _iLayerIdx, CGameObject* _pObject, bool _bMoveAll);
 	CLayer* FindLayer(const wstring& _strLayerName);
 	CLayer* GetLayer(int _iIdx) { return m_arrLayer[_iIdx]; };
-
 	
-
 private:
 	void AddLayer(const wstring& _strLayerName, int _iIdx = -1);
 
@@ -48,9 +50,5 @@ public:
 
 		return pScript;
 	}
-
-public:
-	CScene();
-	virtual ~CScene();
 };
 

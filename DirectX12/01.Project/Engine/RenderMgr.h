@@ -39,6 +39,9 @@ public:
 	void Render();
 	void Render_tool();			
 
+	void Render_Lights();
+	void Merge_Light();
+
 private:
 	void CreateMRT();
 	
@@ -46,16 +49,9 @@ private:
 	void UpdateLight3D();
 
 public:
-	void RegisterLight2D(const tLight2D& _Light2D)
-	{
-		if (100 <= m_tLight2DInfo.iCount)
-		{
-			return;
-		}
+	void RegisterLight2D( const tLight2D& _Light2D );
 
-		m_tLight2DInfo.arrLight2D[m_tLight2DInfo.iCount++] = _Light2D;
-	}
-	void RegisterLight3D(CLight3D* _pLight3D) { if (m_vecLight3D.size() >= 100) return; m_vecLight3D.push_back(_pLight3D); }
+	void RegisterLight3D( CLight3D* _pLight3D );
 
 	CCamera* GetCamera(int _iIdx) { return m_vecCam[_iIdx]; }
 	void RegisterCamera(CCamera* _pCam) { m_vecCam.push_back(_pCam); }

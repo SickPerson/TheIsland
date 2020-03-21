@@ -23,12 +23,17 @@ private:
 	Ptr<CTexture>					m_pDSTex;
 	ComPtr<ID3D12DescriptorHeap>	m_pRTV;
 
+	D3D12_RESOURCE_BARRIER			m_TargetToRes[8];
+	D3D12_RESOURCE_BARRIER			m_ResToTarget[8];
+
 public:
 	void Create( UINT iCount, tRT* arrRT, Ptr<CTexture> pDSTex);
 	void OMSet( UINT iCount, UINT iOffset = 0 );
 	void OMSet();
 	void Clear();
 	void Clear( UINT iRTidx );
+	void TargetToResBarrier();
+	void ResToTargetBarrier();
 
 	Ptr<CTexture>	GetRTTex( UINT iIdx );
 	Ptr<CTexture>	GetDSTex();

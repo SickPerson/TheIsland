@@ -8,6 +8,12 @@
 class CMaterial :
 	public CResource
 {
+public:
+	CMaterial();
+	virtual ~CMaterial();
+
+	virtual CMaterial* Clone();
+
 private:
 	Ptr<CShader>	m_pShader;
 	tMtrlParam      m_tParam;
@@ -25,11 +31,5 @@ public:
 	virtual void Save(const wstring& _strPath);
 
 	Ptr<CShader> GetShader() { return m_pShader; }
-
-	virtual CMaterial* Clone();
-
-public:
-	CMaterial();
-	virtual ~CMaterial();
 };
 

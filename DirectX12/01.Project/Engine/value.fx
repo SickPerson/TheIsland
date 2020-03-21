@@ -32,16 +32,18 @@ struct tLight3DInfo
 	int         ipadding;
 };
 
-
 // constant register 
 cbuffer TRANSFORM_MATRIX : register( b0 )
 {
 	row_major matrix g_matWorld;
 	row_major matrix g_matView;
 	row_major matrix g_matProj;
-
 	row_major matrix g_matWV;
 	row_major matrix g_matWVP;
+
+	row_major matrix g_matWorldInv;
+	row_major matrix g_matViewInv;
+	row_major matrix g_matProjInv;
 };
 
 cbuffer MATERIAL_PARAM : register( b1 )
@@ -104,6 +106,7 @@ cbuffer LIGHT3D : register( b4 )
 	int             g_iLight3DCount;
 	int3            padding3DLight;
 };
+
 
 cbuffer TEST : register( b5 )
 {

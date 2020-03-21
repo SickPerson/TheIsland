@@ -9,10 +9,12 @@
 
 #include "TimeMgr.h"
 #include "EventMgr.h"
+#include "ResMgr.h"
 
 #include "Light3D.h"
 
 #include "MRT.h"
+
 
 CRenderMgr::CRenderMgr()
 	: m_iRTVHeapSize(0)
@@ -41,43 +43,74 @@ void CRenderMgr::Render()
 
 	// DeferredMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->Clear();
-	m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
+	//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
+
+	// LightMRT 초기화
+	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->Clear();
+
+	// ==================================
+	// Main Camera 로 Deferred 렌더링 진행
+	// ==================================
+	m_vecCam[0]->SortGameObject();
+
+	// Deferred MRT 셋팅
+	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->OMSet();
+	m_vecCam[0]->Render_Deferred();
+	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->TargetToResBarrier();
+
+	// Render Light
+	Render_Lights();
+
+	// Merge (Diffuse Target, Diffuse Light Target, Specular Target )		
+	Merge_Light();
+
+	// Forward Render
+	m_vecCam[0]->Render_Forward(); // skybox, grid, ui
+
+	//=================================
+	// 추가 카메라는 forward render 만
+	//=================================
+	for ( int i = 1; i < m_vecCam.size(); ++i )
+	{
+		m_vecCam[i]->SortGameObject();
+		m_vecCam[i]->Render_Forward();
+	}
 
 	// 카메라 반복문 돌면서
-	for (size_t i = 0; i < m_vecCam.size(); ++i)
-	{
-		// 물체 분류 작업 forward로 출력할것인지 deffered로 출력할 것인지
-		m_vecCam[i]->SortGameObject();
+	//for (size_t i = 0; i < m_vecCam.size(); ++i)
+	//{
+	//	// 물체 분류 작업 forward로 출력할것인지 deffered로 출력할 것인지
+	//	m_vecCam[i]->SortGameObject();
 
-		// 일반적인 카메라
-		if (CAM_TYPE::BASIC == m_vecCam[i]->GetCamType())
-		{
-			// Deferred MRT 셋팅
-			m_arrMRT[(UINT)MRT_TYPE::DEFERRED]->OMSet();
-			m_vecCam[i]->Render_Deferred();
+	//	// 일반적인 카메라
+	//	if (CAM_TYPE::BASIC == m_vecCam[i]->GetCamType())
+	//	{
+	//		// Deferred MRT 셋팅
+	//		m_arrMRT[(UINT)MRT_TYPE::DEFERRED]->OMSet();
+	//		m_vecCam[i]->Render_Deferred();
 
-			// Light MRT 셋팅
+	//		// Light MRT 셋팅
 
-			// SwapChain MRT 셋팅		
-			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
-			m_vecCam[i]->Render_Forward();
-			// 타겟이 SwapChain으로 바꼈으니 카메라 Render도 Forward로 변경해서 Rendering
+	//		// SwapChain MRT 셋팅		
+	//		m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
+	//		m_vecCam[i]->Render_Forward();
+	//		// 타겟이 SwapChain으로 바꼈으니 카메라 Render도 Forward로 변경해서 Rendering
 
-			// Merge (Diffuse Target, Diffuse Light Target, Specular Light Target)
-		}
-		else if (CAM_TYPE::INVENTORY == m_vecCam[i]->GetCamType())
-		{
-			// Deferred MRT 셋팅
-			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
-			m_vecCam[i]->Render_Deferred();
+	//		// Merge (Diffuse Target, Diffuse Light Target, Specular Light Target)
+	//	}
+	//	else if (CAM_TYPE::INVENTORY == m_vecCam[i]->GetCamType())
+	//	{
+	//		// Deferred MRT 셋팅
+	//		m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
+	//		m_vecCam[i]->Render_Deferred();
 
-			// Light MRT 셋팅
+	//		// Light MRT 셋팅
 
-			// SwapChain MRT 셋팅		
-			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
-			m_vecCam[i]->Render_Forward();
-		}
-	}	
+	//		// SwapChain MRT 셋팅		
+	//		m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
+	//		m_vecCam[i]->Render_Forward();
+	//	}
+	//}	
 
 	// 출력
 	CDevice::GetInst()->Render_Present();
@@ -92,6 +125,34 @@ void CRenderMgr::Render_tool()
 	// 광원 정보 업데이트
 	UpdateLight2D();
 	UpdateLight3D();
+}
+
+void CRenderMgr::Render_Lights()
+{
+	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->OMSet();
+
+	// 광원을 그린다.
+	for ( UINT i = 0; i < m_vecLight3D.size(); ++i )
+	{
+		m_vecLight3D[i]->Light3D()->Render();
+	}
+
+	m_vecLight3D.clear();
+	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->TargetToResBarrier();
+
+	// SwapChain MRT 셋팅
+	UINT iIdx = CDevice::GetInst()->GetSwapchainIdx();
+	m_arrMRT[( UINT )MRT_TYPE::SWAPCHAIN]->OMSet( 1, iIdx );
+}
+
+void CRenderMgr::Merge_Light()
+{
+	// Diffuse + Lights
+	static Ptr<CMesh> pRectMesh = CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" );
+	static Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"MergeLightMtrl" );
+
+	pMtrl->UpdateData();
+	pRectMesh->Render();
 }
 
 void CRenderMgr::UpdateLight2D()
@@ -121,6 +182,23 @@ void CRenderMgr::UpdateLight3D()
 	CDevice::GetInst()->SetConstBufferToRegister(pLight3DBuffer, iOffsetPos);
 	
 	m_vecLight3D.clear();
+}
+
+void CRenderMgr::RegisterLight2D( const tLight2D & _Light2D )
+{
+	if ( 100 <= m_tLight2DInfo.iCount )
+	{
+		return;
+	}
+
+	m_tLight2DInfo.arrLight2D[m_tLight2DInfo.iCount++] = _Light2D;
+}
+
+void CRenderMgr::RegisterLight3D( CLight3D * _pLight3D )
+{
+	if ( m_vecLight3D.size() >= 100 )
+		return;
+	m_vecLight3D.push_back( _pLight3D );
 }
 
 CMRT * CRenderMgr::GetMRT( MRT_TYPE eType )

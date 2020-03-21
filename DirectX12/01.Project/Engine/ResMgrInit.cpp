@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ResMgr.h"
+#include "RenderMgr.h"
 
 void CResMgr::CreateDefaultShader()
 {
@@ -182,6 +183,67 @@ void CResMgr::CreateDefaultShader()
 	pShader->AddShaderParam( tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 } );
 	pShader->Create( SHADER_POV::FORWARD );
 	AddRes( L"LandScapeShader", pShader );
+
+	// ===============
+	// DirLight Shader
+	// ===============
+	pShader = new CShader;
+	pShader->CreateVertexShader( L"Shader\\light.fx", "VS_DirLight", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\light.fx", "PS_DirLight", "ps_5_0" );
+
+	// One-One Blend
+	pShader->SetBlendState( BLEND_TYPE::ONEBLEND );
+
+	// No Depth Test, No Depth Write
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE );
+
+	pShader->AddShaderParam( tShaderParam{ L"Light Index", SHADER_PARAM::INT_0 } );
+	pShader->AddShaderParam( tShaderParam{ L"Normal Target Texture", SHADER_PARAM::TEX_0 } );
+	pShader->AddShaderParam( tShaderParam{ L"Position Target Texture", SHADER_PARAM::TEX_1 } );
+	pShader->Create( SHADER_POV::LIGHTING );
+
+	AddRes( L"DirLightShader", pShader );
+
+	// ==================
+	// PointLight Shader
+	// ==================
+	pShader = new CShader;
+	pShader->CreateVertexShader( L"Shader\\light.fx", "VS_PointLight", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\light.fx", "PS_PointLight", "ps_5_0" );
+
+	// One-One Blend
+	pShader->SetBlendState( BLEND_TYPE::ONEBLEND );
+
+	// No Depth Test, No Depth Write
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE );
+
+	// Cull_None
+	pShader->SetRasterizerType( RS_TYPE::CULL_FRONT );
+
+	pShader->AddShaderParam( tShaderParam{ L"Light Index", SHADER_PARAM::INT_0 } );
+	pShader->AddShaderParam( tShaderParam{ L"Normal Target Texture", SHADER_PARAM::TEX_0 } );
+	pShader->AddShaderParam( tShaderParam{ L"Position Target Texture", SHADER_PARAM::TEX_1 } );
+	pShader->AddShaderParam( tShaderParam{ L"Render Target Resolution", SHADER_PARAM::VEC2_0 } );
+
+	pShader->Create( SHADER_POV::LIGHTING );
+	AddRes( L"PointLightShader", pShader );
+
+	// ==================
+	// MergeLight Shader
+	// ==================
+	pShader = new CShader;
+	pShader->CreateVertexShader( L"Shader\\light.fx", "VS_MergeLight", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\light.fx", "PS_MergeLight", "ps_5_0" );
+
+	// No Depth Test, No Depth Write
+	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE );
+
+	pShader->AddShaderParam( tShaderParam{ L"Diffuse Target Texture", SHADER_PARAM::TEX_0 } );
+	pShader->AddShaderParam( tShaderParam{ L"Light Target Texture", SHADER_PARAM::TEX_1 } );
+	pShader->AddShaderParam( tShaderParam{ L"Specular Target Texture", SHADER_PARAM::TEX_2 } );
+
+	pShader->Create( SHADER_POV::LIGHTING );
+	AddRes( L"MergeLightShader", pShader );
 }
 
 
@@ -266,6 +328,56 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->SetShader( FindRes<CShader>( L"LandScapeShader" ) );
 	AddRes( L"LandScapeMtrl", pMtrl );
 
+	// Dir Light
+	{
+		pMtrl = new CMaterial;
+		pMtrl->DisableFileSave();
+		pMtrl->SetShader( FindRes<CShader>( L"DirLightShader" ) );
+
+		Ptr<CTexture> pTargetTex = FindRes<CTexture>( L"NormalTargetTex" );
+		pMtrl->SetData( SHADER_PARAM::TEX_0, pTargetTex.GetPointer() );
+
+		pTargetTex = FindRes<CTexture>( L"PositionTargetTex" );
+		pMtrl->SetData( SHADER_PARAM::TEX_1, pTargetTex.GetPointer() );
+
+		AddRes( L"DirLightMtrl", pMtrl );
+	}
+
+	// Point Light
+	{
+		pMtrl = new CMaterial;
+		pMtrl->DisableFileSave();
+		pMtrl->SetShader( FindRes<CShader>( L"PointLightShader" ) );
+
+		Ptr<CTexture> pTargetTex = FindRes<CTexture>( L"NormalTargetTex" );
+		pMtrl->SetData( SHADER_PARAM::TEX_0, pTargetTex.GetPointer() );
+
+		pTargetTex = FindRes<CTexture>( L"PositionTargetTex" );
+		pMtrl->SetData( SHADER_PARAM::TEX_1, pTargetTex.GetPointer() );
+
+		tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+		pMtrl->SetData( SHADER_PARAM::VEC2_0, &vResolution );
+
+		AddRes( L"PointLightMtrl", pMtrl );
+	}
+
+	// Merge Light
+	{
+		pMtrl = new CMaterial;
+		pMtrl->DisableFileSave();
+		pMtrl->SetShader( FindRes<CShader>( L"MergeLightShader" ) );
+
+		Ptr<CTexture> pTargetTex = FindRes<CTexture>( L"DiffuseTargetTex" );
+		pMtrl->SetData( SHADER_PARAM::TEX_0, pTargetTex.GetPointer() );
+
+		pTargetTex = FindRes<CTexture>( L"DiffuseLightTargetTex" );
+		pMtrl->SetData( SHADER_PARAM::TEX_1, pTargetTex.GetPointer() );
+
+		pTargetTex = FindRes<CTexture>( L"SpecularLightTargetTex" );
+		pMtrl->SetData( SHADER_PARAM::TEX_2, pTargetTex.GetPointer() );
+
+		AddRes( L"MergeLightMtrl", pMtrl );
+	}
 }
 
 

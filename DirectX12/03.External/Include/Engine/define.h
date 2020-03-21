@@ -74,6 +74,7 @@ enum class TEXTURE_REGISTER
 enum class RES_TYPE
 {
 	MATERIAL,
+	MESHDATA,
 	MESH,
 	TEXTURE,
 	SOUND,
