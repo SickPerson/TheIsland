@@ -12,8 +12,6 @@ constexpr	unsigned short	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_WILD_PIG + ANIMAL_DEE
 constexpr	int	MAX_BUF = 1024;
 constexpr	int	MAX_STR_LEN = 50;
 
-using Packet = unsigned char;
-
 extern char SERVERIP[20];
 
 #define WORLD_WIDTH 800
@@ -32,10 +30,11 @@ constexpr	int		CS_END = 6;
 constexpr	char	SC_LOGIN_OK = 0;
 constexpr	char	SC_LOGIN_FAIL = 1;
 constexpr	char	SC_CONNECT = 2;
-constexpr	char	SC_POSITION = 3;
-constexpr	char	SC_CHAT = 4;
-constexpr	char	SC_STAT_CHANGE = 5;
-constexpr	char	SC_REMOVE_OBJECT = 6;
+constexpr	char	SC_DISCONNECT = 3;
+constexpr	char	SC_POSITION = 4;
+constexpr	char	SC_CHAT = 5;
+constexpr	char	SC_STAT_CHANGE = 6;
+constexpr	char	SC_REMOVE_OBJECT = 7;
 
 #pragma	pack(push, 1)
 
@@ -43,18 +42,24 @@ struct sc_packet_login_ok {
 	char	size;
 	char	type;
 	unsigned short	id;
-	int	hp, level, exp;
 };
 
 struct sc_packet_login_fail {
 	char	size;
 	char	type;
+	unsigned short id;
+};
+
+struct sc_packet_disconnect {
+	char	size;
+	char	type;
+	unsigned short id;
 };
 
 struct sc_packet_accept {
 	char	size;
 	char	type;
-	unsigned short usID;
+	unsigned short id;
 };
 
 struct sc_packet_position {

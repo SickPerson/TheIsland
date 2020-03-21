@@ -11,26 +11,11 @@ typedef struct Over_ex
 	EVENT_TYPE		m_Event;
 }OVER_EX, POVER_EX;
 
-typedef struct Position2d {
-	short x;
-	short y;
-
-	Position2d(short _x, short _y) : x(_x), y(_y) {}
-}POS2D, PPOS2D;
-
-typedef struct Position3d {
-	short x;
-	short y;
-	short z;
-
-	Position3d(short _x, short _y, short _z) : x(_x), y(_y), z(_z) {}
-}POS3D, PPOS3D;
-
 typedef struct User_info {
 	SOCKET				socket;
 	OVER_EX				over;
 	unsigned short		id;
-	POS3D				pos;
+	DirectX::XMFLOAT3	pos;
 	set<unsigned int>	near_id;
 	mutex				near_lock;
 };
@@ -48,17 +33,6 @@ struct Object_Event {
 	constexpr bool operator <(const Object_Event& _left) const
 	{
 		return wakeup_time > _left.wakeup_time;
-	}
-};
-
-struct T_EVENT {
-	int do_object;
-	EVENT_TYPE event_type;
-	high_resolution_clock::time_point	start_time;
-	int from_object;
-
-	constexpr bool operator <(const T_EVENT& _Left) const {
-		return (start_time > _Left.start_time);
 	}
 };
 

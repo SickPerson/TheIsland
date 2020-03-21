@@ -9,25 +9,25 @@ public:
 	CProcess();
 	virtual ~CProcess();
 public:
-	std::recursive_mutex	m_rmProcessMutex;
+	recursive_mutex	m_rmProcessMutex;
 public:
 	static class CPlayerPool*	m_pPlayerPool;
-	static concurrency::concurrent_unordered_set<unsigned short> m_cusLoginList;
-	static concurrency::concurrent_priority_queue<Object_Event>	m_cpqEventQueue;
-	static std::function<void(char, unsigned short)>			m_fpAttackEvent;
+	static concurrent_unordered_set<unsigned short> m_cusLoginList;
+	static concurrent_priority_queue<Object_Event>	m_cpqEventQueue;
+	static function<void(char, unsigned short)>			m_fpAttackEvent;
 
 public:
 	void InitProcessData();
 
 public:
-	void CopyBefore(concurrency::concurrent_unordered_set<unsigned short>& _cusList)
+	void CopyBefore(concurrent_unordered_set<unsigned short>& _cusList)
 	{
-		std::lock_guard<std::recursive_mutex> lock(m_rmProcessMutex);
+		lock_guard<recursive_mutex> lock(m_rmProcessMutex);
 		_cusList = m_cusLoginList;
 	}
 	void DeleteList(unsigned short _usID)
 	{
-		concurrency::concurrent_unordered_set<unsigned short> list;
+		concurrent_unordered_set<unsigned short> list;
 		CopyBefore(list);
 		for (auto au = list.begin(); au != list.end();)
 		{
@@ -39,12 +39,12 @@ public:
 			else
 				++au;
 		}
-		std::lock_guard<std::recursive_mutex>	lock(m_rmProcessMutex);
+		lock_guard<recursive_mutex>	lock(m_rmProcessMutex);
 		m_cusLoginList = list;
 	}
 	void InsertList(unsigned short _usID)
 	{
-		std::lock_guard<std::recursive_mutex>	lock(m_rmProcessMutex);
+		lock_guard<recursive_mutex>	lock(m_rmProcessMutex);
 		m_cusLoginList.insert(_usID);
 	}
 	bool CheckList(unsigned short _usID)
