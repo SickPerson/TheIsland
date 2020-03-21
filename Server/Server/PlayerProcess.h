@@ -23,10 +23,10 @@ public:
 		CS_ATTACK = 4;
 		CS_IDLE = 5;
 		CS_END = 6;*/
-		m_fppacketProcess[CS_LOGIN] = [&](unsigned short _usID, char* _packet)
+		/*m_fppacketProcess[CS_LOGIN] = [&](unsigned short _usID, char* _packet)
 		{
 			if(CProcess::m_pPlayerPool)
-		}
+		}*/
 	}
 	void BindUpdateViewListFunction()
 	{

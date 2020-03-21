@@ -6,7 +6,6 @@ class CTimerMgr
 	SINGLE(CTimerMgr);
 
 public:
-	CTimerMgr();
 	float GetTotalTime() const; // in seconds
 	float GetDeltaTime() const; // in seconds
 
