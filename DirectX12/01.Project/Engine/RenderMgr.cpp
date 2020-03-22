@@ -43,7 +43,7 @@ void CRenderMgr::Render()
 
 	// DeferredMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->Clear();
-	//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
+	m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
 
 	// LightMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->Clear();
@@ -72,8 +72,21 @@ void CRenderMgr::Render()
 	//=================================
 	for ( int i = 1; i < m_vecCam.size(); ++i )
 	{
-		m_vecCam[i]->SortGameObject();
-		m_vecCam[i]->Render_Forward();
+		if (m_vecCam[i]->GetCamType() == CAM_TYPE::INVENTORY)
+		{
+			m_vecCam[i]->SortGameObject();
+
+			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
+			m_vecCam[i]->Render_Deferred();
+
+			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
+			m_vecCam[i]->Render_Forward();
+		}
+		else
+		{
+			m_vecCam[i]->SortGameObject();
+			m_vecCam[i]->Render_Forward();
+		}
 	}
 
 	// 카메라 반복문 돌면서

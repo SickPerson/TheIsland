@@ -194,22 +194,6 @@ void CIngameScene::Init()
 	// AddGameObject
 	m_pScene->FindLayer( L"Monster" )->AddGameObject( pObject );
 
-
-	//// Script 설정	
-	//pObject->GetScript<CGridScript>()->SetToolCamera(pMainCam);
-	//pObject->GetScript<CGridScript>()->SetGridColor(Vec3(0.8f, 0.2f, 0.2f));
-
-	//// AddGameObject
-	//m_pScene->FindLayer(L"Tool")->AddGameObject(pObject);
-	//	
-
-	//// =================================
-	//// CollisionMgr 충돌 그룹(Layer) 지정
-	//// =================================
-	//// Player Layer 와 Monster Layer 는 충돌 검사 진행
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Monster");
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Bullet", L"Monster");
-
 	// Script 설정
 	pObject->AddComponent( new CMonsterScript );
 
@@ -327,6 +311,90 @@ void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
 		pObject->AddChild(pChildObject);
 		m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
 		_pInventory->GetScript<CInventoryScript>()->AddSlot(pChildObject);
+	}
+
+
+	Ptr<CTexture> pFont = CResMgr::GetInst()->Load<CTexture>(L"FontTex", L"Texture\\Font\\Font_0.png");
+	for (int i = 0; i < 5; ++i)
+	{
+		CGameObject* pChildObject = new CGameObject;
+		pChildObject->AddComponent(new CTransform);
+		pChildObject->AddComponent(new CMeshRender);
+
+		//pChildObject->Transform()->SetLocalPos(Vec3(-190.f + (i * 95.f), -330.f, 500.f));
+		pChildObject->Transform()->SetLocalPos(Vec3(-0.4f + (i * 0.2f), -0.6f, -100.f));
+		pChildObject->Transform()->SetLocalScale(Vec3(20.f / 500.f, 20.f / 80.f, 1.f));
+
+		pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
+
+		pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, pFont.GetPointer());
+
+		// 추후에 폰트 정보를 파일입출력으로 받아온 후
+		// 각 글자에 따라서 정보를 찍어주면 됨
+		if (i == 0)
+		{
+			float startU = 224.f / 256.f;
+			float startV = 66.f / 256.f;
+			float widthU = 15.f / 256.f;
+			float heightV = 32.f/ 256.f;
+
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &startU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_2, &startV);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		}
+		else if (i == 1)
+		{
+			float startU = 240.f / 256.f;
+			float startV = 66.f / 256.f;
+			float widthU = 15.f / 256.f;
+			float heightV = 32.f / 256.f;
+
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &startU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_2, &startV);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		}
+		else if (i == 2)
+		{
+			float startU = 0.f / 256.f;
+			float startV = 99.f / 256.f;
+			float widthU = 15.f / 256.f;
+			float heightV = 32.f / 256.f;
+
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &startU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_2, &startV);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		}
+		else if (i == 3)
+		{
+			float startU = 16.f / 256.f;
+			float startV = 99.f / 256.f;
+			float widthU = 15.f / 256.f;
+			float heightV = 32.f / 256.f;
+
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &startU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_2, &startV);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		}
+		else if (i == 4)
+		{
+			float startU = 32.f / 256.f;
+			float startV = 99.f / 256.f;
+			float widthU = 15.f / 256.f;
+			float heightV = 32.f / 256.f;
+
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &startU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_2, &startV);
+			pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		}
+
+		pObject->AddChild(pChildObject);
+		m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
 	}
 }
 

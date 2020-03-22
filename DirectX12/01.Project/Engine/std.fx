@@ -198,6 +198,46 @@ float4 PS_Tex(TEX_OUTPUT _input) : SV_Target
 }
 
 
+// =======================
+// Font Shader
+// =======================
+TEX_OUTPUT VS_Font(TEX_INPUT _input)
+{
+	TEX_OUTPUT output = (TEX_OUTPUT)0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.
+	float4 vWorldPos = mul(float4(_input.vPos, 1.f), g_matWorld);
+	float4 vViewPos = mul(vWorldPos, g_matView);
+	float4 vProjPos = mul(vViewPos, g_matProj);
+
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
+}
+// 0일떄는 start
+// 1일때는 start + width
+float4 PS_Font(TEX_OUTPUT _input) : SV_Target
+{
+	float4 vColor = (float4) 0.f;
+
+	// g_float_0 : Start U
+	// g_float_1 : Width U
+	// g_float_2 : Start V
+	// g_float_3 : Height V
+	_input.vUV.x = _input.vUV.x * g_float_1 + g_float_0;
+	_input.vUV.y = _input.vUV.y * g_float_3 + g_float_2;
+	// 0일때 0.2, 1일떄 0.4
+
+	vColor = g_tex_0.Sample(g_sam_1, _input.vUV);
+
+	if(vColor.z < 0.5f)
+		vColor = float4(0.4f, 0.4f, 0.8f, 1.f);
+
+	return vColor;
+}
+
+
 // =================
 // Collider2D Shader
 // =================
