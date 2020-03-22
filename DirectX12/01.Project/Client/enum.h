@@ -1,0 +1,9 @@
+#pragma once
+
+enum LOCK_TYPE
+{
+	LT_LOGIN_SUCCESS,
+	LT_LOOP_START,
+	LT_LOGIN_PACKET_SEND,
+	LT_END
+};

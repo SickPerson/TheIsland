@@ -14,6 +14,10 @@
 #include "ChatScript.h"
 #include "IngameScene.h"
 
+#include "Network.h"
+
+char SERVERIP[20]{};
+
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -33,6 +37,9 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow )
 {
+	cout << "IP:";
+	cin >> SERVERIP;
+
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	UNREFERENCED_PARAMETER( lpCmdLine );
 

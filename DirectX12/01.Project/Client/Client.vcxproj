@@ -97,7 +97,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
@@ -111,7 +111,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
     </ClCompile>
@@ -157,11 +157,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Server\Server\protocol.h" />
     <ClInclude Include="ChatScript.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="define.h" />
+    <ClInclude Include="enum.h" />
+    <ClInclude Include="header.h" />
     <ClInclude Include="IngameScene.h" />
     <ClInclude Include="InventoryScript.h" />
     <ClInclude Include="LoginScene.h" />
+    <ClInclude Include="Network.h" />
     <ClInclude Include="PlayerCamScript.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -173,6 +178,7 @@
     <ClCompile Include="IngameScene.cpp" />
     <ClCompile Include="InventoryScript.cpp" />
     <ClCompile Include="LoginScene.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="PlayerCamScript.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -1,0 +1,23 @@
+#pragma once
+
+#ifdef UNICODE
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+#else
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#endif
+
+#pragma comment(lib, "ws2_32.lib")
+
+#include <WinSock2.h>
+#include <mutex>
+#include <iostream>
+
+#include <concurrent_unordered_set.h>
+
+#include "define.h"
+#include "enum.h"
+
+#include "../../../Server/Server/protocol.h"
+
+using namespace std;
+using namespace concurrency;

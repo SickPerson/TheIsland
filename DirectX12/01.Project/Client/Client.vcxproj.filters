@@ -19,6 +19,12 @@
     <Filter Include="ComponentScript">
       <UniqueIdentifier>{2f1659d4-5d30-44a2-a9aa-db1ed73be212}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{52f171bf-d4ca-429f-88af-c401180441a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\etc">
+      <UniqueIdentifier>{aad681fd-419d-4643-9900-c2f3b2ce6f97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -48,6 +54,21 @@
     <ClInclude Include="InventoryScript.h">
       <Filter>ComponentScript</Filter>
     </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="header.h">
+      <Filter>Network\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="enum.h">
+      <Filter>Network\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>Network\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Server\Server\protocol.h">
+      <Filter>Network\etc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -70,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="InventoryScript.cpp">
       <Filter>ComponentScript</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

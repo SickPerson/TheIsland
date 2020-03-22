@@ -99,7 +99,8 @@ struct sc_packet_add_object {
 	int	hp, level, exp;
 };
 
-struct cs_packet_login {
+// client->server
+struct cs_login_packet {
 	char	size;
 	char	type;
 	wchar_t	player_id[10];
