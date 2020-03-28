@@ -175,6 +175,7 @@ call EngineCopy.bat</Command>
     <ClInclude Include="EventMgr.h" />
     <ClInclude Include="extern.h" />
     <ClInclude Include="FBXLoader.h" />
+    <ClInclude Include="FontMgr.h" />
     <ClInclude Include="FPSCamScript.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="func.h" />
@@ -233,6 +234,7 @@ call EngineCopy.bat</Command>
     <ClCompile Include="desc.cpp" />
     <ClCompile Include="EventMgr.cpp" />
     <ClCompile Include="FBXLoader.cpp" />
+    <ClCompile Include="FontMgr.cpp" />
     <ClCompile Include="FPSCamScript.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="func.cpp" />

@@ -164,6 +164,7 @@
     <ClInclude Include="enum.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="IngameScene.h" />
+    <ClInclude Include="InputScript.h" />
     <ClInclude Include="InventoryScript.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="Network.h" />
@@ -176,6 +177,7 @@
     <ClCompile Include="ChatScript.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="IngameScene.cpp" />
+    <ClCompile Include="InputScript.cpp" />
     <ClCompile Include="InventoryScript.cpp" />
     <ClCompile Include="LoginScene.cpp" />
     <ClCompile Include="Network.cpp" />

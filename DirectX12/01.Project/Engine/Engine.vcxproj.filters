@@ -240,9 +240,6 @@
     <ClInclude Include="SceneScript.h">
       <Filter>03. Manager\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="RenderMgr.h">
-      <Filter>03. Manager\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="MRT.h">
       <Filter>03. Manager\Rendering\MRT</Filter>
     </ClInclude>
@@ -263,6 +260,12 @@
     </ClInclude>
     <ClInclude Include="func.h">
       <Filter>00. etc</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderMgr.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="FontMgr.h">
+      <Filter>03. Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -424,6 +427,9 @@
     </ClCompile>
     <ClCompile Include="func.cpp">
       <Filter>00. etc</Filter>
+    </ClCompile>
+    <ClCompile Include="FontMgr.cpp">
+      <Filter>03. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

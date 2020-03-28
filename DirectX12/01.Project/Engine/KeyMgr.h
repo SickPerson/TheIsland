@@ -16,6 +16,9 @@ enum class KEY_TYPE
 	KEY_LALT,
 	KEY_ESC,
 
+	KEY_DOT,
+	KEY_BACKSPACE,
+
 	KEY_1,
 	KEY_2,
 	KEY_3,

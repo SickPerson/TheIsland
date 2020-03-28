@@ -13,6 +13,7 @@
 #include "PathMgr.h"
 #include "ConstantBuffer.h"
 
+#include "FontMgr.h"
 
 CCore::CCore()
 	: m_hMainHwnd(nullptr)
@@ -59,6 +60,7 @@ int CCore::Init(HWND _hWnd, const tResolution & _resolution, bool _bWindow)
 	CTimeMgr::GetInst()->Init();
 	CResMgr::GetInst()->Init();
 	CSceneMgr::GetInst()->Init();
+	CFontMgr::GetInst()->Init();
 
 	return S_OK;
 }

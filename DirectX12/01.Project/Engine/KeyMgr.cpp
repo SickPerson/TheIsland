@@ -19,6 +19,9 @@ int arrVK[(UINT)KEY_TYPE::KEY_END] =
 	VK_MENU,	// KEY_LALT,
 	VK_ESCAPE,	// KEY_ESC,
 
+	VK_OEM_PERIOD, //KEY_DOT,
+	VK_BACK,	//KEY_BACKSPACE,
+
 	'1',//KEY_1,
 	'2',//KEY_2,
 	'3',//KEY_3,

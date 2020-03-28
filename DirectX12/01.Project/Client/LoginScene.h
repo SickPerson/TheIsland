@@ -17,6 +17,11 @@ public:
 private:
 	CGameObject*		m_pID;
 	CGameObject*		m_pPassword;
+	CGameObject*		m_pIP;
+
+	string				m_strID;
+	string				m_strPassword;
+	string				m_strIP;
 
 public:
 	CGameObject* GetIDObj();
