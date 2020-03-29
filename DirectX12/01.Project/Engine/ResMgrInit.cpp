@@ -33,6 +33,14 @@ void CResMgr::CreateDefaultShader()
 	// BlendState ¼³Á¤
 	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
 
+	pShader->AddShaderParam(tShaderParam{ L"Start_U", SHADER_PARAM::FLOAT_0 });
+	pShader->AddShaderParam(tShaderParam{ L"Width_U", SHADER_PARAM::FLOAT_1 });
+	pShader->AddShaderParam(tShaderParam{ L"Start_V", SHADER_PARAM::FLOAT_2 });
+	pShader->AddShaderParam(tShaderParam{ L"Height_U", SHADER_PARAM::FLOAT_3 });
+
+	pShader->AddShaderParam(tShaderParam{ L"Font Color", SHADER_PARAM::VEC4_0 });
+	pShader->AddShaderParam(tShaderParam{ L"Back Color", SHADER_PARAM::VEC4_1 });
+
 	pShader->Create(SHADER_POV::FORWARD);
 
 	AddRes(L"FontShader", pShader);

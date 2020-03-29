@@ -37,8 +37,8 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow )
 {
-	cout << "IP:";
-	cin >> SERVERIP;
+	//cout << "IP:";
+	//cin >> SERVERIP;
 
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	UNREFERENCED_PARAMETER( lpCmdLine );

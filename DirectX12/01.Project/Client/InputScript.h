@@ -24,6 +24,9 @@ public:
 	// CScript을(를) 통해 상속됨
 	virtual void Update() override;
 
+private:
+	void WriteFont(char font);
+
 public:
 	void Init();
 	// 폰트를 띄울 글자 한개마다 게임오브젝트에 있는 메쉬 하나씩 사용

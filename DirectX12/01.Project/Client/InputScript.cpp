@@ -34,207 +34,55 @@ void CInputScript::Update()
 	{
 		if (KEY_TAB(KEY_TYPE::KEY_1))
 		{
-			m_strInput.push_back('1');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['1'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('1');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_2))
 		{
-			m_strInput.push_back('2');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['2'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('2');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_3))
 		{
-			m_strInput.push_back('3');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['3'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('3');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_4))
 		{
-			m_strInput.push_back('4');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['4'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('4');
 		}
-		else if (KEY_TAB(KEY_TYPE::KEY_1))
+		else if (KEY_TAB(KEY_TYPE::KEY_5))
 		{
-			m_strInput.push_back('5');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['5'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('5');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_6))
 		{
-			m_strInput.push_back('6');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['6'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('6');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_7))
 		{
-			m_strInput.push_back('7');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['7'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('7');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_8))
 		{
-			m_strInput.push_back('8');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['8'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('8');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_9))
 		{
-			m_strInput.push_back('9');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['9'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('9');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_0))
 		{
-			m_strInput.push_back('0');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['0'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('0');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_DOT))
 		{
-			m_strInput.push_back('.');
-			CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['.'];
-			Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-			float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-			float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-			float startU = tInfo.ix / sizeX;
-			float startV = tInfo.iy / sizeY;
-			float widthU = tInfo.iWidth / sizeX;
-			float heightV = tInfo.iHeight / sizeY;
-			pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-			pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-			pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-			pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+			WriteFont('.');
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_BACKSPACE))
 		{
+			int arra[10000000] = { 1 };
+
 			if (m_iCount > 0)
 			{
-				m_strInput.pop_back();
+				m_strInput.erase(m_strInput.length()-1, 1);
 				Ptr<CMaterial> pMtrl = m_vFont[--m_iCount]->MeshRender()->GetSharedMaterial();
 				float startU = 0.f;
 				float startV = 0.f;
@@ -263,6 +111,28 @@ void CInputScript::Update()
 				m_bEnable = true;
 			}
 		}*/
+	}
+}
+
+void CInputScript::WriteFont(char font)
+{
+	if (m_iCount < m_vFont.size())
+	{
+		m_strInput.push_back(font);
+		CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo[font];
+		Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
+		float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
+		float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
+		float startU = tInfo.ix / sizeX;
+		float startV = tInfo.iy / sizeY;
+		float widthU = tInfo.iWidth / sizeX;
+		float heightV = tInfo.iHeight / sizeY;
+		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
+		pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
 	}
 }
 
