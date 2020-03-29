@@ -2,6 +2,8 @@
 #include "FontMgr.h"
 
 #include "PathMgr.h"
+#include "Texture.h"
+#include "ResMgr.h"
 #include <fstream>
 
 CFontMgr::CFontMgr()
@@ -15,6 +17,8 @@ CFontMgr::~CFontMgr()
 
 void CFontMgr::Init()
 {
+	m_vecFontTex.emplace_back(CResMgr::GetInst()->Load<CTexture>(L"FontTex", L"Texture\\Font\\Font_0.png"));
+
 	std::ifstream readFont;
 
 	wstring strPath = CPathMgr::GetResPath();
@@ -61,14 +65,19 @@ void CFontMgr::Init()
 
 		tInfo.mCharInfo.insert(make_pair(tCharInfo.id, tCharInfo));
 	}
-	m_vFontInfo.emplace_back(tInfo);
+	m_vecFontInfo.emplace_back(tInfo);
 }
 CharInfo CFontMgr::GetCharInfo(char id, int index)
 {
-	return m_vFontInfo[index].mCharInfo[id];
+	return m_vecFontInfo[index].mCharInfo[id];
+}
+
+Ptr<CTexture> CFontMgr::GetFontTex(int index)
+{
+	return m_vecFontTex[index];
 }
 
 FontInfo CFontMgr::GetFontInfo(int index) const
 {
-	return m_vFontInfo[index];
+	return m_vecFontInfo[index];
 }

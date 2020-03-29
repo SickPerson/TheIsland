@@ -231,8 +231,10 @@ float4 PS_Font(TEX_OUTPUT _input) : SV_Target
 
 	vColor = g_tex_0.Sample(g_sam_1, _input.vUV);
 
+	vColor = vColor * g_vec4_0;
+
 	if(vColor.z < 0.5f)
-		vColor = float4(0.4f, 0.4f, 0.8f, 1.f);
+		vColor = g_vec4_1;
 
 	return vColor;
 }

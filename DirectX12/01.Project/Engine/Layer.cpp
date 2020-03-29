@@ -92,6 +92,12 @@ void CLayer::RemoveParentObj(CGameObject * _pObject)
 	assert(nullptr);
 }
 
+void CLayer::RemoveAll()
+{
+	m_vecLayerObj.clear();
+	m_vecParentObj.clear();
+}
+
 void CLayer::Awake()
 {
 	for (UINT i = 0; i < m_vecParentObj.size(); ++i)

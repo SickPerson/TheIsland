@@ -21,6 +21,9 @@
 #include "ChatScript.h"
 #include "InputScript.h"
 
+#include "IngameScene.h"
+#include <Engine/SceneMgr.h>
+
 CLoginScene::CLoginScene() :
 	m_pID(NULL),
 	m_pPassword(NULL)
@@ -35,8 +38,6 @@ CLoginScene::~CLoginScene()
 
 void CLoginScene::Init()
 {
-	Ptr<CTexture> pFont = CResMgr::GetInst()->Load<CTexture>(L"FontTex", L"Texture\\Font\\Font_0.png");
-
 	CGameObject* pObject = NULL;
 
 	// ====================
@@ -173,7 +174,7 @@ void CLoginScene::Init()
 
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
-		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, pFont.GetPointer());
+		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
 
 		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 		m_pIP->AddChild(pObject);
@@ -181,6 +182,24 @@ void CLoginScene::Init()
 		m_pIP->GetScript<CInputScript>()->SetRect(Rect(-250.f, -330.f, 500.f, 40.f));
 	}
 
+}
+
+void CLoginScene::Update()
+{
+	// 엔터를 눌렀을때 다음 씬으로 진입한다
+	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
+	{
+		// 입력한 IP를 받아옴
+		string strIP = m_pIP->GetScript<CInputScript>()->GetString();
+
+
+		// 씬 넘어가기전 오브젝트들 정리
+		m_pScene->FindLayer(L"UI")->RemoveAll();
+		m_pScene->FindLayer(L"Default")->RemoveAll();
+
+		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+		CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");
+	}
 }
 
 CGameObject * CLoginScene::GetIDObj()

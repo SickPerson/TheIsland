@@ -1,4 +1,5 @@
 #pragma once
+#include "Ptr.h"
 
 typedef struct CharInfo {
 	char id;
@@ -28,14 +29,18 @@ enum class FontFileInfo {
 	END,
 };
 
+class CTexture;
+
 class CFontMgr
 {
 	SINGLE(CFontMgr);
 private:
-	vector<FontInfo> m_vFontInfo;
+	vector<FontInfo>			m_vecFontInfo;
+	vector<Ptr<CTexture>>		m_vecFontTex;
 public:
 	void Init();
 	FontInfo GetFontInfo(int index = 0) const;
 	CharInfo GetCharInfo(char id, int index = 0);
+	Ptr<CTexture> GetFontTex(int index = 0);
 };
 

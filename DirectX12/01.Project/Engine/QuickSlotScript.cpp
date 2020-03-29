@@ -17,7 +17,7 @@ void CQuickSlotScript::Update()
 {
 	const vector<CGameObject *>& vecObj = GetObj()->GetChild();
 
-	if (KEY_TAB(KEY_TYPE::KEY_NUM1))
+	if (KEY_TAB(KEY_TYPE::KEY_1))
 	{
 		int a = 2;
 		if (m_iSelect == 0)
@@ -34,7 +34,7 @@ void CQuickSlotScript::Update()
 		}
 		vecObj[0]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 	}
-	else if (KEY_TAB(KEY_TYPE::KEY_NUM2))
+	else if (KEY_TAB(KEY_TYPE::KEY_2))
 	{
 		int a = 2;
 		if (m_iSelect == 1)
@@ -51,7 +51,7 @@ void CQuickSlotScript::Update()
 		}
 		vecObj[1]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 	}
-	else if (KEY_TAB(KEY_TYPE::KEY_NUM3))
+	else if (KEY_TAB(KEY_TYPE::KEY_3))
 	{
 		int a = 2;
 		if (m_iSelect == 2)
@@ -68,7 +68,7 @@ void CQuickSlotScript::Update()
 		}
 		vecObj[2]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 	}
-	else if (KEY_TAB(KEY_TYPE::KEY_NUM4))
+	else if (KEY_TAB(KEY_TYPE::KEY_4))
 	{
 		int a = 2;
 		if (m_iSelect == 3)
@@ -85,7 +85,7 @@ void CQuickSlotScript::Update()
 		}
 		vecObj[3]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 	}
-	else if (KEY_TAB(KEY_TYPE::KEY_NUM5))
+	else if (KEY_TAB(KEY_TYPE::KEY_5))
 	{
 		int a = 2;
 		if (m_iSelect == 4)

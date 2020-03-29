@@ -17,7 +17,7 @@ CInventoryScript::~CInventoryScript()
 
 void CInventoryScript::Update()
 {
-	if (KEY_TAB(KEY_TYPE::KEY_Q))
+	if (KEY_TAB(KEY_TYPE::KEY_I))
 	{
 		if (m_bActive)
 		{
