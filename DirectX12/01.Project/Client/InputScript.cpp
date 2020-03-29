@@ -78,8 +78,6 @@ void CInputScript::Update()
 		}
 		else if (KEY_TAB(KEY_TYPE::KEY_BACKSPACE))
 		{
-			int arra[10000000] = { 1 };
-
 			if (m_iCount > 0)
 			{
 				m_strInput.erase(m_strInput.length()-1, 1);
