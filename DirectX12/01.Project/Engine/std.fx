@@ -93,6 +93,9 @@ VS_OUTPUT VS_UI_Test(VS_INPUT _input)
 
 float4 PS_UI_Test(VS_OUTPUT _input) : SV_Target
 {
+	if (g_int_0 == -1)
+		return g_vec4_0;
+
 	if (g_int_0 == 1) // ¹è°æ»ö
 		return float4(0.4f, 0.4f, 0.4f, 0.5f);
 	if (g_int_0 == 2) // Äü½½¸©»ö
@@ -107,9 +110,6 @@ float4 PS_UI_Test(VS_OUTPUT _input) : SV_Target
 		return float4(0.7f, 0.4f, 0.f, 1.f);
 	if (g_int_0 == 7)
 		return float4(0.2f, 0.2f, 0.2f, 0.8f);
-
-	//if(g_int_0 != 0)
-		//return g_vec_0;
 
 	float4 color = g_tex_0.Sample(g_sam_0, _input.vUV);
 	color[3] = color[3] * g_float_0;

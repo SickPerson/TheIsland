@@ -23,6 +23,7 @@
 
 #include "IngameScene.h"
 #include <Engine/SceneMgr.h>
+#include <Engine/RenderMgr.h>
 
 CLoginScene::CLoginScene() :
 	m_pID(NULL),
@@ -53,7 +54,67 @@ void CLoginScene::Init()
 
 	m_pScene->GetLayer( 0 )->AddGameObject( pObject );
 
-	int a = 1;
+	CreateInputID();
+	CreateInputIP();
+}
+
+void CLoginScene::Update()
+{
+	// 엔터를 눌렀을때 다음 씬으로 진입한다
+	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
+	{
+		// 입력한 IP를 받아옴
+		string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
+		string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
+
+		// 씬 넘어가기전 오브젝트들 정리
+		m_pScene->FindLayer(L"UI")->RemoveAll();
+		m_pScene->FindLayer(L"Default")->RemoveAll();
+
+		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+		CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");
+	}
+
+	if (KEY_TAB(KEY_TYPE::KEY_LBTN))
+	{
+		tResolution tRes = CRenderMgr::GetInst()->GetResolution();
+		POINT vPos = CKeyMgr::GetInst()->GetMousePos();
+		Vec4 vBox = m_pIP->GetScript<CInputScript>()->GetRect();
+
+		vPos.x -= tRes.fWidth / 2.f;
+		vPos.y -= tRes.fHeight / 2.f;
+		vPos.y *= -1.f;
+
+		//std::cout << vPos.x << ", " << vPos.y << std::endl;
+
+		// IP 창 클릭?
+		if (vPos.x >= vBox.x && vPos.x <= vBox.z)
+		{
+			if (vPos.y >= vBox.y && vPos.y <= vBox.w)
+			{
+				//std::cout << "클릭!" << std::endl;
+				m_pIP->GetScript<CInputScript>()->SetEnable(true);
+				m_pID->GetScript<CInputScript>()->SetEnable(false);
+			}
+		}
+
+		vBox = m_pID->GetScript<CInputScript>()->GetRect();
+
+		// ID 창 클릭?
+		if (vPos.x >= vBox.x && vPos.x <= vBox.z)
+		{
+			if (vPos.y >= vBox.y && vPos.y <= vBox.w)
+			{
+				//std::cout << "클릭!" << std::endl;
+				m_pIP->GetScript<CInputScript>()->SetEnable(false);
+				m_pID->GetScript<CInputScript>()->SetEnable(true);
+			}
+		}
+	}
+}
+
+void CLoginScene::CreateInputID()
+{
 	// ===================
 	//		  ID창
 	// ===================
@@ -68,62 +129,127 @@ void CLoginScene::Init()
 
 	m_pID->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 	m_pID->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
-	m_pID->AddComponent(new CChatScript);
+	m_pID->AddComponent(new CInputScript);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pID);
 
-	pObject = new CGameObject;
+	CGameObject* pObject = new CGameObject;
 	pObject->SetName(L"ID Bar");
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 	pObject->FrustumCheck(false);
 
-	pObject->Transform()->SetLocalPos(Vec3(0.f, -80.f, 1.f));
+	pObject->Transform()->SetLocalPos(Vec3(0.f, -270.f, 1.f));
 	pObject->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
 
+	int a = 1;
 	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 	m_pID->AddChild(pObject);
+	m_pID->GetScript<CInputScript>()->SetFontSpace(pObject);
 
-	// ===================
-	//		Password창
-	// ===================
-	m_pPassword = new CGameObject;
-	m_pPassword->SetName(L"Password");
-	m_pPassword->AddComponent(new CTransform);
-	m_pPassword->AddComponent(new CMeshRender);
-	m_pPassword->FrustumCheck(false);
+	float fontSize = 500.f / 15.f;
 
-	m_pPassword->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	m_pPassword->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	for (int i = 0; i < 15; ++i)
+	{
+		pObject = new CGameObject;
+		pObject->SetName(L"ID Font");
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+		pObject->FrustumCheck(false);
 
-	m_pPassword->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	m_pPassword->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
-	m_pPassword->AddComponent(new CChatScript);
+		pObject->Transform()->SetLocalPos(Vec3(-250.f + (i * fontSize) + fontSize / 2.f, -270.f, 1.f));
+		pObject->Transform()->SetLocalScale(Vec3(fontSize, 40.f, 1.f));
 
-	m_pScene->FindLayer(L"UI")->AddGameObject(m_pPassword);
+		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
+		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
 
-	pObject = new CGameObject;
-	pObject->SetName(L"Password Bar");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
-	pObject->FrustumCheck(false);
+		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+		m_pID->AddChild(pObject);
+		m_pID->GetScript<CInputScript>()->AddInputObject(pObject);
+	}
+	m_pID->GetScript<CInputScript>()->SetRect(Vec4(-250.f, -290.f, 250.f, -250.f));
+	m_pID->GetScript<CInputScript>()->SetEnable(true);
 
-	pObject->Transform()->SetLocalPos(Vec3(0.f, -130.f, 1.f));
-	pObject->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
 
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+	// ID Info 
+	{
+		pObject = new CGameObject;
+		pObject->SetName(L"ID Info");
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+		pObject->FrustumCheck(false);
 
-	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+		pObject->Transform()->SetLocalPos(Vec3(-320.f, -270.f, 1.f));
+		pObject->Transform()->SetLocalScale(Vec3(40.f, 40.f, 1.f));
 
-	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-	m_pPassword->AddChild(pObject);
+		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
+		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
 
+		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+
+		CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['I'];
+		Ptr<CMaterial> pMtrl = pObject->MeshRender()->GetCloneMaterial();
+		float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
+		float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
+		float startU = tInfo.ix / sizeX;
+		float startV = tInfo.iy / sizeY;
+		float widthU = tInfo.iWidth / sizeX;
+		float heightV = tInfo.iHeight / sizeY;
+		Vec4 vFontColor = Vec4(1.f, 1.f, 1.f, 1.f);
+		Vec4 vFontBackColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		pMtrl->SetData(SHADER_PARAM::VEC4_0, &vFontColor);
+		pMtrl->SetData(SHADER_PARAM::VEC4_1, &vFontBackColor);
+		pObject->MeshRender()->SetMaterial(pMtrl);
+	}
+	{
+		pObject = new CGameObject;
+		pObject->SetName(L"ID Info");
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+		pObject->FrustumCheck(false);
+
+		pObject->Transform()->SetLocalPos(Vec3(-280.f, -270.f, 1.f));
+		pObject->Transform()->SetLocalScale(Vec3(40.f, 40.f, 1.f));
+
+		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
+		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
+
+		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+
+		CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['D'];
+		Ptr<CMaterial> pMtrl = pObject->MeshRender()->GetCloneMaterial();
+		float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
+		float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
+		float startU = tInfo.ix / sizeX;
+		float startV = tInfo.iy / sizeY;
+		float widthU = tInfo.iWidth / sizeX;
+		float heightV = tInfo.iHeight / sizeY;
+		Vec4 vFontColor = Vec4(1.f, 1.f, 1.f, 1.f);
+		Vec4 vFontBackColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		pMtrl->SetData(SHADER_PARAM::VEC4_0, &vFontColor);
+		pMtrl->SetData(SHADER_PARAM::VEC4_1, &vFontBackColor);
+		pObject->MeshRender()->SetMaterial(pMtrl);
+	}
+}
+
+void CLoginScene::CreateInputIP()
+{
 	// ===================
 	//		  IP창
 	// ===================
@@ -142,7 +268,7 @@ void CLoginScene::Init()
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pIP);
 
-	pObject = new CGameObject;
+	CGameObject* pObject = new CGameObject;
 	pObject->SetName(L"IP Bar");
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
@@ -154,11 +280,13 @@ void CLoginScene::Init()
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
 
+	int a = 1;
 	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 	m_pIP->AddChild(pObject);
-	
+	m_pIP->GetScript<CInputScript>()->SetFontSpace(pObject);
+
 	float fontSize = 500.f / 15.f;
 
 	for (int i = 0; i < 15; ++i)
@@ -179,27 +307,118 @@ void CLoginScene::Init()
 		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 		m_pIP->AddChild(pObject);
 		m_pIP->GetScript<CInputScript>()->AddInputObject(pObject);
-		m_pIP->GetScript<CInputScript>()->SetRect(Rect(-250.f, -330.f, 500.f, 40.f));
 	}
+	m_pIP->GetScript<CInputScript>()->SetRect(Vec4(-250.f, -350.f, 250.f, -310.f));
+	m_pIP->GetScript<CInputScript>()->SetEnable(false);
 
+	// IP Info 
+	{
+		pObject = new CGameObject;
+		pObject->SetName(L"ID Info");
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+		pObject->FrustumCheck(false);
+
+		pObject->Transform()->SetLocalPos(Vec3(-320.f, -330.f, 1.f));
+		pObject->Transform()->SetLocalScale(Vec3(40.f, 40.f, 1.f));
+
+		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
+		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
+
+		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+
+		CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['I'];
+		Ptr<CMaterial> pMtrl = pObject->MeshRender()->GetCloneMaterial();
+		float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
+		float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
+		float startU = tInfo.ix / sizeX;
+		float startV = tInfo.iy / sizeY;
+		float widthU = tInfo.iWidth / sizeX;
+		float heightV = tInfo.iHeight / sizeY;
+		Vec4 vFontColor = Vec4(1.f, 1.f, 1.f, 1.f);
+		Vec4 vFontBackColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		pMtrl->SetData(SHADER_PARAM::VEC4_0, &vFontColor);
+		pMtrl->SetData(SHADER_PARAM::VEC4_1, &vFontBackColor);
+		pObject->MeshRender()->SetMaterial(pMtrl);
+	}
+	{
+		pObject = new CGameObject;
+		pObject->SetName(L"ID Info");
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+		pObject->FrustumCheck(false);
+
+		pObject->Transform()->SetLocalPos(Vec3(-280.f, -330.f, 1.f));
+		pObject->Transform()->SetLocalScale(Vec3(40.f, 40.f, 1.f));
+
+		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
+		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
+
+		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+
+		CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo['P'];
+		Ptr<CMaterial> pMtrl = pObject->MeshRender()->GetCloneMaterial();
+		float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
+		float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
+		float startU = tInfo.ix / sizeX;
+		float startV = tInfo.iy / sizeY;
+		float widthU = tInfo.iWidth / sizeX;
+		float heightV = tInfo.iHeight / sizeY;
+		Vec4 vFontColor = Vec4(1.f, 1.f, 1.f, 1.f);
+		Vec4 vFontBackColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
+		pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
+		pMtrl->SetData(SHADER_PARAM::VEC4_0, &vFontColor);
+		pMtrl->SetData(SHADER_PARAM::VEC4_1, &vFontBackColor);
+		pObject->MeshRender()->SetMaterial(pMtrl);
+	}
 }
 
-void CLoginScene::Update()
+void CLoginScene::CreateInputPassword()
 {
-	// 엔터를 눌렀을때 다음 씬으로 진입한다
-	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
-	{
-		// 입력한 IP를 받아옴
-		string strIP = m_pIP->GetScript<CInputScript>()->GetString();
+	// ===================
+	//		Password창
+	// ===================
+	m_pPassword = new CGameObject;
+	m_pPassword->SetName(L"Password");
+	m_pPassword->AddComponent(new CTransform);
+	m_pPassword->AddComponent(new CMeshRender);
+	m_pPassword->FrustumCheck(false);
 
+	m_pPassword->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	m_pPassword->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
-		// 씬 넘어가기전 오브젝트들 정리
-		m_pScene->FindLayer(L"UI")->RemoveAll();
-		m_pScene->FindLayer(L"Default")->RemoveAll();
+	m_pPassword->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	m_pPassword->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+	m_pPassword->AddComponent(new CChatScript);
 
-		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
-		CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");
-	}
+	m_pScene->FindLayer(L"UI")->AddGameObject(m_pPassword);
+
+	CGameObject* pObject = new CGameObject;
+	pObject->SetName(L"Password Bar");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+	pObject->FrustumCheck(false);
+
+	pObject->Transform()->SetLocalPos(Vec3(0.f, -130.f, 1.f));
+	pObject->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+
+	int a = 1;
+	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+
+	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+	m_pPassword->AddChild(pObject);
 }
 
 CGameObject * CLoginScene::GetIDObj()

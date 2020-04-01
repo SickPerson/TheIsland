@@ -15,6 +15,11 @@ public:
 	virtual void Init() override;
 	virtual void Update() override;
 
+public:
+	void CreateInputID();
+	void CreateInputIP();
+	void CreateInputPassword();
+
 private:
 	CGameObject*		m_pID;
 	CGameObject*		m_pPassword;
