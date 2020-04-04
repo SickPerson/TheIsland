@@ -17,6 +17,12 @@ private:
 	ComPtr<ID3D12Device>					m_pDevice;		// 메모리 할당, 객체 생성	
 	ComPtr<ID3D12CommandQueue>				m_pCmdQueue;	
 
+	// 컴퓨트 쉐이더 커맨드 큐
+	ComPtr<ID3D12CommandQueue>				m_pCmdQueueCompute;
+	// 컴퓨터 쉐이더 커맨드 리스트
+	ComPtr<ID3D12CommandAllocator>			m_pCmdAllocCompute;
+	ComPtr<ID3D12GraphicsCommandList>		m_pCmdListCompute;
+
 	// 렌더링 커맨드 리스트
 	ComPtr<ID3D12CommandAllocator>			m_pCmdAlloc;
 	ComPtr<ID3D12GraphicsCommandList>		m_pCmdListGraphic;
@@ -26,6 +32,8 @@ private:
 	ComPtr<ID3D12GraphicsCommandList>		m_pCmdListRes;	
 
 	ComPtr<ID3D12Fence>						m_pFence;
+	ComPtr<ID3D12Fence>						m_pFenceCompute;
+
 	ComPtr<IDXGIFactory>					m_pFactory;
 	ComPtr<ID3D12Debug>						m_pDbgCtrl;		// 디버그 관리	
 
@@ -36,6 +44,7 @@ private:
 	vector<ComPtr<ID3D12DescriptorHeap>>	m_vecDummyDescriptor;
 	UINT									m_iCurDummyIdx;
 	ComPtr<ID3D12DescriptorHeap>			m_pInitDescriptor;
+	ComPtr<ID3D12DescriptorHeap>			m_pDummyDescriptorCompute; // 컴퓨트쉐이더
 	UINT									m_iCBVIncreSize; // 핸들 오프셋 증감 사이즈
 
 	vector<D3D12_STATIC_SAMPLER_DESC>		m_vecSamplerDesc;
@@ -64,6 +73,12 @@ public:
 
 	void Render_Present();
 	void WaitForFenceEvent();
+	void WaitForFenceEvent_CS();
+
+	void SetConstBufferToRegister_CS(CConstantBuffer* _pCB, UINT _iOffset);
+	void SetTextureToRegister_CS(CTexture* _pTex, TEXTURE_REGISTER _eRegister);
+	void SetUAVToRegister_CS(CTexture* _pTex, UAV_REGISTER _eRegister);
+	void ClearDymmyDescriptorHeap_CS();
 
 	void SetConstBufferToRegister(CConstantBuffer* _pCB, UINT _iOffset);	
 	void SetGlobalConstBufferToRegister(CConstantBuffer* _pCB, UINT _iOffset);
@@ -71,7 +86,9 @@ public:
 	void ClearDymmyDescriptorHeap(UINT _iDummyIndex);
 
 	void UpdateTable();
+	void UpdateTable_CS();
 	void ExcuteResourceLoad();
+	void ExcuteComputeShader();
 
 private:
 	void CreateSwapChain();
@@ -83,6 +100,7 @@ private:
 public:
 	ComPtr<ID3D12GraphicsCommandList> GetCmdList() { return m_pCmdListGraphic; }
 	ComPtr<ID3D12GraphicsCommandList> GetCmdListRes() { return m_pCmdListRes; }
+	ComPtr<ID3D12GraphicsCommandList> GetCmdListCompute() { return m_pCmdListCompute; }
 	ComPtr<ID3D12Device> GetDevice() { return m_pDevice; }
 	ComPtr<ID3D12RootSignature> GetRootSignature(ROOT_SIG_TYPE _eType) { return m_arrSig[(UINT)_eType]; }
 	CConstantBuffer* GetCB(CONST_REGISTER _eRegister) { return m_vecCB[(UINT)_eRegister]; }

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "IngameScene.h"
 
+#include <Engine/Device.h>
+
 #include <Engine/Ptr.h>
 
 #include <Engine/Texture.h>
@@ -51,6 +53,13 @@ void CIngameScene::Init()
 
 	Ptr<CTexture> pColor = CResMgr::GetInst()->Load<CTexture>( L"Tile", L"Texture\\Tile\\TILE_03.tga" );
 	Ptr<CTexture> pNormal = CResMgr::GetInst()->Load<CTexture>( L"Tile_n", L"Texture\\Tile\\TILE_03_N.tga" );
+
+	// Compute Shader Test
+	// UAV 용 Texture 생성
+	Ptr<CTexture> pTestUAVTexture = CResMgr::GetInst()->CreateTexture(L"UAVTexture", 1024, 1024
+		, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+		, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
 
 	CGameObject* pObject = nullptr;
 	CGameObject* pChildObject = nullptr;
@@ -264,6 +273,39 @@ void CIngameScene::Init()
 	// AddGameObject
 	m_pScene->FindLayer( L"Tool" )->AddGameObject( pObject );
 
+
+	// ====================
+	// Test Compute Shader 오브젝트 생성
+	// ====================
+	pObject = new CGameObject;
+	pObject->SetName(L"Monster Object");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	// Transform 설정
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 100.f, -500.f));
+	pObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
+	pObject->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
+
+	// MeshRender 설정
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TexMtrl"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pTestUAVTexture.GetPointer());
+
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
+	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pNormalTargetTex.GetPointer());	
+
+
+	// ====================
+	// Compute Shader Test
+	// ====================
+	int i = 1;
+
+	Ptr<CMaterial> pCSMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"CSTestMtrl");
+	pCSMtrl->SetData(SHADER_PARAM::INT_0, &i);
+	CDevice::GetInst()->SetUAVToRegister_CS(pTestUAVTexture.GetPointer(), UAV_REGISTER::u0);
+
+	pCSMtrl->Dispatch(1, 1024, 1); // --> 컴퓨트 쉐이더 수행	
 
 	// =================================
 	// CollisionMgr 충돌 그룹(Layer) 지정
