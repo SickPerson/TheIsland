@@ -52,6 +52,7 @@ int CDevice::Init(HWND _hWnd, const tResolution & _res, bool _bWindow)
 	
 	// CreateFence
 	m_pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_pFence));
+	m_pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_pFenceCompute));
 	m_iFenceValue = 1;
 
 	// Create an event handle to use for frame synchronization.
@@ -61,21 +62,27 @@ int CDevice::Init(HWND _hWnd, const tResolution & _res, bool _bWindow)
 		assert(nullptr);
 	}
 
+
 	// Command Queue 	
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	m_pDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_pCmdQueue));
 
+	// Compute Command Queue
+	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
+	m_pDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_pCmdQueueCompute));
+
 	// Create Command Allocator
 	m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_pCmdAlloc));
 	m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_pCmdAllocRes));
+	m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_COMPUTE, IID_PPV_ARGS(&m_pCmdAllocCompute));
 
 	// Create the command list.
-	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT
-		, m_pCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_pCmdListGraphic));
-	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT
-		, m_pCmdAllocRes.Get(), nullptr, IID_PPV_ARGS(&m_pCmdListRes));
+	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_pCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_pCmdListGraphic));
+	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_pCmdAllocRes.Get(), nullptr, IID_PPV_ARGS(&m_pCmdListRes));
+	m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COMPUTE, m_pCmdAllocCompute.Get(), nullptr, IID_PPV_ARGS(&m_pCmdListCompute));
 
 	m_pCmdListGraphic->Close();
 
@@ -102,7 +109,7 @@ void CDevice::Render_Start(float(&_arrFloat)[4])
 
 	// 필요한 상태 설정	
 	// RootSignature 설정	
-	CMDLIST->SetGraphicsRootSignature(CDevice::GetInst()->GetRootSignature(ROOT_SIG_TYPE::INPUT_ASSEM).Get());
+	CMDLIST->SetGraphicsRootSignature(CDevice::GetInst()->GetRootSignature(ROOT_SIG_TYPE::RENDER).Get());
 		
 	m_pCmdListGraphic->RSSetViewports(1, &m_tVP);
 	m_pCmdListGraphic->RSSetScissorRects(1, &m_tScissorRect);
@@ -175,6 +182,96 @@ void CDevice::WaitForFenceEvent()
 		m_pFence->SetEventOnCompletion(fence, m_hFenceEvent);
 		WaitForSingleObject(m_hFenceEvent, INFINITE);
 	}
+}
+
+void CDevice::WaitForFenceEvent_CS()
+{
+	// Signal and increment the fence value.
+	static int iFenceValue = 0;
+
+	const size_t fence = iFenceValue;
+	m_pCmdQueueCompute->Signal(m_pFenceCompute.Get(), fence);
+	iFenceValue++;
+
+	size_t a = m_pFenceCompute->GetCompletedValue();
+	// Wait until the previous frame is finished.
+	if (a < fence)
+	{
+		m_pFenceCompute->SetEventOnCompletion(fence, m_hFenceEvent);
+		WaitForSingleObject(m_hFenceEvent, INFINITE);
+	}
+}
+
+void CDevice::SetConstBufferToRegister_CS(CConstantBuffer * _pCB, UINT _iOffset)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+
+	// 0번 슬롯이 상수버퍼 데이터
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pDummyDescriptorCompute->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += m_iCBVIncreSize * (UINT)_pCB->GetRegisterNum();
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = _pCB->GetCBV()->GetCPUDescriptorHandleForHeapStart();
+	hSrcHandle.ptr += _iOffset * m_iCBVIncreSize;
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void CDevice::SetTextureToRegister_CS(CTexture * _pTex, TEXTURE_REGISTER _eRegister)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+
+	// 0번 슬롯이 상수버퍼 데이터
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pDummyDescriptorCompute->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += m_iCBVIncreSize * (UINT)_eRegister;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = _pTex->GetSRV()->GetCPUDescriptorHandleForHeapStart();
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void CDevice::SetUAVToRegister_CS(CTexture * _pTex, UAV_REGISTER _eRegister)
+{
+	UINT iDestRange = 1;
+	UINT iSrcRange = 1;
+
+	// 0번 슬롯이 상수버퍼 데이터
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pDummyDescriptorCompute->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr += m_iCBVIncreSize * (UINT)_eRegister;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = _pTex->GetUAV()->GetCPUDescriptorHandleForHeapStart();
+
+	m_pDevice->CopyDescriptors(1, &hDescHandle, &iDestRange
+		, 1, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	// 리소스 상태 변경
+	if (_pTex->GetResState() == D3D12_RESOURCE_STATE_COMMON)
+	{
+		CMDLIST_CS->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_pTex->GetTex2D().Get()
+			, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+
+		_pTex->SetResState(D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	}
+}
+
+void CDevice::ClearDymmyDescriptorHeap_CS()
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE hDescHandle = m_pDummyDescriptorCompute->GetCPUDescriptorHandleForHeapStart();
+	hDescHandle.ptr;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE hSrcHandle = m_pInitDescriptor->GetCPUDescriptorHandleForHeapStart();
+	hSrcHandle.ptr;
+
+	UINT iDestRange = (UINT)TEXTURE_REGISTER::END;
+	UINT iSrcRange = (UINT)TEXTURE_REGISTER::END;
+
+	m_pDevice->CopyDescriptors(1/*디스크립터 개수*/
+		, &hDescHandle, &iDestRange
+		, 1/*디스크립터 개수*/
+		, &hSrcHandle, &iSrcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void CDevice::CreateSwapChain()
@@ -257,7 +354,7 @@ void CDevice::CreateRootSignature()
 	ComPtr<ID3DBlob> pSignature;
 	ComPtr<ID3DBlob> pError;
 	HRESULT hr = D3D12SerializeRootSignature(&sigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pSignature, &pError);
-	m_pDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(), IID_PPV_ARGS(&m_arrSig[(UINT)ROOT_SIG_TYPE::INPUT_ASSEM]));	
+	m_pDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(), IID_PPV_ARGS(&m_arrSig[(UINT)ROOT_SIG_TYPE::RENDER]));	
 
 	// 더미용 Descriptor Heap 만들기
 	D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
@@ -282,6 +379,46 @@ void CDevice::CreateRootSignature()
 	// 초기화용 더미 디스크립터 힙 작성	
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	DEVICE->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor));
+
+	// ====================================
+	// Compute Shader 전용 Signature 만들기
+	// ====================================
+	range = {};
+	range.BaseShaderRegister = 0;  // u0 에서
+	range.NumDescriptors = 4;	   // u3 까지 4 개 UAV 레지스터 사용여부 
+	range.OffsetInDescriptorsFromTableStart = (UINT)TEXTURE_REGISTER::END;
+	range.RegisterSpace = 0;
+	range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
+
+	vecRange.push_back(range);
+
+	slotParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	slotParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	slotParam.DescriptorTable.NumDescriptorRanges = (UINT)vecRange.size();
+	slotParam.DescriptorTable.pDescriptorRanges = &vecRange[0];
+
+	sigDesc = {};
+	sigDesc.NumParameters = 1;
+	sigDesc.pParameters = &slotParam;
+	sigDesc.NumStaticSamplers = 0;
+	sigDesc.pStaticSamplers = nullptr; // 컴퓨트 쉐이더에서는 Sampler 사용 불가능
+	sigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_NONE; // 컴퓨트 쉐이더용 Signature 는 기본 플래그 값으로 설정
+
+	pSignature = nullptr;
+	pError = nullptr;
+
+	hr = D3D12SerializeRootSignature(&sigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pSignature, &pError);
+	m_pDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize()
+		, IID_PPV_ARGS(&m_arrSig[(UINT)ROOT_SIG_TYPE::COMPUTE]));
+
+	// 생성된 컴퓨트 쉐이더용 루트시그네이쳐를 컴퓨트 쉐이더 커맨드 리스트에 등록
+	CMDLIST_CS->SetComputeRootSignature(CDevice::GetInst()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
+
+	// ComputeShader 더미 디스크립터 힙 작성	
+	cbvHeapDesc.NumDescriptors += range.NumDescriptors; // UAV 만큼 추가
+	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	DEVICE->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pDummyDescriptorCompute));
 }
 
 void CDevice::CreateSamplerDesc()
@@ -413,6 +550,15 @@ void CDevice::UpdateTable()
 	ClearDymmyDescriptorHeap(m_iCurDummyIdx);	
 }
 
+void CDevice::UpdateTable_CS()
+{
+	ID3D12DescriptorHeap* pDescriptor = m_pDummyDescriptorCompute.Get();
+	m_pCmdListCompute->SetDescriptorHeaps(1, &pDescriptor);
+
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuhandle = pDescriptor->GetGPUDescriptorHandleForHeapStart();
+	m_pCmdListCompute->SetComputeRootDescriptorTable(0, gpuhandle);
+}
+
 void CDevice::ExcuteResourceLoad()
 {
 	// 리소스 로딩 명령 닫기
@@ -427,4 +573,23 @@ void CDevice::ExcuteResourceLoad()
 	// 다시 활성화
 	m_pCmdAllocRes->Reset();
 	m_pCmdListRes->Reset(m_pCmdAllocRes.Get(), nullptr);
+}
+
+void CDevice::ExcuteComputeShader()
+{
+	// 컴퓨트 쉐이더 명령 닫기
+	m_pCmdListCompute->Close();
+
+	// 커맨드 리스트 수행	
+	ID3D12CommandList* ppCommandLists[] = { m_pCmdListCompute.Get() };
+	m_pCmdQueueCompute->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+	WaitForFenceEvent_CS();
+
+	// 다시 활성화
+	m_pCmdAllocCompute->Reset();
+	m_pCmdListCompute->Reset(m_pCmdAllocCompute.Get(), nullptr);
+
+	// 루트서명 등록
+	m_pCmdListCompute->SetComputeRootSignature(CDevice::GetInst()->GetRootSignature(ROOT_SIG_TYPE::COMPUTE).Get());
 }

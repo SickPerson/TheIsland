@@ -29,6 +29,9 @@ private:
 	ComPtr<ID3D12PipelineState>			m_pPilelineState;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC  m_tPipeline;
 
+	ComPtr<ID3D12PipelineState>			m_pPilelineState_CS;
+	D3D12_COMPUTE_PIPELINE_STATE_DESC   m_tCSStateDesc;
+
 	D3D_PRIMITIVE_TOPOLOGY				m_eTopology;
 	vector<tShaderParam>				m_vecShaderParam;
 
@@ -46,13 +49,14 @@ public:
 	//void CreateHullShader();
 	//void CreateDomainShader();
 	//void CreateGeometryShader();
-	//void CreateComputeShader();
+	void CreateComputeShader(const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion);
 
 	void SetBlendState(BLEND_TYPE _eType) { m_eBlendType = _eType; }
 	void SetDepthStencilType(DEPTH_STENCIL_TYPE _eType);
 	void SetRasterizerType(RS_TYPE _eType) { m_eRSType = _eType; }
 
 	void UpdateData();
+	void UpdateData_CS();
 	void AddShaderParam(const tShaderParam& _param) { m_vecShaderParam.push_back(_param); }
 
 	SHADER_POV GetShaderPOV() { return m_ePOV; }
