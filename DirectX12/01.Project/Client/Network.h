@@ -39,8 +39,8 @@ public:
 	static void Err_quit(const char* msg, int err_no);
 	static void Err_display(const char* msg, int err_no);
 public:
-	bool Init();
-	bool ConnectServer();
+	void Init();
+	bool ConnectServer(char* _packet);
 	bool CreateEventSelect();
 
 	void DisConnect();
@@ -116,7 +116,7 @@ public:
 	}
 
 public:
-	void SendLoginPacket(wchar_t* _wcPlayerID, wchar_t* _wcPlayerPW);
+	void SendLoginPacket(string _sPlayerID, string _sIP);
 
 };
 

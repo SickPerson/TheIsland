@@ -16,8 +16,6 @@
 
 #include "Network.h"
 
-char SERVERIP[20]{};
-
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -58,6 +56,10 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	{
 		return 0;
 	}
+	// Network Init
+	CNetwork::GetInst();
+	// Network Run
+	shared_ptr<thread>m_tNetworkThread = make_shared<thread>([]() {CNetwork::GetInst()->RecvPacket(); });
 
 	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 	CLoginScene* pLoginScene = pScene->CreateSceneScript<CLoginScene>( L"LoginScene" );

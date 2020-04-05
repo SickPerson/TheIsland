@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PacketMgr.h"
 #include "DataBase.h"
 #include "Network.h"
@@ -23,25 +22,30 @@ void PacketMgr::Send_Packet(const unsigned short& _usID, void* _packet)
 	send_over->m_DataBuffer.buf = reinterpret_cast<char*>(send_over->m_MessageBuffer);
 	send_over->m_DataBuffer.len = packet_size;
 
-	/*if (WSASend(client_s, &send_over->m_DataBuffer, 1, 0, 0, &send_over->m_Overlapped, 0) == SOCKET_ERROR) {
-		if (WSAGetLastError() != WSA_IO_PENDING) {
-			cout << "Error - Fail WSASend(error_code : " << WSAGetLastError << " ) " << endl;
+	int retval = WSASend(CProcess::m_pPlayerPool->m_cumPlayerPool[_usID]->GetPlayerSocket(), &send_over->m_DataBuffer, 1, NULL, 0, &send_over->m_Overlapped, NULL);
+
+	if (retval == SOCKET_ERROR) {
+		int err_no = WSAGetLastError();
+		if (err_no != WSA_IO_PENDING) {
+			CNetwork::Err_display("SEND EVENT SOCKET_ERR - ", err_no);
 		}
-	}*/
+	}
 }
 
 void PacketMgr::Send_Login_OK_Packet(unsigned short _usID)
 {
-	sc_packet_login_ok packet;
+	sc_login_ok_packet packet;
+	char* ip = CNetwork::GetInst()->GetIpAddr();
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
 	packet.id = _usID;
+	strcpy_s(packet.ip, ip);
 	Send_Packet(_usID, &packet);
 }
 
 void PacketMgr::Send_Login_Fail_Packet(unsigned short _usID)
 {
-	sc_packet_login_fail packet;
+	sc_login_fail_packet packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_FAIL;
 	packet.id = _usID;
@@ -80,9 +84,9 @@ void PacketMgr::Send_Remove_Packet(unsigned short _usPlayer, unsigned short _usO
 {
 	if (_usPlayer != _usOther)
 	{
-		sc_packet_disconnect packet;
-		ZeroMemory(&packet, sizeof(sc_packet_disconnect));
-		packet.size = sizeof(sc_packet_disconnect);
+		sc_disconnect_packet packet;
+		ZeroMemory(&packet, sizeof(sc_disconnect_packet));
+		packet.size = sizeof(sc_disconnect_packet);
 		packet.type = SC_DISCONNECT;
 		packet.id = _usPlayer;
 		Send_Packet(_usOther, &packet);
@@ -93,8 +97,8 @@ void PacketMgr::Send_Disconnect_Packet(unsigned short _usPlayer)
 {
 	concurrent_unordered_set<unsigned short> list;
 
-	sc_packet_disconnect	packet;
-	packet.size = sizeof(sc_packet_disconnect);
+	sc_disconnect_packet	packet;
+	packet.size = sizeof(sc_disconnect_packet);
 	packet.type = SC_DISCONNECT;
 	packet.id = _usPlayer;
 

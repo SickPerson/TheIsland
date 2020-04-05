@@ -1,6 +1,5 @@
 #pragma once
 #include "stdafx.h"
-#include "PlayerProcess.h"
 #include "Playerpool.h"
 
 class CProcess
@@ -11,7 +10,7 @@ public:
 public:
 	recursive_mutex	m_rmProcessMutex;
 public:
-	static class CPlayerPool*	m_pPlayerPool;
+	static CPlayerpool*	m_pPlayerPool;
 	static concurrent_unordered_set<unsigned short> m_cusLoginList;
 	static concurrent_priority_queue<Object_Event>	m_cpqEventQueue;
 	static function<void(char, unsigned short)>			m_fpAttackEvent;
