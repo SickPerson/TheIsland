@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
-#include "Player.h"
 
+class CPlayer;
 class CPlayerpool
 {
 private:

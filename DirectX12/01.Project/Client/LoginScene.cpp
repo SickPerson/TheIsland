@@ -69,6 +69,8 @@ void CLoginScene::Update()
 		string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
 		string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
 		
+		// Client -> Server로 로그인 패킷 보내기 - 만약 이 코드를 작동 시키면
+		// 서버가 켜져 있지 않다면, 클라이언트가 인게임씬으로 넘어가지 않습니다.
 		//CNetwork::GetInst()->SendLoginPacket(strID, strIP);
 
 		// 씬 넘어가기전 오브젝트들 정리

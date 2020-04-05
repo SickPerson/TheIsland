@@ -1,6 +1,8 @@
 #include "PacketMgr.h"
+#include "Process.h"
 #include "DataBase.h"
 #include "Network.h"
+#include "Player.h"
 
 PacketMgr::PacketMgr()
 {	

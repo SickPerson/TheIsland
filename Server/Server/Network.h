@@ -1,10 +1,7 @@
 #pragma once
 #include "stdafx.h"
-#include "PlayerProcess.h"
 
-#include "PacketMgr.h"
-#include "TimerMgr.h"
-#include "DataBase.h"
+class CPlayerProcess;
 
 class CNetwork
 {

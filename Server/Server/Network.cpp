@@ -1,4 +1,8 @@
-#include "stdafx.h"
+
+#include "PlayerProcess.h"
+#include "PacketMgr.h"
+#include "TimerMgr.h"
+#include "DataBase.h"
 #include "Network.h"
 
 CNetwork::CNetwork()

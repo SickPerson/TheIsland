@@ -175,17 +175,18 @@ void CNetwork::ProcessPacket(char* _packet)
 {
 	switch (_packet[1])
 	{
-	case SC_LOGIN_OK:
+	case SC_LOGIN_OK: // 로그인이 성공한다면 서버에 연결을 시도합니다.
 		Init();
 		SetLogin(true);
 		ConnectServer(_packet);
 		break;
-	case SC_LOGIN_FAIL:
+	case SC_LOGIN_FAIL: // 로그인이 실패한다면 서버에 연결이 되지 않습니다.
 		SetLogin(false);
 		break;
 	}
 }
 
+// 로그인 패킷을 서버로 보냅니다. string에서 char*으로 바꿀예정입니다.
 void CNetwork::SendLoginPacket(string _sPlayerID, string _sIP)
 {
 	DWORD size, flag = 0;

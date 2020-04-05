@@ -1,8 +1,7 @@
-#include "stdafx.h"
-#include "Process.h"
 #include "PlayerProcess.h"
 #include "Network.h"
 #include "PacketMgr.h"
+#include "Player.h"
 
 
 CPlayerProcess::CPlayerProcess()
