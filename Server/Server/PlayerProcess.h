@@ -36,7 +36,7 @@ public:
 	void PacketProcess(unsigned short _usID, char* _packet);
 	void RecvPacket(unsigned short _usID, DWORD _dwSize, char* _Packet);
 
-	void PlayerLogin();
+	void PlayerLogin(DataBase_Event& _event);
 	void PlayerLogout(unsigned short _usID);
 	void PlayerDinconnect(unsigned short _usID);
 	void PlayerPos(unsigned short _usID, char* _Packet);

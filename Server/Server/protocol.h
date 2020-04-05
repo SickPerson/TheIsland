@@ -37,20 +37,27 @@ constexpr	char	SC_STAT_CHANGE = 6;
 constexpr	char	SC_REMOVE_OBJECT = 7;
 
 #pragma	pack(push, 1)
+// Sever -> Client
+struct sc_login_state_packet {
+	char size;
+	char type;
+	unsigned short id;
+};
 
-struct sc_packet_login_ok {
+struct sc_login_ok_packet {
 	char	size;
 	char	type;
 	unsigned short	id;
+	char	ip[MAX_STR_LEN];
 };
 
-struct sc_packet_login_fail {
+struct sc_login_fail_packet {
 	char	size;
 	char	type;
 	unsigned short id;
 };
 
-struct sc_packet_disconnect {
+struct sc_disconnect_packet {
 	char	size;
 	char	type;
 	unsigned short id;
@@ -103,8 +110,8 @@ struct sc_packet_add_object {
 struct cs_login_packet {
 	char	size;
 	char	type;
-	wchar_t	player_id[10];
-	wchar_t	player_pw[10];
+	char	player_id[MAX_STR_LEN];
+	char	player_ip[MAX_STR_LEN];
 };
 
 struct cs_packet_move {

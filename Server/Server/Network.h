@@ -21,6 +21,12 @@ private:
 private:
 	volatile unsigned short m_usUserID;
 
+private:
+	char ipaddr[MAX_STR_LEN];
+
+public:
+	char* GetIpAddr() { return ipaddr; }
+
 public:
 	bool CreateSocket(SOCKET& _sClientSocket, unsigned short _usID);
 	bool Associate(HANDLE _hDevice, unsigned short _usID);

@@ -25,6 +25,8 @@
 #include <Engine/SceneMgr.h>
 #include <Engine/RenderMgr.h>
 
+#include "Network.h"
+
 CLoginScene::CLoginScene() :
 	m_pID(NULL),
 	m_pPassword(NULL)
@@ -63,9 +65,11 @@ void CLoginScene::Update()
 	// 엔터를 눌렀을때 다음 씬으로 진입한다
 	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
 	{
-		// 입력한 IP를 받아옴
-		string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
+		// 입력한 ID, IP를 받아옴
 		string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
+		string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
+		
+		//CNetwork::GetInst()->SendLoginPacket(strID, strIP);
 
 		// 씬 넘어가기전 오브젝트들 정리
 		m_pScene->FindLayer(L"UI")->RemoveAll();

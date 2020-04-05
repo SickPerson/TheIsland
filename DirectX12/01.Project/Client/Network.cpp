@@ -3,10 +3,7 @@
 
 CNetwork::CNetwork()
 {
-	if (!Init())
-		cout << "Network Init Fail" << endl;
-	else
-		cout << "Network Init Success" << endl;
+	Init();
 }
 
 CNetwork::~CNetwork()
@@ -34,7 +31,7 @@ void CNetwork::Err_display(const char * msg, int err_no)
 	LocalFree(lpMsgBuf);
 }
 
-bool CNetwork::Init()
+void CNetwork::Init()
 {
 	for (auto i = 0; i < LT_END; ++i)
 		m_bLoginState[i] = false;
@@ -54,40 +51,28 @@ bool CNetwork::Init()
 
 	m_RecvWsaBuf.buf = m_cSendBuf;
 	m_RecvWsaBuf.len = BUF_SIZE;
-
-	return ConnectServer();
 }
 
-bool CNetwork::ConnectServer()
+bool CNetwork::ConnectServer(char* _packet)
 {
+	sc_login_ok_packet* packet = reinterpret_cast<sc_login_ok_packet*>(_packet);
+
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(SOCKADDR_IN));
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_port = htons(SERVER_PORT);
-	serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
+	serveraddr.sin_addr.s_addr = inet_addr(packet->ip);
 	int retval = WSAConnect(m_sock, reinterpret_cast<sockaddr*>(&serveraddr), sizeof(serveraddr), NULL, NULL, NULL, NULL);
 	if (retval == SOCKET_ERROR) {
 		int err_no = WSAGetLastError();
 		Err_display("socket err", err_no);
-		while (1) {
-			cout << "IP :";
-			cin >> SERVERIP;
-			volatile bool reconnect = ConnectServer();
-			if (reconnect)
-				break;
-		}
+		return false;
 	}
-	else {
-		cout << "연결" << endl;
-		if (CreateEventSelect()) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	return true;
+	// IP 주소로 연결되었을 경우
+	if (CreateEventSelect())
+		return true;
+	else
+		return false;
 }
 
 bool CNetwork::CreateEventSelect()
@@ -118,10 +103,9 @@ void CNetwork::DisConnect()
 
 void CNetwork::RecvPacket()
 {
-	cout << "Network Run" << endl;
-
 	while (!m_bClientClose)
 	{
+		cout << "Network Run" << endl;
 		m_iIndex = WSAWaitForMultipleEvents(1, &m_hEvent, FALSE, WSA_INFINITE, FALSE);
 
 		if ((m_iIndex == WSA_WAIT_FAILED) || (m_iIndex == WSA_WAIT_TIMEOUT))
@@ -184,7 +168,7 @@ void CNetwork::RecvPacket()
 			break;
 		}
 	}
-	cout << "Network Close" << endl;
+	//cout << "Network Close" << endl;
 }
 
 void CNetwork::ProcessPacket(char* _packet)
@@ -192,13 +176,17 @@ void CNetwork::ProcessPacket(char* _packet)
 	switch (_packet[1])
 	{
 	case SC_LOGIN_OK:
+		Init();
+		SetLogin(true);
+		ConnectServer(_packet);
 		break;
 	case SC_LOGIN_FAIL:
+		SetLogin(false);
 		break;
 	}
 }
 
-void CNetwork::SendLoginPacket(wchar_t * _wcPlayerID, wchar_t * _wcPlayerPW)
+void CNetwork::SendLoginPacket(string _sPlayerID, string _sIP)
 {
 	DWORD size, flag = 0;
 
@@ -206,9 +194,8 @@ void CNetwork::SendLoginPacket(wchar_t * _wcPlayerID, wchar_t * _wcPlayerPW)
 
 	packet->size = sizeof(cs_login_packet);
 	packet->type = CS_LOGIN;
-
-	wcsncpy_s(packet->player_id, wcslen(packet->player_id), _wcPlayerID, wcslen(_wcPlayerID));
-	wcsncpy_s(packet->player_pw, wcslen(packet->player_pw), _wcPlayerPW, wcslen(_wcPlayerPW));
+	//packet->player_id = _sPlayerID.c_str();
+	//packet->player_ip = _sIP;
 
 	m_SendWsaBuf.len = sizeof(cs_login_packet);
 

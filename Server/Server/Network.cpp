@@ -19,7 +19,7 @@ void CNetwork::GetServerIpAddress()
 {
 	PHOSTENT	hostinfo;
 	char		hostname[50];
-	char		ipaddr[50];
+	//char		ipaddr[50];
 	memset(hostname, 0, sizeof(hostname));
 	memset(ipaddr, 0, sizeof(ipaddr));
 
@@ -188,7 +188,7 @@ void CNetwork::WorkerThread()
 			{
 				int err_no = GetLastError();
 				Err_display("WorkerThread]Send Error", err_no);
-				m_pPlayerProcess->PlayerDinconnect(id);
+				m_pPlayerProcess->PlayerDinconnect(id); // 오류 발생시 소켓 종료
 			}
 			break;
 		}
