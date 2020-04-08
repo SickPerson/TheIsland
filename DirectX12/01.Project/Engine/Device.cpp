@@ -156,7 +156,7 @@ void CDevice::Render_Present()
 	WaitForFenceEvent();
 
 	// 백버퍼 타겟 인덱스 변경
-	m_iCurTargetIdx == 0 ? m_iCurTargetIdx = 1 : m_iCurTargetIdx = 0;
+	//m_iCurTargetIdx == 0 ? m_iCurTargetIdx = 1 : m_iCurTargetIdx = 0;
 
 	// 상수버퍼 오프셋 초기화
 	for (size_t i = 0; i < m_vecCB.size(); ++i)
@@ -165,7 +165,7 @@ void CDevice::Render_Present()
 	}
 
 	// 백버퍼 타겟 인덱스 변경
-	m_iCurTargetIdx == 0 ? m_iCurDummyIdx = 1 : m_iCurDummyIdx = 0;
+	m_iCurTargetIdx == 0 ? m_iCurTargetIdx = 1 : m_iCurTargetIdx = 0;
 }
 
 void CDevice::WaitForFenceEvent()
