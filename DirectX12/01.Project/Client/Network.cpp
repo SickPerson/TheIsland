@@ -179,11 +179,12 @@ void CNetwork::ProcessPacket(char* _packet)
 	switch (_packet[1])
 	{
 	case SC_LOGIN_OK: // 로그인이 성공한다면 서버에 연결을 시도합니다.
+		cout << "IP 일치" << endl;
 		SetLogin(true);
-		
 
 		break;
 	case SC_LOGIN_FAIL: // 로그인이 실패한다면 서버에 연결이 되지 않습니다.
+		cout << "IP 불일치" << endl;
 		SetLogin(false);
 		break;
 	}
