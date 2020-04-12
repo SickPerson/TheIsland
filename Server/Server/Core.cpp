@@ -1,5 +1,6 @@
 #include "Core.h"
 #include "Network.h"
+#include "PacketMgr.h"
 
 CCore::CCore()
 {

@@ -1,10 +1,10 @@
 #include "Process.h"
 #include "PacketMgr.h"
 
-CPlayerpool* m_pPlayerPool = nullptr;
-concurrent_unordered_set<unsigned short> m_cusLoginList;
-concurrent_priority_queue<Object_Event>	m_cpqEventQueue;
-function<void(char, unsigned short)>	m_fpAttackEvent;
+CPlayerpool* CProcess::m_pPlayerPool = nullptr;
+concurrent_unordered_set<unsigned short> CProcess::m_cusLoginList;
+concurrent_priority_queue<Object_Event>	CProcess::m_cpqEventQueue;
+function<void(char, unsigned short)>	CProcess::m_fpAttackEvent;
 
 CProcess::CProcess()
 {

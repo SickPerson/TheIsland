@@ -1,9 +1,8 @@
-
+#include "Network.h"
 #include "PlayerProcess.h"
 #include "PacketMgr.h"
 #include "TimerMgr.h"
 #include "DataBase.h"
-#include "Network.h"
 
 CNetwork::CNetwork()
 {
@@ -194,6 +193,18 @@ void CNetwork::WorkerThread()
 				Err_display("WorkerThread]Send Error", err_no);
 				m_pPlayerProcess->PlayerDinconnect(id); // 오류 발생시 소켓 종료
 			}
+			break;
+		}
+		case EV_UPDATE:
+		{
+			break;
+		}
+		case EV_PLAYER_UPDATE:
+		{
+			break;
+		}
+		case EV_DB:
+		{
 			break;
 		}
 		}

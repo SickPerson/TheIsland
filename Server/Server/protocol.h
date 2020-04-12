@@ -12,6 +12,8 @@ constexpr	unsigned short	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_WILD_PIG + ANIMAL_DEE
 constexpr	int	MAX_BUF = 1024;
 constexpr	int	MAX_STR_LEN = 50;
 
+constexpr	int MAX_QUICK_SLOT = 5;
+
 extern char SERVERIP[20];
 
 #define WORLD_WIDTH 800
@@ -29,12 +31,13 @@ constexpr	int		CS_END = 6;
 // Server -> Client Packet Protocol
 constexpr	char	SC_LOGIN_OK = 0;
 constexpr	char	SC_LOGIN_FAIL = 1;
-constexpr	char	SC_CONNECT = 2;
-constexpr	char	SC_DISCONNECT = 3;
-constexpr	char	SC_POSITION = 4;
-constexpr	char	SC_CHAT = 5;
-constexpr	char	SC_STAT_CHANGE = 6;
-constexpr	char	SC_REMOVE_OBJECT = 7;
+constexpr	char	SC_LOGIN = 2;
+constexpr	char	SC_CONNECT = 3;
+constexpr	char	SC_DISCONNECT = 4;
+constexpr	char	SC_POSITION = 5;
+constexpr	char	SC_CHAT = 6;
+constexpr	char	SC_STAT_CHANGE = 7;
+constexpr	char	SC_REMOVE_OBJECT = 8;
 
 #pragma	pack(push, 1)
 // Sever -> Client
@@ -54,7 +57,6 @@ struct sc_login_ok_packet {
 struct sc_login_fail_packet {
 	char	size;
 	char	type;
-	unsigned short id;
 };
 
 struct sc_disconnect_packet {
@@ -63,48 +65,61 @@ struct sc_disconnect_packet {
 	unsigned short id;
 };
 
-struct sc_packet_accept {
-	char	size;
-	char	type;
+struct sc_accept_packet {
+	char size;
+	char type;
 	unsigned short id;
+
+	int CurHp;
+	int CurStamina;
+	int Curhunger;
+	int thirst;
+
+	float fPosX;
+	float fPosY;
+	float fPosZ;
+
+	float fDirX;
+	float fDirY;
+	float fDirZ;
 };
 
-struct sc_packet_position {
+struct sc_chat_packet {
 	char size;
 	char type;
-	int	id;
-	short x, y;
+	unsigned short id;
+	char meesage[MAX_STR_LEN];
 };
 
-struct sc_pacekt_chat {
-	char size;
-	char type;
-	int id;
-	wchar_t message[MAX_STR_LEN];
-};
-
-struct sc_packet_stat_change {
-	char size;
-	char type;
-	int id;
-	int hp, level, exp;
-	bool	attack_check;
-};
-
-struct sc_packet_remove_object {
-	char size;
-	char type;
-	int id;
-};
-
-struct sc_packet_add_object {
-	char size;
-	char type;
-	int id;
-	int obj_class;		// 1: PLAYER,    2:ORC,  3:Dragon, ¡¦..
-	short x, y;
-	int	hp, level, exp;
-};
+//struct sc_packet_position {
+//	char size;
+//	char type;
+//	int	id;
+//	short x, y;
+//};
+//
+//struct sc_packet_stat_change {
+//	char size;
+//	char type;
+//	int id;
+//	int hp, level, exp;
+//	bool	attack_check;
+//};
+//
+//struct sc_packet_remove_object {
+//	char size;
+//	char type;
+//	int id;
+//};
+//
+//struct sc_packet_add_object {
+//	char size;
+//	char type;
+//	int id;
+//	int obj_class;		// 1: PLAYER,    2:ORC,  3:Dragon, ¡¦..
+//	short x, y;
+//	int	hp, level, exp;
+//};
 
 // client->server
 struct cs_login_packet {

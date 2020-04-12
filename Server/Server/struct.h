@@ -11,7 +11,7 @@ typedef struct Over_ex
 	EVENT_TYPE		m_Event;
 }OVER_EX, POVER_EX;
 
-typedef struct User_info {
+struct User_info {
 	SOCKET				socket;
 	OVER_EX				over;
 	unsigned short		id;
@@ -43,7 +43,39 @@ typedef struct DataBase_Event {
 	char	state;
 	unsigned short client_num;
 	wchar_t	id[MAX_STR_LEN];
-	wchar_t	password[MAX_STR_LEN];
+
+	int CurHp;
+	int CurStamina;
+	int Curhunger;
+	int thirst;
+
+	float fPosX;
+	float fPosY;
+	float fPosZ;
+
+	float fDirX;
+	float fDirY;
+	float fDirZ;
+};
+
+/*_____________________________________________
+			[Object Struct]
+_______________________________________________*/
+struct Object {
+	int iHp;
+	int iStamina;
+	int iHunger;
+	int iThirst;
+
+	float fPosX;
+	float fPosY;
+	float fPosZ;
+
+	float fDirX;
+	float fDirY;
+	float fDirZ;
+
+	chrono::high_resolution_clock::time_point m_tStartTime;
 };
 
 struct User_Data {

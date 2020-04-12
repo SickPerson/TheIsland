@@ -10,15 +10,21 @@ public:
 public:
 	recursive_mutex	m_rmProcessMutex;
 public:
-	static CPlayerpool*	m_pPlayerPool; // 플레이어들을 받을 수 있는 플레이어풀을 만들었으나, 현재  static 전역변수로 하여서 어떠한 부분에서 오류가 발생하고 있습니다.
+	static CPlayerpool*	m_pPlayerPool;
 	static concurrent_unordered_set<unsigned short> m_cusLoginList;
 	static concurrent_priority_queue<Object_Event>	m_cpqEventQueue;
-	static function<void(char, unsigned short)>			m_fpAttackEvent;
+	static function<void(char, unsigned short)>		m_fpAttackEvent;
 
 public:
 	void InitProcessData();
 
 public:
+	concurrent_unordered_set<unsigned short>& GetLoginList()
+	{
+		lock_guard<recursive_mutex>lock(m_rmProcessMutex);
+		auto au = m_cusLoginList;
+		return au;
+	}
 	void CopyBefore(concurrent_unordered_set<unsigned short>& _cusList)
 	{
 		lock_guard<recursive_mutex> lock(m_rmProcessMutex);

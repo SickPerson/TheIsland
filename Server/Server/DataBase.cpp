@@ -49,9 +49,10 @@ bool CDataBase::ConnectDataBase()
 			ret = SQLAllocHandle(SQL_HANDLE_DBC, m_hEnv, &m_hDbc);
 			if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 				ret = SQLSetConnectAttr(m_hDbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)(5), 0);
-				ret = SQLConnect(m_hDbc, (SQLCHAR*)L"2015180031", SQL_NTS, (SQLCHAR*)NULL, 0, NULL, 0);
+				ret = SQLConnect(m_hDbc, (SQLCHAR*)L"TheIsLand", SQL_NTS, (SQLCHAR*)NULL, 0, NULL, 0);
 				if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 					ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
+					cout << "Connect DataBase" << endl;
 					return true;
 				}
 				else {

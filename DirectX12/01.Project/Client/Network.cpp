@@ -195,8 +195,8 @@ void CNetwork::SendLoginPacket(string _sPlayerID, string _sIP)
 
 	packet->size = sizeof(cs_login_packet);
 	packet->type = CS_LOGIN;
-	//packet->player_id = _sPlayerID.c_str();
-	//packet->player_ip = _sIP;
+	strcpy(packet->player_id, _sPlayerID.c_str());
+	strcpy(packet->player_ip, _sIP.c_str());
 
 	m_SendWsaBuf.len = sizeof(cs_login_packet);
 

@@ -4,6 +4,7 @@
 
 #include <WinSock2.h>
 #include <Windows.h>
+#include <functional>
 
 #include <sql.h>
 #include <sqlext.h>

@@ -4,15 +4,15 @@
 #include "Network.h"
 #include "Player.h"
 
-PacketMgr::PacketMgr()
+CPacketMgr::CPacketMgr()
 {	
 }
 
-PacketMgr::~PacketMgr()
+CPacketMgr::~CPacketMgr()
 {
 }
 
-void PacketMgr::Send_Packet(const unsigned short& _usID, void* _packet)
+void CPacketMgr::Send_Packet(const unsigned short& _usID, void* _packet)
 {
 	char* packet = reinterpret_cast<char*>(_packet);
 	int packet_size = packet[0];
@@ -34,10 +34,11 @@ void PacketMgr::Send_Packet(const unsigned short& _usID, void* _packet)
 	}
 }
 
-void PacketMgr::Send_Login_OK_Packet(unsigned short _usID)
+void CPacketMgr::Send_Login_OK_Packet(unsigned short _usID)
 {
 	sc_login_ok_packet packet;
 	char* ip = CNetwork::GetInst()->GetIpAddr();
+	cout << ip << endl;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
 	packet.id = _usID;
@@ -45,19 +46,18 @@ void PacketMgr::Send_Login_OK_Packet(unsigned short _usID)
 	Send_Packet(_usID, &packet);
 }
 
-void PacketMgr::Send_Login_Fail_Packet(unsigned short _usID)
+void CPacketMgr::Send_Login_Fail_Packet(unsigned short _usID)
 {
 	sc_login_fail_packet packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_FAIL;
-	packet.id = _usID;
 	Send_Packet(_usID, &packet);
 }
 
-void PacketMgr::Send_Accept_Packet(unsigned short _usID, concurrent_unordered_set<unsigned short>& _ViewList)
+void CPacketMgr::Send_Accept_Packet(unsigned short _usID, concurrent_unordered_set<unsigned short>& _ViewList)
 {
-	sc_packet_accept	packet;
-	packet.size = sizeof(sc_packet_accept);
+	sc_accept_packet	packet;
+	packet.size = sizeof(sc_accept_packet);
 	packet.type = SC_CONNECT;
 	packet.id = _usID;
 
@@ -70,19 +70,19 @@ void PacketMgr::Send_Accept_Packet(unsigned short _usID, concurrent_unordered_se
 	}
 }
 
-void PacketMgr::Send_Status_Packet(unsigned short _usPlayer, unsigned short _usOther)
+void CPacketMgr::Send_Status_Packet(unsigned short _usPlayer, unsigned short _usOther)
 {
 }
 
-void PacketMgr::Send_Pos_Packet(unsigned short _usPlayer, unsigned short _usOther)
+void CPacketMgr::Send_Pos_Packet(unsigned short _usPlayer, unsigned short _usOther)
 {
 }
 
-void PacketMgr::Send_Look_Packet(unsigned short _usPlayer)
+void CPacketMgr::Send_Look_Packet(unsigned short _usPlayer)
 {
 }
 
-void PacketMgr::Send_Remove_Packet(unsigned short _usPlayer, unsigned short _usOther)
+void CPacketMgr::Send_Remove_Packet(unsigned short _usPlayer, unsigned short _usOther)
 {
 	if (_usPlayer != _usOther)
 	{
@@ -95,7 +95,7 @@ void PacketMgr::Send_Remove_Packet(unsigned short _usPlayer, unsigned short _usO
 	}
 }
 
-void PacketMgr::Send_Disconnect_Packet(unsigned short _usPlayer)
+void CPacketMgr::Send_Disconnect_Packet(unsigned short _usPlayer)
 {
 	concurrent_unordered_set<unsigned short> list;
 

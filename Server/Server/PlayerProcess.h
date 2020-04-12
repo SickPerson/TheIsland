@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "Process.h"
 
 class CPlayerProcess:
@@ -22,6 +23,10 @@ public:
 		CS_ATTACK = 4;
 		CS_IDLE = 5;
 		CS_END = 6;*/
+		m_fppacketProcess[CS_LOGIN] = [&](unsigned short _usID, char* _packet)
+		{
+			PlayerLoginCheck(_usID, _packet);
+		};
 		/*m_fppacketProcess[CS_LOGIN] = [&](unsigned short _usID, char* _packet)
 		{
 			if(CProcess::m_pPlayerPool)
@@ -35,6 +40,7 @@ public:
 	void PacketProcess(unsigned short _usID, char* _packet);
 	void RecvPacket(unsigned short _usID, DWORD _dwSize, char* _Packet);
 
+	void PlayerLoginCheck(unsigned short _usID, char* _packet);
 	void PlayerLogin(DataBase_Event& _event);
 	void PlayerLogout(unsigned short _usID);
 	void PlayerDinconnect(unsigned short _usID);
