@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "Network.h"
+#include "LoginScene.h"
 
 CNetwork::CNetwork()
 {
 	Init();
+	ConnectServer();
 }
 
 CNetwork::~CNetwork()
@@ -40,7 +42,7 @@ void CNetwork::Init()
 	m_bCollision = false;
 
 	m_cusViewList.clear();
-
+	//---------------------------------------------------
 	WSADATA	wsa;
 	WSAStartup(MAKEWORD(2, 2), &wsa);
 
@@ -53,15 +55,16 @@ void CNetwork::Init()
 	m_RecvWsaBuf.len = BUF_SIZE;
 }
 
-bool CNetwork::ConnectServer(char* _packet)
+bool CNetwork::ConnectServer()
 {
-	sc_login_ok_packet* packet = reinterpret_cast<sc_login_ok_packet*>(_packet);
+	//sc_login_ok_packet* packet = reinterpret_cast<sc_login_ok_packet*>(_packet);
 
+	char IP[15] = "127.0.0.1";
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(SOCKADDR_IN));
 	serveraddr.sin_family = AF_INET;
 	serveraddr.sin_port = htons(SERVER_PORT);
-	serveraddr.sin_addr.s_addr = inet_addr(packet->ip);
+	serveraddr.sin_addr.s_addr = inet_addr(IP);
 	int retval = WSAConnect(m_sock, reinterpret_cast<sockaddr*>(&serveraddr), sizeof(serveraddr), NULL, NULL, NULL, NULL);
 	if (retval == SOCKET_ERROR) {
 		int err_no = WSAGetLastError();
@@ -176,9 +179,9 @@ void CNetwork::ProcessPacket(char* _packet)
 	switch (_packet[1])
 	{
 	case SC_LOGIN_OK: // 로그인이 성공한다면 서버에 연결을 시도합니다.
-		Init();
 		SetLogin(true);
-		ConnectServer(_packet);
+		
+
 		break;
 	case SC_LOGIN_FAIL: // 로그인이 실패한다면 서버에 연결이 되지 않습니다.
 		SetLogin(false);

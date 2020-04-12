@@ -40,7 +40,7 @@ public:
 	static void Err_display(const char* msg, int err_no);
 public:
 	void Init();
-	bool ConnectServer(char* _packet);
+	bool ConnectServer();
 	bool CreateEventSelect();
 
 	void DisConnect();

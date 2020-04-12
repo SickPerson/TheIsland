@@ -4,20 +4,37 @@
 
 CPlayer::CPlayer()
 {
+	Init();
 }
 
 
 CPlayer::~CPlayer()
 {
+	m_cusViewList.clear();
+}
+
+void CPlayer::Init()
+{
+	SetPlayerSocket(INVALID_SOCKET);
+	SetPlayerConnect(false);
+	m_cusViewList.clear();
+	m_iCursize = 0;
+	m_iPrevsize = 0;
+
+	ZeroMemory(&m_over, sizeof(OVER_EX));
+
+	m_over.m_Event = EV_RECV;
+	m_over.m_DataBuffer.buf = reinterpret_cast<char*>(m_over.m_DataBuffer.buf);
+	m_over.m_DataBuffer.len = sizeof(m_over.m_DataBuffer.buf);
 }
 
 void CPlayer::SetRecvState()
 {
 	DWORD flag{ 0 };
 
-	ZeroMemory(&m_over->m_Overlapped, sizeof(WSAOVERLAPPED));
+	ZeroMemory(&m_over.m_Overlapped, sizeof(WSAOVERLAPPED));
 
-	int retval = WSARecv(m_sSocket, &m_over->m_DataBuffer, 1, NULL, &flag, &m_over->m_Overlapped, NULL);
+	int retval = WSARecv(m_sSocket, &m_over.m_DataBuffer, 1, NULL, &flag, &m_over.m_Overlapped, NULL);
 
 	if (0 != retval)
 	{
@@ -33,7 +50,7 @@ char* CPlayer::RecvEvent(DWORD data_size, char * _packet)
 	char* packet = _packet;
 	int curr = m_iCursize;
 	int prev = m_iPrevsize;
-	char* packetBuf = m_over->m_MessageBuffer;
+	char* packetBuf = m_over.m_MessageBuffer;
 
 	while (0 < size)
 	{

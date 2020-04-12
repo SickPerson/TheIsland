@@ -71,14 +71,10 @@ void CLoginScene::Update()
 		
 		// Client -> Server로 로그인 패킷 보내기 - 만약 이 코드를 작동 시키면
 		// 서버가 켜져 있지 않다면, 클라이언트가 인게임씬으로 넘어가지 않습니다.
-		//CNetwork::GetInst()->SendLoginPacket(strID, strIP);
+		CNetwork::GetInst()->SendLoginPacket(strID, strIP);
 
-		// 씬 넘어가기전 오브젝트들 정리
-		m_pScene->FindLayer(L"UI")->RemoveAll();
-		m_pScene->FindLayer(L"Default")->RemoveAll();
-
-		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
-		CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");
+		// 다음 씬
+		NextScene();
 	}
 
 	if (KEY_TAB(KEY_TYPE::KEY_LBTN))
@@ -425,6 +421,16 @@ void CLoginScene::CreateInputPassword()
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 	m_pPassword->AddChild(pObject);
+}
+
+void CLoginScene::NextScene()
+{
+	// 씬 넘어가기전 오브젝트들 정리
+	m_pScene->FindLayer(L"UI")->RemoveAll();
+	m_pScene->FindLayer(L"Default")->RemoveAll();
+
+	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+	CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");
 }
 
 CGameObject * CLoginScene::GetIDObj()

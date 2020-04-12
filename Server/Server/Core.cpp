@@ -6,6 +6,8 @@ CCore::CCore()
 {
 	m_iNumWorkerThread = 0;
 	m_vWorkerThread.clear();
+
+	Initalize();
 }
 
 CCore::~CCore()
@@ -15,7 +17,6 @@ CCore::~CCore()
 void CCore::Initalize()
 {
 	CheckThisCpuCount();
-
 	CNetwork::GetInst();
 }
 

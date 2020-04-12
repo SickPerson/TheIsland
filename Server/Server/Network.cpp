@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Network.h"
 #include "PlayerProcess.h"
 #include "PacketMgr.h"
@@ -10,6 +11,7 @@ CNetwork::CNetwork()
 	m_bRunningServer = true;
 	m_pPlayerProcess = nullptr;
 	m_usUserID = 0;
+	//------------------------------
 	Initialize();
 	GetServerIpAddress();
 }
@@ -22,7 +24,7 @@ void CNetwork::GetServerIpAddress()
 {
 	PHOSTENT	hostinfo;
 	char		hostname[50];
-	//char		ipaddr[50];
+	char		ipaddr[50];
 	memset(hostname, 0, sizeof(hostname));
 	memset(ipaddr, 0, sizeof(ipaddr));
 
@@ -30,8 +32,8 @@ void CNetwork::GetServerIpAddress()
 	if (err_no == 0) {
 		hostinfo = gethostbyname(hostname);
 		strcpy_s(ipaddr, inet_ntoa(*reinterpret_cast<struct in_addr*>(hostinfo->h_addr_list[0])));
+		strcpy_s(ip, ipaddr);
 	}
-	WSACleanup();
 	cout << "Server IP Address: " << ipaddr << endl;
 }
 
@@ -81,7 +83,7 @@ bool CNetwork::InitSock()
 	int retval;
 
 	m_ListenSock = WSASocketW(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
-	if (!m_ListenSock == INVALID_SOCKET) {
+	if (m_ListenSock == INVALID_SOCKET) {
 		int err_no = WSAGetLastError();
 		Err_display("Socket Err", err_no);
 		return false;

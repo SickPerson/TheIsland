@@ -37,12 +37,9 @@ void CPacketMgr::Send_Packet(const unsigned short& _usID, void* _packet)
 void CPacketMgr::Send_Login_OK_Packet(unsigned short _usID)
 {
 	sc_login_ok_packet packet;
-	char* ip = CNetwork::GetInst()->GetIpAddr();
-	cout << ip << endl;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
 	packet.id = _usID;
-	strcpy_s(packet.ip, ip);
 	Send_Packet(_usID, &packet);
 }
 

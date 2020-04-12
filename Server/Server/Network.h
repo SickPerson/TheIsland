@@ -16,13 +16,12 @@ private:
 	CPlayerProcess*	m_pPlayerProcess;
 
 private:
-	volatile unsigned short m_usUserID;
-
-private:
-	char ipaddr[MAX_STR_LEN];
+	char ip[50];
 
 public:
-	char* GetIpAddr() { return ipaddr; }
+	char* GetIP() { return ip; }
+private:
+	volatile unsigned short m_usUserID;
 
 public:
 	bool CreateSocket(SOCKET& _sClientSocket, unsigned short _usID);

@@ -19,6 +19,7 @@ public:
 	void CreateInputID();
 	void CreateInputIP();
 	void CreateInputPassword();
+	void NextScene();
 
 private:
 	CGameObject*		m_pID;

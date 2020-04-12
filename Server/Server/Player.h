@@ -18,7 +18,7 @@ private:
 	unsigned short	m_usID;
 	volatile bool	m_bConnect;
 	SOCKET			m_sSocket;
-	OVER_EX*		m_over;
+	OVER_EX			m_over;
 	int				m_iPrevsize;
 	int				m_iCursize;
 
@@ -26,6 +26,8 @@ private:
 	shared_mutex m_rmPlayerStatusMutex[LOCK_END];
 	recursive_mutex	m_rmPlayerListMutex;
 
+public:
+	void Init();
 public:
 	void SetRecvState();
 	char* RecvEvent(DWORD data_size, char * _packet);

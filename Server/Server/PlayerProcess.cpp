@@ -7,11 +7,18 @@ CPlayerProcess::CPlayerProcess()
 {
 	if (!CProcess::m_pPlayerPool)
 		CProcess::m_pPlayerPool = new class CPlayerpool();
+	BindPacketProcess();
+	BindUpdateViewListFunction();
 }
 
 
 CPlayerProcess::~CPlayerProcess()
 {
+	if (m_pPlayerPool)
+	{
+		delete m_pPlayerPool;
+		m_pPlayerPool = nullptr;
+	}
 }
 
 void CPlayerProcess::AcceptClient(const SOCKET & _sSocket, unsigned short _usID)
@@ -43,17 +50,19 @@ void CPlayerProcess::PlayerLoginCheck(unsigned short _usID, char * _packet)
 	cs_login_packet* login_packet = reinterpret_cast<cs_login_packet*>(_packet);
 
 	// 로그인 시도시, IP 주소가 다를 경우
-	if (0 != strcmp(login_packet->player_ip, CNetwork::GetInst()->GetIpAddr()))
+	if (0 != strcmp(login_packet->player_ip, CNetwork::GetInst()->GetIP()))
 	{
+		cout << "현재 접속하려는 플레이어 IP주소가 다릅니다." << endl;
 		CPacketMgr::Send_Login_Fail_Packet(_usID);
 		return;
 	}
 
 	// 로그인 시도시, IP 주소가 같을 경우 -> 진행
+	cout << "현재 접속하려는 플레이어 IP 주소 일치 접속 진행" << endl;
 	CPacketMgr::Send_Login_OK_Packet(_usID);
 	// DataBase로 로그인
 	// Not DataBase
-	sc_accept_packet accept_packet;
+	/*sc_accept_packet accept_packet;
 	accept_packet.size = sizeof(sc_accept_packet);
 	accept_packet.type = SC_LOGIN;
 	accept_packet.CurHp = 100;
@@ -71,7 +80,7 @@ void CPlayerProcess::PlayerLoginCheck(unsigned short _usID, char * _packet)
 
 	concurrent_unordered_set<unsigned short>viewlist;
 
-	InsertList(_usID);
+	InsertList(_usID);*/
 }
 
 void CPlayerProcess::PlayerLogin(DataBase_Event& _event)

@@ -56,6 +56,7 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	{
 		return 0;
 	}
+
 	// Network Init
 	CNetwork::GetInst();
 	// Network Run

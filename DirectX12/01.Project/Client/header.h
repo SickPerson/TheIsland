@@ -1,4 +1,5 @@
 #pragma once
+#define _CRT_SECURE_NI_WARNINGS
 
 #ifdef UNICODE
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")

@@ -4,7 +4,7 @@
 [NETWORK]
 -----------------------------------------*/
 constexpr	int	SERVER_PORT = 9000;
-constexpr	unsigned short	MAX_USER	= 5000;
+constexpr	unsigned short	MAX_USER	= 10;
 constexpr	unsigned short	ANIMAL_BEAR = 50;
 constexpr	unsigned short	ANIMAL_WILD_PIG = 100;
 constexpr	unsigned short	ANIMAL_DEER = 150;
@@ -14,7 +14,7 @@ constexpr	int	MAX_STR_LEN = 50;
 
 constexpr	int MAX_QUICK_SLOT = 5;
 
-extern char SERVERIP[20];
+//char SERVERIP[20] = "127.0.0.1";
 
 #define WORLD_WIDTH 800
 #define WORLD_HEIGHT 800
@@ -51,7 +51,6 @@ struct sc_login_ok_packet {
 	char	size;
 	char	type;
 	unsigned short	id;
-	char	ip[MAX_STR_LEN];
 };
 
 struct sc_login_fail_packet {
