@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Network.h"
 #include "LoginScene.h"
+#include "IngameScene.h"
+
+unsigned short CNetwork::m_usID = 0;
 
 CNetwork::CNetwork()
 {
@@ -187,6 +190,8 @@ void CNetwork::ProcessPacket(char* _packet)
 		cout << "IP ºÒÀÏÄ¡" << endl;
 		SetLogin(false);
 		break;
+	case SC_LOGIN:
+		break;
 	}
 }
 
@@ -211,4 +216,12 @@ void CNetwork::SendLoginPacket(string _sPlayerID, string _sIP)
 		int err_no = WSAGetLastError();
 		Err_display("Err while sending packet - ", err_no);
 	}
+}
+
+void CNetwork::RecvLoginPacket(char * _packet)
+{
+	sc_first_status_packet* packet = reinterpret_cast<sc_first_status_packet*>(_packet);
+	m_usID = packet->id;
+
+	CIngameScene::m_cumPlayer[m_usID];
 }

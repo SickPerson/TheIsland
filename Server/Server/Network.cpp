@@ -236,8 +236,8 @@ void CNetwork::AcceptThread()
 				continue;
 			}
 			else {
-				//cout << "立加 : " << inet_ntoa(addr.sin_addr) << '\t' << ntohs(addr.sin_port) << endl;
-				//cout << "UserNum : " << m_usUserID << endl;
+				cout << "立加 : " << inet_ntoa(addr.sin_addr) << '\t' << ntohs(addr.sin_port) << endl;
+				cout << "UserNum : " << m_usUserID + 1 << endl;
 				++m_usUserID;
 				continue;
 			}

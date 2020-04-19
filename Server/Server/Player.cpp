@@ -46,13 +46,14 @@ void CPlayer::SetRecvState()
 
 char* CPlayer::RecvEvent(DWORD data_size, char * _packet)
 {
-	int size = data_size;
+
+	int rest_size = data_size;
 	char* packet = _packet;
 	int curr = m_iCursize;
 	int prev = m_iPrevsize;
 	char* packetBuf = m_over.m_MessageBuffer;
 
-	while (0 < size)
+	while (0 < rest_size)
 	{
 		int packet_size;
 		if (0 != curr)
@@ -63,21 +64,21 @@ char* CPlayer::RecvEvent(DWORD data_size, char * _packet)
 			curr = packet_size;
 		}
 		int need_size = packet_size - prev;
-		if (need_size <= size)
+		if (need_size <= rest_size)
 		{
 			memcpy(packetBuf + prev, packet, need_size);
 			prev = 0;
 			curr = 0;
-			size -= need_size;
+			rest_size -= need_size;
 			packet += need_size;
 			return packet;
 		}
 		else
 		{
-			memcpy(packetBuf + prev, packet, size);
-			prev += size;
-			size = -size;
-			packet += size;
+			memcpy(packetBuf + prev, packet, rest_size);
+			prev += rest_size;
+			rest_size = -rest_size;
+			packet += rest_size;
 		}
 	}
 	return nullptr;

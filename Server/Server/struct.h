@@ -44,10 +44,10 @@ typedef struct DataBase_Event {
 	unsigned short client_num;
 	wchar_t	id[MAX_STR_LEN];
 
-	int CurHp;
-	int CurStamina;
-	int Curhunger;
-	int thirst;
+	int HP;
+	int Stamina;
+	int Hunger;
+	int Thirst;
 
 	float fPosX;
 	float fPosY;
