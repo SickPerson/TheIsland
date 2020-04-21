@@ -8,8 +8,6 @@ struct tShaderParam
 	SHADER_PARAM	eType;
 };
 
-
-
 class CShader :
 	public CResource
 {
@@ -40,24 +38,24 @@ private:
 	DEPTH_STENCIL_TYPE					m_eDSType;
 
 	SHADER_POV							m_ePOV;
-	
+
 
 public:
-	void Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	void CreateVertexShader(const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion);
-	void CreatePixelShader(const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion);
+	void Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+	void CreateVertexShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
+	void CreatePixelShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
 	//void CreateHullShader();
 	//void CreateDomainShader();
-	//void CreateGeometryShader();
-	void CreateComputeShader(const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion);
+	void CreateGeometryShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
+	void CreateComputeShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
 
-	void SetBlendState(BLEND_TYPE _eType) { m_eBlendType = _eType; }
-	void SetDepthStencilType(DEPTH_STENCIL_TYPE _eType);
-	void SetRasterizerType(RS_TYPE _eType) { m_eRSType = _eType; }
+	void SetBlendState( BLEND_TYPE _eType ) { m_eBlendType = _eType; }
+	void SetDepthStencilType( DEPTH_STENCIL_TYPE _eType );
+	void SetRasterizerType( RS_TYPE _eType ) { m_eRSType = _eType; }
 
 	void UpdateData();
 	void UpdateData_CS();
-	void AddShaderParam(const tShaderParam& _param) { m_vecShaderParam.push_back(_param); }
+	void AddShaderParam( const tShaderParam& _param ) { m_vecShaderParam.push_back( _param ); }
 
 	SHADER_POV GetShaderPOV() { return m_ePOV; }
 };

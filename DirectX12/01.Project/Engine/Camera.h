@@ -44,6 +44,7 @@ private:
 
 	vector<CGameObject*>			m_vecDeferred;
 	vector<CGameObject*>			m_vecForward;
+	vector<CGameObject*>			m_vecParticle;
 
 	CAM_TYPE	m_eCamType;	// 일반 카메라인지 플레이어만 보는 특수한 카메라인지
 public:	

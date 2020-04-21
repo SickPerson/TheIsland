@@ -138,6 +138,15 @@ void CMesh::Render( UINT iSubset )
 	CMDLIST->DrawIndexedInstanced( m_vecIdxInfo[iSubset].iIdxCount, 1, 0, 0, 0 );
 }
 
+void CMesh::Render_Instancing( UINT iInstancCount, UINT iSubset )
+{
+	CDevice::GetInst()->UpdateTable();
+
+	CMDLIST->IASetVertexBuffers( 0, 1, &m_tVtxView );
+	CMDLIST->IASetIndexBuffer( &m_vecIdxInfo[iSubset].tIdxView );
+	CMDLIST->DrawIndexedInstanced( m_vecIdxInfo[iSubset].iIdxCount, iInstancCount, 0, 0, 0 );
+}
+
 CMesh * CMesh::CreateFromContainer( CFBXLoader & loader )
 {
 	const tContainer* container = &loader.GetContainer( 0 );

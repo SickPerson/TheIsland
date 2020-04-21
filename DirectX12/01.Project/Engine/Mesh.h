@@ -40,6 +40,7 @@ public:
 	void Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem
 		, DXGI_FORMAT _iIdxFormat, UINT _iIdxCount, BYTE* _pIdxSysMem);
 	void Render( UINT iSubSet = 0 );
+	void Render_Instancing( UINT iInstancCount, UINT iSubset = 0 );
 	static CMesh* CreateFromContainer( CFBXLoader & Loader );
 
 public:
