@@ -19,10 +19,17 @@ CStructuredBuffer::~CStructuredBuffer()
 
 void CStructuredBuffer::Create( UINT iElementSize, UINT iElementCount, void * pSysMem )
 {
+	m_pBuffer = nullptr;
+	m_pSRV = nullptr;
+	m_pUAV = nullptr;
+
 	m_iElementSize = iElementSize;
 	m_iElementCount = iElementCount;
 
-	m_eResState = D3D12_RESOURCE_STATE_COMMON;
+	if ( pSysMem )
+		m_eResState = D3D12_RESOURCE_STATE_COPY_DEST;
+	else
+		m_eResState = D3D12_RESOURCE_STATE_COMMON;
 
 	// 버퍼 Desc 작성
 	D3D12_RESOURCE_DESC tBufferDesc{};
@@ -46,6 +53,49 @@ void CStructuredBuffer::Create( UINT iElementSize, UINT iElementCount, void * pS
 		m_eResState,
 		nullptr,
 		IID_PPV_ARGS( &m_pBuffer ) );
+
+	// 초기 Initial 데이터가 있는 경우
+	if ( pSysMem )
+	{
+		// 읽기 버퍼 생성
+		ComPtr<ID3D12Resource> pReadBuffer = nullptr;
+
+		// ReadBuffer Desc
+		D3D12_RESOURCE_DESC tReadBufferDesc = {};
+		tReadBufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		tReadBufferDesc.Width = m_iElementSize * m_iElementCount;
+		tReadBufferDesc.Height = 1;
+		tReadBufferDesc.DepthOrArraySize = 1;
+		tReadBufferDesc.MipLevels = 1;
+		tReadBufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+		tReadBufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		tReadBufferDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+		tReadBufferDesc.SampleDesc.Count = 1;
+		tReadBufferDesc.SampleDesc.Quality = 0;
+
+		// Buffer Create
+		DEVICE->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES( D3D12_HEAP_TYPE_UPLOAD ),
+			D3D12_HEAP_FLAG_NONE,
+			&tReadBufferDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS( &pReadBuffer ) );
+
+		UINT8* pVertexDataBegin = nullptr;
+		D3D12_RANGE readRange{ 0, 0 }; // We do not intend to read from this resource on the CPU.	
+		pReadBuffer->Map( 0, &readRange, reinterpret_cast< void** >( &pVertexDataBegin ) );
+		memcpy( pVertexDataBegin, pSysMem, ( tReadBufferDesc.Width * tReadBufferDesc.Height ) );
+		pReadBuffer->Unmap( 0, nullptr );
+
+		// Resource Copy
+		CMDLIST_RES->CopyBufferRegion( m_pBuffer.Get(), 0, pReadBuffer.Get(), 0, m_iElementSize * m_iElementCount );
+		CMDLIST_RES->ResourceBarrier( 1, &CD3DX12_RESOURCE_BARRIER::Transition( m_pBuffer.Get()
+			, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON ) );
+		CDevice::GetInst()->ExcuteResourceLoad();
+
+		m_eResState = D3D12_RESOURCE_STATE_COMMON;
+	}
 
 	// UAV 생성
 	// UAV 를 저장할 DescriptorHeap Create
@@ -131,4 +181,19 @@ D3D12_RESOURCE_STATES CStructuredBuffer::GetResState()
 ComPtr<ID3D12Resource> CStructuredBuffer::GetBuffer()
 {
 	return m_pBuffer;
+}
+
+UINT CStructuredBuffer::GetElementSize()
+{
+	return m_iElementSize;
+}
+
+UINT CStructuredBuffer::GetElementCount()
+{
+	return m_iElementCount;
+}
+
+UINT CStructuredBuffer::GetBufferSize()
+{
+	return m_iElementSize * m_iElementCount;
 }

@@ -165,6 +165,89 @@ float4 PS_Tex(TEX_OUTPUT _input) : SV_Target
 }
 
 
+VS_OUTPUT VS_UI_Test( VS_INPUT _input )
+{
+	VS_OUTPUT output = ( VS_OUTPUT )0;
+
+	output.vOutPos = mul( float4( _input.vPos, 1.f ), g_matWVP );
+	output.vViewPos = mul( float4( _input.vPos, 1.f ), g_matWV ).xyz;
+	output.vViewNormal = normalize( mul( float4( _input.vNormal, 0.f ), g_matWV ) ).xyz;
+	output.vOutColor = _input.vColor;
+
+
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
+float4 PS_UI_Test( VS_OUTPUT _input ) : SV_Target
+{
+	if ( g_int_0 == -1 )
+		return g_vec4_0;
+
+	if ( g_int_0 == 1 ) // 배경색
+		return float4( 0.4f, 0.4f, 0.4f, 0.5f );
+	if ( g_int_0 == 2 ) // 퀵슬릇색
+		return float4( 0.7f, 0.7f, 0.7f, 1.f );
+	if ( g_int_0 == 3 ) // 갈증 상태바
+		return float4( 0.4f, 0.4f, 0.8f, 1.f );
+	if ( g_int_0 == 4 ) // 배경색
+		return float4( 0.8f, 0.8f, 0.8f, 0.5f );
+	if ( g_int_0 == 5 ) // HP
+		return float4( 0.2f, 0.6f, 0.2f, 1.f );
+	if ( g_int_0 == 6 ) // 배고픔
+		return float4( 0.7f, 0.4f, 0.f, 1.f );
+	if ( g_int_0 == 7 )
+		return float4( 0.2f, 0.2f, 0.2f, 0.8f );
+
+	float4 color = g_tex_0.Sample( g_sam_0, _input.vUV );
+	color[3] = color[3] * g_float_0;
+	color[3] = color[3] - 0.2f;
+
+	return color;
+}
+
+// =======================
+// Font Shader
+// =======================
+TEX_OUTPUT VS_Font( TEX_INPUT _input )
+{
+	TEX_OUTPUT output = ( TEX_OUTPUT )0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.
+	float4 vWorldPos = mul( float4( _input.vPos, 1.f ), g_matWorld );
+	float4 vViewPos = mul( vWorldPos, g_matView );
+	float4 vProjPos = mul( vViewPos, g_matProj );
+
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
+}
+// 0일떄는 start
+// 1일때는 start + width
+float4 PS_Font( TEX_OUTPUT _input ) : SV_Target
+{
+	float4 vColor = ( float4 ) 0.f;
+
+	// g_float_0 : Start U
+	// g_float_1 : Width U
+	// g_float_2 : Start V
+	// g_float_3 : Height V
+	_input.vUV.x = _input.vUV.x * g_float_1 + g_float_0;
+	_input.vUV.y = _input.vUV.y * g_float_3 + g_float_2;
+	// 0일때 0.2, 1일떄 0.4
+
+	vColor = g_tex_0.Sample( g_sam_1, _input.vUV );
+
+	vColor = vColor * g_vec4_0;
+
+	if ( vColor.z < 0.5f )
+		vColor = g_vec4_1;
+
+	return vColor;
+}
+
 // =================
 // Collider2D Shader
 // =================

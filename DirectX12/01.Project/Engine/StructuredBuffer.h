@@ -34,5 +34,9 @@ public:
 	void SetResState( D3D12_RESOURCE_STATES eState );
 	D3D12_RESOURCE_STATES GetResState();
 	ComPtr<ID3D12Resource> GetBuffer();
+
+	UINT GetElementSize();
+	UINT GetElementCount();
+	UINT GetBufferSize();
 };
 

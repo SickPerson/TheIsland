@@ -67,21 +67,29 @@ int CDevice::Init( HWND _hWnd, const tResolution & _res, bool _bWindow )
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	m_pDevice->CreateCommandQueue( &queueDesc, IID_PPV_ARGS( &m_pCmdQueue ) );
+	m_pCmdQueue->SetName( L"Command Queue" );
 
 	// Compute Command Queue
 	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
 	m_pDevice->CreateCommandQueue( &queueDesc, IID_PPV_ARGS( &m_pCmdQueueCompute ) );
+	m_pCmdQueueCompute->SetName( L"Compute Command Queue" );
 
 	// Create Command Allocator
 	m_pDevice->CreateCommandAllocator( D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS( &m_pCmdAlloc ) );
 	m_pDevice->CreateCommandAllocator( D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS( &m_pCmdAllocRes ) );
 	m_pDevice->CreateCommandAllocator( D3D12_COMMAND_LIST_TYPE_COMPUTE, IID_PPV_ARGS( &m_pCmdAllocCompute ) );
+	m_pCmdAlloc->SetName( L"Command Allocator" );
+	m_pCmdAllocRes->SetName( L"Resource Command Allocator" );
+	m_pCmdAllocCompute->SetName( L"Compute Command Allocator" );
 
 	// Create the command list.
 	m_pDevice->CreateCommandList( 0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_pCmdAlloc.Get(), nullptr, IID_PPV_ARGS( &m_pCmdListGraphic ) );
 	m_pDevice->CreateCommandList( 0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_pCmdAllocRes.Get(), nullptr, IID_PPV_ARGS( &m_pCmdListRes ) );
 	m_pDevice->CreateCommandList( 0, D3D12_COMMAND_LIST_TYPE_COMPUTE, m_pCmdAllocCompute.Get(), nullptr, IID_PPV_ARGS( &m_pCmdListCompute ) );
+	m_pCmdListGraphic->SetName( L"Graphic Command List" );
+	m_pCmdListRes->SetName( L"Resource Command List" );
+	m_pCmdListCompute->SetName( L"Compute Command List" );
 
 	m_pCmdListGraphic->Close();
 
@@ -482,11 +490,11 @@ void CDevice::CreateSamplerDesc()
 	sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	sampler.MipLODBias = 0;
-	sampler.MaxAnisotropy = 0;
-	sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-	sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+	sampler.MaxAnisotropy = 4;
+	sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE;
 	sampler.MinLOD = 0.0f;
-	sampler.MaxLOD = D3D12_FLOAT32_MAX;
+	sampler.MaxLOD = 0.f;
 	sampler.ShaderRegister = 0;
 	sampler.RegisterSpace = 0;
 	sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
@@ -499,7 +507,7 @@ void CDevice::CreateSamplerDesc()
 	sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
 	sampler.MipLODBias = 0;
 	sampler.MaxAnisotropy = 0;
-	sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+	sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 	sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
 	sampler.MinLOD = 0.0f;
 	sampler.MaxLOD = D3D12_FLOAT32_MAX;
