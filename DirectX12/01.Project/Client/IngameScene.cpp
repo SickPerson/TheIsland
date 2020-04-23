@@ -32,6 +32,9 @@
 #include "InventoryScript.h"
 #include <Engine/TestScript.h>
 
+concurrency::concurrent_unordered_set<unsigned short> CIngameScene::m_cusLoginList;
+concurrency::concurrent_unordered_map<unsigned short, CGameObject*> CIngameScene::m_cumPlayer;
+
 CIngameScene::CIngameScene()
 {
 }

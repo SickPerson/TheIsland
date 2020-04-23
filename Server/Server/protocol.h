@@ -10,8 +10,8 @@ constexpr	unsigned short	ANIMAL_WILD_PIG = 100;
 constexpr	unsigned short	ANIMAL_DEER = 150;
 constexpr	unsigned short	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_WILD_PIG + ANIMAL_DEER;
 constexpr	int	MAX_BUF = 1024;
-constexpr	int	MAX_STR_LEN = 50;
-
+constexpr	int	MAX_STR_LEN = 15;
+constexpr	int MAX_MEG_LEN = 50;
 constexpr	int MAX_QUICK_SLOT = 5;
 
 //char SERVERIP[20] = "127.0.0.1";
@@ -24,8 +24,6 @@ constexpr	char	CS_LOGIN = 0;
 constexpr	char	CS_LOGOUT = 1;
 constexpr	char	CS_LOOK = 2;
 constexpr	char	CS_POS = 3;
-constexpr	char	CS_ATTACK = 4;
-constexpr	char	CS_IDLE = 5;
 constexpr	int		CS_END = 6;
 
 // Server -> Client Packet Protocol
@@ -40,7 +38,9 @@ constexpr	char	SC_STAT_CHANGE = 7;
 constexpr	char	SC_REMOVE_OBJECT = 8;
 
 #pragma	pack(push, 1)
-// Sever -> Client
+// ___________________________________________________________________
+//						[ Sever -> Client ]
+// ___________________________________________________________________
 struct sc_login_state_packet {
 	char size;
 	char type;
@@ -64,15 +64,29 @@ struct sc_disconnect_packet {
 	unsigned short id;
 };
 
-struct sc_accept_packet {
+struct sc_first_status_packet {
 	char size;
 	char type;
 	unsigned short id;
 
-	int CurHp;
-	int CurStamina;
-	int Curhunger;
-	int thirst;
+	int HP;
+	int Stamina;
+	int Hunger;
+	int Thirst;
+
+	float fPosX;
+	float fPosY;
+	float fPosZ;
+
+	float fDirX;
+	float fDirY;
+	float fDirZ;
+};
+
+struct sc_pos_packet {
+	char size;
+	char type;
+	unsigned short id;
 
 	float fPosX;
 	float fPosY;
@@ -87,7 +101,7 @@ struct sc_chat_packet {
 	char size;
 	char type;
 	unsigned short id;
-	char meesage[MAX_STR_LEN];
+	wchar_t meesage[MAX_STR_LEN];
 };
 
 //struct sc_packet_position {
@@ -120,12 +134,21 @@ struct sc_chat_packet {
 //	int	hp, level, exp;
 //};
 
-// client->server
+// ___________________________________________________________________
+//						[ Client -> Server ]
+// ___________________________________________________________________
 struct cs_login_packet {
 	char	size;
 	char	type;
 	char	player_id[MAX_STR_LEN];
 	char	player_ip[MAX_STR_LEN];
+};
+
+struct cs_chat_packet {
+	char size;
+	char type;
+	unsigned short id;
+	wchar_t meesage[MAX_STR_LEN];
 };
 
 struct cs_packet_move {

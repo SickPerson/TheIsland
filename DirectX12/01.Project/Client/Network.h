@@ -118,5 +118,7 @@ public:
 public:
 	void SendLoginPacket(string _sPlayerID, string _sIP);
 
+public:
+	void RecvLoginPacket(char* _packet);
 };
 

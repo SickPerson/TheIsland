@@ -2,6 +2,7 @@
 #include "Network.h"
 #include "PacketMgr.h"
 #include "Player.h"
+#include "DataBase.h"
 
 CPlayerProcess::CPlayerProcess()
 {
@@ -45,6 +46,25 @@ void CPlayerProcess::RecvPacket(unsigned short _usID, DWORD _dwSize, char * _Pac
 	return;
 }
 
+void CPlayerProcess::PlayerLogin(unsigned short _usID, char * _packet)
+{
+	cs_login_packet* login_packet = reinterpret_cast<cs_login_packet*>(_packet);
+
+	// 로그인 시도시, IP 주소가 다를 경우
+	if (0 != strcmp(login_packet->player_ip, CNetwork::GetInst()->GetIP()))
+	{
+		cout << "현재 접속하려는 플레이어 IP주소가 다릅니다." << endl;
+		CPacketMgr::Send_Login_Fail_Packet(_usID);
+		return;
+	}
+	// 로그인 시도시, IP 주소가 같을 경우 -> 진행
+	cout << "현재 접속하려는 플레이어 IP 주소 일치 접속 진행" << endl;
+	CPacketMgr::Send_Login_OK_Packet(_usID);
+	CPacketMgr::Send_First_Status_Packet(_usID);
+
+	InsertList(_usID);
+}
+
 void CPlayerProcess::PlayerLoginCheck(unsigned short _usID, char * _packet)
 {
 	cs_login_packet* login_packet = reinterpret_cast<cs_login_packet*>(_packet);
@@ -62,14 +82,14 @@ void CPlayerProcess::PlayerLoginCheck(unsigned short _usID, char * _packet)
 	CPacketMgr::Send_Login_OK_Packet(_usID);
 	// DataBase로 로그인
 	// Not DataBase
-	/*sc_accept_packet accept_packet;
-	accept_packet.size = sizeof(sc_accept_packet);
+	/*sc_first_status_packet accept_packet;
+	accept_packet.size = sizeof(sc_first_status_packet);
 	accept_packet.type = SC_LOGIN;
-	accept_packet.CurHp = 100;
-	accept_packet.Curhunger = 100;
-	accept_packet.CurStamina = 100;
-	accept_packet.Curhunger = 100;
-	accept_packet.thirst = 100;
+	accept_packet.HP = 100;
+	accept_packet.Hunger = 100;
+	accept_packet.Stamina = 100;
+	accept_packet.Hunger = 100;
+	accept_packet.Thirst = 100;
 
 	accept_packet.fPosX = 0.f;
 	accept_packet.fPosY = 25.f;
@@ -94,13 +114,13 @@ void CPlayerProcess::PlayerLogin(DataBase_Event& _event)
 
 	InsertList(_event.client_num);
 
-	sc_accept_packet accept_packet;
-	accept_packet.size = sizeof(sc_accept_packet);
+	sc_first_status_packet accept_packet;
+	accept_packet.size = sizeof(sc_first_status_packet);
 	accept_packet.type = SC_LOGIN_OK;
-	accept_packet.CurHp = _event.CurHp;
-	accept_packet.Curhunger = _event.Curhunger;
-	accept_packet.CurStamina = _event.CurStamina;
-	accept_packet.thirst = _event.thirst;
+	accept_packet.HP = _event.HP;
+	accept_packet.Hunger = _event.Hunger;
+	accept_packet.Stamina = _event.Stamina;
+	accept_packet.Thirst = _event.Thirst;
 
 	accept_packet.fPosX = _event.fPosX;
 	accept_packet.fPosY = _event.fPosY;
@@ -112,10 +132,10 @@ void CPlayerProcess::PlayerLogin(DataBase_Event& _event)
 	CPacketMgr::Send_Packet(_event.client_num, &accept_packet);
 
 	// DB에서 받아온 정보를 플레이어에게 옮긴다.
-	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetHP(_event.CurHp);
-	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetHunger(_event.Curhunger);
-	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetStamina(_event.CurStamina);
-	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetThirst(_event.thirst);
+	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetHP(_event.HP);
+	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetHunger(_event.Hunger);
+	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetStamina(_event.Stamina);
+	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetThirst(_event.Thirst);
 	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetPos(_event.fPosX, _event.fPosY, _event.fPosZ);
 	CProcess::m_pPlayerPool->m_cumPlayerPool[_event.client_num]->SetDir(_event.fDirX, _event.fDirY, _event.fDirZ);
 
@@ -125,17 +145,26 @@ void CPlayerProcess::PlayerLogin(DataBase_Event& _event)
 	CPacketMgr::Send_Accept_Packet(_event.client_num, viewlist);
 }
 
-void CPlayerProcess::PlayerLogout(unsigned short _usID)
-{
-}
-
 void CPlayerProcess::PlayerDinconnect(unsigned short _usID)
 {
 	// 이미 Disconnect인 상태일 경우
 	if (!CProcess::m_pPlayerPool->m_cumPlayerPool[_usID]->GetPlayerConnect()) return;
-
+	// 아직 Diconnect인 상태가 아닐 경우
 	concurrent_unordered_set<unsigned short>ViewList;
 	CProcess::m_pPlayerPool->m_cumPlayerPool[_usID]->SetPlayerConnect(false);
+
+	// Database
+	/*if (CDataBase::GetInst()->GetIsLogin(_usID))
+		return;*/
+
+	DirectX::XMFLOAT3 pos = CProcess::m_pPlayerPool->m_cumPlayerPool[_usID]->GetPos();
+
+	// Database
+
+	if (CheckList(_usID))
+		DeleteList(_usID);
+	CProcess::m_pPlayerPool->m_cumPlayerPool[_usID]->CopyPlayerList(ViewList);
+	CPacketMgr::Send_Disconnect_Packet(_usID);
 }
 
 void CPlayerProcess::PlayerPos(unsigned short _usID, char * _Packet)

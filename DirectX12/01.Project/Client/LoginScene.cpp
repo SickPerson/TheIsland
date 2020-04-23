@@ -62,10 +62,6 @@ void CLoginScene::Init()
 
 void CLoginScene::Update()
 {
-	/*if (CNetwork::GetInst()->GetLogin())
-	{
-		
-	}*/
 	// 엔터를 눌렀을때 다음 씬으로 진입한다
 	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
 	{
@@ -75,10 +71,7 @@ void CLoginScene::Update()
 		
 		// Client -> Server로 로그인 패킷 보내기 - 만약 이 코드를 작동 시키면
 		// 서버가 켜져 있지 않다면, 클라이언트가 인게임씬으로 넘어가지 않습니다.
-		//CNetwork::GetInst()->SendLoginPacket(strID, strIP);
-	
-		// 다음 씬
-		NextScene();
+		CNetwork::GetInst()->SendLoginPacket(strID, strIP);
 	}
 
 	if (KEY_TAB(KEY_TYPE::KEY_LBTN))
@@ -116,6 +109,13 @@ void CLoginScene::Update()
 				m_pID->GetScript<CInputScript>()->SetEnable(true);
 			}
 		}
+	}
+
+	// 만약 로그인 승인을 받았을 경우 다음씬으로 넘어갑니다.
+	if (CNetwork::GetInst()->GetLogin())
+	{
+		// 다음 씬
+		NextScene();
 	}
 }
 
