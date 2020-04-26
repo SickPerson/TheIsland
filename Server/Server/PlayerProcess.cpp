@@ -169,8 +169,11 @@ void CPlayerProcess::PlayerDinconnect(unsigned short _usID)
 
 void CPlayerProcess::PlayerPos(unsigned short _usID, char * _Packet)
 {
+	sc_pos_packet*	 packet = reinterpret_cast<sc_pos_packet*>(_Packet);
+	DirectX::XMFLOAT3 pos = DirectX::XMFLOAT3(packet->fPosX, packet->fPosY, packet->fPosZ);
 }
 
 void CPlayerProcess::PlayerLook(unsigned short _usID, char * _Packet)
 {
+	
 }

@@ -27,6 +27,18 @@ public:
 		{
 			PlayerLogin(_usID, _packet);
 		};
+		m_fppacketProcess[CS_LOGOUT] = [&](unsigned short _usID, char* _packet)
+		{
+
+		};
+		m_fppacketProcess[CS_LOOK] = [&](unsigned short _usID, char* _packet)
+		{
+
+		};
+		m_fppacketProcess[CS_POS] = [&](unsigned short _usID, char* _packet)
+		{
+
+		};
 		/*m_fppacketProcess[CS_LOGIN] = [&](unsigned short _usID, char* _packet)
 		{
 			if(CProcess::m_pPlayerPool)
@@ -45,7 +57,6 @@ public:
 	void PlayerLogin(DataBase_Event& _event);
 	void PlayerDinconnect(unsigned short _usID);
 	void PlayerPos(unsigned short _usID, char* _Packet);
-
 	void PlayerLook(unsigned short _usID, char* _Packet);
 };
 
