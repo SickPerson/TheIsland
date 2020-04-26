@@ -16,14 +16,12 @@ constexpr	int MAX_QUICK_SLOT = 5;
 
 //char SERVERIP[20] = "127.0.0.1";
 
-#define WORLD_WIDTH 800
-#define WORLD_HEIGHT 800
-
 // Client -> Server Packet Protocol
 constexpr	char	CS_LOGIN = 0;
 constexpr	char	CS_LOGOUT = 1;
 constexpr	char	CS_LOOK = 2;
 constexpr	char	CS_POS = 3;
+constexpr	char	CS_CHAT = 4;
 constexpr	int		CS_END = 6;
 
 // Server -> Client Packet Protocol

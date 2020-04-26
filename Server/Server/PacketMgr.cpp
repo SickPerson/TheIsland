@@ -102,6 +102,8 @@ void CPacketMgr::Send_Accept_Packet(unsigned short _usID, concurrent_unordered_s
 
 void CPacketMgr::Send_Status_Packet(unsigned short _usPlayer, unsigned short _usOther)
 {
+	DirectX::XMFLOAT3 pos = CProcess::m_pPlayerPool->m_cumPlayerPool[_usPlayer]->GetPos();
+	DirectX::XMFLOAT3 dir = CProcess::m_pPlayerPool->m_cumPlayerPool[_usPlayer]->GetDir();
 }
 
 void CPacketMgr::Send_Pos_Packet(unsigned short _usPlayer, unsigned short _usOther)
