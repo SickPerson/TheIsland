@@ -14,7 +14,7 @@ CShader::CShader()
 	, m_pPSBlob( nullptr )
 	, m_pErrBlob( nullptr )
 	, m_pCSBlob( nullptr )
-	, m_pPilelineState( nullptr )
+	, m_pPipelineState( nullptr )
 	, m_eBlendType( BLEND_TYPE::DEFAULT )
 	, m_eDSType( DEPTH_STENCIL_TYPE::LESS )
 	, m_tPipeline{}
@@ -129,7 +129,7 @@ void CShader::CreatePixelShader( const wstring & _strPath, const string & _strFu
 
 void CShader::UpdateData()
 {
-	CMDLIST->SetPipelineState( m_pPilelineState.Get() );
+	CMDLIST->SetPipelineState( m_pPipelineState.Get() );
 	CMDLIST->IASetPrimitiveTopology( m_eTopology );
 }
 
@@ -155,6 +155,7 @@ void CShader::Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology )
 
 		{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 88, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+
 	};
 
 	m_tPipeline.InputLayout = { inputElementDescs, _countof( inputElementDescs ) };
@@ -198,7 +199,7 @@ void CShader::Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology )
 		break;
 	}
 
-	switch ( _eTopology )
+	switch (_eTopology)
 	{
 	case D3D_PRIMITIVE_TOPOLOGY_POINTLIST:
 		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
@@ -250,10 +251,10 @@ void CShader::Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology )
 		m_tPipeline.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
 		break;
 	default:
-		assert( nullptr );
+		assert(nullptr);
 	}
 
-	HRESULT hr = DEVICE->CreateGraphicsPipelineState( &m_tPipeline, IID_PPV_ARGS( &m_pPilelineState ) );
-	if ( FAILED( hr ) )
-		assert( nullptr );
+	HRESULT hr = DEVICE->CreateGraphicsPipelineState(&m_tPipeline, IID_PPV_ARGS(&m_pPipelineState ));
+	if (FAILED(hr))
+		assert(nullptr);
 }

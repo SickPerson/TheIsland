@@ -33,6 +33,9 @@ void CRenderMgr::Render()
 	float arrColor[4] = { 0.f,0.f, 0.f, 1.f };
 	CDevice::GetInst()->Render_Start(arrColor);
 
+	static CConstantBuffer* pGlobalBuffer = CDevice::GetInst()->GetCB( CONST_REGISTER::b5 );
+	CDevice::GetInst()->SetConstBufferToRegister( pGlobalBuffer, pGlobalBuffer->AddData( &g_global ) );
+
 	// 광원 정보 업데이트
 	UpdateLight2D();
 	UpdateLight3D();
@@ -43,7 +46,7 @@ void CRenderMgr::Render()
 
 	// DeferredMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->Clear();
-	m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
+	//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
 
 	// LightMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->Clear();
@@ -76,8 +79,8 @@ void CRenderMgr::Render()
 		{
 			m_vecCam[i]->SortGameObject();
 
-			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
-			m_vecCam[i]->Render_Deferred();
+			//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
+			//m_vecCam[i]->Render_Deferred();
 
 			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
 			m_vecCam[i]->Render_Forward();

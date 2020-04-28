@@ -6,7 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "File", "File", "{95018B3D-68AB-4E4D-B6AF-5227C8DF27E4}"
 	ProjectSection(SolutionItems) = preProject
 		EngineCopy.bat = EngineCopy.bat
-		할일.txt = 할일.txt
+		오류목록.txt = 오류목록.txt
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "01.Project\Client\Client.vcxproj", "{6CAD1CF3-A0D0-472F-9492-211823E87FE7}"
@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "01.Project\Client
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "01.Project\Engine\Engine.vcxproj", "{606E1682-A768-4AB1-B412-E9B68F47F39B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MapTool", "MapTool\MapTool.vcxproj", "{D05E9519-480E-4F4F-B24D-13418D881ABD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +42,14 @@ Global
 		{606E1682-A768-4AB1-B412-E9B68F47F39B}.Release|x64.Build.0 = Release|x64
 		{606E1682-A768-4AB1-B412-E9B68F47F39B}.Release|x86.ActiveCfg = Release|Win32
 		{606E1682-A768-4AB1-B412-E9B68F47F39B}.Release|x86.Build.0 = Release|Win32
+		{D05E9519-480E-4F4F-B24D-13418D881ABD}.Debug|x64.ActiveCfg = Debug|x64
+		{D05E9519-480E-4F4F-B24D-13418D881ABD}.Debug|x64.Build.0 = Debug|x64
+		{D05E9519-480E-4F4F-B24D-13418D881ABD}.Debug|x86.ActiveCfg = Debug|Win32
+		{D05E9519-480E-4F4F-B24D-13418D881ABD}.Debug|x86.Build.0 = Debug|Win32
+		{D05E9519-480E-4F4F-B24D-13418D881ABD}.Release|x64.ActiveCfg = Release|x64
+		{D05E9519-480E-4F4F-B24D-13418D881ABD}.Release|x64.Build.0 = Release|x64
+		{D05E9519-480E-4F4F-B24D-13418D881ABD}.Release|x86.ActiveCfg = Release|Win32
+		{D05E9519-480E-4F4F-B24D-13418D881ABD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

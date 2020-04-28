@@ -603,7 +603,8 @@ void CDevice::SetBufferToRegister( CStructuredBuffer * pBuffer, TEXTURE_REGISTER
 	// 리소스 상태 변경
 	if ( pBuffer->GetResState() == D3D12_RESOURCE_STATE_UNORDERED_ACCESS )
 	{
-		CMDLIST->ResourceBarrier( 1, &CD3DX12_RESOURCE_BARRIER::Transition( pBuffer->GetBuffer().Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON ) );
+		CMDLIST->ResourceBarrier( 1, &CD3DX12_RESOURCE_BARRIER::Transition( pBuffer->GetBuffer().Get(),
+			D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COMMON ) );
 
 		pBuffer->SetResState( D3D12_RESOURCE_STATE_COMMON );
 	}

@@ -89,7 +89,8 @@ void CStructuredBuffer::Create( UINT iElementSize, UINT iElementCount, void * pS
 		pReadBuffer->Unmap( 0, nullptr );
 
 		// Resource Copy
-		CMDLIST_RES->CopyBufferRegion( m_pBuffer.Get(), 0, pReadBuffer.Get(), 0, m_iElementSize * m_iElementCount );
+		CMDLIST_RES->CopyBufferRegion( m_pBuffer.Get(), 0, pReadBuffer.Get(), 0, 
+			m_iElementSize * m_iElementCount );
 		CMDLIST_RES->ResourceBarrier( 1, &CD3DX12_RESOURCE_BARRIER::Transition( m_pBuffer.Get()
 			, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON ) );
 		CDevice::GetInst()->ExcuteResourceLoad();

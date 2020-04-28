@@ -50,12 +50,13 @@ public:
 public:
 	UINT GetSubsetCount();
 	const vector<tMTBone>* GetBones();
-	void SetBoneTex( Ptr<CTexture> pTex );
+	//void SetBoneTex( Ptr<CTexture> pTex );
 	const vector<tMTAnimClip>* GetAnimClip();
 	//Ptr<CTexture> GetBoneTex();
 	bool IsAnimMesh();
 	CStructuredBuffer*	GetBoneFrameDataBuffer();
 	CStructuredBuffer*	GetBoneOffsetBuffer();
+	UINT GetBoneCount();
 
 public:
 	virtual void Load( const wstring& strPath );
