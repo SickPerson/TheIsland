@@ -91,6 +91,9 @@
     <Filter Include="05. Resource\FbxLoader">
       <UniqueIdentifier>{084a25dc-68de-401c-a0e0-1091e1720450}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameObject\Component\Particle">
+      <UniqueIdentifier>{8efbd3dd-7818-4b1b-b1a2-b7617e045459}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -261,11 +264,17 @@
     <ClInclude Include="func.h">
       <Filter>00. etc</Filter>
     </ClInclude>
-    <ClInclude Include="RenderMgr.h">
-      <Filter>03. Manager</Filter>
-    </ClInclude>
     <ClInclude Include="FontMgr.h">
       <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
+      <Filter>02. Device</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderMgr.h">
+      <Filter>03. Manager\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>06. GameObject\Component\Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -431,6 +440,12 @@
     <ClCompile Include="FontMgr.cpp">
       <Filter>03. Manager</Filter>
     </ClCompile>
+    <ClCompile Include="StructuredBuffer.cpp">
+      <Filter>02. Device</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>06. GameObject\Component\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl">
@@ -438,22 +453,28 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="value.fx">
+    <FxCompile Include="func.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="tool.fx">
+    <FxCompile Include="light.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="std3d.fx">
+    <FxCompile Include="particle.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
     <FxCompile Include="std.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="func.fx">
+    <FxCompile Include="std3d.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
-    <FxCompile Include="light.fx">
+    <FxCompile Include="tool.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="value.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="animation.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
     <FxCompile Include="compute.fx">

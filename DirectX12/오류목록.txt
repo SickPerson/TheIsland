@@ -1,0 +1,4 @@
+
+
+2020.04.28
+RenderMgr.cpp 49, 82, 83 MRT_TYPE::PLAYER 때문에 ResourceBarrier() 문제발생

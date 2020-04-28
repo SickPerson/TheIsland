@@ -54,6 +54,9 @@ void CIngameScene::Init()
 	Ptr<CTexture> pColor = CResMgr::GetInst()->Load<CTexture>( L"Tile", L"Texture\\Tile\\TILE_03.tga" );
 	Ptr<CTexture> pNormal = CResMgr::GetInst()->Load<CTexture>( L"Tile_n", L"Texture\\Tile\\TILE_03_N.tga" );
 
+	Ptr<CTexture> pDiffuseTargetTex = CResMgr::GetInst()->FindRes<CTexture>( L"DiffuseTargetTex" );
+	Ptr<CTexture> pNormalTargetTex = CResMgr::GetInst()->FindRes<CTexture>( L"NormalTargetTex" );
+	Ptr<CTexture> pPositionTargetTex = CResMgr::GetInst()->FindRes<CTexture>( L"PositionTargetTex" );
 	// Compute Shader Test
 	// UAV 용 Texture 생성
 	Ptr<CTexture> pTestUAVTexture = CResMgr::GetInst()->CreateTexture(L"UAVTexture", 1024, 1024
@@ -79,7 +82,7 @@ void CIngameScene::Init()
 
 	// MeshRender 설정
 	pPlayer->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"SphereMesh" ) );
-	pPlayer->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"PlayerMtrl" ) );
+	pPlayer->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"Std3DMtrl" ) );
 	pPlayer->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pColor.GetPointer() );
 	pPlayer->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_1, pNormal.GetPointer() );
 
@@ -109,6 +112,29 @@ void CIngameScene::Init()
 	//// AddGameObject
 	//m_pScene->FindLayer(L"Player")->AddGameObject(pObject);
 
+	// ====================
+	// Monster 오브젝트 생성
+	// ====================
+	pObject = new CGameObject;
+	pObject->SetName( L"Monster Object" );
+	pObject->AddComponent( new CTransform );
+	pObject->AddComponent( new CMeshRender );
+
+	// Transform 설정
+	pObject->Transform()->SetLocalPos( Vec3( 0.f, 200.f, 500.f ) );
+	pObject->Transform()->SetLocalScale( Vec3( 100.f, 100.f, 1.f ) );
+
+	// MeshRender 설정
+	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
+	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"TestMtrl" ) );
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pNormalTargetTex.GetPointer() );
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_1, pNormal.GetPointer() );
+
+	// Script 설정
+	// pObject->AddComponent(new CMonsterScript);
+
+	// AddGameObject
+	m_pScene->FindLayer( L"Monster" )->AddGameObject( pObject );
 
 	// ==================
 	// Camera Object 생성

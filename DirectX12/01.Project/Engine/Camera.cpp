@@ -14,17 +14,19 @@
 #include "MeshRender.h"
 #include "Collider2D.h"
 
+#include "ParticleSystem.h"
+
 CCamera::CCamera()
-	: CComponent(COMPONENT_TYPE::CAMERA)
-	, m_frustum(this)
-	, m_fFar(1000.f)
-	, m_fNear(1.f)
-	, m_fFOV(XM_PI / 4.f)
-	, m_fScale(1.f)
-	, m_eProjType(PROJ_TYPE::ORTHGRAPHIC)
-	, m_iLayerCheck(0)
-	, m_eCamType(CAM_TYPE::BASIC)
-{		
+	: CComponent( COMPONENT_TYPE::CAMERA )
+	, m_frustum( this )
+	, m_fFar( 1000.f )
+	, m_fNear( 1.f )
+	, m_fFOV( XM_PI / 4.f )
+	, m_fScale( 1.f )
+	, m_eProjType( PROJ_TYPE::ORTHGRAPHIC )
+	, m_iLayerCheck( 0 )
+	, m_eCamType( CAM_TYPE::BASIC )
+{
 }
 
 CCamera::~CCamera()
@@ -35,12 +37,12 @@ void CCamera::FinalUpdate()
 {
 	// ºäÇà·Ä
 	Vec3 vPos = Transform()->GetWorldPos();
-	Matrix matViewTrans = XMMatrixTranslation(-vPos.x, -vPos.y, -vPos.z);
+	Matrix matViewTrans = XMMatrixTranslation( -vPos.x, -vPos.y, -vPos.z );
 
 	Matrix matViewRot = XMMatrixIdentity();
-	Vec3 vRight = Transform()->GetWorldDir(DIR_TYPE::RIGHT);
-	Vec3 vUp	= Transform()->GetWorldDir(DIR_TYPE::UP);
-	Vec3 vFront = Transform()->GetWorldDir(DIR_TYPE::FRONT);
+	Vec3 vRight = Transform()->GetWorldDir( DIR_TYPE::RIGHT );
+	Vec3 vUp = Transform()->GetWorldDir( DIR_TYPE::UP );
+	Vec3 vFront = Transform()->GetWorldDir( DIR_TYPE::FRONT );
 
 	matViewRot._11 = vRight.x; matViewRot._12 = vUp.x; matViewRot._13 = vFront.x;
 	matViewRot._21 = vRight.y; matViewRot._22 = vUp.y; matViewRot._23 = vFront.y;
@@ -53,22 +55,22 @@ void CCamera::FinalUpdate()
 
 	tResolution res = CRenderMgr::GetInst()->GetResolution();
 
-	if (m_eProjType == PROJ_TYPE::PERSPECTIVE)
-	{		
-		m_matProj = XMMatrixPerspectiveFovLH(m_fFOV, res.fWidth / res.fHeight, m_fNear, m_fFar);
+	if ( m_eProjType == PROJ_TYPE::PERSPECTIVE )
+	{
+		m_matProj = XMMatrixPerspectiveFovLH( m_fFOV, res.fWidth / res.fHeight, m_fNear, m_fFar );
 	}
 	else
 	{
-		m_matProj = XMMatrixOrthographicLH(res.fWidth * m_fScale, res.fHeight * m_fScale, m_fNear, m_fFar);
+		m_matProj = XMMatrixOrthographicLH( res.fWidth * m_fScale, res.fHeight * m_fScale, m_fNear, m_fFar );
 		//m_matProj = XMMatrixOrthographicOffCenterLH(0.f, res.fWidth, res.fHeight, 0.f, m_fNear, m_fFar);		
 	}
 
-	m_matViewInv = XMMatrixInverse(nullptr, m_matView);
-	m_matProjInv = XMMatrixInverse(nullptr, m_matProj);
+	m_matViewInv = XMMatrixInverse( nullptr, m_matView );
+	m_matProjInv = XMMatrixInverse( nullptr, m_matProj );
 
 	m_frustum.FinalUpdate();
 
-	CRenderMgr::GetInst()->RegisterCamera(this);
+	CRenderMgr::GetInst()->RegisterCamera( this );
 }
 
 // ·»´õ¸µ ½ÃÁ¡ ºÐ·ù
@@ -76,6 +78,7 @@ void CCamera::SortGameObject()
 {
 	m_vecDeferred.clear();
 	m_vecForward.clear();
+	m_vecParticle.clear();
 
 	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
 
@@ -99,6 +102,11 @@ void CCamera::SortGameObject()
 							m_vecDeferred.push_back( vecObj[i] );
 						else if ( SHADER_POV::FORWARD == vecObj[i]->MeshRender()->GetSharedMaterial()->GetShader()->GetShaderPOV() )
 							m_vecForward.push_back( vecObj[i] );
+					}
+
+					else if ( vecObj[i]->ParticleSystem() )
+					{
+						m_vecParticle.push_back( vecObj[i] );
 					}
 				}
 			}
@@ -152,23 +160,23 @@ void CCamera::Render()
 
 	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
 
-	for (UINT i = 0; i < MAX_LAYER; ++i)
-	{	
-		if (m_iLayerCheck & (1 << i))
+	for ( UINT i = 0; i < MAX_LAYER; ++i )
+	{
+		if ( m_iLayerCheck & ( 1 << i ) )
 		{
-			const vector<CGameObject*>& vecObj = pCurScene->GetLayer(i)->GetObjects();
+			const vector<CGameObject*>& vecObj = pCurScene->GetLayer( i )->GetObjects();
 
-			for (UINT i = 0; i < vecObj.size(); ++i)
+			for ( UINT i = 0; i < vecObj.size(); ++i )
 			{
-				if (!vecObj[i]->GetFrustumCheck() 
-					|| m_frustum.CheckFrustumSphere(vecObj[i]->Transform()->GetWorldPos(), vecObj[i]->Transform()->GetMaxScale()))					
+				if ( !vecObj[i]->GetFrustumCheck()
+					|| m_frustum.CheckFrustumSphere( vecObj[i]->Transform()->GetWorldPos(), vecObj[i]->Transform()->GetMaxScale() ) )
 				{
-					if (vecObj[i]->MeshRender())
+					if ( vecObj[i]->MeshRender() )
 					{
 						vecObj[i]->MeshRender()->Render();
 					}
 
-					if (vecObj[i]->Collider2D())
+					if ( vecObj[i]->Collider2D() )
 					{
 						vecObj[i]->Collider2D()->Render();
 					}
@@ -178,29 +186,29 @@ void CCamera::Render()
 	}
 }
 
-void CCamera::SaveToScene(FILE * _pFile)
+void CCamera::SaveToScene( FILE * _pFile )
 {
-	UINT iType = (UINT)GetComponentType();
-	fwrite(&iType, sizeof(UINT), 1, _pFile);
+	UINT iType = ( UINT )GetComponentType();
+	fwrite( &iType, sizeof( UINT ), 1, _pFile );
 
-	fwrite(&m_fNear, sizeof(float), 1, _pFile);
-	fwrite(&m_fFar, sizeof(float), 1, _pFile);
+	fwrite( &m_fNear, sizeof( float ), 1, _pFile );
+	fwrite( &m_fFar, sizeof( float ), 1, _pFile );
 
-	fwrite(&m_fFOV, sizeof(float), 1, _pFile);
-	fwrite(&m_fScale, sizeof(float), 1, _pFile);
-	
-	fwrite(&m_eProjType, sizeof(UINT), 1, _pFile);
-	fwrite(&m_iLayerCheck, 4, 1, _pFile);
+	fwrite( &m_fFOV, sizeof( float ), 1, _pFile );
+	fwrite( &m_fScale, sizeof( float ), 1, _pFile );
+
+	fwrite( &m_eProjType, sizeof( UINT ), 1, _pFile );
+	fwrite( &m_iLayerCheck, 4, 1, _pFile );
 }
 
-void CCamera::LoadFromScene(FILE * _pFile)
+void CCamera::LoadFromScene( FILE * _pFile )
 {
-	fread(&m_fNear, sizeof(float), 1, _pFile);
-	fread(&m_fFar, sizeof(float), 1, _pFile);
-	
-	fread(&m_fFOV, sizeof(float), 1, _pFile);
-	fread(&m_fScale, sizeof(float), 1, _pFile);
-	
-	fread(&m_eProjType, sizeof(UINT), 1, _pFile);
-	fread(&m_iLayerCheck, 4, 1, _pFile);
+	fread( &m_fNear, sizeof( float ), 1, _pFile );
+	fread( &m_fFar, sizeof( float ), 1, _pFile );
+
+	fread( &m_fFOV, sizeof( float ), 1, _pFile );
+	fread( &m_fScale, sizeof( float ), 1, _pFile );
+
+	fread( &m_eProjType, sizeof( UINT ), 1, _pFile );
+	fread( &m_iLayerCheck, 4, 1, _pFile );
 }

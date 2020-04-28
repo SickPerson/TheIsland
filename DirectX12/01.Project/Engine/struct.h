@@ -29,12 +29,29 @@ struct tDBG
 	wstring  strDBG;
 };
 
-
 struct tLightColor
 {
 	Vec4 vDiff;
 	Vec4 vSpec;
 	Vec4 vAmb;
+};
+
+struct tParticle
+{
+	Vec3 vWorldPos;		// 위치	
+	Vec3 vWorldDir;		// 이동 방향
+
+	float m_fCurTime;	// 현재 시간
+	float m_fLifeTime;	// 최대 생명주기
+
+	int  iAlive;
+	int  arrPading[3];
+};
+
+struct tParticleShared
+{
+	int iAddCount;
+	int arrPading[3];
 };
 
 // 상수버퍼 메모리
@@ -119,6 +136,13 @@ struct tLandScape
 	Vec2 vPadding;
 };
 
+struct tGlobalValue
+{
+	tResolution vResolution;
+	float fDT;
+	float fAccTime;
+};
+
 //================
 // Struct of FBX 
 //=================
@@ -186,6 +210,13 @@ typedef struct _tagContainer
 }tContainer;
 
 // Animation
+struct tFrameTrans
+{
+	Vec4	vTranslate;
+	Vec4	vScale;
+	Vec4	qRot;
+};
+
 struct tMTKeyFrame
 {
 	double	dTime;
