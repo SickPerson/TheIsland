@@ -54,7 +54,7 @@ void CLight3D::FinalUpdate()
 {
 	m_tLightInfo.vLightPos = Transform()->GetWorldPos();
 	Transform()->SetLocalScale( Vec3( m_tLightInfo.fRange, m_tLightInfo.fRange, m_tLightInfo.fRange ) );
-	CRenderMgr::GetInst()->RegisterLight3D(this);
+	m_iArrIdx = CRenderMgr::GetInst()->RegisterLight3D(this);
 }
 
 void CLight3D::Render()

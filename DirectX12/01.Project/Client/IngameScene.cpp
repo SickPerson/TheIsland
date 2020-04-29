@@ -43,7 +43,6 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	CSceneMgr::GetInst()->CreateMRTUI();
 
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>( L"TestTex", L"Texture\\Health.png" );
 	Ptr<CTexture> pExplosionTex = CResMgr::GetInst()->Load<CTexture>( L"Explosion", L"Texture\\Explosion\\Explosion80.png" );
@@ -66,6 +65,7 @@ void CIngameScene::Init()
 
 	CGameObject* pObject = nullptr;
 	CGameObject* pChildObject = nullptr;
+
 
 	// ===================
 	// Player 오브젝트 생성
@@ -190,7 +190,7 @@ void CIngameScene::Init()
 
 	CreatePlayerStatusUI();
 	CreateInventoryUI();
-
+	CSceneMgr::GetInst()->CreateMRTUI();
 
 	// ====================
 	// 3D Light Object 추가
@@ -199,13 +199,13 @@ void CIngameScene::Init()
 	pObject->AddComponent( new CTransform );
 	pObject->AddComponent( new CLight3D );
 
-	pObject->Light3D()->SetLightPos( Vec3( 0.f, 200.f, 1000.f ) );
-	pObject->Light3D()->SetLightType( LIGHT_TYPE::DIR );
-	pObject->Light3D()->SetDiffuseColor( Vec3( 1.f, 1.f, 1.f ) );
-	pObject->Light3D()->SetSpecular( Vec3( 0.3f, 0.3f, 0.3f ) );
-	pObject->Light3D()->SetAmbient( Vec3( 0.1f, 0.1f, 0.1f ) );
-	pObject->Light3D()->SetLightDir( Vec3( 1.f, -1.f, 1.f ) );
-	pObject->Light3D()->SetLightRange( 500.f );
+	pObject->Light3D()->SetLightPos(Vec3(0.f, 500.f, 0.f));
+	pObject->Light3D()->SetLightType(LIGHT_TYPE::DIR);
+	pObject->Light3D()->SetDiffuseColor(Vec3(1.f, 1.f, 1.f));
+	pObject->Light3D()->SetSpecular(Vec3(0.3f, 0.3f, 0.3f));
+	pObject->Light3D()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
+	pObject->Light3D()->SetLightDir(Vec3(1.f, -1.f, 1.f));
+	pObject->Light3D()->SetLightRange(1000.f);
 
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
@@ -321,6 +321,27 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
 	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pNormalTargetTex.GetPointer());	
 
+	// ===================
+	// Test 오브젝트 생성
+	// ===================
+	pObject = new CGameObject;
+	pObject->SetName(L"Test Object");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	// Transform 설정
+	pObject->Transform()->SetLocalPos(Vec3(0.f, -100.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1000.f, 1000.f, 1.f));
+	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
+
+	// MeshRender 설정
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+
+	// AddGameObject
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
 
 	// ====================
 	// Compute Shader Test

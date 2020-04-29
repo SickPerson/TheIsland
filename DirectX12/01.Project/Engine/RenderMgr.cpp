@@ -46,7 +46,7 @@ void CRenderMgr::Render()
 
 	// DeferredMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->Clear();
-	//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
+	m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
 
 	// LightMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->Clear();
@@ -79,8 +79,9 @@ void CRenderMgr::Render()
 		{
 			m_vecCam[i]->SortGameObject();
 
-			//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
-			//m_vecCam[i]->Render_Deferred();
+			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
+			m_vecCam[i]->Render_Deferred();
+			//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->TargetToResBarrier();
 
 			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
 			m_vecCam[i]->Render_Forward();
@@ -161,7 +162,7 @@ void CRenderMgr::UpdateLight3D()
 	UINT iOffsetPos = pLight3DBuffer->AddData(&tLight3DArray);
 	CDevice::GetInst()->SetConstBufferToRegister(pLight3DBuffer, iOffsetPos);
 	
-	m_vecLight3D.clear();
+	//m_vecLight3D.clear();
 }
 
 void CRenderMgr::RegisterLight2D( const tLight2D & _Light2D )
@@ -174,11 +175,12 @@ void CRenderMgr::RegisterLight2D( const tLight2D & _Light2D )
 	m_tLight2DInfo.arrLight2D[m_tLight2DInfo.iCount++] = _Light2D;
 }
 
-void CRenderMgr::RegisterLight3D( CLight3D * _pLight3D )
+int CRenderMgr::RegisterLight3D( CLight3D * _pLight3D )
 {
-	if ( m_vecLight3D.size() >= 100 )
-		return;
-	m_vecLight3D.push_back( _pLight3D );
+	if (m_vecLight3D.size() >= 100)
+		return -1;
+	m_vecLight3D.push_back(_pLight3D);
+	return (int)m_vecLight3D.size() - 1;
 }
 
 CMRT * CRenderMgr::GetMRT( MRT_TYPE eType )

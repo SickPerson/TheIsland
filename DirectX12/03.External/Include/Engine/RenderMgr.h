@@ -51,7 +51,7 @@ private:
 public:
 	void RegisterLight2D( const tLight2D& _Light2D );
 
-	void RegisterLight3D( CLight3D* _pLight3D );
+	int RegisterLight3D( CLight3D* _pLight3D );
 
 	CCamera* GetCamera(int _iIdx) { return m_vecCam[_iIdx]; }
 	void RegisterCamera(CCamera* _pCam) { m_vecCam.push_back(_pCam); }

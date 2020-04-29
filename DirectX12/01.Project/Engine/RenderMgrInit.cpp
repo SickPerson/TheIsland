@@ -94,7 +94,7 @@ void CRenderMgr::CreateMRT()
 		arrRT[1].pTarget = CResMgr::GetInst()->CreateTexture( L"SpecularLightTargetTex"
 			, ( UINT )m_tResolution.fWidth, ( UINT )m_tResolution.fHeight
 			, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES( D3D12_HEAP_TYPE_DEFAULT ), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClearColor );
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[1].vClearColor );
 
 		m_arrMRT[( UINT )MRT_TYPE::LIGHT] = new CMRT;
 		m_arrMRT[( UINT )MRT_TYPE::LIGHT]->Create( 2, arrRT, pDSTex ); // 깊이 텍스쳐는 SwapChain 것을 사용한다.
