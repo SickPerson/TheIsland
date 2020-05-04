@@ -72,6 +72,9 @@
     <ClInclude Include="InputScript.h">
       <Filter>ComponentScript</Filter>
     </ClInclude>
+    <ClInclude Include="ConstStringScript.h">
+      <Filter>ComponentScript</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -99,6 +102,9 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="InputScript.cpp">
+      <Filter>ComponentScript</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstStringScript.cpp">
       <Filter>ComponentScript</Filter>
     </ClCompile>
   </ItemGroup>

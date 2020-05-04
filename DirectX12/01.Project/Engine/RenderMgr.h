@@ -61,6 +61,9 @@ public:
 	HWND GetHwnd() { return m_hWnd; }
 
 	CMRT*	GetMRT( MRT_TYPE eType );
+
+	void CopySwapToPosteffect();
+
 	UINT	GetRTVHeapSize();
 };
 

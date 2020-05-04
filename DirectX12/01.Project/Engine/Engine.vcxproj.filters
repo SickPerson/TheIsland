@@ -480,5 +480,11 @@
     <FxCompile Include="compute.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
+    <FxCompile Include="posteffect.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="water.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

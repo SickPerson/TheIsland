@@ -24,7 +24,7 @@ private:
 	ComPtr<ID3DBlob>					m_pErrBlob;
 	ComPtr<ID3DBlob>					m_pCSBlob;
 
-	ComPtr<ID3D12PipelineState>			m_pPilelineState;
+	ComPtr<ID3D12PipelineState>			m_pPipelineState;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC  m_tPipeline;
 
 	ComPtr<ID3D12PipelineState>			m_pPilelineState_CS;
@@ -44,8 +44,8 @@ public:
 	void Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 	void CreateVertexShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
 	void CreatePixelShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
-	//void CreateHullShader();
-	//void CreateDomainShader();
+	void CreateHullShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
+	void CreateDomainShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
 	void CreateGeometryShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
 	void CreateComputeShader( const wstring& _strPath, const string& _strFuncName, const string& _strhlslVersion );
 

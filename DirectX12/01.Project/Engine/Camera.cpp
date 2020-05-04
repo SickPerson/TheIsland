@@ -79,6 +79,7 @@ void CCamera::SortGameObject()
 	m_vecDeferred.clear();
 	m_vecForward.clear();
 	m_vecParticle.clear();
+	m_vecPostEffect.clear();
 
 	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
 
@@ -102,6 +103,8 @@ void CCamera::SortGameObject()
 							m_vecDeferred.push_back( vecObj[i] );
 						else if ( SHADER_POV::FORWARD == vecObj[i]->MeshRender()->GetSharedMaterial()->GetShader()->GetShaderPOV() )
 							m_vecForward.push_back( vecObj[i] );
+						else if (SHADER_POV::POSTEFFECT == vecObj[i]->MeshRender()->GetSharedMaterial()->GetShader()->GetShaderPOV())
+							m_vecPostEffect.push_back(vecObj[i]);
 					}
 
 					else if ( vecObj[i]->ParticleSystem() )
@@ -146,10 +149,31 @@ void CCamera::Render_Forward()
 			m_vecForward[i]->Collider2D()->Render();
 	}
 
+	for (size_t i = 0; i < m_vecParticle.size(); ++i)
+	{
+		m_vecParticle[i]->ParticleSystem()->Render();
+	}
+
 	for ( size_t i = 0; i < m_vecDeferred.size(); ++i )
 	{
 		if ( m_vecDeferred[i]->Collider2D() )
 			m_vecDeferred[i]->Collider2D()->Render();
+	}
+}
+
+void CCamera::Render_PostEffect()
+{
+	g_transform.matView = GetViewMat();
+	g_transform.matProj = GetProjMat();
+	g_transform.matViewInv = m_matViewInv;
+	g_transform.matProjInv = m_matProjInv;
+
+	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
+
+	for (size_t i = 0; i < m_vecPostEffect.size(); ++i)
+	{
+		CRenderMgr::GetInst()->CopySwapToPosteffect();
+		m_vecPostEffect[i]->MeshRender()->Render();
 	}
 }
 

@@ -15,9 +15,9 @@ CAnimator3D::CAnimator3D() :
 	m_pBoneFinalMat(NULL),
 	m_bFinalMatUpdate(false)
 {
-	m_pBoneMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"Aniamtion3DUpdateMtrl" );
+	m_pBoneMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"Animation3DUpdateMtrl" );
 	m_pBoneFinalMat = new CStructuredBuffer;
-}
+}	
 
 
 CAnimator3D::~CAnimator3D()

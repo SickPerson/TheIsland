@@ -26,6 +26,7 @@
 #include <Engine/RenderMgr.h>
 
 #include "Network.h"
+#include "ConstStringScript.h"
 
 CLoginScene::CLoginScene() :
 	m_pID(NULL),
@@ -58,6 +59,30 @@ void CLoginScene::Init()
 
 	CreateInputID();
 	CreateInputIP();
+
+	pObject = new CGameObject;
+	pObject->SetName(L"Help Message");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CConstStringScript);
+
+	pObject->Transform()->SetLocalPos(Vec3(-330.f, 280.f, 1.f));
+	pObject->Transform()->SetLocalScale(Vec3(62.f, 108.f, 1.f));
+
+	pObject->GetScript<CConstStringScript>()->Init("THE ISLAND");
+
+	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+
+	pObject = new CGameObject;
+	pObject->SetName(L"Help Message");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CConstStringScript);
+
+	pObject->Transform()->SetLocalPos(Vec3(150.f, 200.f, 1.f));
+	pObject->Transform()->SetLocalScale(Vec3(25.f, 40, 1.f));
+
+	pObject->GetScript<CConstStringScript>()->Init("DEMO");
+
+	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 }
 
 void CLoginScene::Update()

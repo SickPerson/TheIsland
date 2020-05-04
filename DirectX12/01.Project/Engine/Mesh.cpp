@@ -3,6 +3,7 @@
 
 #include "Device.h"
 #include "PathMgr.h"
+#include "StructuredBuffer.h"
 
 CMesh::CMesh()
 	: CResource(RES_TYPE::MESH)
@@ -27,6 +28,9 @@ CMesh::~CMesh()
 	{
 		SAFE_DELETE( m_vecIdxInfo[i].pIdxSysMem );
 	}
+
+	SAFE_DELETE(m_pBoneFrameData);
+	SAFE_DELETE(m_pBoneOffset);	
 }
 
 void CMesh::Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem
@@ -38,7 +42,6 @@ void CMesh::Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem
 	tIndexInfo tInfo = {};
 	tInfo.eIdxFormat = _eIdxFormat;
 	tInfo.iIdxCount = _iIdxCount;
-
 
 	D3D12_HEAP_PROPERTIES tHeapProperty = {};
 		
@@ -154,11 +157,11 @@ CMesh * CMesh::CreateFromContainer( CFBXLoader & loader )
 	const tContainer* container = &loader.GetContainer( 0 );
 
 	ComPtr<ID3D12Resource> pVB = NULL;
-	D3D12_VERTEX_BUFFER_VIEW tVtxView{};
+	D3D12_VERTEX_BUFFER_VIEW tVtxView = {};
 	UINT iVtxCount = ( UINT )container->vecPos.size();
 	UINT iVtxSize = sizeof( VTX );
 
-	VTX* pSysMem = new VTX[iVtxSize];
+	VTX* pSysMem = new VTX[iVtxCount];
 
 	for ( UINT i = 0; i < iVtxCount; ++i )
 	{
@@ -222,11 +225,11 @@ CMesh * CMesh::CreateFromContainer( CFBXLoader & loader )
 	// ÀÎµ¦½º Á¤º¸
 	UINT iIdxBufferCount = ( UINT )container->vecIdx.size();
 
-	for ( UINT i = 0; i < iIdxBufferCount; ++i )
+	for ( UINT	i = 0; i < iIdxBufferCount; ++i )
 	{
 		tIndexInfo info = {};
 		info.iIdxCount = ( UINT )container->vecIdx[i].size();
-		info.eIdxFormat = DXGI_FORMAT_R32_UINT;
+		info.eIdxFormat = DXGI_FORMAT_R32_UINT;	
 		info.pIdxSysMem = malloc( GetSizeofFormat( info.eIdxFormat ) * info.iIdxCount );
 		memcpy( info.pIdxSysMem, &container->vecIdx[i][0], GetSizeofFormat( info.eIdxFormat ) * info.iIdxCount );
 
@@ -237,7 +240,7 @@ CMesh * CMesh::CreateFromContainer( CFBXLoader & loader )
 		tHeapProperty.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 		tHeapProperty.CreationNodeMask = 1;
 		tHeapProperty.VisibleNodeMask = 1;
-
+			
 		tResDesc = {};
 		tResDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 		tResDesc.Alignment = 0;

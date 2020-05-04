@@ -126,7 +126,7 @@ void CDevice::Render_Start( float( &_arrFloat )[4] )
 	// Indicate that the back buffer will be used as a Render target.
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE; ;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	barrier.Transition.pResource = pSwapchainMRT->GetRTTex( m_iCurTargetIdx )->GetTex2D().Get();
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;		// 출력에서
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 다시 백버퍼로 지정
@@ -191,7 +191,7 @@ void CDevice::WaitForFenceEvent()
 void CDevice::WaitForFenceEvent_CS()
 {
 	// Signal and increment the fence value.
-	static int iFenceValue = 0;
+	static size_t iFenceValue = 1;
 
 	const size_t fence = iFenceValue;
 	m_pCmdQueueCompute->Signal( m_pFenceCompute.Get(), fence );
@@ -437,10 +437,6 @@ void CDevice::CreateRootSignature()
 		m_vecDummyDescriptor.push_back( pDummyDescriptor );
 	}
 
-	// 초기화용 더미 디스크립터 힙 작성	
-	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	DEVICE->CreateDescriptorHeap( &cbvHeapDesc, IID_PPV_ARGS( &m_pInitDescriptor ) );
-
 	// ====================================
 	// Compute Shader 전용 Signature 만들기
 	// ====================================
@@ -480,6 +476,10 @@ void CDevice::CreateRootSignature()
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	DEVICE->CreateDescriptorHeap( &cbvHeapDesc, IID_PPV_ARGS( &m_pDummyDescriptorCompute ) );
+
+	// 초기화용 더미 디스크립터 힙 작성	
+	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	DEVICE->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_pInitDescriptor));
 }
 
 void CDevice::CreateSamplerDesc()

@@ -126,6 +126,50 @@ void CShader::CreatePixelShader( const wstring & _strPath, const string & _strFu
 	m_tPipeline.PS = { m_pPSBlob->GetBufferPointer(), m_pPSBlob->GetBufferSize() };
 }
 
+void CShader::CreateHullShader(const wstring & _strPath, const string & _strFuncName, const string & _strhlslVersion)
+{
+	int iFlag = 0;
+#ifdef _DEBUG
+	iFlag = D3DCOMPILE_DEBUG;
+#endif
+
+	wstring strPath = CPathMgr::GetResPath();
+	strPath += _strPath;
+
+	char* pErr = nullptr;
+
+	if (FAILED(D3DCompileFromFile(strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		, _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pHSBlob, &m_pErrBlob)))
+	{
+		pErr = (char*)m_pErrBlob->GetBufferPointer();
+		MessageBoxA(nullptr, pErr, "Shader Create Failed !!!", MB_OK);
+	}
+
+	m_tPipeline.HS = { m_pHSBlob->GetBufferPointer(), m_pHSBlob->GetBufferSize() };
+}
+
+void CShader::CreateDomainShader(const wstring & _strPath, const string & _strFuncName, const string & _strhlslVersion)
+{
+	int iFlag = 0;
+#ifdef _DEBUG
+	iFlag = D3DCOMPILE_DEBUG;
+#endif
+
+	wstring strPath = CPathMgr::GetResPath();
+	strPath += _strPath;
+
+	char* pErr = nullptr;
+
+	if (FAILED(D3DCompileFromFile(strPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		, _strFuncName.c_str(), _strhlslVersion.c_str(), iFlag, 0, &m_pDSBlob, &m_pErrBlob)))
+	{
+		pErr = (char*)m_pErrBlob->GetBufferPointer();
+		MessageBoxA(nullptr, pErr, "Shader Create Failed !!!", MB_OK);
+	}
+
+	m_tPipeline.DS = { m_pDSBlob->GetBufferPointer(), m_pDSBlob->GetBufferSize() };
+}
+
 
 void CShader::UpdateData()
 {
@@ -170,7 +214,6 @@ void CShader::Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology )
 	m_tPipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	m_tPipeline.SampleDesc.Count = 1;
 
-
 	switch ( m_ePOV )
 	{
 	case SHADER_POV::DEFERRED:
@@ -180,7 +223,6 @@ void CShader::Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology )
 		m_tPipeline.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		break;
 	case SHADER_POV::FORWARD:
-	case SHADER_POV::POST_EFFECT:
 	case SHADER_POV::PARTICLE:
 		m_tPipeline.NumRenderTargets = 1;
 		m_tPipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;

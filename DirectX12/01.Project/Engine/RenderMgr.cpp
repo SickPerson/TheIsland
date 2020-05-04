@@ -46,7 +46,6 @@ void CRenderMgr::Render()
 
 	// DeferredMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->Clear();
-	m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
 
 	// LightMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->Clear();
@@ -70,6 +69,9 @@ void CRenderMgr::Render()
 	// Forward Render
 	m_vecCam[0]->Render_Forward(); // skybox, grid, ui
 
+	// PostEffectRender
+	m_vecCam[0]->Render_PostEffect();
+
 	//=================================
 	// 추가 카메라는 forward render 만
 	//=================================
@@ -77,13 +79,16 @@ void CRenderMgr::Render()
 	{
 		if (m_vecCam[i]->GetCamType() == CAM_TYPE::INVENTORY)
 		{
+			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
 			m_vecCam[i]->SortGameObject();
 
+			//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->ResToTargetBarrier();
 			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
 			m_vecCam[i]->Render_Deferred();
-			//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->TargetToResBarrier();
+			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->TargetToResBarrier();
 
-			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
+			UINT _iIdx = CDevice::GetInst()->GetSwapchainIdx();
+			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, _iIdx);
 			m_vecCam[i]->Render_Forward();
 		}
 		else
@@ -186,6 +191,27 @@ int CRenderMgr::RegisterLight3D( CLight3D * _pLight3D )
 CMRT * CRenderMgr::GetMRT( MRT_TYPE eType )
 {
 	return m_arrMRT[(UINT)eType];
+}
+
+void CRenderMgr::CopySwapToPosteffect()
+{
+	static CTexture* pPostEffectTex = CResMgr::GetInst()->FindRes<CTexture>(L"PosteffectTargetTex").GetPointer();
+
+	UINT iIdx = CDevice::GetInst()->GetSwapchainIdx();
+
+	// SwapChain Target Texture 를 RenderTarget -> CopySource 상태로 변경
+	CMDLIST->ResourceBarrier(1
+		, &CD3DX12_RESOURCE_BARRIER::Transition(m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->GetRTTex(iIdx)->GetTex2D().Get()
+			, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE));
+
+	// SwapChainTex -> PostEfectTex 로 복사
+	CMDLIST->CopyResource(pPostEffectTex->GetTex2D().Get()
+		, m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->GetRTTex(iIdx)->GetTex2D().Get());
+
+	// SwapChain Target Texture 를 CopySource -> RenderTarget 상태로 변경
+	CMDLIST->ResourceBarrier(1
+		, &CD3DX12_RESOURCE_BARRIER::Transition(m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->GetRTTex(iIdx)->GetTex2D().Get()
+			, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
 }
 
 UINT CRenderMgr::GetRTVHeapSize()

@@ -58,11 +58,14 @@ void CFBXLoader::LoadFbx( const wstring & wstrPath )
 
 	m_pImporter = FbxImporter::Create( m_pManager, "" );
 
-	string strPath{ wstrPath.begin(), wstrPath.end() };
+	string strPath( wstrPath.begin(), wstrPath.end() );
 
-	if ( !m_pImporter->Initialize( strPath.c_str(), -1, m_pManager->GetIOSettings() ) )
-		assert( NULL );
-
+	if (!m_pImporter->Initialize(strPath.c_str(), -1, m_pManager->GetIOSettings()))
+	{
+		FbxStatus eStatus = m_pImporter->GetStatus();
+		assert(nullptr);
+	}
+		
 	m_pImporter->Import( m_pScene );
 
 	m_pScene->GetGlobalSettings().SetAxisSystem( FbxAxisSystem::Max );
@@ -187,9 +190,9 @@ void CFBXLoader::LoadMesh( FbxMesh * pFbxMesh )
 			int iIdx = pFbxMesh->GetPolygonVertex( i, j );
 			arrIdx[j] = iIdx;
 
+			GetNormal( pFbxMesh, &Container, iIdx, iVtxOrder );
 			GetTangent( pFbxMesh, &Container, iIdx, iVtxOrder );
 			GetBinormal( pFbxMesh, &Container, iIdx, iVtxOrder );
-			GetNormal( pFbxMesh, &Container, iIdx, iVtxOrder );
 			GetUV( pFbxMesh, &Container, iIdx, pFbxMesh->GetTextureUVIndex( i, j ) );
 
 			++iVtxOrder;
@@ -294,7 +297,7 @@ void CFBXLoader::GetBinormal( FbxMesh * pMesh, tContainer * pContainer, int iIdx
 		else
 			iBinormalIdx = pBinormal->GetIndexArray().GetAt( iIdx );
 	}
-
+		
 	FbxVector4 vBinormal = pBinormal->GetDirectArray().GetAt( iBinormalIdx );
 
 	pContainer->vecBinormal[iIdx].x = ( float )vBinormal.mData[0];
@@ -593,10 +596,47 @@ void CFBXLoader::LoadAnimationData( FbxMesh * pMesh, tContainer * pContainer )
 
 void CFBXLoader::LoadWeightsAndIndices( FbxCluster * pCluster, int iBoneIdx, tContainer * pContainer )
 {
+	int iIndicesCount = pCluster->GetControlPointIndicesCount();
+
+	for (int i = 0; i < iIndicesCount; ++i)
+	{
+		tWeightsAndIndices tWI = {};
+
+		// 각 정점에게 본 인덱스 정보와, 가중치 값을 알린다.
+		tWI.iBoneIdx = iBoneIdx;
+		tWI.dWeight = pCluster->GetControlPointWeights()[i];
+
+		int iVtxIdx = pCluster->GetControlPointIndices()[i];
+
+		pContainer->vecWI[iVtxIdx].push_back(tWI);
+	}
 }
 
 void CFBXLoader::LoadOffsetMatrix( FbxCluster * pCluster, const FbxAMatrix & matNodeTransform, int iBoneIdx, tContainer * pContainer )
 {
+	FbxAMatrix matClusterTrans;
+	FbxAMatrix matClusterLinkTrans;
+
+	pCluster->GetTransformMatrix(matClusterTrans);
+	pCluster->GetTransformLinkMatrix(matClusterLinkTrans);
+
+	// Reflect Matrix
+	FbxVector4 V0 = { 1, 0, 0, 0 };
+	FbxVector4 V1 = { 0, 0, 1, 0 };
+	FbxVector4 V2 = { 0, 1, 0, 0 };
+	FbxVector4 V3 = { 0, 0, 0, 1 };
+
+	FbxAMatrix matReflect;
+	matReflect[0] = V0;
+	matReflect[1] = V1;
+	matReflect[2] = V2;
+	matReflect[3] = V3;
+
+	FbxAMatrix matOffset;
+	matOffset = matClusterLinkTrans.Inverse() * matClusterTrans * matNodeTransform;
+	matOffset = matReflect * matOffset * matReflect;
+
+	m_vecBone[iBoneIdx]->matOffset = matOffset;
 }
 
 void CFBXLoader::LoadKeyframeTransform( FbxNode * pNode, FbxCluster * pCluster, const FbxAMatrix & matNodeTransform, int iBoneIdx, tContainer * pContainer )
@@ -692,7 +732,7 @@ void CFBXLoader::CheckWeightAndIndices( FbxMesh * pMesh, tContainer * pContainer
 				( *iter )[0].dWeight += revision;
 			}
 
-			if ( ( *iter ).size() >= 4 )
+			if ( ( *iter ).size() >= 4 )	
 			{
 				( *iter ).erase( ( *iter ).begin() + 4, ( *iter ).end() );
 			}

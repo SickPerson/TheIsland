@@ -304,6 +304,65 @@ void CResMgr::CreateDefaultShader()
 	pShader = new CShader;
 	pShader->CreateComputeShader( L"Shader\\particle.fx", "CS_ParticleUpdate", "cs_5_0" );
 	AddRes( L"ParticleUpdateShader", pShader );
+
+	// =======================
+	// Animation Update Shader
+	// =======================
+	pShader = new CShader;
+	pShader->CreateComputeShader(L"Shader\\animation.fx", "CS_Animation3D", "cs_5_0");
+	AddRes(L"Animaion3DUpdateShader", pShader);
+
+	// =================
+	// Distortion Shader
+	// =================
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\posteffect.fx", "VS_Distortion", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\posteffect.fx", "PS_Distortion", "ps_5_0");
+	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::LESS_NO_WRITE);
+
+	pShader->Create(SHADER_POV::POSTEFFECT);
+
+	AddRes(L"DistortionShader", pShader);
+
+	// ===========================
+	// Distortion Character Shader
+	// ===========================
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\posteffect.fx", "VS_DistortionCharacter", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\posteffect.fx", "PS_DistortionCharacter", "ps_5_0");
+	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::LESS_NO_WRITE);
+
+	pShader->Create(SHADER_POV::POSTEFFECT);
+
+	AddRes(L"DistortionCharacterShader", pShader);
+
+	// ===========================
+	// Water Shader
+	// ===========================
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\water.fx", "VS_Water", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\water.fx", "PS_Water", "ps_5_0");
+	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::LESS_NO_WRITE);
+
+	pShader->Create(SHADER_POV::POSTEFFECT);
+
+	AddRes(L"WaterShader", pShader);
+
+	// ===========================
+	// Water Shader
+	// ===========================
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\water.fx", "VS_TestWater", "vs_5_0");
+	pShader->CreateHullShader(L"Shader\\water.fx", "HS_TestWater", "hs_5_0");
+	pShader->CreateDomainShader(L"Shader\\water.fx", "DS_TestWater", "ds_5_0");
+	pShader->CreatePixelShader(L"Shader\\water.fx", "PS_TestWater", "ps_5_0");
+	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::LESS_NO_WRITE);
+	//pShader->SetRasterizerType(RS_TYPE::WIRE_FRAME);
+
+	pShader->Create(SHADER_POV::POSTEFFECT, D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	pShader->AddShaderParam(tShaderParam{ L"TessellationAmout", SHADER_PARAM::FLOAT_0 });
+
+	AddRes(L"TestWaterShader", pShader);
 }
 
 
@@ -444,6 +503,49 @@ void CResMgr::CreateDefaultMaterial()
 		AddRes( L"MergeLightMtrl", pMtrl );
 	}
 
+	{
+		// Material 값 셋팅
+		pMtrl = new CMaterial;
+		pMtrl->DisableFileSave();
+		pMtrl->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"DistortionCharacterShader"));
+		Ptr<CTexture> pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PosteffectTargetTex");
+		pMtrl->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		AddRes(L"DistortionMtrl", pMtrl);
+	}
+
+	{
+		// Material 값 셋팅
+		pMtrl = new CMaterial;
+		pMtrl->DisableFileSave();
+		pMtrl->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"WaterShader"));
+		Ptr<CTexture> pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PosteffectTargetTex");
+		pMtrl->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Base_Tex", L"Texture\\Water_Base_Texture_0.dds");
+		pMtrl->SetData(SHADER_PARAM::TEX_1, pTex.GetPointer());
+		pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PositionTargetTex");
+		pMtrl->SetData(SHADER_PARAM::TEX_2, pTex.GetPointer());
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Detail_Tex", L"Texture\\Water_Detail_Texture_0.dds");
+		pMtrl->SetData(SHADER_PARAM::TEX_3, pTex.GetPointer());
+		AddRes(L"WaterMtrl", pMtrl);
+	}
+
+	{
+		// Material 값 셋팅
+		pMtrl = new CMaterial;
+		pMtrl->DisableFileSave();
+		pMtrl->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"TestWaterShader"));
+		Ptr<CTexture> pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PosteffectTargetTex");
+		pMtrl->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Base_Tex", L"Texture\\Water_Base_Texture_0.dds");
+		pMtrl->SetData(SHADER_PARAM::TEX_1, pTex.GetPointer());
+		pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PositionTargetTex");
+		pMtrl->SetData(SHADER_PARAM::TEX_2, pTex.GetPointer());
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Detail_Tex", L"Texture\\Water_Detail_Texture_0.dds");
+		pMtrl->SetData(SHADER_PARAM::TEX_3, pTex.GetPointer());
+		AddRes(L"TestWaterMtrl", pMtrl);
+	}
+
+
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"CSTestShader"));
@@ -465,6 +567,12 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->SetData( SHADER_PARAM::VEC2_0, &Vec2( pNoiseTex->Width(), pNoiseTex->Height() ) );
 
 	AddRes( L"ParticleUpdateMtrl", pMtrl );
+
+	// Animation Update
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
+	pMtrl->SetShader(FindRes<CShader>(L"Animaion3DUpdateShader"));
+	AddRes(L"Animation3DUpdateMtrl", pMtrl);
 }
 
 

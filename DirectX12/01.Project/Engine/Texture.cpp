@@ -34,19 +34,20 @@ void CTexture::Create(UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 	m_tDesc.SampleDesc.Count = 1;
 	m_tDesc.SampleDesc.Quality = 0;
 	m_tDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	m_tDesc.Layout = D3D12_TEXTURE_LAYOUT::D3D12_TEXTURE_LAYOUT_UNKNOWN;
 
 	D3D12_CLEAR_VALUE* pValue = nullptr;
-	D3D12_RESOURCE_STATES eResStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
+	m_eState = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
 
 	if ( _eResFlag & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL )
 	{
 		CD3DX12_CLEAR_VALUE depthOptimizedClearValue( DXGI_FORMAT_D32_FLOAT, 1.0f, 0 );
 		pValue = &depthOptimizedClearValue;
-		eResStates = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE;
+		m_eState = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_DEPTH_WRITE;
 	}
 	else if ( _eResFlag & D3D12_RESOURCE_FLAGS::D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET )
 	{
-		eResStates = D3D12_RESOURCE_STATE_COMMON;
+		m_eState = D3D12_RESOURCE_STATE_COMMON;
 		float arrFloat[4] = { _vClearColor.x, _vClearColor.y, _vClearColor.z, _vClearColor.w };
 		CD3DX12_CLEAR_VALUE depthOptimizedClearValue( _eFormat, arrFloat );
 		pValue = &depthOptimizedClearValue;
@@ -57,7 +58,7 @@ void CTexture::Create(UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 		&_HeapProperty,
 		_eHeapFlag,
 		&m_tDesc,
-		eResStates,
+		m_eState,
 		pValue,
 		IID_PPV_ARGS( &m_pTex2D ) );
 
@@ -124,7 +125,7 @@ void CTexture::Create(UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 		srvDesc.Format = m_Image.GetMetadata().format;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = 1;
-		DEVICE->CreateShaderResourceView( m_pTex2D.Get(), &srvDesc, m_pSRV->GetCPUDescriptorHandleForHeapStart() );
+		DEVICE->CreateShaderResourceView( m_pTex2D.Get(), &srvDesc, handle);
 	}
 }
 
@@ -270,6 +271,8 @@ void CTexture::Load(const wstring & _strFullPath)
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
 	DEVICE->CreateShaderResourceView(m_pTex2D.Get(), &srvDesc, m_pSRV->GetCPUDescriptorHandleForHeapStart());	
+
+	m_tDesc = m_pTex2D->GetDesc();
 }
 
 void CTexture::Save(const wstring& _strPath)

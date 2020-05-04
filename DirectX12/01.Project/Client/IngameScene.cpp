@@ -24,6 +24,7 @@
 
 #include <Engine/PlayerScript.h>
 #include <Engine/FPSCamScript.h>
+#include <Engine/ToolCamScript.h>
 #include <Engine/MonsterScript.h>
 #include <Engine/StatusScript.h>
 #include <Engine/QuickSlotScript.h>
@@ -62,6 +63,11 @@ void CIngameScene::Init()
 		, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
 		, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
 
+	Ptr<CMaterial> pPM = CResMgr::GetInst()->FindRes<CMaterial>(L"MergeLightMtrl");
+	pPM->SetData(SHADER_PARAM::TEX_3, pSky01.GetPointer());
+
+	pPM = CResMgr::GetInst()->FindRes<CMaterial>(L"PointLightMtrl");
+	pPM->SetData(SHADER_PARAM::TEX_2, pSky01.GetPointer());
 
 	CGameObject* pObject = nullptr;
 	CGameObject* pChildObject = nullptr;
@@ -70,47 +76,18 @@ void CIngameScene::Init()
 	// ===================
 	// Player 오브젝트 생성
 	// ===================
-	CGameObject* pPlayer = new CGameObject;
-	pPlayer->SetName( L"Player Object" );
-	pPlayer->AddComponent( new CTransform );
-	pPlayer->AddComponent( new CMeshRender );
+	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
 
-	// Transform 설정
-	pPlayer->Transform()->SetLocalPos( Vec3( 0.f, 25.f, 0.f ) );
-	pPlayer->Transform()->SetLocalScale( Vec3( 50.f, 50.f, 50.f ) );
-	//pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
-
-	// MeshRender 설정
-	pPlayer->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"SphereMesh" ) );
-	pPlayer->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"Std3DMtrl" ) );
-	pPlayer->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pColor.GetPointer() );
-	pPlayer->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_1, pNormal.GetPointer() );
-
+	CGameObject* pPlayer = pMeshData->Instantiate();
 	// Script 설정
-	pPlayer->AddComponent( new CPlayerScript );
+	pPlayer->AddComponent(new CPlayerScript);
 
-	// AddGameObject
-	m_pScene->FindLayer( L"Player" )->AddGameObject(pPlayer);
-
-	//pObject = new CGameObject; // 지금 먼가 안되서 테스트하려고 임시로 만들어둔 오브젝트
-	//pObject->SetName(L"Player Object");
-	//pObject->AddComponent(new CTransform);
-	//pObject->AddComponent(new CMeshRender);
-	//pObject->AddComponent(new CTestScript);
-	//pObject->GetScript<CTestScript>()->SetTestObject(pPlayer);
-	//// Transform 설정
-	//pObject->Transform()->SetLocalPos(Vec3(0.f, 25.f, 150.f));
-	//pObject->Transform()->SetLocalScale(Vec3(5.f, 5.f, 100.f));
-	//pObject->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
-
-	//// MeshRender 설정
-	//pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"CubeMesh"));
-	//pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
-	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
-	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
-
-	//// AddGameObject
-	//m_pScene->FindLayer(L"Player")->AddGameObject(pObject);
+	pPlayer->SetName(L"Player Object");
+	pPlayer->FrustumCheck(false);
+	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 600.f, 0.f));
+	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 1.f));
+	pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
+	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 
 	// ====================
 	// Monster 오브젝트 생성
@@ -143,7 +120,7 @@ void CIngameScene::Init()
 	pMainCam->SetName( L"MainCam" );
 	pMainCam->AddComponent( new CTransform );
 	pMainCam->AddComponent( new CCamera );
-	pMainCam->AddComponent( new CFPSCamScript );
+	pMainCam->AddComponent( new CToolCamScript );
 
 	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 100.f, 0.f ) );
 	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
@@ -259,19 +236,19 @@ void CIngameScene::Init()
 	// LandScape 오브젝트 생성
 	// =======================
 	pObject = new CGameObject;
-	pObject->SetName( L"LandScape Object" );
-	pObject->AddComponent( new CTransform );
-	pObject->AddComponent( new CMeshRender );
-	pObject->AddComponent( new CLandScape );
-	pObject->LandScape()->CreateLandScape( L"Texture/TestLandScape.bmp", 219, 219 );
-	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"LandScapeMesh" ) );
-	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" ) );
-	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pSky01.GetPointer() );
-	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
-	pObject->Transform()->SetLocalScale( Vec3( 15.f, 15.f, 15.f ) );
-	pObject->FrustumCheck( false );
+	pObject->SetName(L"LandScape Object");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+	pObject->AddComponent(new CLandScape);
+	pObject->LandScape()->CreateLandScape(L"Texture/TestLandScape.bmp", 219, 219);
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"LandScapeMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"LandScapeMtrl"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pSky01.GetPointer());
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(15.f, 15.f, 15.f));
+	pObject->FrustumCheck(false);
 
-	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
 
 
 	// ====================
@@ -299,28 +276,6 @@ void CIngameScene::Init()
 	// AddGameObject
 	m_pScene->FindLayer( L"Tool" )->AddGameObject( pObject );
 
-
-	// ====================
-	// Test Compute Shader 오브젝트 생성
-	// ====================
-	pObject = new CGameObject;
-	pObject->SetName(L"Monster Object");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
-
-	// Transform 설정
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 100.f, -500.f));
-	pObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
-	pObject->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
-
-	// MeshRender 설정
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TexMtrl"));
-	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pTestUAVTexture.GetPointer());
-
-	m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
-	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pNormalTargetTex.GetPointer());	
-
 	// ===================
 	// Test 오브젝트 생성
 	// ===================
@@ -330,9 +285,9 @@ void CIngameScene::Init()
 	pObject->AddComponent(new CMeshRender);
 
 	// Transform 설정
-	pObject->Transform()->SetLocalPos(Vec3(0.f, -100.f, 0.f));
-	pObject->Transform()->SetLocalScale(Vec3(1000.f, 1000.f, 1.f));
-	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 300.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(10000.f, 10000.f, 1.f));
+	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.2f, 0.f, 0.f));
 
 	// MeshRender 설정
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -343,16 +298,45 @@ void CIngameScene::Init()
 	// AddGameObject
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
 
-	// ====================
-	// Compute Shader Test
-	// ====================
-	int i = 1;
+	// ==========================
+	// Distortion Object 만들기
+	// ==========================
+	pObject = new CGameObject;
+	pObject->SetName(L"Water");
 
-	Ptr<CMaterial> pCSMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"CSTestMtrl");
-	pCSMtrl->SetData(SHADER_PARAM::INT_0, &i);
-	CDevice::GetInst()->SetUAVToRegister_CS(pTestUAVTexture.GetPointer(), UAV_REGISTER::u0);
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
 
-	pCSMtrl->Dispatch(1, 1024, 1); // --> 컴퓨트 쉐이더 수행	
+	// Material 값 셋팅
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"TestWaterMtrl");
+
+	float tessellation = 12.f;
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(pMtrl);
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &tessellation);
+
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 500.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(10000.f, 10000.f, 1.f));
+	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
+
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
+
+	// =============
+	// FBX 파일 로드
+	// =============
+	//Ptr<CMeshData> pMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\monster.fbx");
+	//pMeshData->Save(pMeshData->GetPath());
+
+	//// MeshData 로드
+	/*Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
+
+	pObject = pMeshData->Instantiate();
+	pObject->SetName(L"House");
+	pObject->FrustumCheck(false);
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 600.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);*/
 
 	// =================================
 	// CollisionMgr 충돌 그룹(Layer) 지정
