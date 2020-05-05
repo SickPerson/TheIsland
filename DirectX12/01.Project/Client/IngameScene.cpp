@@ -44,6 +44,27 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
+	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\wolf.fbx");
+	//pTestMeshData->Save(pTestMeshData->GetPath());
+
+	// MeshData 로드
+	Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
+	Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
+
+	CGameObject * pTestObject = pBearTex->Instantiate();
+	pTestObject->SetName(L"House");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 600.f, 1200.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+
+	pTestObject = pWolfTex->Instantiate();
+	pTestObject->SetName(L"House");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(300.f, 600.f, 1200.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
 
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>( L"TestTex", L"Texture\\Health.png" );
 	Ptr<CTexture> pExplosionTex = CResMgr::GetInst()->Load<CTexture>( L"Explosion", L"Texture\\Explosion\\Explosion80.png" );
@@ -76,7 +97,7 @@ void CIngameScene::Init()
 	// ===================
 	// Player 오브젝트 생성
 	// ===================
-	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
+	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\barghest.mdat", L"MeshData\\barghest.mdat");
 
 	CGameObject* pPlayer = pMeshData->Instantiate();
 	// Script 설정

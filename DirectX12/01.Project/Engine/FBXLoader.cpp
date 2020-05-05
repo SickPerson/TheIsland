@@ -245,7 +245,7 @@ void CFBXLoader::GetTangent( FbxMesh * pMesh, tContainer * pContainer, int iIdx,
 {
 	int iTangentCnt = pMesh->GetElementTangentCount();
 	if ( 1 != iTangentCnt )
-		assert( NULL ); // 정점 1개가 포함하는 탄젠트 정보가 2개 이상이다.
+ 		assert( NULL ); // 정점 1개가 포함하는 탄젠트 정보가 2개 이상이다.
 
 	// 탄젠트 data 의 시작 주소
 	FbxGeometryElementTangent* pTangent = pMesh->GetElementTangent();
@@ -406,13 +406,27 @@ void CFBXLoader::LoadTexture()
 			strFileName = CPathMgr::GetFileName( m_vecContainer[i].vecMtrl[j].strDiff.c_str() );
 			CResMgr::GetInst()->Load<CTexture>( strFileName, strPath );
 
-			strPath = CPathMgr::GetRelativePath( m_vecContainer[i].vecMtrl[j].strNormal.c_str() );
-			strFileName = CPathMgr::GetFileName( m_vecContainer[i].vecMtrl[j].strNormal.c_str() );
-			CResMgr::GetInst()->Load<CTexture>( strFileName, strPath );
+			if (m_vecContainer[i].vecMtrl[j].strNormal.size() == 0)
+			{
+				continue;
+			}
+			else
+			{
+				strPath = CPathMgr::GetRelativePath(m_vecContainer[i].vecMtrl[j].strNormal.c_str());
+				strFileName = CPathMgr::GetFileName(m_vecContainer[i].vecMtrl[j].strNormal.c_str());
+				CResMgr::GetInst()->Load<CTexture>(strFileName, strPath);
+			}
 
-			strPath = CPathMgr::GetRelativePath( m_vecContainer[i].vecMtrl[j].strSpec.c_str() );
-			strFileName = CPathMgr::GetFileName( m_vecContainer[i].vecMtrl[j].strSpec.c_str() );
-			CResMgr::GetInst()->Load<CTexture>( strFileName, strPath );
+			if (m_vecContainer[i].vecMtrl[j].strSpec.size() == 0)
+			{
+				continue;
+			}
+			else
+			{
+				strPath = CPathMgr::GetRelativePath(m_vecContainer[i].vecMtrl[j].strSpec.c_str());
+				strFileName = CPathMgr::GetFileName(m_vecContainer[i].vecMtrl[j].strSpec.c_str());
+				CResMgr::GetInst()->Load<CTexture>(strFileName, strPath);
+			}
 		}
 	}
 }
