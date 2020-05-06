@@ -25,7 +25,6 @@ constexpr	char	CS_CHAT = 4;
 constexpr	int		CS_END = 6;
 
 // Server -> Client Packet Protocol
-constexpr	char	SC_LOGIN_IP = 0;
 constexpr	char	SC_LOGIN_OK = 1;
 constexpr	char	SC_LOGIN_FAIL = 2;
 constexpr	char	SC_LOGIN = 3;

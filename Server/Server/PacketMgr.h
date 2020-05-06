@@ -9,7 +9,6 @@ public:
 	static void Send_Packet(unsigned int _usID, void* _packet);
 
 public:
-	static void Send_Login_IP_Packet(unsigned int _usID);
 	static void Send_Login_OK_Packet(unsigned int _usID);
 	static void Send_Login_Fail_Packet(unsigned int _usID);
 	static void Send_Message_Packet(unsigned int _usID, char* _message);

@@ -219,8 +219,7 @@ void CNetwork::RecvPacket()
 
 void CNetwork::ProcessPacket(char* _packet)
 {
-	int ai = _packet[1];
-	cout << ai << endl;
+	cout << "패킷 타입: "<< (int)_packet[1] << endl;
 	switch (_packet[1])
 	{
 	case SC_LOGIN_OK: // 로그인이 성공한다면 서버에 연결을 시도합니다.

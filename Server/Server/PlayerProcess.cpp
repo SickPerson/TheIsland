@@ -56,7 +56,7 @@ void CPlayerProcess::PlayerLogin(unsigned int _usID, char * _packet)
 	CPacketMgr::Send_Login_OK_Packet(_usID);
 	
 	// 처음 플레이어의 정보 보내기
-	//CPacketMgr::Send_First_Status_Packet(_usID);
+	CPacketMgr::Send_First_Status_Packet(_usID);
 
 	//// 게임에 들어와있는 리스트에 추가하기
 	//InsertList(_usID);

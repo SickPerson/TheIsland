@@ -39,15 +39,6 @@ void CPacketMgr::Send_Packet(unsigned int _usID, void* _packet)
 	}
 }
 
-void CPacketMgr::Send_Login_IP_Packet(unsigned int _usID)
-{
-	sc_login_ip_packet packet;
-	packet.size = sizeof(packet);
-	packet.type = SC_LOGIN_IP;
-	packet.id = _usID;	
-	Send_Packet(_usID, &packet);
-}
-
 void CPacketMgr::Send_Login_OK_Packet(unsigned int _usID)
 {
 	sc_login_ok_packet packet;

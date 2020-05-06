@@ -90,7 +90,7 @@ void CLoginScene::Update()
 	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
 	{
 		NextScene();
-		//// 입력한 IP, ID를 받아옴
+		// 입력한 IP, ID를 받아옴
 		//string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
 		//string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
 		//// Sever Connect
