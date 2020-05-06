@@ -11,10 +11,25 @@ typedef struct Over_ex
 	EVENT_TYPE		m_Event;
 }OVER_EX, POVER_EX;
 
+// юс╫ц
+struct SOCKETINFO
+{
+	OVER_EX	recv_over;
+	SOCKET	socket;
+	int		id;
+
+	bool is_connected;
+	bool is_active;
+	short	x, y;
+	set <int> near_id;
+	mutex near_lock;
+	mutex vm_lock;
+};
+
 struct User_info {
 	SOCKET				socket;
 	OVER_EX				over;
-	unsigned short		id;
+	unsigned int		id;
 	DirectX::XMFLOAT3	pos;
 	set<unsigned int>	near_id;
 	mutex				near_lock;
@@ -27,8 +42,8 @@ struct Object_Event {
 	std::chrono::high_resolution_clock::time_point wakeup_time;
 	EVENT_TYPE	m_EventType;
 	EVENT_TYPE	m_OverType;
-	unsigned short m_usID;
-	unsigned short m_usOtherID;
+	unsigned int m_usID;
+	unsigned int m_usOtherID;
 
 	constexpr bool operator <(const Object_Event& _left) const
 	{
@@ -41,13 +56,13 @@ struct Object_Event {
 _______________________________________________*/
 typedef struct DataBase_Event {
 	char	state;
-	unsigned short client_num;
+	unsigned int client_num;
 	wchar_t	id[MAX_STR_LEN];
 
-	int CurHp;
-	int CurStamina;
-	int Curhunger;
-	int thirst;
+	int HP;
+	int Stamina;
+	int Hunger;
+	int Thirst;
 
 	float fPosX;
 	float fPosY;
@@ -80,10 +95,10 @@ struct Object {
 
 struct User_Data {
 	std::string m_sID;
-	unsigned short m_usID;
+	unsigned int m_usID;
 	int m_iPlayerNum;
 
-	User_Data(std::string sID, unsigned short usNum, int iPlayerNum) {
+	User_Data(std::string sID, unsigned int usNum, int iPlayerNum) {
 		m_sID = sID;
 		m_usID = usNum;
 		m_iPlayerNum = iPlayerNum;

@@ -30,7 +30,7 @@ void CDataBase::HandleDiagnosticRecord(SQLHANDLE _hHandle, SQLSMALLINT _hType, R
 		fwprintf(stderr, L"Invalid handle!\n");
 		return;
 	}
-	while (SQLGetDiagRec(_hType, _hHandle, ++iRec, (SQLCHAR*)wszState, &iError, (SQLCHAR*)wszMessage,
+	while (SQLGetDiagRec(_hType, _hHandle, ++iRec, (SQLWCHAR*)wszState, &iError, (SQLWCHAR*)wszMessage,
 		(SQLSMALLINT)(sizeof(wszMessage) / sizeof(WCHAR)), (SQLSMALLINT*)NULL) == SQL_SUCCESS) {
 		// Hide data truncated..
 		if (wcsncmp(wszState, L"01004", 5)) {
@@ -49,7 +49,7 @@ bool CDataBase::ConnectDataBase()
 			ret = SQLAllocHandle(SQL_HANDLE_DBC, m_hEnv, &m_hDbc);
 			if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 				ret = SQLSetConnectAttr(m_hDbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)(5), 0);
-				ret = SQLConnect(m_hDbc, (SQLCHAR*)L"TheIsLand", SQL_NTS, (SQLCHAR*)NULL, 0, NULL, 0);
+				ret = SQLConnect(m_hDbc, (SQLWCHAR*)L"TheIsLand", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
 				if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 					ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
 					cout << "Connect DataBase" << endl;
@@ -135,7 +135,7 @@ bool CDataBase::GetIsLogin(std::string sID)
 	return false;
 }
 
-bool CDataBase::GetIsLogin(unsigned short usID)
+bool CDataBase::GetIsLogin(unsigned int usID)
 {
 	for (auto& player : m_UserData) {
 		if (player.m_usID == usID) {
@@ -145,12 +145,12 @@ bool CDataBase::GetIsLogin(unsigned short usID)
 	return false;
 }
 
-void CDataBase::SetIsLogin(int iPlayerNum, unsigned short usID, std::string ID)
+void CDataBase::SetIsLogin(int iPlayerNum, unsigned int usID, std::string ID)
 {
 	m_UserData.emplace_back(User_Data{ ID, usID, iPlayerNum });
 }
 
-int CDataBase::FindIsLogin(unsigned short usID, wchar_t * user_id, bool bDelete)
+int CDataBase::FindIsLogin(unsigned int usID, wchar_t * user_id, bool bDelete)
 {
 	std::vector<User_Data>::iterator	iter;
 	for (iter = m_UserData.begin(); iter != m_UserData.end();) {

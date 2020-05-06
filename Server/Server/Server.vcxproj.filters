@@ -34,9 +34,6 @@
     <Filter Include="03. Process\02. Player">
       <UniqueIdentifier>{04ced422-0a38-4cdc-a826-c2b1d14be0e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Main\01. Core">
-      <UniqueIdentifier>{6ba2dd76-2494-43cd-a9a6-acbeb0a4fac8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Process\02. Animal">
       <UniqueIdentifier>{c655b8ec-3b79-4cc6-af96-3cfbe3d2a890}</UniqueIdentifier>
     </Filter>
@@ -66,9 +63,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>99.default\00.sources</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>01. Main</Filter>
-    </ClCompile>
     <ClCompile Include="PacketMgr.cpp">
       <Filter>02. Network\01.PacketMgr</Filter>
     </ClCompile>
@@ -84,9 +78,6 @@
     <ClCompile Include="PlayerProcess.cpp">
       <Filter>03. Process\02. Player</Filter>
     </ClCompile>
-    <ClCompile Include="Core.cpp">
-      <Filter>01. Main\01. Core</Filter>
-    </ClCompile>
     <ClCompile Include="TimerMgr.cpp">
       <Filter>07. Util\01. TimerMgr</Filter>
     </ClCompile>
@@ -98,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>04. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>01. Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +123,6 @@
       <Filter>03. Process\02. Player</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Core.h">
-      <Filter>01. Main\01. Core</Filter>
-    </ClInclude>
     <ClInclude Include="TimerMgr.h">
       <Filter>07. Util\01. TimerMgr</Filter>
     </ClInclude>
@@ -146,6 +137,9 @@
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>04. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="directXmath.h">
+      <Filter>99.default\01.header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

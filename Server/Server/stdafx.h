@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <ctime>
+#include <math.h>
 
 #include <iostream>
 #include <thread>
@@ -39,6 +40,9 @@
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <DirectXCollision.h>
+
+#include <sdkddkver.h>
+#include <DirectXMath.h>
 
 using namespace std;
 using namespace chrono;

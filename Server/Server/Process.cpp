@@ -2,9 +2,8 @@
 #include "PacketMgr.h"
 
 CPlayerpool* CProcess::m_pPlayerPool = nullptr;
-concurrent_unordered_set<unsigned short> CProcess::m_cusLoginList;
+concurrent_unordered_set<unsigned int> CProcess::m_cusLoginList;
 concurrent_priority_queue<Object_Event>	CProcess::m_cpqEventQueue;
-function<void(char, unsigned short)>	CProcess::m_fpAttackEvent;
 
 CProcess::CProcess()
 {

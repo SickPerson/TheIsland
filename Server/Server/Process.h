@@ -5,34 +5,33 @@
 class CProcess
 {
 public:
-	CProcess();
+	explicit CProcess();
 	virtual ~CProcess();
 public:
 	recursive_mutex	m_rmProcessMutex;
 public:
 	static CPlayerpool*	m_pPlayerPool;
-	static concurrent_unordered_set<unsigned short> m_cusLoginList;
+	static concurrent_unordered_set<unsigned int> m_cusLoginList;
 	static concurrent_priority_queue<Object_Event>	m_cpqEventQueue;
-	static function<void(char, unsigned short)>		m_fpAttackEvent;
 
 public:
 	void InitProcessData();
 
 public:
-	concurrent_unordered_set<unsigned short>& GetLoginList()
+	concurrent_unordered_set<unsigned int>& GetLoginList()
 	{
 		lock_guard<recursive_mutex>lock(m_rmProcessMutex);
 		auto au = m_cusLoginList;
 		return au;
 	}
-	void CopyBefore(concurrent_unordered_set<unsigned short>& _cusList)
+	void CopyBefore(concurrent_unordered_set<unsigned int>& _cusList)
 	{
 		lock_guard<recursive_mutex> lock(m_rmProcessMutex);
 		_cusList = m_cusLoginList;
 	}
-	void DeleteList(unsigned short _usID)
+	void DeleteList(unsigned int _usID)
 	{
-		concurrent_unordered_set<unsigned short> list;
+		concurrent_unordered_set<unsigned int> list;
 		CopyBefore(list);
 		for (auto au = list.begin(); au != list.end();)
 		{
@@ -47,12 +46,12 @@ public:
 		lock_guard<recursive_mutex>	lock(m_rmProcessMutex);
 		m_cusLoginList = list;
 	}
-	void InsertList(unsigned short _usID)
+	void InsertList(unsigned int _usID)
 	{
 		lock_guard<recursive_mutex>	lock(m_rmProcessMutex);
 		m_cusLoginList.insert(_usID);
 	}
-	bool CheckList(unsigned short _usID)
+	bool CheckList(unsigned int _usID)
 	{
 		if (m_cusLoginList.count(_usID) != 0)
 			return true;
@@ -62,10 +61,10 @@ public:
 	static void InitializeBeforeStart()
 	{
 		CProcess::m_cpqEventQueue.clear();
-		m_cusLoginList.clear();
+		CProcess::m_cusLoginList.clear();
 	}
 public:
-	static void PostEvent(unsigned short _usID, unsigned short _usOther, EVENT_TYPE _cOverEvent, EVENT_TYPE _cEvent, const std::chrono::high_resolution_clock::time_point& _TimePoint)
+	static void PostEvent(unsigned int _usID, unsigned int _usOther, EVENT_TYPE _cOverEvent, EVENT_TYPE _cEvent, const std::chrono::high_resolution_clock::time_point& _TimePoint)
 	{
 		m_cpqEventQueue.push(Object_Event{ _TimePoint, _cEvent, _cOverEvent, _usID, _usOther });
 	}

@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
+#include "Player.h"
 
-class CPlayer;
 class CPlayerpool
 {
 private:
@@ -11,6 +11,6 @@ public:
 	virtual ~CPlayerpool();
 
 public:
-	static concurrent_unordered_map<unsigned short, CPlayer*> m_cumPlayerPool;
+	static concurrent_unordered_map<unsigned int, CPlayer*> m_cumPlayerPool;
 };
 
