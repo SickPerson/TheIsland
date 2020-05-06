@@ -4,7 +4,19 @@
 class CObject
 {
 private:
-	Object m_Obj;
+	int m_iHp;
+	int m_iStamina;
+	int m_iHunger;
+	int m_iThirst;
+
+	float m_fPosX;
+	float m_fPosY;
+	float m_fPosZ;
+
+	float m_fDirX;
+	float m_fDirY;
+	float m_fDirZ;
+
 	shared_mutex m_ObjMutex[OBJ_END];
 
 public:

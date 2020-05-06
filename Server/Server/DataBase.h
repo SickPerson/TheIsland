@@ -34,8 +34,8 @@ public:
 	bool PopFromStateQueue(DataBase_Event& event);
 
 	bool	GetIsLogin(std::string sID);
-	bool	GetIsLogin(unsigned short usID);
-	void	SetIsLogin(int iPlayerNum, unsigned short usID, std::string ID);
-	int		FindIsLogin(unsigned short usID, wchar_t* user_id, bool bDelete = false);
+	bool	GetIsLogin(unsigned int usID);
+	void	SetIsLogin(int iPlayerNum, unsigned int usID, std::string ID);
+	int		FindIsLogin(unsigned int usID, wchar_t* user_id, bool bDelete = false);
 };
 

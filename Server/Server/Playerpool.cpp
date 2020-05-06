@@ -1,11 +1,11 @@
+#include "stdafx.h"
 #include "Playerpool.h"
-#include "Player.h"
 
-concurrent_unordered_map<unsigned short, CPlayer*>CPlayerpool::m_cumPlayerPool;
+concurrent_unordered_map<unsigned int, CPlayer*>CPlayerpool::m_cumPlayerPool;
 
 CPlayerpool::CPlayerpool()
 {
-	for (unsigned short i = 0; i < MAX_USER; ++i)
+	for (int i = 0; i < MAX_USER; ++i)
 		CPlayerpool::m_cumPlayerPool.insert(make_pair(i, new CPlayer()));
 }
 

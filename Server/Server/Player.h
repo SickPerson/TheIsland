@@ -15,14 +15,14 @@ public:
 	virtual ~CPlayer();
 
 private:
-	unsigned short	m_usID;
+	unsigned int	m_usID;
 	volatile bool	m_bConnect;
 	SOCKET			m_sSocket;
 	OVER_EX			m_over;
 	int				m_iPrevsize;
 	int				m_iCursize;
 
-	concurrent_unordered_set<unsigned short> m_cusViewList;
+	concurrent_unordered_set<unsigned int> m_cusViewList;
 	shared_mutex m_rmPlayerStatusMutex[LOCK_END];
 	recursive_mutex	m_rmPlayerListMutex;
 
@@ -40,7 +40,7 @@ public:
 		unique_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_CONNECT]); // Write Lock(1개의 스레드만 접근할 수 있는 락)
 		m_bConnect = _bState;
 	}
-	void SetPlayerID(const unsigned short& _usID) {
+	void SetPlayerID(const unsigned int& _usID) {
 		unique_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_ID]); // Write Lock(1개의 스레드만 접근할 수 있는 락)
 		m_usID = _usID;
 	}
@@ -53,18 +53,18 @@ public:
 		shared_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_CONNECT]);
 		return m_bConnect;
 	}
-	const unsigned short GetPlayerID() {
+	const unsigned int GetPlayerID() {
 		shared_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_ID]);
 		return m_usID;
 	}
 
 public:
-	void CopyBefore(concurrency::concurrent_unordered_set<unsigned short>& _usCopyList)
+	void CopyBefore(concurrency::concurrent_unordered_set<unsigned int>& _usCopyList)
 	{
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		_usCopyList = m_cusViewList;
 	}
-	void CopyPlayerList(concurrency::concurrent_unordered_set<unsigned short>& _usCopyList) {
+	void CopyPlayerList(concurrency::concurrent_unordered_set<unsigned int>& _usCopyList) {
 		unique_lock<recursive_mutex>lock(m_rmPlayerListMutex);
 		_usCopyList = m_cusViewList;
 		lock.unlock();
@@ -77,9 +77,9 @@ public:
 				++au;
 		}
 	}
-	void DeleteList(unsigned short _usID)
+	void DeleteList(unsigned int _usID)
 	{
-		concurrency::concurrent_unordered_set<unsigned short> list;
+		concurrency::concurrent_unordered_set<unsigned int> list;
 		CopyBefore(list);
 		for (auto au = list.begin(); au != list.end();)
 		{
@@ -94,12 +94,12 @@ public:
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		m_cusViewList = list;
 	}
-	void InsertList(unsigned short _usID)
+	void InsertList(unsigned int _usID)
 	{
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		m_cusViewList.insert(_usID);
 	}
-	bool CheckList(unsigned short _usID)
+	bool CheckList(unsigned int _usID)
 	{
 		if (m_cusViewList.count(_usID) != 0)
 			return true;

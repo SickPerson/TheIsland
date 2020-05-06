@@ -7,8 +7,8 @@ class CPlayerProcess:
 {
 private:
 	recursive_mutex	m_rmPlayerProcessLock;
-	function<void(unsigned short)>	m_fpUpdateViewList;
-	function<void(unsigned short, char*)> m_fppacketProcess[CS_END];
+	function<void(unsigned int)>	m_fpUpdateViewList;
+	function<void(unsigned int, char*)> m_fpPacketProcess[CS_END];
 public:
 	explicit CPlayerProcess();
 	virtual ~CPlayerProcess();
@@ -16,36 +16,34 @@ public:
 public:
 	void BindPacketProcess()
 	{
-		/*CS_LOGIN = 0;
-		CS_LOGOUT = 1;
-		CS_LOOK = 2;
-		CS_POS = 3;
-		CS_ATTACK = 4;
-		CS_IDLE = 5;
-		CS_END = 6;*/
-		m_fppacketProcess[CS_LOGIN] = [&](unsigned short _usID, char* _packet)
+		m_fpPacketProcess[CS_LOGIN] = [&](unsigned int _usID, char* _packet)
 		{
-			PlayerLoginCheck(_usID, _packet);
+			PlayerLogin(_usID, _packet);
 		};
-		/*m_fppacketProcess[CS_LOGIN] = [&](unsigned short _usID, char* _packet)
+		m_fpPacketProcess[CS_LOOK] = [&](unsigned int _usID, char* _packet)
 		{
-			if(CProcess::m_pPlayerPool)
-		}*/
+			PlayerLook(_usID, _packet);
+		};
+		m_fpPacketProcess[CS_POS] = [&](unsigned int _usID, char* _packet)
+		{
+			PlayerPos(_usID, _packet);
+		};
 	}
 	void BindUpdateViewListFunction()
 	{
-
+		m_fpUpdateViewList = [&](unsigned int usID) {UpdateViewList(usID); };
 	}
-	void AcceptClient(const SOCKET& _sSocket, unsigned short _usID);
-	void PacketProcess(unsigned short _usID, char* _packet);
-	void RecvPacket(unsigned short _usID, DWORD _dwSize, char* _Packet);
+	void AcceptClient(const SOCKET& _sSocket, unsigned int _usID);
+	void ProcessPacket(unsigned int _usID, char* _packet);
+	void RecvPacket(unsigned int _usID, char* _Packet, DWORD bytesize);
 
-	void PlayerLoginCheck(unsigned short _usID, char* _packet);
+	void PlayerLogin(unsigned int _usID, char* _packet);
 	void PlayerLogin(DataBase_Event& _event);
-	void PlayerLogout(unsigned short _usID);
-	void PlayerDinconnect(unsigned short _usID);
-	void PlayerPos(unsigned short _usID, char* _Packet);
+	void PlayerPos(unsigned int _usID, char* _Packet);
+	void PlayerLook(unsigned int _usID, char* _Packet);
+	void PlayerDinconnect(unsigned int _usID);
 
-	void PlayerLook(unsigned short _usID, char* _Packet);
+public:
+	void UpdateViewList(unsigned int _usID);
 };
 

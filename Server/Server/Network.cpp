@@ -4,16 +4,17 @@
 #include "PacketMgr.h"
 #include "TimerMgr.h"
 #include "DataBase.h"
+#include "Player.h"
 
 CNetwork::CNetwork()
 {
-	m_ListenSock = INVALID_SOCKET;
+	m_ListenSock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	m_bRunningServer = true;
 	m_pPlayerProcess = nullptr;
 	m_usUserID = 0;
 	//------------------------------
-	Initialize();
-	GetServerIpAddress();
+	//Initialize();
+	CheckThisCputCount();
 }
 
 CNetwork::~CNetwork()
@@ -32,85 +33,11 @@ void CNetwork::GetServerIpAddress()
 	if (err_no == 0) {
 		hostinfo = gethostbyname(hostname);
 		strcpy_s(ipaddr, inet_ntoa(*reinterpret_cast<struct in_addr*>(hostinfo->h_addr_list[0])));
-		strcpy_s(ip, ipaddr);
 	}
 	cout << "Server IP Address: " << ipaddr << endl;
 }
 
-bool CNetwork::CreateSocket(SOCKET & _sClientSocket, unsigned short _usID)
-{
-	if (_sClientSocket == INVALID_SOCKET)
-	{
-		closesocket(_sClientSocket);
-		return false;
-	}
-	return Associate(reinterpret_cast<HANDLE>(_sClientSocket), _usID);
-}
-
-bool CNetwork::Associate(HANDLE _hDevice, unsigned short _usID)
-{
-	if (_hDevice == INVALID_HANDLE_VALUE)
-		return false;
-	CreateIoCompletionPort(_hDevice, m_hIocp, _usID, 0);
-	if (NULL == m_hIocp)
-		return false;
-	else
-		return true;
-}
-
-bool CNetwork::InitWinSock()
-{
-	// WinSock Initalize
-	WSADATA	wsa;
-
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		return false;
-	else
-		return true;
-}
-
-bool CNetwork::InitCompletionPort()
-{
-	m_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
-	if (m_hIocp == NULL)
-		return false;
-	else
-		return true;
-}
-
-bool CNetwork::InitSock()
-{
-	int retval;
-
-	m_ListenSock = WSASocketW(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
-	if (m_ListenSock == INVALID_SOCKET) {
-		int err_no = WSAGetLastError();
-		Err_display("Socket Err", err_no);
-		return false;
-	}
-
-	SOCKADDR_IN	serveraddr;
-	ZeroMemory(&serveraddr, sizeof(serveraddr));
-	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serveraddr.sin_port = htons(SERVER_PORT);
-	retval = ::bind(m_ListenSock, reinterpret_cast<SOCKADDR*>(&serveraddr), sizeof(serveraddr));
-	if (retval == SOCKET_ERROR) {
-		int err_no = WSAGetLastError();
-		Err_display("bind()", err_no);
-		return false;
-	}
-
-	retval = listen(m_ListenSock, SOMAXCONN);
-	if (retval == SOCKET_ERROR) {
-		int err_no = WSAGetLastError();
-		Err_display("listen()", err_no);
-		return false;
-	}
-	return true;
-}
-
-bool CNetwork::Initialize()
+void CNetwork::Initialize()
 {
 	CProcess::InitializeBeforeStart();
 
@@ -118,24 +45,81 @@ bool CNetwork::Initialize()
 
 	CTimerMgr::GetInst()->Reset();
 
-	if (!InitWinSock()) {
+	// ==========================================
+	WSADATA wsaData;
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
 		int err_no = WSAGetLastError();
 		Err_display("InitWinSock() err", err_no);
-		return false;
 	}
 
-	if (!InitCompletionPort()) {
+	int retval;
+
+	m_ListenSock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	if (m_ListenSock == INVALID_SOCKET) {
+		int err_no = WSAGetLastError();
+		Err_display("Socket Err", err_no);
+	}
+
+	SOCKADDR_IN	serveraddr;
+	ZeroMemory(&serveraddr, sizeof(SOCKADDR_IN));
+	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_port = htons(SERVER_PORT);
+	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	retval = ::bind(m_ListenSock, (struct sockaddr*)&serveraddr, sizeof(SOCKADDR_IN));
+	if (retval == SOCKET_ERROR) {
+		int err_no = WSAGetLastError();
+		Err_display("bind()", err_no);
+	}
+	retval = listen(m_ListenSock, 5);
+	if (retval == SOCKET_ERROR) {
+		int err_no = WSAGetLastError();
+		Err_display("listen()", err_no);
+	}
+	//
+	m_addrLen = sizeof(SOCKADDR_IN);
+	memset(&m_clientAddr, 0, m_addrLen);
+
+	//
+	m_hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
+	if (m_hIocp == NULL) {
 		int err_no = WSAGetLastError();
 		Err_display("InitCompletionPort() err", err_no);
-		return false;
 	}
 
-	if (!InitSock()) {
-		int err_no = WSAGetLastError();
-		Err_display("InitSock() err", err_no);
-		return false;
+	GetServerIpAddress();
+}
+
+void CNetwork::StartServer()
+{
+	for (int i = 0; i < m_iNumWorkerThread; ++i) {
+		m_vWorkerThread.push_back(std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } }));
+		//m_vWorkerThread.emplace_back(thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } });
 	}
-	return true;
+	std::cout << "WorkerThread Create" << std::endl;
+
+	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
+	//m_tAcceptThread = thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } };
+	std::cout << "AcceptThread Create" << std::endl;
+
+	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
+	//std::cout << "UpdateThread Create" << std::endl;
+
+	std::cout << "Server Start" << std::endl;
+}
+
+void CNetwork::CloseServer()
+{
+	m_pUpdateThread->join();
+	cout << "나와도 돼" << endl;
+	m_pAcceptThread->join();
+	//m_tAcceptThread.join();
+	cout << "나오면 안돼" << endl;
+
+	for (auto& thread : m_vWorkerThread)
+		thread->join();
+
+	EndServer();
+	Disconnect();
 }
 
 void CNetwork::Disconnect()
@@ -146,104 +130,107 @@ void CNetwork::Disconnect()
 	m_ListenSock = INVALID_SOCKET;
 }
 
+void CNetwork::CheckThisCputCount()
+{
+	// CPU , Thread 개수 확인
+	SYSTEM_INFO	si; // CPU 개수 확인용
+	GetSystemInfo(&si); // 시스템 정보를 받아온다.
+	m_iCpuCore = static_cast<int>(si.dwNumberOfProcessors);
+	m_iNumWorkerThread = static_cast<int>(m_iCpuCore * 2 - 2);
+	cout << "CPU Core Count: " << m_iCpuCore << "\tThread: " << m_iNumWorkerThread << endl;
+}
+
 void CNetwork::WorkerThread()
 {
+	cout << "워커 스레드 들어와" << endl;
+	DWORD		num_byte;
+	ULONGLONG	key64;
+	PULONG_PTR	p_key = &key64;
 	while (m_bRunningServer) {
-		DWORD		io_byte;
-		ULONGLONG	key;
-		PULONG_PTR	p_key = &key;
-		POVER_EX	lpover_ex;
+		OVER_EX*	lpover_ex;
 
-		BOOL	is_error = GetQueuedCompletionStatus(m_hIocp, &io_byte, p_key,
+		BOOL	is_error = GetQueuedCompletionStatus(m_hIocp, &num_byte, p_key,
 			reinterpret_cast<LPWSAOVERLAPPED *>(&lpover_ex), INFINITE);
 
-		unsigned short id = reinterpret_cast<unsigned short&>(key);
+		unsigned int id = static_cast<unsigned>(key64);
 
 		// 비정상 종료 : FALSE, 수신 바이트 크기 = 0
 		// 정상 종료 : TRUE, 수신 바이트 크기 = 0
 		if (is_error == false)
 		{
 			int err_no = WSAGetLastError();
-			if (err_no != WSA_IO_PENDING)
-			{
-				std::cout << "[ Player: " << key << " ] Disconnect" << std::endl;
+			if (err_no != WSA_IO_PENDING){
+				std::cout << "[ Player: " << id << " ] Disconnect" << std::endl;
 				m_pPlayerProcess->PlayerDinconnect(id);
 			}
 			continue;
 		}
 
-		if (io_byte == 0)
+		if (num_byte == 0)
 		{
-			std::cout << "[ Player: " << key << " ] Disconnect" << std::endl;
+			std::cout << "[ Player: " << id << " ] Disconnect" << std::endl;
 			m_pPlayerProcess->PlayerDinconnect(id);
 			continue;
 		}
-
-		switch (lpover_ex.m_Event)
+		switch (lpover_ex->m_Event)
 		{
 		case EV_RECV:
 		{
-			m_pPlayerProcess->RecvPacket(id, io_byte, lpover_ex.m_MessageBuffer);
+			cout << "받자받자" << endl;
+			m_pPlayerProcess->RecvPacket(id, lpover_ex->m_MessageBuffer, num_byte);
+			//m_pPlayerProcess->RecvPacket(id, num_byte, lpover_ex.m_MessageBuffer);
 			break;
 		}
 
 		case EV_SEND:
 		{
-			if (io_byte != lpover_ex.m_DataBuffer.len)
-			{
-				int err_no = GetLastError();
-				Err_display("WorkerThread]Send Error", err_no);
-				m_pPlayerProcess->PlayerDinconnect(id); // 오류 발생시 소켓 종료
-			}
+			delete lpover_ex;
 			break;
 		}
 		case EV_UPDATE:
 		{
+			delete lpover_ex;
 			break;
 		}
 		case EV_PLAYER_UPDATE:
 		{
+			delete lpover_ex;
 			break;
 		}
 		case EV_DB:
 		{
+			delete lpover_ex;
 			break;
+		}
+		default:
+		{
+			cout << "Unknown Event Type :" << lpover_ex->m_Event << endl;
+			while (true);
 		}
 		}
 	}
-	return;
+	cout << "워커 나오면 안돼" << endl;
 }
 
 void CNetwork::AcceptThread()
 {
 	while (m_bRunningServer) {
-		SOCKADDR_IN addr;
-		ZeroMemory(&addr, sizeof(SOCKADDR_IN));
-		addr.sin_family = AF_INET;
-		addr.sin_port = htons(SERVER_PORT);
-		addr.sin_addr.s_addr = INADDR_ANY;
-		int addrsize = sizeof(SOCKADDR_IN);
-
-		auto client_sock = WSAAccept(m_ListenSock, reinterpret_cast<sockaddr*>(&addr), &addrsize, NULL, NULL);
+		auto client_sock = WSAAccept(m_ListenSock, (struct sockaddr*)&m_clientAddr, &m_addrLen, NULL, NULL);
 
 		if (client_sock == INVALID_SOCKET) {
 			int err_no = WSAGetLastError();
 			Err_display("ACCEPT INVALID_SOCKET!", err_no);
 			break;
 		}
-		else {
-			if (!CreateSocket(client_sock, m_usUserID)) {
-				continue;
-			}
-			else {
-				//cout << "접속 : " << inet_ntoa(addr.sin_addr) << '\t' << ntohs(addr.sin_port) << endl;
-				//cout << "UserNum : " << m_usUserID << endl;
-				++m_usUserID;
-				continue;
-			}
-		}
+		CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_sock), m_hIocp, m_usUserID, 0);
+
+		cout << "접속 : " << inet_ntoa(m_clientAddr.sin_addr) << '\t' << ntohs(m_clientAddr.sin_port) << endl;
+		m_pPlayerProcess->AcceptClient(client_sock, m_usUserID);
+		CPacketMgr::GetInst()->Send_Login_IP_Packet(m_usUserID);
+		cout << "UserNum : " << m_usUserID << endl;
+		++m_usUserID;
 	}
-	return;
+	cout << "어셉 스레드 나오면 안돼" << endl;
 }
 
 void CNetwork::UpdateThread()
@@ -269,7 +256,7 @@ void CNetwork::UpdateThread()
 				break;
 		}
 	}
-	return;
+	cout << "업데이트 나오면 안돼" << endl;
 }
 
 void CNetwork::DataBaseThread()
@@ -286,7 +273,6 @@ void CNetwork::DataBaseThread()
 				break;
 		}
 	}
-	return;
 }
 
 void CNetwork::Err_quit(const char* msg, int err_no)
@@ -294,7 +280,7 @@ void CNetwork::Err_quit(const char* msg, int err_no)
 	WCHAR *lpMsgBuf;
 	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, err_no,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, NULL);
-	MessageBox(NULL, (LPCTSTR)lpMsgBuf, (LPCSTR)msg, MB_ICONERROR);
+	MessageBox(NULL, (LPCWSTR)lpMsgBuf, (LPCWSTR)msg, MB_ICONERROR);
 	LocalFree(lpMsgBuf);
 	exit(-1);
 }

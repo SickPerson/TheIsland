@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Core.h"
+#include "Network.h"
 
 #ifdef _DEBUG
 #define new new(_CLIENT_BLOCK, __FILE__, __LINE__)
@@ -12,9 +12,9 @@
 int main() {
 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 
-	CCore::GetInst()->Initalize();
-	CCore::GetInst()->StartServer();
-	CCore::GetInst()->CloseServer();
+	CNetwork::GetInst()->Initialize();
+	CNetwork::GetInst()->StartServer();
+	CNetwork::GetInst()->CloseServer();
 
 	_CrtDumpMemoryLeaks();
 }

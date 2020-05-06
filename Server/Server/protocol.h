@@ -4,53 +4,62 @@
 [NETWORK]
 -----------------------------------------*/
 constexpr	int	SERVER_PORT = 9000;
-constexpr	unsigned short	MAX_USER	= 10;
-constexpr	unsigned short	ANIMAL_BEAR = 50;
-constexpr	unsigned short	ANIMAL_WILD_PIG = 100;
-constexpr	unsigned short	ANIMAL_DEER = 150;
-constexpr	unsigned short	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_WILD_PIG + ANIMAL_DEER;
+constexpr	unsigned int	MAX_USER	= 10;
+constexpr	unsigned int	ANIMAL_BEAR = 50;
+constexpr	unsigned int	ANIMAL_WILD_PIG = 100;
+constexpr	unsigned int	ANIMAL_DEER = 150;
+constexpr	unsigned int	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_WILD_PIG + ANIMAL_DEER;
 constexpr	int	MAX_BUF = 1024;
-constexpr	int	MAX_STR_LEN = 50;
-
+constexpr	int	MAX_STR_LEN = 15;
+constexpr	int MAX_MEG_LEN = 50;
 constexpr	int MAX_QUICK_SLOT = 5;
 
 //char SERVERIP[20] = "127.0.0.1";
-
-#define WORLD_WIDTH 800
-#define WORLD_HEIGHT 800
 
 // Client -> Server Packet Protocol
 constexpr	char	CS_LOGIN = 0;
 constexpr	char	CS_LOGOUT = 1;
 constexpr	char	CS_LOOK = 2;
 constexpr	char	CS_POS = 3;
-constexpr	char	CS_ATTACK = 4;
-constexpr	char	CS_IDLE = 5;
+constexpr	char	CS_CHAT = 4;
 constexpr	int		CS_END = 6;
 
 // Server -> Client Packet Protocol
-constexpr	char	SC_LOGIN_OK = 0;
-constexpr	char	SC_LOGIN_FAIL = 1;
-constexpr	char	SC_LOGIN = 2;
-constexpr	char	SC_CONNECT = 3;
-constexpr	char	SC_DISCONNECT = 4;
-constexpr	char	SC_POSITION = 5;
-constexpr	char	SC_CHAT = 6;
-constexpr	char	SC_STAT_CHANGE = 7;
-constexpr	char	SC_REMOVE_OBJECT = 8;
+constexpr	char	SC_LOGIN_IP = 0;
+constexpr	char	SC_LOGIN_OK = 1;
+constexpr	char	SC_LOGIN_FAIL = 2;
+constexpr	char	SC_LOGIN = 3;
+constexpr	char	SC_CONNECT = 4;
+constexpr	char	SC_DISCONNECT = 5;
+constexpr	char	SC_POS = 6;
+constexpr	char	SC_CHAT = 7;
+constexpr	char	SC_STAT_CHANGE = 8;
+constexpr	char	SC_REMOVE_OBJECT = 9;
+constexpr	char	SC_END = 10;
+
+// About Player
+constexpr float PLAYER_BETWEEN_RANGE = 2500.f;
 
 #pragma	pack(push, 1)
-// Sever -> Client
+// ___________________________________________________________________
+//						[ Sever -> Client ]
+// ___________________________________________________________________
 struct sc_login_state_packet {
 	char size;
 	char type;
-	unsigned short id;
+	unsigned int id;
+};
+
+struct sc_login_ip_packet {
+	char size;
+	char type;
+	unsigned int id;
 };
 
 struct sc_login_ok_packet {
 	char	size;
 	char	type;
-	unsigned short	id;
+	unsigned int	id;
 };
 
 struct sc_login_fail_packet {
@@ -61,18 +70,48 @@ struct sc_login_fail_packet {
 struct sc_disconnect_packet {
 	char	size;
 	char	type;
-	unsigned short id;
+	unsigned int id;
+};
+
+struct sc_first_status_packet {
+	char size;
+	char type;
+	unsigned int id;
+
+	int HP;
+	int Stamina;
+	int Hunger;
+	int Thirst;
+
+	float fPosX;
+	float fPosY;
+	float fPosZ;
+
+	float fDirX;
+	float fDirY;
+	float fDirZ;
 };
 
 struct sc_accept_packet {
 	char size;
 	char type;
-	unsigned short id;
+	unsigned int id;
 
-	int CurHp;
-	int CurStamina;
-	int Curhunger;
-	int thirst;
+	int HP;
+
+	float fPosX;
+	float fPosY;
+	float fPosZ;
+
+	float fDirX;
+	float fDirY;
+	float fDirZ;
+};
+
+struct sc_pos_packet {
+	char size;
+	char type;
+	unsigned int id;
 
 	float fPosX;
 	float fPosY;
@@ -86,7 +125,7 @@ struct sc_accept_packet {
 struct sc_chat_packet {
 	char size;
 	char type;
-	unsigned short id;
+	unsigned int id;
 	char meesage[MAX_STR_LEN];
 };
 
@@ -120,12 +159,22 @@ struct sc_chat_packet {
 //	int	hp, level, exp;
 //};
 
-// client->server
+// ___________________________________________________________________
+//						[ Client -> Server ]
+// ___________________________________________________________________
+
 struct cs_login_packet {
 	char	size;
 	char	type;
+	unsigned int id;
 	char	player_id[MAX_STR_LEN];
-	char	player_ip[MAX_STR_LEN];
+};
+
+struct cs_chat_packet {
+	char size;
+	char type;
+	unsigned int id;
+	wchar_t meesage[MAX_STR_LEN];
 };
 
 struct cs_packet_move {
