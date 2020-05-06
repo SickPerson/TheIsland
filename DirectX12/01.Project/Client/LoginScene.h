@@ -30,6 +30,9 @@ private:
 	string				m_strPassword;
 	string				m_strIP;
 
+	bool				m_bIP_Success = false;
+	bool				m_bNextScene = false;
+
 public:
 	CGameObject* GetIDObj();
 	CGameObject* GetPasswordObj();

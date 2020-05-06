@@ -1,6 +1,8 @@
 #pragma once
 #include "header.h"
 
+class CGameObject;
+
 class CNetwork
 {
 	SINGLE(CNetwork)
@@ -26,6 +28,9 @@ private:
 	recursive_mutex m_rmListMutex;
 	recursive_mutex m_rmLoginStateLock[LT_END];
 
+	shared_ptr<thread>m_tNetworkThread;
+
+	concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
 	concurrent_unordered_set<unsigned short> m_cusViewList;
 
 	volatile bool m_bLoginState[LT_END];
@@ -33,6 +38,7 @@ private:
 	bool m_bClientClose;
 	bool m_bCollision;
 
+public:
 	static unsigned short m_usID;
 
 public:
@@ -40,12 +46,17 @@ public:
 	static void Err_display(const char* msg, int err_no);
 public:
 	void Init();
-	bool ConnectServer();
+	bool ConnectServer(string ipAddr);
+	void RunRecvThread();
 	bool CreateEventSelect();
 
 	void DisConnect();
 	void RecvPacket();
 	void ProcessPacket(char* _packet);
+
+public:
+	void SetID(unsigned short _id);
+	unsigned short GetID();
 
 public:
 	void SetLogin(bool _bLogin)
@@ -116,7 +127,11 @@ public:
 	}
 
 public:
-	void SendLoginPacket(string _sPlayerID, string _sIP);
+	void SendLoginPacket(string _sPlayerID);
+	void SendPosPacket();
+	void SendDirPacket();
 
+public:
+	void RecvIpPacket(char* _packet);
+	void RecvLoginPacket(char* _packet);
 };
-

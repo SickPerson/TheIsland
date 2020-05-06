@@ -47,6 +47,7 @@ void CPlayerProcess::RecvPacket(unsigned int _usID, char * _Packet, DWORD bytesi
 
 void CPlayerProcess::PlayerLogin(unsigned int _usID, char * _packet)
 {
+	cout << "보내자" << endl;
 	concurrent_unordered_set<unsigned int> viewlist;
 	// DB USE
 
@@ -55,16 +56,16 @@ void CPlayerProcess::PlayerLogin(unsigned int _usID, char * _packet)
 	CPacketMgr::Send_Login_OK_Packet(_usID);
 	
 	// 처음 플레이어의 정보 보내기
-	CPacketMgr::Send_First_Status_Packet(_usID);
+	//CPacketMgr::Send_First_Status_Packet(_usID);
 
-	// 게임에 들어와있는 리스트에 추가하기
-	InsertList(_usID);
+	//// 게임에 들어와있는 리스트에 추가하기
+	//InsertList(_usID);
 
-	// 현재 게임의 뷰리스트 추가하기
-	CopyBefore(viewlist);
+	//// 현재 게임의 뷰리스트 추가하기
+	//CopyBefore(viewlist);
 
-	// 들어온 유저의 정보를 접속자들에게 보내기
-	CPacketMgr::Send_Accept_Packet(_usID, viewlist);
+	//// 들어온 유저의 정보를 접속자들에게 보내기
+	//CPacketMgr::Send_Accept_Packet(_usID, viewlist);
 }
 
 void CPlayerProcess::PlayerLogin(DataBase_Event& _event)

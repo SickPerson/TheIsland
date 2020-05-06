@@ -12,11 +12,14 @@ CPacketMgr::~CPacketMgr()
 {
 }
 
-void CPacketMgr::Send_Packet(const unsigned int& _usID, void* _packet)
+void CPacketMgr::Send_Packet(unsigned int _usID, void* _packet)
 {
 	DWORD flags{ 0 };
 	char* packet = reinterpret_cast<char*>(_packet);
 	int packet_size = packet[0];
+	int packet_type = packet[1];
+
+	cout << "패킷 사이즈:" << packet_size << "패킷 타입:" << packet_type << endl;
 
 	OVER_EX* send_over = new OVER_EX;
 	memset(send_over, 0x00, sizeof(OVER_EX));
@@ -50,6 +53,7 @@ void CPacketMgr::Send_Login_OK_Packet(unsigned int _usID)
 	sc_login_ok_packet packet;
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
+	packet.id = _usID;
 	Send_Packet(_usID, &packet);
 }
 

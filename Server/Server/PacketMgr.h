@@ -6,7 +6,7 @@ class CPacketMgr
 	SINGLE(CPacketMgr)
 
 public:
-	static void Send_Packet(const unsigned int& _usID, void* _packet);
+	static void Send_Packet(unsigned int _usID, void* _packet);
 
 public:
 	static void Send_Login_IP_Packet(unsigned int _usID);

@@ -226,7 +226,6 @@ void CNetwork::AcceptThread()
 
 		cout << "Á¢¼Ó : " << inet_ntoa(m_clientAddr.sin_addr) << '\t' << ntohs(m_clientAddr.sin_port) << endl;
 		m_pPlayerProcess->AcceptClient(client_sock, m_usUserID);
-		CPacketMgr::GetInst()->Send_Login_IP_Packet(m_usUserID);
 		cout << "UserNum : " << m_usUserID << endl;
 		++m_usUserID;
 	}

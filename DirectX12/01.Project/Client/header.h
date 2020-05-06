@@ -14,6 +14,7 @@
 #include <iostream>
 
 #include <concurrent_unordered_set.h>
+#include <concurrent_unordered_map.h>
 
 #include "define.h"
 #include "enum.h"
