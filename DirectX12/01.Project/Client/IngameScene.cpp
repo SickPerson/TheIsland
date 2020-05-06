@@ -97,7 +97,7 @@ void CIngameScene::Init()
 	// ===================
 	// Player 오브젝트 생성
 	// ===================
-	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
+	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\barghest.mdat", L"MeshData\\barghest.mdat");
 
 	CGameObject* pPlayer = pMeshData->Instantiate();
 	// Script 설정
@@ -106,7 +106,7 @@ void CIngameScene::Init()
 	pPlayer->SetName(L"Player Object");
 	pPlayer->FrustumCheck(false);
 	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 600.f, 0.f));
-	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
+	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 1.f));
 	pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 
@@ -163,7 +163,7 @@ void CIngameScene::Init()
 	pPlayerCam->AddComponent(new CPlayerCamScript);
 	pPlayerCam->GetScript<CPlayerCamScript>()->SetPlayer(pPlayer);
 	
-	pPlayerCam->Transform()->SetLocalPos(Vec3(0.f, 50.f, 0.f));
+	//pPlayerCam->Transform()->SetLocalPos(Vec3(0.f, 25.f, 150.f));
 	pPlayerCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
 
 	pPlayerCam->Camera()->SetProjType(PROJ_TYPE::PERSPECTIVE);

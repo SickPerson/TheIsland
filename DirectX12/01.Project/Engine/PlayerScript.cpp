@@ -28,8 +28,6 @@ void CPlayerScript::Update()
 	Vec3 vScale = Transform()->GetLocalScale();
 	vPos.y = vScale.y / 2.f;
 	Transform()->SetLocalPos(vPos);
-
-	Transform()->SetLocalRot(Vec3(0.f, -XM_PI / 2.f, 0.f));
 }
 
 void CPlayerScript::SetCamera(CCamera * pCamera)
