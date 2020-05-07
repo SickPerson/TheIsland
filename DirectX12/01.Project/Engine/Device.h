@@ -111,5 +111,7 @@ public:
 	CConstantBuffer* GetCB( CONST_REGISTER _eRegister ) { return m_vecCB[( UINT )_eRegister]; }
 	ComPtr<IDXGISwapChain> GetSwapchain() { return m_pSwapChain; }
 	UINT GetSwapchainIdx() { return m_iCurTargetIdx; }
+
+	tResolution GetResolution() const { return m_tResolution; }
 };
 
