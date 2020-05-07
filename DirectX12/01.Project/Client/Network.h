@@ -1,7 +1,10 @@
 #pragma once
 #include "header.h"
 
+#include <Engine/SceneScript.h>
+
 class CGameObject;
+class CPlayer;
 
 class CNetwork
 {
@@ -21,7 +24,7 @@ private:
 
 	DWORD	m_in_packet_size;
 	DWORD	m_saved_packet_size;
-	char	m_cpacket_buffer[BUF_SIZE];
+	char	m_cPacketBuf[255];
 
 	int		m_iIndex;
 
@@ -30,16 +33,17 @@ private:
 
 	shared_ptr<thread>m_tNetworkThread;
 
-	concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
-	concurrent_unordered_set<unsigned short> m_cusViewList;
-
 	volatile bool m_bLoginState[LT_END];
 	bool m_bPushKey;
 	bool m_bClientClose;
 	bool m_bCollision;
 
+	CScene* pScene;
+
 public:
 	static unsigned short m_usID;
+	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
+	static concurrent_unordered_set<unsigned int> m_cusViewList;
 
 public:
 	static void Err_quit(const char* msg, int err_no);
@@ -86,19 +90,19 @@ public:
 	bool GetClientClose() { return m_bClientClose; }
 	bool GetCollision() { return m_bCollision; }
 public:
-	void CopyBefore(concurrent_unordered_set<unsigned short>& _usCopyList)
+	void CopyBefore(concurrent_unordered_set<unsigned int>& _usCopyList)
 	{
 		lock_guard<recursive_mutex>	lock(m_rmListMutex);
 		_usCopyList = m_cusViewList;
 
 	}
-	void InsertList(unsigned short _usID)
+	void InsertList(unsigned int _usID)
 	{
 		m_cusViewList.insert(_usID);
 	}
-	void DeleteList(unsigned short _usID)
+	void DeleteList(unsigned int _usID)
 	{
-		concurrent_unordered_set<unsigned short> List;
+		concurrent_unordered_set<unsigned int> List;
 		CopyBefore(List);
 		for (auto iter = List.begin(); iter != List.end();)
 		{
@@ -118,7 +122,7 @@ public:
 		lock_guard<recursive_mutex> lock(m_rmListMutex);
 		m_cusViewList.clear();
 	}
-	bool CheckList(unsigned short _usID)
+	bool CheckList(unsigned int _usID)
 	{
 		if (m_cusViewList.count(_usID) != 0)
 			return true;
@@ -130,8 +134,11 @@ public:
 	void SendLoginPacket(string _sPlayerID);
 	void SendPosPacket();
 	void SendDirPacket();
+	void SendChatPacket(string _message);
 
 public:
-	void RecvIpPacket(char* _packet);
 	void RecvLoginPacket(char* _packet);
+	void RecvConnectPacket(char* _packet);
+	void RecvPosPacket(char* _packet);
+	void RecvChatPacket(char* _packet);
 };

@@ -87,23 +87,25 @@ void CLoginScene::Init()
 
 void CLoginScene::Update()
 {
+	if (CNetwork::GetInst()->GetLogin() && CNetwork::GetInst()->GetLoopStart()) {
+		NextScene();
+	}
 	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
 	{
-		NextScene();
+		//NextScene();
 		// 입력한 IP, ID를 받아옴
-		//string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
-		//string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
-		//// Sever Connect
-		//if (CNetwork::GetInst()->ConnectServer(strIP)) {
-		//	cout << "IP Connect Success" << endl;
-		//	if (!CNetwork::GetInst()->GetLoginSend()) {
-		//		CNetwork::GetInst()->SetLoginSend(true);
-		//		CNetwork::GetInst()->SendLoginPacket(strID);
-		//		NextScene();
-		//	}
-		//}
-		//else
-		//	cout << "IP Connect Failure" << endl;
+		string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
+		string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
+		// Sever Connect
+		if (CNetwork::GetInst()->ConnectServer(strIP)) {
+			cout << "IP Connect Success" << endl;
+			if (!CNetwork::GetInst()->GetLoginSend()) {
+				CNetwork::GetInst()->SetLoginSend(true);
+				CNetwork::GetInst()->SendLoginPacket(strID);
+			}
+		}
+		else
+			cout << "IP Connect Failure" << endl;
 	}
 
 	if (KEY_TAB(KEY_TYPE::KEY_LBTN))

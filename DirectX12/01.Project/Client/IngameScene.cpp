@@ -33,6 +33,8 @@
 #include "InventoryScript.h"
 #include <Engine/TestScript.h>
 
+#include "Network.h"
+
 CIngameScene::CIngameScene()
 {
 }
@@ -107,20 +109,20 @@ void CIngameScene::Init()
 	// ===================
 	// Player 오브젝트 생성
 	// ===================
-	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
+	//Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
 
-	CGameObject* pPlayer = pMeshData->Instantiate();
-	// Script 설정
-	pPlayer->AddComponent(new CPlayerScript);
-	pPlayer->AddComponent(new CCollider2D);
-	pPlayer->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
+	//CGameObject* pPlayer = pMeshData->Instantiate();
+	//// Script 설정
+	//pPlayer->AddComponent(new CPlayerScript);
+	//pPlayer->AddComponent(new CCollider2D);
+	//pPlayer->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
 
-	pPlayer->SetName(L"Player Object");
-	pPlayer->FrustumCheck(false);
-	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 600.f, 0.f));
-	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
-	pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
-	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
+	//pPlayer->SetName(L"Player Object");
+	//pPlayer->FrustumCheck(false);
+	//pPlayer->Transform()->SetLocalPos(Vec3(0.f, 600.f, 0.f));
+	//pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
+	//pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
+	//m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 
 	// ====================
 	// Monster 오브젝트 생성
@@ -163,7 +165,7 @@ void CIngameScene::Init()
 	pMainCam->Camera()->SetLayerAllCheck();
 	pMainCam->Camera()->SetLayerCheck( 30, false );
 	pMainCam->Camera()->SetLayerCheck( 29, false );
-	pPlayer->GetScript<CPlayerScript>()->SetCamera( pMainCam->Camera() );
+	CNetwork::m_cumPlayer[CNetwork::m_usID]->GetScript<CPlayerScript>()->SetCamera( pMainCam->Camera() );
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pMainCam );
 
 	// ====================
@@ -173,7 +175,7 @@ void CIngameScene::Init()
 	pPlayerCam->AddComponent(new CTransform);
 	pPlayerCam->AddComponent(new CCamera);
 	pPlayerCam->AddComponent(new CPlayerCamScript);
-	pPlayerCam->GetScript<CPlayerCamScript>()->SetPlayer(pPlayer);
+	pPlayerCam->GetScript<CPlayerCamScript>()->SetPlayer(CNetwork::m_cumPlayer[CNetwork::m_usID]);
 	
 	//pPlayerCam->Transform()->SetLocalPos(Vec3(0.f, 25.f, 150.f));
 	pPlayerCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
