@@ -46,8 +46,10 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	/*Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\boar.fbx");
-	pTestMeshData->Save(pTestMeshData->GetPath());*/
+	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\boar.fbx");
+	//pTestMeshData->Save(pTestMeshData->GetPath());
+	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
+	//pTestMeshData->Save( pTestMeshData->GetPath() );
 
 	// MeshData ·Îµå
 	Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
