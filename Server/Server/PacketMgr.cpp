@@ -45,6 +45,7 @@ void CPacketMgr::Send_Login_OK_Packet(unsigned int _usID)
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
 	packet.id = _usID;
+	cout << packet.size << endl;
 	Send_Packet(_usID, &packet);
 }
 
@@ -82,7 +83,7 @@ void CPacketMgr::Send_First_Status_Packet(unsigned int _usID)
 	packet.fPosZ = 0.f;
 
 	packet.fDirX = 0.f;
-	packet.fDirY = 0.f;
+	packet.fDirY = 180.f;
 	packet.fDirZ = 0.f;
 
 	Send_Packet(_usID, &packet);

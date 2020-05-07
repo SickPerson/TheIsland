@@ -4,7 +4,7 @@
 [NETWORK]
 -----------------------------------------*/
 constexpr	int	SERVER_PORT = 9000;
-constexpr	unsigned int	MAX_USER	= 10;
+constexpr	unsigned int	MAX_USER	= 3;
 constexpr	unsigned int	ANIMAL_BEAR = 50;
 constexpr	unsigned int	ANIMAL_WILD_PIG = 100;
 constexpr	unsigned int	ANIMAL_DEER = 150;
@@ -169,11 +169,20 @@ struct cs_login_packet {
 	char	player_id[MAX_STR_LEN];
 };
 
+struct cs_pos_packet {
+	char size;
+	char type;
+	unsigned int id;
+
+	float fposX; float fposY; float fposZ;
+	float fDirX; float fDirY; float fDirZ;
+};
+
 struct cs_chat_packet {
 	char size;
 	char type;
 	unsigned int id;
-	wchar_t meesage[MAX_STR_LEN];
+	char meesage[MAX_STR_LEN];
 };
 
 struct cs_packet_move {

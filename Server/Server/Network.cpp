@@ -222,6 +222,7 @@ void CNetwork::AcceptThread()
 			Err_display("ACCEPT INVALID_SOCKET!", err_no);
 			break;
 		}
+		//m_usUserID = CProcess::GetNewID();
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_sock), m_hIocp, m_usUserID, 0);
 
 		cout << "Á¢¼Ó : " << inet_ntoa(m_clientAddr.sin_addr) << '\t' << ntohs(m_clientAddr.sin_port) << endl;

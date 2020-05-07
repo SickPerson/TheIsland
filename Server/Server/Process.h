@@ -57,6 +57,7 @@ public:
 			return true;
 		return false;
 	}
+	static unsigned int GetNewID();
 public:
 	static void InitializeBeforeStart()
 	{

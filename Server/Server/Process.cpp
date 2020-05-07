@@ -20,3 +20,15 @@ void CProcess::InitProcessData()
 	m_cusLoginList.clear();
 	m_cpqEventQueue.clear();
 }
+
+unsigned int CProcess::GetNewID()
+{
+	for (int i = 0; i < MAX_USER; ++i) {
+		auto id = m_cusLoginList.find(i);
+		if (id == m_cusLoginList.end())
+			return i;
+		else
+			continue;
+	}
+	return -1;
+}
