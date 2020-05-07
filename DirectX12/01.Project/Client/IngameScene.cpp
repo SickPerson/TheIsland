@@ -46,12 +46,13 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\wolf.fbx");
-	//pTestMeshData->Save(pTestMeshData->GetPath());
+	/*Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\boar.fbx");
+	pTestMeshData->Save(pTestMeshData->GetPath());*/
 
 	// MeshData 로드
 	Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
 	Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
+	Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
 
 	CGameObject * pTestObject = pBearTex->Instantiate();
 	pTestObject->AddComponent(new CCollider2D);
@@ -75,6 +76,19 @@ void CIngameScene::Init()
 	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-600.f, 50.f, 0.f));
 	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+	pTestObject = pBoarTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CMonsterScript);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(90.f, 90.f, 90.f));
+
+	pTestObject->SetName(L"Boar");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(300.f, 50.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
 	// ====================================================================
 
@@ -109,20 +123,20 @@ void CIngameScene::Init()
 	// ===================
 	// Player 오브젝트 생성
 	// ===================
-	//Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
+	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
 
-	//CGameObject* pPlayer = pMeshData->Instantiate();
-	//// Script 설정
-	//pPlayer->AddComponent(new CPlayerScript);
-	//pPlayer->AddComponent(new CCollider2D);
-	//pPlayer->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
+	CGameObject* pPlayer = pMeshData->Instantiate();
+	// Script 설정
+	pPlayer->AddComponent(new CPlayerScript);
+	pPlayer->AddComponent(new CCollider2D);
+	pPlayer->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
 
-	//pPlayer->SetName(L"Player Object");
-	//pPlayer->FrustumCheck(false);
-	//pPlayer->Transform()->SetLocalPos(Vec3(0.f, 600.f, 0.f));
-	//pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
-	//pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
-	//m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
+	pPlayer->SetName(L"Player Object");
+	pPlayer->FrustumCheck(false);
+	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 600.f, 0.f));
+	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
+	pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
+	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 
 	// ====================
 	// Monster 오브젝트 생성
@@ -165,7 +179,7 @@ void CIngameScene::Init()
 	pMainCam->Camera()->SetLayerAllCheck();
 	pMainCam->Camera()->SetLayerCheck( 30, false );
 	pMainCam->Camera()->SetLayerCheck( 29, false );
-	CNetwork::m_cumPlayer[CNetwork::m_usID]->GetScript<CPlayerScript>()->SetCamera( pMainCam->Camera() );
+	pPlayer->GetScript<CPlayerScript>()->SetCamera( pMainCam->Camera() );
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pMainCam );
 
 	// ====================
@@ -175,7 +189,7 @@ void CIngameScene::Init()
 	pPlayerCam->AddComponent(new CTransform);
 	pPlayerCam->AddComponent(new CCamera);
 	pPlayerCam->AddComponent(new CPlayerCamScript);
-	pPlayerCam->GetScript<CPlayerCamScript>()->SetPlayer(CNetwork::m_cumPlayer[CNetwork::m_usID]);
+	pPlayerCam->GetScript<CPlayerCamScript>()->SetPlayer(pPlayer);
 	
 	//pPlayerCam->Transform()->SetLocalPos(Vec3(0.f, 25.f, 150.f));
 	pPlayerCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
