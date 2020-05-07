@@ -93,13 +93,6 @@ void CNetwork::Init()
 
 	for (int i = 0; i < MAX_USER; ++i) {
 		m_cumPlayer.insert(make_pair(i, pMeshData->Instantiate()));
-		m_cumPlayer[i]->AddComponent(new CPlayerScript);
-		m_cumPlayer[i]->AddComponent(new CCollider2D);
-		m_cumPlayer[i]->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
-
-		m_cumPlayer[i]->SetName(L"Player Object");
-		m_cumPlayer[i]->AddComponent(new CPlayerScript);
-		m_cumPlayer[i]->FrustumCheck(false);
 	}
 
 	m_cusViewList.clear();
@@ -230,10 +223,6 @@ void CNetwork::RecvPacket()
 					m_saved_packet_size += size;
 					size = 0;
 				}
-				cout << "나오자";
-				cout << "in packet size:" << m_in_packet_size
-					<< "saved packet size: " << m_saved_packet_size
-					<< "size: " << size;
 			}
 		}
 		if (m_weEvent.lNetworkEvents & FD_CLOSE)
@@ -248,7 +237,6 @@ void CNetwork::RecvPacket()
 
 void CNetwork::ProcessPacket(char* _packet)
 {
-	cout << "패킷 타입: " << (int)_packet[1] << endl;
 	switch (_packet[1])
 	{
 	case SC_LOGIN_OK: // 로그인이 성공한다면 서버에 연결을 시도합니다.
@@ -380,22 +368,17 @@ void CNetwork::RecvLoginPacket(char * _packet)
 	m_usID = packet->id;
 	InsertList(m_usID);
 
+	m_cumPlayer[m_usID]->SetName(L"Player Object");
 	m_cumPlayer[m_usID]->AddComponent(new CPlayerScript);
 	m_cumPlayer[m_usID]->AddComponent(new CCollider2D);
 	m_cumPlayer[m_usID]->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
 
-	m_cumPlayer[m_usID]->SetName(L"Player Object");
-	m_cumPlayer[m_usID]->AddComponent(new CPlayerScript);
 	m_cumPlayer[m_usID]->FrustumCheck(false);
 	m_cumPlayer[m_usID]->Transform()->SetLocalPos(Vec3(packet->fPosX, packet->fPosY, packet->fPosZ));
 	m_cumPlayer[m_usID]->Transform()->SetLocalScale(Vec3(2.f, 2.f, 1.f));
 	m_cumPlayer[m_usID]->Transform()->SetLocalRot(Vec3(packet->fDirX, packet->fDirY, packet->fDirZ));
 
 	pScene->FindLayer(L"Player")->AddGameObject(m_cumPlayer[m_usID]);
-	//CSceneScript::GetScene()->FindLayer(L"Player")->AddGameObject(m_cumPlayer[m_usID]);
-
-	//Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\barghest.mdat", L"MeshData\\barghest.mdat");
-	//m_pScene->FindLayer(L"Player")->AddGameObject(m_cumPlayer[m_usID]);
 }
 
 void CNetwork::RecvConnectPacket(char * _packet)
@@ -406,19 +389,17 @@ void CNetwork::RecvConnectPacket(char * _packet)
 		InsertList(packet->id);
 	}
 
+	m_cumPlayer[packet->id]->SetName(L"Player Object");
 	m_cumPlayer[packet->id]->AddComponent(new CPlayerScript);
 	m_cumPlayer[packet->id]->AddComponent(new CCollider2D);
 	m_cumPlayer[packet->id]->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
 
-	m_cumPlayer[packet->id]->SetName(L"Player Object");
-	m_cumPlayer[packet->id]->AddComponent(new CPlayerScript);
 	m_cumPlayer[packet->id]->FrustumCheck(false);
 	m_cumPlayer[packet->id]->Transform()->SetLocalPos(Vec3(packet->fPosX, packet->fPosY, packet->fPosZ));
 	m_cumPlayer[packet->id]->Transform()->SetLocalScale(Vec3(2.f, 2.f, 1.f));
 	m_cumPlayer[packet->id]->Transform()->SetLocalRot(Vec3(packet->fDirX, packet->fDirY, packet->fDirZ));
 
 	pScene->FindLayer(L"Other")->AddGameObject(m_cumPlayer[packet->id]);
-	//m_pScene->FindLayer(L"Other")->AddGameObject(CNetwork::m_cumPlayer[packet->id]);
 }
 
 void CNetwork::RecvPosPacket(char * _packet)
