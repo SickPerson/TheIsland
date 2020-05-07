@@ -33,6 +33,8 @@
 #include "InventoryScript.h"
 #include <Engine/TestScript.h>
 
+#include <Engine/ParticleSystem.h>
+
 #include "Network.h"
 
 CIngameScene::CIngameScene()
@@ -65,7 +67,7 @@ void CIngameScene::Init()
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
 	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
-	 // ================================================================
+	 // ===================================================================
 	pTestObject = pWolfTex->Instantiate();
 	pTestObject->AddComponent(new CCollider2D);
 	pTestObject->AddComponent(new CMonsterScript);
@@ -328,24 +330,36 @@ void CIngameScene::Init()
 	// ===================
 	// Test 오브젝트 생성
 	// ===================
-	pObject = new CGameObject;
-	pObject->SetName(L"Test Object");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
+	for (int i = 0; i < 11; ++i)
+	{
+		for (int j = 0; j < 11; ++j)
+		{
+			pObject = new CGameObject;
+			pObject->SetName(L"Test Object");
+			pObject->AddComponent(new CTransform);
+			pObject->AddComponent(new CMeshRender);
 
-	// Transform 설정
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 300.f, 0.f));
-	pObject->Transform()->SetLocalScale(Vec3(10000.f, 10000.f, 1.f));
-	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.2f, 0.f, 0.f));
+			// Transform 설정
+			if(i > 9)
+				pObject->Transform()->SetLocalPos(Vec3(-5000.f + (j * 1000.f), -60.f, 9000.f - (i * 1000.f) + 20.f));
+			else
+				pObject->Transform()->SetLocalPos(Vec3(-5000.f + (j * 1000.f), 10.f, 9000.f - (i * 1000.f)));
+			pObject->Transform()->SetLocalScale(Vec3(1000.f, 1000.f, 1.f));
+			if(i > 9)
+				pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.2f, 0.f, 0.f));
+			else
+				pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
 
-	// MeshRender 설정
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
-	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
-	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+			// MeshRender 설정
+			pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
+			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
+			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
 
-	// AddGameObject
-	m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
+			// AddGameObject
+			m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
+		}
+	}
 
 	// ==========================
 	// Distortion Object 만들기
@@ -365,11 +379,24 @@ void CIngameScene::Init()
 	pObject->MeshRender()->SetMaterial(pMtrl);
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &tessellation);
 
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 500.f, 0.f));
+	pObject->Transform()->SetLocalPos(Vec3(0.f, -50.f, 0.f));
 	pObject->Transform()->SetLocalScale(Vec3(10000.f, 10000.f, 1.f));
 	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
 
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
+
+	// ====================
+	// Particle Object 생성
+	// ====================
+	pObject = new CGameObject;
+	pObject->SetName(L"Particle");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CParticleSystem);
+
+	pObject->FrustumCheck(false);
+	pObject->Transform()->SetLocalPos(Vec3(-300.f, 50.f, 300.f));
+
+	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
 
 	// =============
 	// FBX 파일 로드

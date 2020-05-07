@@ -6,39 +6,39 @@
 #include "Transform.h"
 #include "StructuredBuffer.h"
 
-CParticleSystem::CParticleSystem() : 
-	CComponent(COMPONENT_TYPE::PARTICLESYSTEM),
-	m_pParticleBuffer( NULL ),
-	m_pSharedBuffer( NULL ),
-	m_iMaxParticle( 1000 ),
-	m_fFrequency( 0.002f ),
-	m_fAccTime( 0.f ),
-	m_fMinLifeTime( 0.5f ),
-	m_fMaxLifeTime( 1.f ),
-	m_fMinSpeed( 100 ),
-	m_fMaxSpeed( 50.f ),
-	m_fStartScale( 30.f ),
-	m_fEndScale( 10.f ),
-	m_vStartColor( Vec4( 0.2f, 0.2f, 0.8f, 1.4f ) ),
-	m_vEndColor( Vec4( 0.6f, 0.6f, 0.8f, 1.0f ) )
+CParticleSystem::CParticleSystem()
+	: CComponent(COMPONENT_TYPE::PARTICLESYSTEM)
+	, m_pParticleBuffer(nullptr)
+	, m_pSharedBuffer(nullptr)
+	, m_iMaxParticle(1000)
+	, m_fFrequency(0.002f)
+	, m_fAccTime(0.f)
+	, m_fMinLifeTime(0.5f)
+	, m_fMaxLifeTime(1.f)
+	, m_fMinSpeed(100)
+	, m_fMaxSpeed(50.f)
+	, m_fStartScale(30.f)
+	, m_fEndScale(10.f)
+	, m_vStartColor(Vec4(0.8f, 0.8f, 0.8f, 1.4f))
+	, m_vEndColor(Vec4(0.2f, 0.2f, 0.2f, 1.0f))
 {
 	// 구조화 버퍼 생성
 	m_pParticleBuffer = new CStructuredBuffer;
-	m_pParticleBuffer->Create( sizeof( tParticle ), m_iMaxParticle, NULL );
+	m_pParticleBuffer->Create(sizeof(tParticle), m_iMaxParticle, nullptr);
 
 	m_pSharedBuffer = new CStructuredBuffer;
-	m_pSharedBuffer->Create( sizeof( tParticleShared ), 1, NULL );
+	m_pSharedBuffer->Create(sizeof(tParticleShared), 1, nullptr);
 
 	// 사각형 Mesh
-	m_pMesh = CResMgr::GetInst()->FindRes<CMesh>( L"PointMesh" );
+	m_pMesh = CResMgr::GetInst()->FindRes<CMesh>(L"PointMesh");
 
 	// Material
-	m_pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"ParticleMtrl" );
-	Ptr<CTexture> pParticle = CResMgr::GetInst()->Load<CTexture>( L"Texture\\Particle\\CartoonSmoke.png", L"Texture\\Particle\\Bubbles50px.png" );
-	m_pMtrl->SetData( SHADER_PARAM::TEX_0, pParticle.GetPointer() );
+	m_pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ParticleMtrl");
+	Ptr<CTexture> pParticle = CResMgr::GetInst()->Load<CTexture>(L"Texture\\Particle\\smokeparticle.png", L"Texture\\Particle\\smokeparticle.png");
+	m_pMtrl->SetData(SHADER_PARAM::TEX_0, pParticle.GetPointer());
 
 	// ParticleUpdate
-	m_pUpdateMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"ParticleUpdateMtrl" );
+	m_pUpdateMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ParticleUpdateMtrl");
 }
 
 CParticleSystem::~CParticleSystem()

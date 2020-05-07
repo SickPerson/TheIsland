@@ -296,7 +296,7 @@ void CNetwork::SendLoginPacket(string _sPlayerID)
 	packet->size = sizeof(cs_login_packet);
 	packet->type = CS_LOGIN;
 	packet->id = m_usID;
-	strcpy(packet->player_id, _sPlayerID.c_str());
+	//strcpy(packet->player_id, _sPlayerID.c_str());
 
 	m_SendWsaBuf.len = sizeof(cs_login_packet);
 
@@ -349,7 +349,7 @@ void CNetwork::SendChatPacket(string _message)
 	cs_chat_packet packet;
 	packet.size = sizeof(packet);
 	packet.type = CS_CHAT;
-	strcpy(packet.meesage, _message.c_str());
+	//strcpy(packet.meesage, _message.c_str());
 
 	m_SendWsaBuf.len = sizeof(cs_pos_packet);
 
