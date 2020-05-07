@@ -165,6 +165,14 @@ bool CCollisionMgr::IsCollision(CCollider2D * _pCollider1, CCollider2D * _pColli
 	{
 		return CollisionCircle(_pCollider1, _pCollider2);
 	}
+	else if (COLLIDER2D_TYPE::CUBE == _pCollider1->GetColliderType() && COLLIDER2D_TYPE::CUBE == _pCollider2->GetColliderType())
+	{
+		return CollisionCube(_pCollider1, _pCollider2);
+	}
+	else if (COLLIDER2D_TYPE::SPHERE == _pCollider1->GetColliderType() && COLLIDER2D_TYPE::SPHERE == _pCollider2->GetColliderType())
+	{
+		return CollisionSphere(_pCollider1, _pCollider2);
+	}
 	else
 	{
 		return CollisionRectCircle(_pCollider1, _pCollider2);
@@ -247,6 +255,197 @@ bool CCollisionMgr::CollisionCircle(CCollider2D * _pCollider1, CCollider2D * _pC
 }
 
 bool CCollisionMgr::CollisionRectCircle(CCollider2D * _pCollider1, CCollider2D * _pCollider2)
+{
+	return false;
+}
+
+
+bool CCollisionMgr::CollisionCube(CCollider2D* _pCollider1, CCollider2D* _pCollider2)
+{
+	static Vec3 arrLocal[24] = {
+		// 윗 면
+		Vec3(-0.5f, 0.5f, 0.5f)
+		, Vec3(0.5f, 0.5f, 0.5f)
+		, Vec3(0.5f, 0.5f, -0.5f)
+		, Vec3(-0.5f, 0.5f, -0.5f)
+		// 아랫 면
+		, Vec3(-0.5f, -0.5f, -0.5f)
+		, Vec3(0.5f, -0.5f, -0.5f)
+		, Vec3(0.5f, -0.5f, 0.5f)
+		, Vec3(-0.5f, -0.5f, 0.5f)
+		// 왼쪽 면
+		, Vec3(-0.5f, 0.5f, 0.5f)
+		, Vec3(-0.5f, 0.5f, -0.5f)
+		, Vec3(-0.5f, -0.5f, -0.5f)
+		, Vec3(-0.5f, -0.5f, 0.5f)
+		// 오른쪽 면
+		, Vec3(0.5f, 0.5f, -0.5f)
+		, Vec3(0.5f, 0.5f, 0.5f)
+		, Vec3(0.5f, -0.5f, 0.5f)
+		, Vec3(0.5f, -0.5f, -0.5f)
+		// 뒷 면
+		, Vec3(0.5f, 0.5f, 0.5f)
+		, Vec3(-0.5f, 0.5f, 0.5f)
+		, Vec3(-0.5f, -0.5f, 0.5f)
+		, Vec3(0.5f, -0.5f, 0.5f)
+		// 앞 면
+		, Vec3(-0.5f, 0.5f, -0.5f)
+		, Vec3(0.5f, 0.5f, -0.5f)
+		, Vec3(0.5f, -0.5f, -0.5f)
+		, Vec3(-0.5f, -0.5f, -0.5f)
+	};
+	const Matrix& matCol1 = _pCollider1->GetColliderWorldMat();
+	const Matrix& matCol2 = _pCollider2->GetColliderWorldMat();
+
+	Vec3 arrCol1[24] = {};
+	Vec3 arrCol2[24] = {};
+	Vec3 arrCenter[2] = {};
+
+	for (UINT i = 0; i < 24; ++i)
+	{
+		arrCol1[i] = XMVector3TransformCoord(arrLocal[i], matCol1);
+		arrCol2[i] = XMVector3TransformCoord(arrLocal[i], matCol2);
+
+		// 2D 충돌이기 때문에 같은 Z 좌표상에서 충돌을 계산한다.
+	}
+
+	arrCenter[0] = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol1);
+	arrCenter[1] = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol2);
+
+	Vec3 vCenter = arrCenter[1] - arrCenter[0];
+
+	Vec3 arrOriginVec[24] = {
+		  arrCol1[3] - arrCol1[0]
+		, arrCol1[1] - arrCol1[0]
+		, arrCol2[3] - arrCol2[0]
+		, arrCol2[1] - arrCol2[0]
+
+		, arrCol1[7] - arrCol1[4]
+		, arrCol1[5] - arrCol1[4]
+		, arrCol2[7] - arrCol2[4]
+		, arrCol2[5] - arrCol2[4]
+
+		, arrCol1[11] - arrCol1[8]
+		, arrCol1[9] - arrCol1[8]
+		, arrCol2[11] - arrCol2[8]
+		, arrCol2[9] - arrCol2[8]
+
+		, arrCol1[15] - arrCol1[12]
+		, arrCol1[13] - arrCol1[12]
+		, arrCol2[15] - arrCol2[12]
+		, arrCol2[13] - arrCol2[12]
+
+		, arrCol1[19] - arrCol1[16]
+		, arrCol1[17] - arrCol1[16]
+		, arrCol2[19] - arrCol2[16]
+		, arrCol2[17] - arrCol2[16]
+
+		, arrCol1[23] - arrCol1[20]
+		, arrCol1[21] - arrCol1[20]
+		, arrCol2[23] - arrCol2[20]
+		, arrCol2[21] - arrCol2[20]
+	};
+
+	Vec3 arrProjVec[24] = {};
+	for (UINT i = 0; i < 24; ++i)
+	{
+		arrOriginVec[i].Normalize(arrProjVec[i]);
+	}
+
+
+	// 투영을 통해서 분리축 테스트
+	// vCenter		 두 사각형의 중심을 잇는 벡터
+	// arrOriginVec  각 사각형의 표면 벡터
+	// arrProjVec    사각형의 표면과 평행한 투영축 벡터(단위벡터)
+
+	for (UINT i = 0; i < 4; ++i)
+	{
+		float fCenter = abs(vCenter.Dot(arrProjVec[i])); // 중심 거리 벡터를 해당 투영축으로 투영시킨 길이
+
+		float fAcc = 0.f;
+		for (UINT j = 0; j < 24; ++j)
+			fAcc += abs(arrOriginVec[j].Dot(arrProjVec[i]));
+
+		fAcc /= 8.f;
+
+		if (fCenter > fAcc)
+			return false;
+	}
+
+	for (UINT i = 4; i < 8; ++i)
+	{
+		float fCenter = abs(vCenter.Dot(arrProjVec[i])); // 중심 거리 벡터를 해당 투영축으로 투영시킨 길이
+
+		float fAcc = 0.f;
+		for (UINT j = 0; j < 24; ++j)
+			fAcc += abs(arrOriginVec[j].Dot(arrProjVec[i]));
+
+		fAcc /= 8.f;
+
+		if (fCenter > fAcc)
+			return false;
+	}
+
+	for (UINT i = 8; i < 12; ++i)
+	{
+		float fCenter = abs(vCenter.Dot(arrProjVec[i])); // 중심 거리 벡터를 해당 투영축으로 투영시킨 길이
+
+		float fAcc = 0.f;
+		for (UINT j = 0; j < 24; ++j)
+			fAcc += abs(arrOriginVec[j].Dot(arrProjVec[i]));
+
+		fAcc /= 8.f;
+
+		if (fCenter > fAcc)
+			return false;
+	}
+
+	for (UINT i = 12; i < 16; ++i)
+	{
+		float fCenter = abs(vCenter.Dot(arrProjVec[i])); // 중심 거리 벡터를 해당 투영축으로 투영시킨 길이
+
+		float fAcc = 0.f;
+		for (UINT j = 0; j < 24; ++j)
+			fAcc += abs(arrOriginVec[j].Dot(arrProjVec[i]));
+
+		fAcc /= 8.f;
+
+		if (fCenter > fAcc)
+			return false;
+	}
+
+	for (UINT i = 16; i < 20; ++i)
+	{
+		float fCenter = abs(vCenter.Dot(arrProjVec[i])); // 중심 거리 벡터를 해당 투영축으로 투영시킨 길이
+
+		float fAcc = 0.f;
+		for (UINT j = 0; j < 24; ++j)
+			fAcc += abs(arrOriginVec[j].Dot(arrProjVec[i]));
+
+		fAcc /= 8.f;
+
+		if (fCenter > fAcc)
+			return false;
+	}
+
+	for (UINT i = 20; i < 24; ++i)
+	{
+		float fCenter = abs(vCenter.Dot(arrProjVec[i])); // 중심 거리 벡터를 해당 투영축으로 투영시킨 길이
+
+		float fAcc = 0.f;
+		for (UINT j = 0; j < 24; ++j)
+			fAcc += abs(arrOriginVec[j].Dot(arrProjVec[i]));
+
+		fAcc /= 8.f;
+
+		if (fCenter > fAcc)
+			return false;
+	}
+
+	return true;
+}
+
+bool CCollisionMgr::CollisionSphere(CCollider2D* _pCollider1, CCollider2D* _pCollider2)
 {
 	return false;
 }

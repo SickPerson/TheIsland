@@ -20,7 +20,7 @@ CCollider2D::CCollider2D()
 	, m_pColMtrl(nullptr)
 	, m_iColID(g_iColID++)
 	, m_iCollisionCount(0)
-	, m_eType(COLLIDER2D_TYPE::RECT)
+	, m_eType(COLLIDER2D_TYPE::CUBE)
 {
 	m_pColMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"Collider2DMtrl_0");
 	SetCollider2DType(m_eType);
@@ -96,6 +96,14 @@ void CCollider2D::SetCollider2DType(COLLIDER2D_TYPE _eType)
 	else if (COLLIDER2D_TYPE::CIRCLE == m_eType)
 	{
 		m_pColMesh = CResMgr::GetInst()->FindRes<CMesh>(L"ColCircleMesh");
+	}
+	else if (COLLIDER2D_TYPE::CUBE == m_eType)
+	{
+		m_pColMesh = CResMgr::GetInst()->FindRes<CMesh>(L"CubeMesh");
+	}
+	else if (COLLIDER2D_TYPE::SPHERE == m_eType)
+	{
+		m_pColMesh = CResMgr::GetInst()->FindRes<CMesh>(L"SphereMesh");
 	}
 }
 

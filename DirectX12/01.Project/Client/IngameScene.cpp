@@ -52,19 +52,29 @@ void CIngameScene::Init()
 	Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
 
 	CGameObject * pTestObject = pBearTex->Instantiate();
-	pTestObject->SetName(L"House");
-	pTestObject->FrustumCheck(false);
-	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 600.f, 1200.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(3.f, 3.f, 3.f));
 
-	pTestObject = pWolfTex->Instantiate();
-	pTestObject->SetName(L"House");
+	pTestObject->SetName(L"Bear");
 	pTestObject->FrustumCheck(false);
-	pTestObject->Transform()->SetLocalPos(Vec3(300.f, 600.f, 1200.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+	pTestObject->Transform()->SetLocalPos(Vec3(-300.f, 20.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	 // ================================================================
+	pTestObject = pWolfTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CMonsterScript);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(3.f, 3.f, 3.f));
+
+	pTestObject->SetName(L"Wolf");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-600.f, 50.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
 
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>( L"TestTex", L"Texture\\Health.png" );
 	Ptr<CTexture> pExplosionTex = CResMgr::GetInst()->Load<CTexture>( L"Explosion", L"Texture\\Explosion\\Explosion80.png" );
@@ -97,16 +107,18 @@ void CIngameScene::Init()
 	// ===================
 	// Player 오브젝트 생성
 	// ===================
-	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\barghest.mdat", L"MeshData\\barghest.mdat");
+	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
 
 	CGameObject* pPlayer = pMeshData->Instantiate();
 	// Script 설정
 	pPlayer->AddComponent(new CPlayerScript);
+	pPlayer->AddComponent(new CCollider2D);
+	pPlayer->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
 
 	pPlayer->SetName(L"Player Object");
 	pPlayer->FrustumCheck(false);
 	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 600.f, 0.f));
-	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 1.f));
+	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
 	pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 
@@ -256,7 +268,7 @@ void CIngameScene::Init()
 	// =======================
 	// LandScape 오브젝트 생성
 	// =======================
-	pObject = new CGameObject;
+	/*pObject = new CGameObject;
 	pObject->SetName(L"LandScape Object");
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
@@ -269,7 +281,7 @@ void CIngameScene::Init()
 	pObject->Transform()->SetLocalScale(Vec3(15.f, 15.f, 15.f));
 	pObject->FrustumCheck(false);
 
-	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
+	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);*/
 
 
 	// ====================
@@ -364,7 +376,7 @@ void CIngameScene::Init()
 	// =================================
 	// Player Layer 와 Monster Layer 는 충돌 검사 진행
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Monster" );
-	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Bullet", L"Monster" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Monster", L"Monster" );
 }
 
 void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
