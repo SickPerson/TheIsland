@@ -31,6 +31,7 @@
 
 #include "PlayerCamScript.h"
 #include "InventoryScript.h"
+#include "SunshineScript.h"
 #include <Engine/TestScript.h>
 
 #include <Engine/ParticleSystem.h>
@@ -228,6 +229,7 @@ void CIngameScene::Init()
 	pObject = new CGameObject;
 	pObject->AddComponent( new CTransform );
 	pObject->AddComponent( new CLight3D );
+	pObject->AddComponent( new CSunshineScript );
 
 	pObject->Light3D()->SetLightPos(Vec3(0.f, 500.f, 0.f));
 	pObject->Light3D()->SetLightType(LIGHT_TYPE::DIR);
@@ -238,6 +240,8 @@ void CIngameScene::Init()
 	pObject->Light3D()->SetLightRange(1000.f);
 
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+
+	CGameObject* pSun = pObject;
 
 	// ===================
 	// Test 오브젝트 생성
@@ -284,6 +288,7 @@ void CIngameScene::Init()
 
 	// AddGameObject
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+	pSun->GetScript<CSunshineScript>()->SetSkybox(pObject);
 
 	// =======================
 	// LandScape 오브젝트 생성

@@ -200,7 +200,7 @@ float4 PS_TestWater(PS_TEST_INPUT _input) : SV_Target
 {
 	float2 vScreenUV = float2(_input.vOutPos.x / g_vResolution.x, _input.vOutPos.y / g_vResolution.y);
 	//return g_tex_0.Sample(g_sam_0, vScreenUV);
-
+ 
 
 	float2 vDir = normalize(float2(0.5f, 0.5f) - _input.vOutUV);
 
