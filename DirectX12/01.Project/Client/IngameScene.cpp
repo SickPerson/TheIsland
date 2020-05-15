@@ -60,9 +60,9 @@ void CIngameScene::Init()
 	Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
 
 	CGameObject * pTestObject = pBearTex->Instantiate();
-	pTestObject->AddComponent(new CCollider2D);
-	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	pTestObject->Collider2D()->SetOffsetScale(Vec3(3.f, 3.f, 3.f));
+	//pTestObject->AddComponent(new CCollider2D);
+	//pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	//pTestObject->Collider2D()->SetOffsetScale(Vec3(3.f, 3.f, 3.f));
 
 	pTestObject->SetName(L"Bear");
 	pTestObject->FrustumCheck(false);
@@ -72,10 +72,10 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
 	 // ===================================================================
 	pTestObject = pWolfTex->Instantiate();
-	pTestObject->AddComponent(new CCollider2D);
+	//pTestObject->AddComponent(new CCollider2D);
 	pTestObject->AddComponent(new CMonsterScript);
-	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	pTestObject->Collider2D()->SetOffsetScale(Vec3(3.f, 3.f, 3.f));
+	//pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	//pTestObject->Collider2D()->SetOffsetScale(Vec3(3.f, 3.f, 3.f));
 
 	pTestObject->SetName(L"Wolf");
 	pTestObject->FrustumCheck(false);
@@ -84,10 +84,10 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
 	// ====================================================================
 	pTestObject = pBoarTex->Instantiate();
-	pTestObject->AddComponent(new CCollider2D);
+	//pTestObject->AddComponent(new CCollider2D);
 	pTestObject->AddComponent(new CMonsterScript);
-	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	pTestObject->Collider2D()->SetOffsetScale(Vec3(90.f, 90.f, 90.f));
+	//pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	//pTestObject->Collider2D()->SetOffsetScale(Vec3(90.f, 90.f, 90.f));
 
 	pTestObject->SetName(L"Boar");
 	pTestObject->FrustumCheck(false);
@@ -133,8 +133,8 @@ void CIngameScene::Init()
 	CGameObject* pPlayer = pMeshData->Instantiate();
 	// Script ¼³Á¤
 	pPlayer->AddComponent(new CPlayerScript);
-	pPlayer->AddComponent(new CCollider2D);
-	pPlayer->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
+	//pPlayer->AddComponent(new CCollider2D);
+	//pPlayer->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
 
 	pPlayer->SetName(L"Player Object");
 	pPlayer->FrustumCheck(false);

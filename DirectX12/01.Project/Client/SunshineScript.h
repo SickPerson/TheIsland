@@ -5,6 +5,9 @@ class CSunshineScript :
 	public CScript
 {
 	float m_fTime;
+	int m_iDay;
+	int m_iHour;
+	int m_iMinute;
 	float m_fDarkness;
 
 	CGameObject* m_pSkybox;
