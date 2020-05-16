@@ -4,7 +4,7 @@
 #include <Engine/TimeMgr.h>
 #include <Engine/Light3D.h>
 
-#define DAYCYCLE 10000.f // 배속
+#define DAYCYCLE 10.f // 배속
 // 아무리 빨라도 1프레임당 1초가 최대
 
 CSunshineScript::CSunshineScript() :
@@ -12,7 +12,7 @@ CSunshineScript::CSunshineScript() :
 	m_fTime(0.f),
 	m_fDarkness(0.f),
 	m_iDay(0),
-	m_iHour(8),
+	m_iHour(11),
 	m_iMinute(0),
 	m_pSkybox(NULL)
 {
