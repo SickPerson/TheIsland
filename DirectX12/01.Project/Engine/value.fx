@@ -114,6 +114,13 @@ cbuffer GLOBAL : register(b5)
     float   g_fAccTime;
 }
 
+cbuffer LADNSCAPE : register( b6 )
+{
+	int		g_iDetailLevel;
+	int		g_iSplatCount;
+	float2	g_vLandScapeEmpty;
+}
+
 Texture2D g_tex_0 : register(t0);
 Texture2D g_tex_1 : register(t1);
 Texture2D g_tex_2 : register(t2);
@@ -123,10 +130,10 @@ Texture2D g_tex_5 : register(t5);
 Texture2D g_tex_6 : register(t6);
 StructuredBuffer<Matrix> g_arrFinalBoneMat : register(t7);
 
-//Texture2DArray g_arrtex_0 : register(t8);
-//Texture2DArray g_arrtex_1 : register(t9);
-//Texture2DArray g_arrtex_2 : register(t10);
-//Texture2DArray g_arrtex_3 : register(t11);
+Texture2DArray g_arrtex_0 : register(t8);
+Texture2DArray g_arrtex_1 : register(t9);
+Texture2DArray g_arrtex_2 : register(t10);
+Texture2DArray g_arrtex_3 : register(t11);
 
 Texture2D g_tex_anim2D : register(t12);
 

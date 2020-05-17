@@ -135,4 +135,137 @@ float4 PS_Skybox(VS_SKY_OUT _in) : SV_Target
 
     return vOutColor * (1.f - g_float_0);
 }
+
+// =============
+// Terrain Shader
+// =============
+
+//struct VS_LANDSCAPE_IN
+//{
+//	float3 vPos			: POSTION;
+//	float3 vNormal		: NORMAL;
+//	float2 vUV			: TEXCOORD;
+//	float3 vTangent		: TANGENT;
+//	float3 vBinormal	: BINORMAL;
+//};
+//
+//struct VS_LANDSCAPE_OUT
+//{
+//	float4	vPos		: SV_POSITION;
+//	float3	vNormal		: NORMAL;
+//	float2	vUV			: TEXCOORD;
+//	float3	vTangent	: TANGENT;
+//	float3	vBinormal	: BINORMAL;
+//	float3	vViewPos	: POSITION;
+//	float4	vProjPos	: POSITION;
+//};
+//
+//struct PS_LANDSCAPE_OUT
+//{
+//	float4	vColor	: SV_Target;
+//	float4	vColor1	: SV_Target1;
+//	float4	vColor2	: SV_Target2;
+//	float4	vColor3	: SV_Target3;
+//	float4	vColor4	: SV_Target4;
+//	float4	vColor5	: SV_Target5;
+//};
+//
+//VS_LANDSCAPE_OUT LandScapeVS( VS_LANDSCAPE_IN input )
+//{
+//	VS_LANDSCAPE_OUT	output = ( VS_LANDSCAPE_OUT )0;
+//
+//	float3	vPos = input.vPos - g_vTrLength * g_vPivot;
+//
+//	output.vProjPos = mul( float4( vPos, 1.f ), g_matWVP );
+//	output.vPos = output.vProjPos;
+//	// Normal을 뷰공간으로 만들어준다.
+//	output.vNormal = normalize( mul( float4( input.vNormal, 0.f ), g_matWV ).xyz );
+//	output.vViewPos = mul( float4( vPos, 1.f ), g_matWV ).xyz;
+//	output.vTangent = normalize( mul( float4( input.vTangent, 0.f ), g_matWV ).xyz );
+//	output.vBinormal = normalize( mul( float4( input.vBinormal, 0.f ), g_matWV ).xyz );
+//	output.vUV = input.vUV;
+//
+//	return output;
+//}
+//
+//PS_LANDSCAPE_OUT LandScapePS( VS_LANDSCAPE_OUT input )
+//{
+//	PS_LANDSCAPE_OUT	output = ( PS_LANDSCAPE_OUT )0;
+//
+//	float2	vUV = input.vUV * g_iDetailLevel;
+//
+//	float4	vColor = g_tex_0.Sample( g_sam_0, vUV );
+//
+//	if ( vColor.a == 0.f )
+//		clip( -1 );
+//
+//	// Normal을 구해준다.
+//	float3x3	mat =
+//	{
+//		input.vTangent,
+//		input.vBinormal,
+//		input.vNormal
+//	};
+//
+//	output.vColor4.xyz = input.vTangent * 0.5f + 0.5f;
+//	output.vColor4.w = 1.f;
+//
+//	output.vColor5.xyz = input.vBinormal * 0.5f + 0.5f;
+//	output.vColor5.w = 1.f;
+//
+//	// Normal 텍스쳐에서 픽셀을 얻어와서 법선벡터로 변환한다.
+//	// 색상은 0 ~ 1 사이의 값이므로 이 값을 단위벡터의 값인 -1 ~ 1 사이로
+//	// 변환해주려면 * 2 - 1 을 해주면 된다.
+//	float3	vBumpNormal = g_NormalTex.Sample( g_DifSmp, vUV ).xyz;
+//	vBumpNormal = vBumpNormal * 2.f - 1.f;
+//
+//	for ( int i = 0; i < g_iSplatCount; i++ )
+//	{
+//		float3	vSplatUV;
+//		vSplatUV.xy = vUV;
+//		vSplatUV.z = i;
+//		float4	vSplatColor = g_SplatDif.Sample( g_SplatSmp, vSplatUV );
+//		float3	vSplatNormal = g_SplatNrm.Sample( g_SplatSmp, vSplatUV ).xyz;
+//		vSplatNormal = vSplatNormal * 2.f - 1.f;
+//		vBumpNormal += vSplatNormal;
+//
+//		vSplatUV.xy = input.vUV;
+//		float4	vSplatAlpha = g_AlphaTex.Sample( g_SplatSmp, vSplatUV );
+//
+//		vColor = ( vColor * ( float4( 1.f, 1.f, 1.f, 1.f ) - vSplatAlpha ) +
+//			vSplatColor * vSplatAlpha );
+//	}
+//
+//	vBumpNormal = normalize( vBumpNormal );
+//
+//	float3	vViewNormal = normalize( mul( vBumpNormal, mat ) );
+//
+//	output.vColor = vColor;
+//	output.vColor1.xyz = vViewNormal * 0.5f + 0.5f;
+//	output.vColor1.w = 1.f;
+//	output.vColor2.x = input.vProjPos.z / input.vProjPos.w;
+//	output.vColor2.w = input.vProjPos.w;
+//
+//	// 재질 Diffuse, Ambient 값을 저장한다.
+//	output.vColor2.y = g_vMtrlDiffuse.x;
+//	output.vColor2.z = g_vMtrlAmbient.x;
+//
+//	float4	vMtrlSpc;
+//	if ( g_vMtrlAmbient.w == 1 )
+//	{
+//		vMtrlSpc = g_SpecularTex.Sample( g_DifSmp, vUV );
+//		vMtrlSpc.w = g_vMtrlSpecular.w;
+//		output.vColor4.w = vMtrlSpc.w;
+//	}
+//
+//	else
+//	{
+//		vMtrlSpc = g_vMtrlSpecular;
+//		output.vColor4.w = g_vMtrlSpecular.w;
+//	}
+//	output.vColor3 = vMtrlSpc;
+//
+//	return output;
+//}
+
 #endif

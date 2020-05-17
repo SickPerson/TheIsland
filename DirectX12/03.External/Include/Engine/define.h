@@ -50,6 +50,7 @@ enum class CONST_REGISTER
 	b3 = 3,
 	b4 = 4,	
 	b5 = 5,
+	b6 = 6,
 
 	END,	
 };
