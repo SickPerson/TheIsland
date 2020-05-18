@@ -172,6 +172,18 @@ void CResMgr::CreateDefaultShader()
 	AddRes( L"Std3DShader", pShader );
 
 	// ============
+	// Std3D Shader
+	// ============
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\std3d.fx", "VS_Std3D", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\std3d.fx", "PS_Std3D_Tree", "ps_5_0");
+	
+	pShader->SetRasterizerType(RS_TYPE::CULL_NONE);
+
+	pShader->Create(SHADER_POV::DEFERRED);
+	AddRes(L"TreeShader", pShader);
+
+	// ============
 	// Skybox Shader
 	// ============
 	pShader = new CShader;
@@ -423,6 +435,13 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"DirShader"));
 	AddRes(L"DirMtrl", pMtrl);
+
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
+	pMtrl->SetShader(FindRes<CShader>(L"TreeShader"));
+	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>(L"TreeDiffuse", L"FBX\\Spruce.fbm\\SpruceLeaves_Diffuse.tif");
+	pMtrl->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+	AddRes(L"TreeMtrl", pMtrl);
 
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();

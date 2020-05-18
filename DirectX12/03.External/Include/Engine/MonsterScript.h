@@ -6,6 +6,7 @@ class CMonsterScript :
 {
 private:
 	int		m_iDir;
+	bool	m_bUD;
 
 public:
 	virtual void Update();
@@ -18,5 +19,7 @@ public:
 public:
 	CMonsterScript();
 	virtual ~CMonsterScript();
+
+	void SetUpDown(bool bUD);
 };
 
