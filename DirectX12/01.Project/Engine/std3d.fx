@@ -105,6 +105,9 @@ PS_STD3D_OUTPUT PS_Std3D_Tree(VS_STD3D_OUTPUT _in)
 		clip(-1);
 
 	float3 vViewNormal = _in.vViewNormal;
+
+	//vViewNormal = float4(0.f, 1.f, 0.f, 1.f);
+
 	// 노말맵이 있는경우
 	if (tex_1)
 	{

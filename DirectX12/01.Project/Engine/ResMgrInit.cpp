@@ -440,7 +440,9 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"TreeShader"));
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>(L"TreeDiffuse", L"FBX\\Spruce.fbm\\SpruceLeaves_Diffuse.tif");
+	Ptr<CTexture> pNormalTex = CResMgr::GetInst()->Load<CTexture>(L"TreeNormal", L"FBX\\Spruce.fbm\\SpruceLeaves_Normal.png");
 	pMtrl->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+	pMtrl->SetData(SHADER_PARAM::TEX_1, pNormalTex.GetPointer());
 	AddRes(L"TreeMtrl", pMtrl);
 
 	pMtrl = new CMaterial;

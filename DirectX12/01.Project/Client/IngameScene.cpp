@@ -49,8 +49,9 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\rockmediumc.fbx");
+	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\genericcliffb.fbx");
 	pTestMeshData->Save(pTestMeshData->GetPath());
+
 	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
 	//pTestMeshData->Save( pTestMeshData->GetPath() );
 
@@ -62,7 +63,7 @@ void CIngameScene::Init()
 	Ptr<CMeshData> pTreeBTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\spruceb.mdat", L"MeshData\\spruceb.mdat");
 	Ptr<CMeshData> pTreeCTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucec.mdat", L"MeshData\\sprucec.mdat");
 
-	Ptr<CMeshData> pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\rockmediumc.mdat", L"MeshData\\rockmediumc.mdat");
+	Ptr<CMeshData> pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\genericcliffb.mdat", L"MeshData\\genericcliffb.mdat");
 
 	CGameObject * pTestObject = pBearTex->Instantiate();
 	pTestObject->AddComponent(new CCollider2D);
@@ -254,9 +255,11 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(500.f, 100.f, 2500.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(50.f, 50.f, 50.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(5.f, 5.f, 5.f));
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
 	// ====================================================================
 
