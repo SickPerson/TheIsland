@@ -133,7 +133,7 @@ float4 PS_Skybox(VS_SKY_OUT _in) : SV_Target
 {
     float4 vOutColor = g_tex_0.Sample(g_sam_0, _in.vUV);  
 
-    return vOutColor * (1.f - g_float_0);
+    return vOutColor * g_float_0;
 }
 
 // =============

@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "Collider2D.h"
 
+#include <iostream>
 
 CCollisionMgr::CCollisionMgr()
 	: m_LayerCheck{}
@@ -447,5 +448,20 @@ bool CCollisionMgr::CollisionCube(CCollider2D* _pCollider1, CCollider2D* _pColli
 
 bool CCollisionMgr::CollisionSphere(CCollider2D* _pCollider1, CCollider2D* _pCollider2)
 {
-	return false;
+	const Matrix& matCol1 = _pCollider1->GetColliderWorldMat();
+	const Matrix& matCol2 = _pCollider2->GetColliderWorldMat();
+
+	Vec3 vCol1 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol1);
+	Vec3 vCol2 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol2);
+
+	Vec3 vScale1 = Vec3(matCol1._11, matCol1._22, matCol1._33);
+	Vec3 vScale2 = Vec3(matCol2._11, matCol2._22, matCol2._33);
+
+	float fDist = pow(vCol2.x - vCol1.x, 2) + pow(vCol2.y - vCol1.y, 2) + pow(vCol2.z - vCol1.z, 2);
+	fDist = sqrt(fDist);
+
+	if (fDist > fabs(vScale1.x) + fabs(vScale2.x))
+		return false;
+
+	return true;
 }
