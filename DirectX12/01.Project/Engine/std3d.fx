@@ -140,41 +140,41 @@ float4 PS_Skybox(VS_SKY_OUT _in) : SV_Target
 // Terrain Shader
 // =============
 
-//struct VS_LANDSCAPE_IN
-//{
-//	float3 vPos			: POSTION;
-//	float3 vNormal		: NORMAL;
-//	float2 vUV			: TEXCOORD;
-//	float3 vTangent		: TANGENT;
-//	float3 vBinormal	: BINORMAL;
-//};
-//
-//struct VS_LANDSCAPE_OUT
-//{
-//	float4	vPos		: SV_POSITION;
-//	float3	vNormal		: NORMAL;
-//	float2	vUV			: TEXCOORD;
-//	float3	vTangent	: TANGENT;
-//	float3	vBinormal	: BINORMAL;
-//	float3	vViewPos	: POSITION;
-//	float4	vProjPos	: POSITION;
-//};
-//
-//struct PS_LANDSCAPE_OUT
-//{
-//	float4	vColor	: SV_Target;
-//	float4	vColor1	: SV_Target1;
-//	float4	vColor2	: SV_Target2;
-//	float4	vColor3	: SV_Target3;
-//	float4	vColor4	: SV_Target4;
-//	float4	vColor5	: SV_Target5;
-//};
-//
+struct VS_LANDSCAPE_IN
+{
+	float3 vPos			: POSTION;
+	float3 vNormal		: NORMAL;
+	float2 vUV			: TEXCOORD;
+	float3 vTangent		: TANGENT;
+	float3 vBinormal	: BINORMAL;
+};
+
+struct VS_LANDSCAPE_OUT
+{
+	float4	vPos		: SV_POSITION;
+	float3	vNormal		: NORMAL;
+	float2	vUV			: TEXCOORD;
+	float3	vTangent	: TANGENT;
+	float3	vBinormal	: BINORMAL;
+	float3	vViewPos	: POSITION;
+	float4	vProjPos	: POSITION1;
+};
+
+struct PS_LANDSCAPE_OUT
+{
+	float4	vColor	: SV_Target;
+	float4	vColor1	: SV_Target1;
+	float4	vColor2	: SV_Target2;
+	float4	vColor3	: SV_Target3;
+	float4	vColor4	: SV_Target4;
+	float4	vColor5	: SV_Target5;
+};
+
 //VS_LANDSCAPE_OUT LandScapeVS( VS_LANDSCAPE_IN input )
 //{
 //	VS_LANDSCAPE_OUT	output = ( VS_LANDSCAPE_OUT )0;
 //
-//	float3	vPos = input.vPos - g_vTrLength * g_vPivot;
+//	float3	vPos = input.vPos;
 //
 //	output.vProjPos = mul( float4( vPos, 1.f ), g_matWVP );
 //	output.vPos = output.vProjPos;
@@ -216,7 +216,7 @@ float4 PS_Skybox(VS_SKY_OUT _in) : SV_Target
 //	// Normal 텍스쳐에서 픽셀을 얻어와서 법선벡터로 변환한다.
 //	// 색상은 0 ~ 1 사이의 값이므로 이 값을 단위벡터의 값인 -1 ~ 1 사이로
 //	// 변환해주려면 * 2 - 1 을 해주면 된다.
-//	float3	vBumpNormal = g_NormalTex.Sample( g_DifSmp, vUV ).xyz;
+//	float3	vBumpNormal = g_tex_1.Sample( g_sam_0, vUV ).xyz;
 //	vBumpNormal = vBumpNormal * 2.f - 1.f;
 //
 //	for ( int i = 0; i < g_iSplatCount; i++ )
@@ -224,13 +224,13 @@ float4 PS_Skybox(VS_SKY_OUT _in) : SV_Target
 //		float3	vSplatUV;
 //		vSplatUV.xy = vUV;
 //		vSplatUV.z = i;
-//		float4	vSplatColor = g_SplatDif.Sample( g_SplatSmp, vSplatUV );
-//		float3	vSplatNormal = g_SplatNrm.Sample( g_SplatSmp, vSplatUV ).xyz;
+//		float4	vSplatColor = g_arrtex_0.Sample( g_sam_1, vSplatUV );
+//		float3	vSplatNormal = g_arrtex_1.Sample( g_sam_1, vSplatUV ).xyz;
 //		vSplatNormal = vSplatNormal * 2.f - 1.f;
 //		vBumpNormal += vSplatNormal;
 //
 //		vSplatUV.xy = input.vUV;
-//		float4	vSplatAlpha = g_AlphaTex.Sample( g_SplatSmp, vSplatUV );
+//		float4	vSplatAlpha = g_arrtex_3.Sample( g_sam_1, vSplatUV );
 //
 //		vColor = ( vColor * ( float4( 1.f, 1.f, 1.f, 1.f ) - vSplatAlpha ) +
 //			vSplatColor * vSplatAlpha );
@@ -247,25 +247,41 @@ float4 PS_Skybox(VS_SKY_OUT _in) : SV_Target
 //	output.vColor2.w = input.vProjPos.w;
 //
 //	// 재질 Diffuse, Ambient 값을 저장한다.
-//	output.vColor2.y = g_vMtrlDiffuse.x;
-//	output.vColor2.z = g_vMtrlAmbient.x;
+//	output.vColor2.y = g_vDiff.x;
+//	output.vColor2.z = g_vEmv.x;
 //
 //	float4	vMtrlSpc;
-//	if ( g_vMtrlAmbient.w == 1 )
+//	if ( g_vEmv.w == 1 )
 //	{
-//		vMtrlSpc = g_SpecularTex.Sample( g_DifSmp, vUV );
-//		vMtrlSpc.w = g_vMtrlSpecular.w;
+//		vMtrlSpc = g_tex_2.Sample( g_sam_0, vUV );
+//		vMtrlSpc.w = g_vSpec.w;
 //		output.vColor4.w = vMtrlSpc.w;
 //	}
 //
 //	else
 //	{
-//		vMtrlSpc = g_vMtrlSpecular;
-//		output.vColor4.w = g_vMtrlSpecular.w;
+//		vMtrlSpc = g_vSpec;
+//		output.vColor4.w = g_vSpec.w;
 //	}
 //	output.vColor3 = vMtrlSpc;
 //
 //	return output;
 //}
+
+VS_STD3D_OUTPUT LandScapeVS( VS_STD3D_INPUT input )
+{
+	VS_STD3D_OUTPUT	output = ( VS_STD3D_OUTPUT )0;
+
+	float3	vPos = input.vPos;
+
+	output.vPosition = mul( float4( vPos, 1.f ), g_matWVP );
+	output.vViewPos = mul( float4( vPos, 1.f ), g_matWV ).xyz;
+	output.vViewNormal = normalize( mul( float4( input.vNormal, 0.f ), g_matWV ).xyz );
+	output.vViewTangent = normalize( mul( float4( input.vTangent, 0.f ), g_matWV ).xyz );
+	output.vViewBinormal = normalize( mul( float4( input.vBinormal, 0.f ), g_matWV ).xyz );
+	output.vUV = input.vUV;
+
+	return output;
+}
 
 #endif

@@ -5,6 +5,9 @@
 #include "Ptr.h"
 #include "ResMgr.h"
 
+#include "Device.h"
+#include "ConstantBuffer.h"
+
 CLandScape::CLandScape() : 
 	CComponent(COMPONENT_TYPE::LANDSCAPE),
 	m_tLandScape{},
@@ -25,6 +28,7 @@ void CLandScape::SaveToScene( FILE * _pFile )
 void CLandScape::LoadFromScene( FILE * _pFile )
 {
 }
+
 
 void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNumZ )
 {

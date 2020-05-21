@@ -6,6 +6,8 @@
 #include <Engine/Camera.h>
 #include <Engine/ToolCamScript.h>
 #include <Engine/Light3D.h>
+#include <Engine/LandScape.h>
+
 
 
 
@@ -74,25 +76,26 @@ void CMapToolScene::Init()
 
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
-
-	// ====================
-	// Skybox 오브젝트 생성
-	// ====================
-	Ptr<CTexture> pSky01 = CResMgr::GetInst()->Load<CTexture>( L"Sky01", L"Texture\\Skybox\\Sky01.png" );
+	// =======================
+	// LandScape 오브젝트 생성
+	// =======================
+	Ptr<CTexture> pLandScape = CResMgr::GetInst()->Load<CTexture>( L"Grass", L"Texture\\LandScape\\SAND_01.bmp" );
 
 	pObject = new CGameObject;
-	pObject->SetName( L"SkyBox" );
-	pObject->FrustumCheck( false );
+	pObject->SetName( L"LandScape Object" );
 	pObject->AddComponent( new CTransform );
 	pObject->AddComponent( new CMeshRender );
+	pObject->AddComponent( new CLandScape );
+	pObject->LandScape()->CreateLandScape( L"Texture/TestLandScape.bmp", 219, 219 );
+	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"LandScapeMesh" ) );
+	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" ) );
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pLandScape.GetPointer() );
+	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
+	pObject->Transform()->SetLocalScale( Vec3( 300.f, 300.f, 300.f ) );
+	pObject->FrustumCheck( false );
 
-	// MeshRender 설정
-	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"SphereMesh" ) );
-	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"SkyboxMtrl" ) );
-	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pSky01.GetPointer() );
-
-	// AddGameObject
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+
 
 
 }

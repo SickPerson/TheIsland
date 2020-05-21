@@ -25,6 +25,8 @@ public:
 	CLONE( CLandScape );
 
 public:
+
+public:
 	void CreateLandScape( const wstring& strPath, UINT iNumX, UINT iNumZ );
 
 private:

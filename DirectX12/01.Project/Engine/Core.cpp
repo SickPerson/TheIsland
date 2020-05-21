@@ -54,6 +54,8 @@ int CCore::Init(HWND _hWnd, const tResolution & _resolution, bool _bWindow)
 	CDevice::GetInst()->SetGlobalConstBufferToRegister(CDevice::GetInst()->GetCB(CONST_REGISTER::b4), 0);
 	CDevice::GetInst()->SetGlobalConstBufferToRegister(CDevice::GetInst()->GetCB(CONST_REGISTER::b5), 0);
 
+	CDevice::GetInst()->CreateConstBuffer( L"LANDSCAPE", sizeof( tLandScape ), 512, CONST_REGISTER::b6 );
+
 
 	CPathMgr::Init();
 	CKeyMgr::GetInst()->Init();
@@ -95,6 +97,7 @@ int CCore::ToolInit( HINSTANCE _hInstance, HWND _hWnd, const tResolution& _start
 	CDevice::GetInst()->SetGlobalConstBufferToRegister( CDevice::GetInst()->GetCB( CONST_REGISTER::b4 ), 0 );
 	CDevice::GetInst()->SetGlobalConstBufferToRegister( CDevice::GetInst()->GetCB( CONST_REGISTER::b5 ), 0 );
 
+	CDevice::GetInst()->CreateConstBuffer( L"LANDSCAPE", sizeof( tLandScape ), 512, CONST_REGISTER::b6 );
 
 	CPathMgr::Init();
 	CKeyMgr::GetInst()->Init();

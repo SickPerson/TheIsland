@@ -100,7 +100,7 @@ void CShader::CreateVertexShader( const wstring & _strPath, const string & _strF
 		MessageBoxA( nullptr, pErr, "Shader Create Failed !!!", MB_OK );
 	}
 
-	m_tPipeline.VS = { m_pVSBlob->GetBufferPointer(), m_pVSBlob->GetBufferSize() };
+ 	m_tPipeline.VS = { m_pVSBlob->GetBufferPointer(), m_pVSBlob->GetBufferSize() };
 }
 
 
