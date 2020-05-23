@@ -86,8 +86,8 @@ PS_STD3D_OUTPUT PS_Std3D(VS_STD3D_OUTPUT _in)
 
     float3 vViewNormal = _in.vViewNormal;
 
-	if (output.vTarget0.w < 0.01f)
-		clip(-1);
+	//if (output.vTarget0.w < 0.01f)
+	//	clip(-1);
 
     // 노말맵이 있는경우
     if (tex_1)
