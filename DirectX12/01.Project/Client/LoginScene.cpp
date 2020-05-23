@@ -10,6 +10,7 @@
 #include <Engine/MeshRender.h>
 #include <Engine/Camera.h>
 #include <Engine/Mesh.h>
+#include <Engine/Font.h>
 
 #include <Engine/QuickSlotScript.h>
 
@@ -81,6 +82,16 @@ void CLoginScene::Init()
 	pObject->Transform()->SetLocalScale(Vec3(25.f, 40, 1.f));
 
 	pObject->GetScript<CConstStringScript>()->Init("DEMO");
+
+	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+
+	pObject = new CGameObject;
+	pObject->SetName(L"Help Message");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CFont);
+
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 1.f));
+	pObject->Transform()->SetLocalScale(Vec3(150.f, 50, 1.f));
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 }
@@ -174,7 +185,7 @@ void CLoginScene::CreateInputID()
 
 	float fontSize = 500.f / 15.f;
 
-	for (int i = 0; i < 15; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 		pObject = new CGameObject;
 		pObject->SetName(L"ID Font");

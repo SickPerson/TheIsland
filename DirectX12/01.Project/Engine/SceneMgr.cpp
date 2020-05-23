@@ -28,14 +28,9 @@
 #include "Device.h"
 #include "Core.h"
 
-#include "PlayerScript.h"
 #include "MonsterScript.h"
 #include "ToolCamScript.h"
 #include "GridScript.h"
-
-#include "FPSCamScript.h"
-#include "StatusScript.h"
-#include "QuickSlotScript.h"
 
 CScene* CSceneMgr::GetCurScene()
 {

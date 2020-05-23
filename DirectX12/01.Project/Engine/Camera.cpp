@@ -13,6 +13,7 @@
 
 #include "MeshRender.h"
 #include "Collider2D.h"
+#include "Font.h"
 
 #include "ParticleSystem.h"
 
@@ -80,6 +81,7 @@ void CCamera::SortGameObject()
 	m_vecForward.clear();
 	m_vecParticle.clear();
 	m_vecPostEffect.clear();
+	m_vecFont.clear();
 
 	CScene* pCurScene = CSceneMgr::GetInst()->GetCurScene();
 
@@ -110,6 +112,11 @@ void CCamera::SortGameObject()
 					else if ( vecObj[i]->ParticleSystem() )
 					{
 						m_vecParticle.push_back( vecObj[i] );
+					}
+
+					else if ( vecObj[i]->Font() )
+					{
+						m_vecFont.push_back( vecObj[i] );
 					}
 				}
 			}
@@ -152,6 +159,11 @@ void CCamera::Render_Forward()
 	for (size_t i = 0; i < m_vecParticle.size(); ++i)
 	{
 		m_vecParticle[i]->ParticleSystem()->Render();
+	}
+
+	for (size_t i = 0; i < m_vecFont.size(); ++i)
+	{
+		m_vecFont[i]->Font()->Render();
 	}
 
 	for ( size_t i = 0; i < m_vecDeferred.size(); ++i )

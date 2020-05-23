@@ -45,6 +45,25 @@ void CResMgr::CreateDefaultShader()
 
 	AddRes(L"FontShader", pShader);
 
+	//=============
+	// Font Shader
+	//=============
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\font.fx", "VS_Font", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\font.fx", "PS_Font", "ps_5_0");
+
+	// BlendState ¼³Á¤
+	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+
+	pShader->AddShaderParam(tShaderParam{ L"Str_Size", SHADER_PARAM::INT_0 });
+
+	pShader->AddShaderParam(tShaderParam{ L"Font Color", SHADER_PARAM::VEC4_0 });
+	pShader->AddShaderParam(tShaderParam{ L"Back Color", SHADER_PARAM::VEC4_1 });
+
+	pShader->Create(SHADER_POV::FORWARD);
+
+	AddRes(L"StrShader", pShader);
+
 
 	// =================
 	// UI Shader
@@ -396,6 +415,11 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"UIShader"));
 	AddRes(L"UIMtrl", pMtrl);
+
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
+	pMtrl->SetShader(FindRes<CShader>(L"StrShader"));
+	AddRes(L"StrMtrl", pMtrl);
 
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();

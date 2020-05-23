@@ -15,6 +15,7 @@ class CCamera;
 class CLandScape;
 class CAnimator3D;
 class CParticleSystem;
+class CFont;
 
 class CGameObject :
 	public CEntity
@@ -57,6 +58,7 @@ public:
 	CLight3D* Light3D() { return (CLight3D*)m_arrCom[(UINT)COMPONENT_TYPE::LIGHT3D]; }
 	CLandScape* LandScape() { return ( CLandScape* )m_arrCom[( UINT )COMPONENT_TYPE::LANDSCAPE]; }
 	CParticleSystem* ParticleSystem() { return ( CParticleSystem* )m_arrCom[( UINT )COMPONENT_TYPE::PARTICLESYSTEM]; }
+	CFont* Font() { return (CFont*)m_arrCom[(UINT)COMPONENT_TYPE::FONT]; }
 
 	const vector<CScript*>& GetScripts() const { return m_vecScript; }
 

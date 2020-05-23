@@ -18,27 +18,34 @@
 #include <Engine/MeshRender.h>
 #include <Engine/Transform.h>
 #include <Engine/Camera.h>
+#include <Engine/Font.h>
 #include <Engine/Light3D.h>
 #include <Engine/LandScape.h>
 #include <Engine/GridScript.h>
 
-#include <Engine/PlayerScript.h>
-#include <Engine/FPSCamScript.h>
 #include <Engine/ToolCamScript.h>
 #include <Engine/MonsterScript.h>
-#include <Engine/StatusScript.h>
-#include <Engine/QuickSlotScript.h>
 
+#include "StatusScript.h"
+#include "QuickSlotScript.h"
 #include "PlayerCamScript.h"
 #include "InventoryScript.h"
 #include "SunshineScript.h"
+#include "PlayerScript.h"
+#include "FPSCamScript.h"
+
+#include "InputScript.h"
+#include "ChatScript.h"
+
 #include <Engine/TestScript.h>
 
 #include <Engine/ParticleSystem.h>
 
 #include "Network.h"
 
-CIngameScene::CIngameScene()
+CIngameScene::CIngameScene() 
+	: m_pChat(NULL)
+	, m_pPlayer(NULL)
 {
 }
 
@@ -525,6 +532,7 @@ void CIngameScene::Init()
 	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
 	pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
+	m_pPlayer = pPlayer;
 
 	// ====================
 	// Monster 오브젝트 생성
@@ -557,7 +565,7 @@ void CIngameScene::Init()
 	pMainCam->SetName( L"MainCam" );
 	pMainCam->AddComponent( new CTransform );
 	pMainCam->AddComponent( new CCamera );
-	pMainCam->AddComponent( new CToolCamScript );
+	pMainCam->AddComponent( new CFPSCamScript );
 
 	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 100.f, 0.f ) );
 	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
@@ -567,7 +575,7 @@ void CIngameScene::Init()
 	pMainCam->Camera()->SetLayerAllCheck();
 	pMainCam->Camera()->SetLayerCheck( 30, false );
 	pMainCam->Camera()->SetLayerCheck( 29, false );
-	pPlayer->GetScript<CPlayerScript>()->SetCamera( pMainCam->Camera() );
+	pMainCam->GetScript<CFPSCamScript>()->SetPlayer(pPlayer);
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pMainCam );
 
 	// ====================
@@ -604,6 +612,7 @@ void CIngameScene::Init()
 
 	CreatePlayerStatusUI();
 	CreateInventoryUI();
+	CreateChatUI();
 	CSceneMgr::GetInst()->CreateMRTUI();
 
 	// ====================
@@ -810,6 +819,25 @@ void CIngameScene::Init()
 	// Player Layer 와 Monster Layer 는 충돌 검사 진행
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Monster" );
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Monster", L"Monster" );
+}
+
+void CIngameScene::Update()
+{
+	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
+	{
+		if (m_pChat)
+		{
+			if (m_pChat->GetScript<CInputScript>()->GetEnable()) 
+			{
+				string str = m_pChat->GetScript<CInputScript>()->GetString();
+				wstring strPlayerName = m_pPlayer->GetName();
+				m_pChat->GetScript<CChatScript>()->AddChat("Test", str);
+				m_pChat->GetScript<CInputScript>()->SetEnable(false);
+			}
+			else
+				m_pChat->GetScript<CInputScript>()->SetEnable(true);
+		}
+	}
 }
 
 void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
@@ -1164,5 +1192,101 @@ void CIngameScene::CreateInventoryUI()
 		// AddGameObject
 		pInventory->AddChild(pObject);
 		m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
+	}
+}
+
+void CIngameScene::CreateChatUI()
+{
+	m_pChat = new CGameObject;
+	m_pChat->SetName(L"Chat Object");
+	m_pChat->AddComponent(new CTransform);
+	m_pChat->AddComponent(new CInputScript);
+	m_pChat->AddComponent(new CChatScript);
+	m_pChat->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	m_pChat->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
+	CGameObject* pObject = new CGameObject;
+	pObject->SetName(L"Chat Box");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	pObject->Transform()->SetLocalPos(Vec3(-480.f, -225.f, 100.f));
+	pObject->Transform()->SetLocalScale(Vec3(300.f, 300.f, 1.f));
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl");
+	pObject->MeshRender()->SetMaterial(pMtrl->Clone());
+	int color = 4; // White
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &color);
+
+	m_pChat->AddChild(pObject);
+	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+
+	// AddGameObject
+	m_pScene->FindLayer(L"UI")->AddGameObject(m_pChat);
+
+	pObject = new CGameObject;
+	pObject->SetName(L"Input Chat");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	pObject->Transform()->SetLocalPos(Vec3(-480.f, -360.f, 1.f));
+	pObject->Transform()->SetLocalScale(Vec3(300.f, 30.f, 1.f));
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+
+	int a = 1;
+	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+
+	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+	m_pChat->AddChild(pObject);
+	m_pChat->GetScript<CInputScript>()->SetFontSpace(pObject);
+
+
+	float fontSize = 300.f / 20.f;
+	for (int i = 0; i < 20; ++i)
+	{
+		pObject = new CGameObject;
+		pObject->SetName(L"Chat Input Font");
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+
+		pObject->Transform()->SetLocalPos(Vec3(-630.f + (i * fontSize) + fontSize / 2.f, -360.f, 1.f));
+		pObject->Transform()->SetLocalScale(Vec3(fontSize, 30.f, 1.f));
+
+		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
+		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
+
+		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+		m_pChat->AddChild(pObject);
+		m_pChat->GetScript<CInputScript>()->AddInputObject(pObject);
+	}
+	m_pChat->GetScript<CInputScript>()->SetEnable(false);
+
+
+	fontSize = 300.f / 30.f;
+	for (int i = 0; i < 30; ++i)
+	{
+		for (int line = 0; line < MAX_CHAT_LINE; ++line)
+		{
+			pObject = new CGameObject;
+			pObject->SetName(L"Chat Font");
+			pObject->AddComponent(new CTransform);
+			pObject->AddComponent(new CMeshRender);
+
+			pObject->Transform()->SetLocalPos(Vec3(-630.f + (i * fontSize) + fontSize / 2.f, -330.f + (line * 30.f), 1.f));
+			pObject->Transform()->SetLocalScale(Vec3(fontSize, 30.f, 1.f));
+
+			pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+
+			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
+			pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
+
+			m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+			m_pChat->AddChild(pObject);
+			m_pChat->GetScript<CChatScript>()->AddChatObject(pObject, line);
+		}
 	}
 }
