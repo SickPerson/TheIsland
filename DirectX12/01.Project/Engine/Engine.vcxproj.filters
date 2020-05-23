@@ -94,6 +94,9 @@
     <Filter Include="06. GameObject\Component\Particle">
       <UniqueIdentifier>{8efbd3dd-7818-4b1b-b1a2-b7617e045459}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameObject\Component\Font">
+      <UniqueIdentifier>{4b6071b6-b6e0-43a4-b7d6-75d369098c53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -219,9 +222,6 @@
     <ClInclude Include="MonsterScript.h">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerScript.h">
-      <Filter>06. GameObject\Component\Script</Filter>
-    </ClInclude>
     <ClInclude Include="ToolCamScript.h">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClInclude>
@@ -229,15 +229,6 @@
       <Filter>06. GameObject\Component\Script</Filter>
     </ClInclude>
     <ClInclude Include="TestScript.h">
-      <Filter>06. GameObject\Component\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="StatusScript.h">
-      <Filter>06. GameObject\Component\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="QuickSlotScript.h">
-      <Filter>06. GameObject\Component\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="FPSCamScript.h">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClInclude>
     <ClInclude Include="SceneScript.h">
@@ -275,6 +266,9 @@
     </ClInclude>
     <ClInclude Include="ParticleSystem.h">
       <Filter>06. GameObject\Component\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>06. GameObject\Component\Font</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -386,22 +380,10 @@
     <ClCompile Include="MonsterScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerScript.cpp">
-      <Filter>06. GameObject\Component\Script</Filter>
-    </ClCompile>
     <ClCompile Include="ToolCamScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
     <ClCompile Include="TestScript.cpp">
-      <Filter>06. GameObject\Component\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="QuickSlotScript.cpp">
-      <Filter>06. GameObject\Component\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="StatusScript.cpp">
-      <Filter>06. GameObject\Component\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="FPSCamScript.cpp">
       <Filter>06. GameObject\Component\Script</Filter>
     </ClCompile>
     <ClCompile Include="SceneScript.cpp">
@@ -446,6 +428,9 @@
     <ClCompile Include="ParticleSystem.cpp">
       <Filter>06. GameObject\Component\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>06. GameObject\Component\Font</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl">
@@ -484,6 +469,9 @@
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
     <FxCompile Include="water.fx">
+      <Filter>04. Shader\ShaderCode</Filter>
+    </FxCompile>
+    <FxCompile Include="font.fx">
       <Filter>04. Shader\ShaderCode</Filter>
     </FxCompile>
   </ItemGroup>

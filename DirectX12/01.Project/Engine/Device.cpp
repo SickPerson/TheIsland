@@ -430,7 +430,7 @@ void CDevice::CreateRootSignature()
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-	for ( size_t i = 0; i < 512; ++i )
+	for ( size_t i = 0; i < 1024; ++i )
 	{
 		ComPtr<ID3D12DescriptorHeap> pDummyDescriptor;
 		DEVICE->CreateDescriptorHeap( &cbvHeapDesc, IID_PPV_ARGS( &pDummyDescriptor ) );
