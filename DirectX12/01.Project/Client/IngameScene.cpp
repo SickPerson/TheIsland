@@ -49,9 +49,9 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\player.fbx");
-	pTestMeshData->Save(pTestMeshData->GetPath());
-	Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
+	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\player.fbx");
+	//pTestMeshData->Save(pTestMeshData->GetPath());
+	//Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
 	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
 	//pTestMeshData->Save( pTestMeshData->GetPath() );
 
@@ -469,7 +469,7 @@ void CIngameScene::Init()
 
 
 	// ====================================================================
-	pTestObject = pTestTex->Instantiate();
+	pTestObject = pDeerTex->Instantiate();
 	pTestObject->SetName(L"Rock");
 	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 100.f, 2000.f));
