@@ -4,19 +4,18 @@
 #include <Engine/KeyMgr.h>
 #include <Engine/FontMgr.h>
 #include <Engine/Material.h>
-
-#include <iostream>
+#include <Engine/Font.h>
 
 CInputScript::CInputScript() :
 	CScript((UINT)SCRIPT_TYPE::UISCRIPT),
 	m_bEnable(true),
-	m_iCount(0),
 	m_vFontColor(Vec4(1.f, 1.f, 1.f, 1.f)),
-	m_vFontBackColor(Vec4(0.f, 0.f, 0.f, 0.f)),
-	m_pSpace(nullptr)
+	m_vHighlightColor(Vec4(0.5f, 0.5f, 0.7f, 0.5f)),
+	m_vBackColor(Vec4(0.2f, 0.2f, 0.2f, 1.f)),
+	m_iCount(0),
+	m_iMaxCount(15)
 {
-	m_strInput.reserve(10);
-	m_vFont.reserve(10);
+	m_strInput.reserve(15);
 }
 
 
@@ -299,17 +298,7 @@ void CInputScript::Update()
 			if (m_iCount > 0)
 			{
 				m_strInput.erase(m_strInput.length()-1, 1);
-				Ptr<CMaterial> pMtrl = m_vFont[--m_iCount]->MeshRender()->GetSharedMaterial();
-				float startU = 0.f;
-				float startV = 0.f;
-				float widthU = 0.f;
-				float heightV = 0.f;
-				pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-				pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-				pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-				pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-				pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-				pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+				Font()->SetString(m_strInput);
 			}
 		}
 	}
@@ -317,29 +306,11 @@ void CInputScript::Update()
 
 void CInputScript::WriteFont(char font)
 {
-	if (m_iCount < m_vFont.size())
+	if (m_iCount < m_iMaxCount)
 	{
 		m_strInput.push_back(font);
-		CharInfo tInfo = CFontMgr::GetInst()->GetFontInfo().mCharInfo[font];
-		Ptr<CMaterial> pMtrl = m_vFont[m_iCount++]->MeshRender()->GetSharedMaterial();
-		float sizeX = (float)CFontMgr::GetInst()->GetFontInfo().iScaleX;
-		float sizeY = (float)CFontMgr::GetInst()->GetFontInfo().iScaleY;
-		float startU = tInfo.ix / sizeX;
-		float startV = tInfo.iy / sizeY;
-		float widthU = tInfo.iWidth / sizeX;
-		float heightV = tInfo.iHeight / sizeY;
-		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
-		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
-		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
-		pMtrl->SetData(SHADER_PARAM::FLOAT_3, &heightV);
-		pMtrl->SetData(SHADER_PARAM::VEC4_0, &m_vFontColor);
-		pMtrl->SetData(SHADER_PARAM::VEC4_1, &m_vFontBackColor);
+		Font()->SetString(m_strInput);
 	}
-}
-
-void CInputScript::AddInputObject(CGameObject * pObject)
-{
-	m_vFont.emplace_back(pObject);
 }
 
 void CInputScript::SetRect(Vec4 rc)
@@ -357,43 +328,36 @@ void CInputScript::SetFontColor(Vec4 vColor)
 	m_vFontColor = vColor;
 }
 
-void CInputScript::SetFontBackColor(Vec4 vColor)
+void CInputScript::SetHighlightColor(Vec4 vColor)
 {
-	m_vFontBackColor = vColor;
+	m_vHighlightColor = vColor;
 }
 
-void CInputScript::SetFontSpace(CGameObject * pObject)
+void CInputScript::SetBackColor(Vec4 vColor)
 {
-	m_pSpace = pObject;
+	m_vBackColor = vColor;
 }
+
 
 void CInputScript::SetEnable(bool bEnable)
 {
 	m_bEnable = bEnable;
-	if (m_pSpace == nullptr)
-		return;
-
-	Ptr<CMaterial> pMtrl = m_pSpace->MeshRender()->GetSharedMaterial();
 	if (m_bEnable)
 	{
-		int a = -1;
-		Vec4 vColor = Vec4(0.5f, 0.5f, 0.7f, 0.5f);
-		pMtrl->SetData(SHADER_PARAM::INT_0, &a);
-		pMtrl->SetData(SHADER_PARAM::VEC4_0, &vColor);
+		Font()->SetBackColor(m_vHighlightColor);
 	}
 	else
 	{
-		int a = 1;
-		pMtrl->SetData(SHADER_PARAM::INT_0, &a);
+		Font()->SetBackColor(m_vBackColor);
 	}
-}
-
-string CInputScript::GetString()
-{
-	return m_strInput;
 }
 
 bool CInputScript::GetEnable()
 {
 	return m_bEnable;
+}
+
+string CInputScript::GetString()
+{
+	return m_strInput;
 }

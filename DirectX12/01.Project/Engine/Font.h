@@ -23,7 +23,8 @@ class CFont :
 	CStructuredBuffer*		m_pStrInfo;
 	string					m_strValue;
 
-	Vec4					m_vFontColor;
+	int						m_iChangeColorIndex;
+	Vec4					m_vFontColor[2];
 	Vec4					m_vBackColor;
 
 public:
@@ -40,5 +41,8 @@ public:
 
 	void SetString(string strValue);
 	string GetString();
+
+	void SetFontColor(Vec4 vColor, int index = 0);
+	void SetBackColor(Vec4 vColor);
 };
 

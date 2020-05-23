@@ -54,46 +54,47 @@ float4 PS_Font(FONT_OUTPUT _input) : SV_Target
 	// g_float_1 : Width U
 	// g_float_2 : Start V
 	// g_float_3 : Height V
-	
-	// 0.333 = 0
-	// 0.666 = 1
 
-	// 0.666 = 0
-	// 0.999 = 1
-
+	int iCurrentIndex = 0;
 	for (int i = 0; i < nStrSize; ++i)
 	{
 		if (_input.vUV.x < (float(i + 1) / (float)nStrSize) && _input.vUV.x > (float(i) / (float)nStrSize))
 		{
 			_input.vUV.x = (_input.vUV.x * (float)nStrSize - i) * g_arrFontInfo[i].vWidthUV.x + g_arrFontInfo[i].vStartUV.x;
 			_input.vUV.y = _input.vUV.y * g_arrFontInfo[i].vWidthUV.y + g_arrFontInfo[i].vStartUV.y;
+			iCurrentIndex = i;
 			break;
 		}
 	}
 
 
-	/*if (_input.vUV.x < 1.f / 3.f)
-	{
-		_input.vUV.x = (_input.vUV.x * 3.f) * g_arrFontInfo[0].vWidthUV.x + g_arrFontInfo[0].vStartUV.x;
-		_input.vUV.y = _input.vUV.y * g_arrFontInfo[0].vWidthUV.y + g_arrFontInfo[0].vStartUV.y;
-	}
-	else if (_input.vUV.x < (1.f / 3.f) * 2.f)
-	{
-		_input.vUV.x = (_input.vUV.x * 3.f - 1.f) * g_arrFontInfo[1].vWidthUV.x + g_arrFontInfo[1].vStartUV.x;
-		_input.vUV.y = _input.vUV.y * g_arrFontInfo[1].vWidthUV.y + g_arrFontInfo[1].vStartUV.y;
-	}
-	else
-	{
-		_input.vUV.x = (_input.vUV.x * 3.f - 2.f) * g_arrFontInfo[2].vWidthUV.x + g_arrFontInfo[2].vStartUV.x;
-		_input.vUV.y = _input.vUV.y * g_arrFontInfo[2].vWidthUV.y + g_arrFontInfo[2].vStartUV.y;
-	}*/
+	//if (_input.vUV.x < 1.f / 3.f)
+	//{
+	//	_input.vUV.x = (_input.vUV.x * 3.f) * g_arrFontInfo[0].vWidthUV.x + g_arrFontInfo[0].vStartUV.x;
+	//	_input.vUV.y = _input.vUV.y * g_arrFontInfo[0].vWidthUV.y + g_arrFontInfo[0].vStartUV.y;
+	//}
+	//else if (_input.vUV.x < (1.f / 3.f) * 2.f)
+	//{
+	//	_input.vUV.x = (_input.vUV.x * 3.f - 1.f) * g_arrFontInfo[1].vWidthUV.x + g_arrFontInfo[1].vStartUV.x;
+	//	_input.vUV.y = _input.vUV.y * g_arrFontInfo[1].vWidthUV.y + g_arrFontInfo[1].vStartUV.y;
+	//}
+	//else
+	//{
+	//	_input.vUV.x = (_input.vUV.x * 3.f - 2.f) * g_arrFontInfo[2].vWidthUV.x + g_arrFontInfo[2].vStartUV.x;
+	//	_input.vUV.y = _input.vUV.y * g_arrFontInfo[2].vWidthUV.y + g_arrFontInfo[2].vStartUV.y;
+	//}
 
 	vColor = g_tex_0.Sample(g_sam_1, _input.vUV);
 
-	vColor = vColor * g_vec4_0;
+	if (g_int_1 == 0)
+		vColor = vColor * g_vec4_0;
+	else if (iCurrentIndex < g_int_1)
+		vColor = vColor * g_vec4_0;
+	else
+		vColor = vColor * g_vec4_1;
 
 	if (vColor.w < 0.5f)
-		vColor = g_vec4_1;
+		vColor = g_vec4_3;
 
 	return vColor;
 }

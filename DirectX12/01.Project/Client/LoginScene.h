@@ -36,8 +36,5 @@ private:
 public:
 	CGameObject* GetIDObj();
 	CGameObject* GetPasswordObj();
-
-	CChatScript* GetID();
-	CChatScript* GetPassword();
 };
 

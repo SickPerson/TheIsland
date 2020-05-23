@@ -59,7 +59,7 @@ void CLoginScene::Init()
 	m_pScene->GetLayer( 0 )->AddGameObject( pObject );
 
 	CreateInputID();
-	CreateInputIP();
+	//CreateInputIP();
 
 	pObject = new CGameObject;
 	pObject->SetName(L"Help Message");
@@ -84,16 +84,6 @@ void CLoginScene::Init()
 	pObject->GetScript<CConstStringScript>()->Init("DEMO");
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-
-	pObject = new CGameObject;
-	pObject->SetName(L"Help Message");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CFont);
-
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 1.f));
-	pObject->Transform()->SetLocalScale(Vec3(150.f, 50, 1.f));
-
-	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 }
 
 void CLoginScene::Update()
@@ -108,39 +98,39 @@ void CLoginScene::Update()
 
 	if (KEY_TAB(KEY_TYPE::KEY_LBTN))
 	{
-		tResolution tRes = CRenderMgr::GetInst()->GetResolution();
-		POINT vPos = CKeyMgr::GetInst()->GetMousePos();
-		Vec4 vBox = m_pIP->GetScript<CInputScript>()->GetRect();
+		//tResolution tRes = CRenderMgr::GetInst()->GetResolution();
+		//POINT vPos = CKeyMgr::GetInst()->GetMousePos();
+		//Vec4 vBox = m_pIP->GetScript<CInputScript>()->GetRect();
 
-		vPos.x -= tRes.fWidth / 2.f;
-		vPos.y -= tRes.fHeight / 2.f;
-		vPos.y *= -1.f;
+		//vPos.x -= tRes.fWidth / 2.f;
+		//vPos.y -= tRes.fHeight / 2.f;
+		//vPos.y *= -1.f;
 
-		//std::cout << vPos.x << ", " << vPos.y << std::endl;
+		////std::cout << vPos.x << ", " << vPos.y << std::endl;
 
-		// IP 창 클릭?
-		if (vPos.x >= vBox.x && vPos.x <= vBox.z)
-		{
-			if (vPos.y >= vBox.y && vPos.y <= vBox.w)
-			{
-				//std::cout << "클릭!" << std::endl;
-				m_pIP->GetScript<CInputScript>()->SetEnable(true);
-				m_pID->GetScript<CInputScript>()->SetEnable(false);
-			}
-		}
+		//// IP 창 클릭?
+		//if (vPos.x >= vBox.x && vPos.x <= vBox.z)
+		//{
+		//	if (vPos.y >= vBox.y && vPos.y <= vBox.w)
+		//	{
+		//		//std::cout << "클릭!" << std::endl;
+		//		m_pIP->GetScript<CInputScript>()->SetEnable(true);
+		//		m_pID->GetScript<CInputScript>()->SetEnable(false);
+		//	}
+		//}
 
-		vBox = m_pID->GetScript<CInputScript>()->GetRect();
+		//vBox = m_pID->GetScript<CInputScript>()->GetRect();
 
-		// ID 창 클릭?
-		if (vPos.x >= vBox.x && vPos.x <= vBox.z)
-		{
-			if (vPos.y >= vBox.y && vPos.y <= vBox.w)
-			{
-				//std::cout << "클릭!" << std::endl;
-				m_pIP->GetScript<CInputScript>()->SetEnable(false);
-				m_pID->GetScript<CInputScript>()->SetEnable(true);
-			}
-		}
+		//// ID 창 클릭?
+		//if (vPos.x >= vBox.x && vPos.x <= vBox.z)
+		//{
+		//	if (vPos.y >= vBox.y && vPos.y <= vBox.w)
+		//	{
+		//		//std::cout << "클릭!" << std::endl;
+		//		m_pIP->GetScript<CInputScript>()->SetEnable(false);
+		//		m_pID->GetScript<CInputScript>()->SetEnable(true);
+		//	}
+		//}
 	}
 }
 
@@ -152,65 +142,20 @@ void CLoginScene::CreateInputID()
 	m_pID = new CGameObject;
 	m_pID->SetName(L"ID");
 	m_pID->AddComponent(new CTransform);
-	m_pID->AddComponent(new CMeshRender);
+	m_pID->AddComponent(new CFont);
 	m_pID->FrustumCheck(false);
 
-	m_pID->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	m_pID->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-
-	m_pID->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	m_pID->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+	m_pID->Transform()->SetLocalPos(Vec3(0.f, -270.f, 1.f));
+	m_pID->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
 	m_pID->AddComponent(new CInputScript);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pID);
-
-	CGameObject* pObject = new CGameObject;
-	pObject->SetName(L"ID Bar");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
-	pObject->FrustumCheck(false);
-
-	pObject->Transform()->SetLocalPos(Vec3(0.f, -270.f, 1.f));
-	pObject->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
-
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
-
-	int a = 1;
-	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-
-	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-	m_pID->AddChild(pObject);
-	m_pID->GetScript<CInputScript>()->SetFontSpace(pObject);
-
-	float fontSize = 500.f / 15.f;
-
-	for (int i = 0; i < 10; ++i)
-	{
-		pObject = new CGameObject;
-		pObject->SetName(L"ID Font");
-		pObject->AddComponent(new CTransform);
-		pObject->AddComponent(new CMeshRender);
-		pObject->FrustumCheck(false);
-
-		pObject->Transform()->SetLocalPos(Vec3(-250.f + (i * fontSize) + fontSize / 2.f, -270.f, 1.f));
-		pObject->Transform()->SetLocalScale(Vec3(fontSize, 40.f, 1.f));
-
-		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
-		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
-
-		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-		m_pID->AddChild(pObject);
-		m_pID->GetScript<CInputScript>()->AddInputObject(pObject);
-	}
 	m_pID->GetScript<CInputScript>()->SetRect(Vec4(-250.f, -290.f, 250.f, -250.f));
 	m_pID->GetScript<CInputScript>()->SetEnable(true);
 
-
 	// ID Info 
 	{
-		pObject = new CGameObject;
+		CGameObject* pObject = new CGameObject;
 		pObject->SetName(L"ID Info");
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CMeshRender);
@@ -244,7 +189,7 @@ void CLoginScene::CreateInputID()
 		pObject->MeshRender()->SetMaterial(pMtrl);
 	}
 	{
-		pObject = new CGameObject;
+		CGameObject* pObject = new CGameObject;
 		pObject->SetName(L"ID Info");
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CMeshRender);
@@ -287,65 +232,21 @@ void CLoginScene::CreateInputIP()
 	m_pIP = new CGameObject;
 	m_pIP->SetName(L"IP");
 	m_pIP->AddComponent(new CTransform);
-	m_pIP->AddComponent(new CMeshRender);
+	m_pIP->AddComponent(new CFont);
 	m_pIP->FrustumCheck(false);
 
-	m_pIP->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	m_pIP->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-
-	m_pIP->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	m_pIP->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+	m_pIP->Transform()->SetLocalPos(Vec3(0.f, -330.f, 1.f));
+	m_pIP->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
 	m_pIP->AddComponent(new CInputScript);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pIP);
-
-	CGameObject* pObject = new CGameObject;
-	pObject->SetName(L"IP Bar");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
-	pObject->FrustumCheck(false);
-
-	pObject->Transform()->SetLocalPos(Vec3(0.f, -330.f, 1.f));
-	pObject->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
-
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
-
-	int a = 1;
-	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-
-	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-	m_pIP->AddChild(pObject);
-	m_pIP->GetScript<CInputScript>()->SetFontSpace(pObject);
-
-	float fontSize = 500.f / 15.f;
-
-	for (int i = 0; i < 15; ++i)
-	{
-		pObject = new CGameObject;
-		pObject->SetName(L"IP Font");
-		pObject->AddComponent(new CTransform);
-		pObject->AddComponent(new CMeshRender);
-		pObject->FrustumCheck(false);
-
-		pObject->Transform()->SetLocalPos(Vec3(-250.f + (i * fontSize) + fontSize / 2.f, -330.f, 1.f));
-		pObject->Transform()->SetLocalScale(Vec3(fontSize, 40.f, 1.f));
-
-		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
-		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
-
-		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-		m_pIP->AddChild(pObject);
-		m_pIP->GetScript<CInputScript>()->AddInputObject(pObject);
-	}
 	m_pIP->GetScript<CInputScript>()->SetRect(Vec4(-250.f, -350.f, 250.f, -310.f));
 	m_pIP->GetScript<CInputScript>()->SetEnable(false);
 
 	// IP Info 
 	{
-		pObject = new CGameObject;
-		pObject->SetName(L"ID Info");
+		CGameObject* pObject = new CGameObject;
+		pObject->SetName(L"IP Info");
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CMeshRender);
 		pObject->FrustumCheck(false);
@@ -378,7 +279,7 @@ void CLoginScene::CreateInputIP()
 		pObject->MeshRender()->SetMaterial(pMtrl);
 	}
 	{
-		pObject = new CGameObject;
+		CGameObject* pObject = new CGameObject;
 		pObject->SetName(L"ID Info");
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CMeshRender);
@@ -415,41 +316,7 @@ void CLoginScene::CreateInputIP()
 
 void CLoginScene::CreateInputPassword()
 {
-	// ===================
-	//		Password창
-	// ===================
-	m_pPassword = new CGameObject;
-	m_pPassword->SetName(L"Password");
-	m_pPassword->AddComponent(new CTransform);
-	m_pPassword->AddComponent(new CMeshRender);
-	m_pPassword->FrustumCheck(false);
 
-	m_pPassword->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	m_pPassword->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-
-	m_pPassword->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	m_pPassword->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
-	m_pPassword->AddComponent(new CChatScript);
-
-	m_pScene->FindLayer(L"UI")->AddGameObject(m_pPassword);
-
-	CGameObject* pObject = new CGameObject;
-	pObject->SetName(L"Password Bar");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
-	pObject->FrustumCheck(false);
-
-	pObject->Transform()->SetLocalPos(Vec3(0.f, -130.f, 1.f));
-	pObject->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
-
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
-
-	int a = 1;
-	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-
-	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-	m_pPassword->AddChild(pObject);
 }
 
 void CLoginScene::NextScene()
@@ -470,14 +337,4 @@ CGameObject * CLoginScene::GetIDObj()
 CGameObject * CLoginScene::GetPasswordObj()
 {
 	return m_pPassword;
-}
-
-CChatScript * CLoginScene::GetID()
-{
-	return m_pID->GetScript< CChatScript >();
-}
-
-CChatScript * CLoginScene::GetPassword()
-{
-	return m_pPassword->GetScript< CChatScript >();
 }
