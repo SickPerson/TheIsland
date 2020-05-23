@@ -49,8 +49,9 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\boar.fbx");
-	//pTestMeshData->Save(pTestMeshData->GetPath());
+	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\player.fbx");
+	pTestMeshData->Save(pTestMeshData->GetPath());
+	Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
 	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
 	//pTestMeshData->Save( pTestMeshData->GetPath() );
 
@@ -58,6 +59,10 @@ void CIngameScene::Init()
 	Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
 	Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
 	Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
+	Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
+	Ptr<CMeshData> pTreeATex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucea.mdat", L"MeshData\\sprucea.mdat");
+	Ptr<CMeshData> pTreeBTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\spruceb.mdat", L"MeshData\\spruceb.mdat");
+	Ptr<CMeshData> pTreeCTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucec.mdat", L"MeshData\\sprucec.mdat");
 
 	CGameObject * pTestObject = pBearTex->Instantiate();
 	pTestObject->AddComponent(new CCollider2D);
@@ -66,7 +71,6 @@ void CIngameScene::Init()
 	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
 	pTestObject->SetName(L"Bear");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-300.f, 20.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
 	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
@@ -80,7 +84,6 @@ void CIngameScene::Init()
 	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
 	pTestObject->SetName(L"Wolf");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-600.f, 50.f, 0.f));
 	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
@@ -93,10 +96,386 @@ void CIngameScene::Init()
 	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
 	pTestObject->SetName(L"Boar");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(300.f, 50.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
 	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+
+
+
+
+	// ====================================================================
+	pTestObject = pBearTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 80.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(2.5f, 2.5f, 2.5f));
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+
+	pTestObject->SetName(L"Bear");
+	pTestObject->Transform()->SetLocalPos(Vec3(20.f, 300.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ===================================================================
+	pTestObject = pWolfTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CMonsterScript);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(2.f, 2.f, 2.f));
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+
+	pTestObject->GetScript<CMonsterScript>()->SetUpDown(false);
+
+	pTestObject->SetName(L"Wolf");
+	pTestObject->Transform()->SetLocalPos(Vec3(50.f, -600.f, 1000.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+	pTestObject = pBoarTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CMonsterScript);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 50.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(60.f, 60.f, 60.f));
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+
+	pTestObject->GetScript<CMonsterScript>()->SetUpDown(false);
+
+	pTestObject->SetName(L"Boar");
+	pTestObject->Transform()->SetLocalPos(Vec3(50.f, 300.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+
+
+
+
+
+	// ====================================================================
+	pTestObject = pBearTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 80.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(2.5f, 2.5f, 2.5f));
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
+
+	pTestObject->SetName(L"Bear");
+	pTestObject->Transform()->SetLocalPos(Vec3(20.f, 300.f, 3000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ===================================================================
+	pTestObject = pWolfTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CMonsterScript);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(2.f, 2.f, 2.f));
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
+
+	pTestObject->GetScript<CMonsterScript>()->SetUpDown(false);
+
+	pTestObject->SetName(L"Wolf");
+	pTestObject->Transform()->SetLocalPos(Vec3(50.f, -600.f, 3000.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+	pTestObject = pBoarTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CMonsterScript);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 50.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(60.f, 60.f, 60.f));
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
+
+	pTestObject->GetScript<CMonsterScript>()->SetUpDown(false);
+
+	pTestObject->SetName(L"Boar");
+	pTestObject->Transform()->SetLocalPos(Vec3(50.f, 300.f, 3000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+	// ===================================================================
+	pTestObject = pWolfTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CMonsterScript);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(2.f, 2.f, 2.f));
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
+
+	pTestObject->SetName(L"Wolf");
+	pTestObject->Transform()->SetLocalPos(Vec3(-400.f, 300.f, 3000.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 30.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+	pTestObject = pBoarTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CMonsterScript);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 50.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(60.f, 60.f, 60.f));
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
+
+	pTestObject->SetName(L"Boar");
+	pTestObject->Transform()->SetLocalPos(Vec3(50.f, 300.f, 3000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+
+	for (int i = 0; i < 70; ++i)
+	{
+		int type = rand() % 3;
+		if (type == 0)
+		{
+			pTestObject = pTreeATex->Instantiate();
+			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
+		}
+		else if (type == 1)
+		{
+			pTestObject = pTreeBTex->Instantiate();
+			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 1);
+		}
+		else
+		{
+			pTestObject = pTreeCTex->Instantiate();
+			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
+		}
+		float fScale = (float)(rand() % 10 + 30);
+		pTestObject->SetName(L"Tree");
+		pTestObject->FrustumCheck(false);
+		pTestObject->Transform()->SetLocalPos(Vec3((float)(rand()%10000 - 5000), 20.f, (float)(rand() % 8000)));
+		pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+		pTestObject->Transform()->SetLocalScale(Vec3(fScale, fScale, fScale));
+		m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	}
+
+	Ptr<CMeshData> pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\genericcliffb.mdat", L"MeshData\\genericcliffb.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-5000.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(12.f, 12.f, 12.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\genericcliffa.mdat", L"MeshData\\genericcliffa.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-4000.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(12.f, 12.f, 12.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\lowrockmedium.mdat", L"MeshData\\lowrockmedium.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-3500.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(12.f, 12.f, 12.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01.mdat", L"MeshData\\MountainsRocks01.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-2500.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01_A.mdat", L"MeshData\\MountainsRocks01_A.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-1500.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01_B.mdat", L"MeshData\\MountainsRocks01_B.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-1000.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01_C.mdat", L"MeshData\\MountainsRocks01_C.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-500.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01_D.mdat", L"MeshData\\MountainsRocks01_D.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks02.mdat", L"MeshData\\MountainsRocks02.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(500.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks02_A.mdat", L"MeshData\\MountainsRocks02_A.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(1000.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks02_B.mdat", L"MeshData\\MountainsRocks02_B.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(1500.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks03.mdat", L"MeshData\\MountainsRocks03.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(2000.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockDetailsA.mdat", L"MeshData\\RockDetailsA.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(2500.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockDetailsB.mdat", L"MeshData\\RockDetailsB.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(3000.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockMediumA.mdat", L"MeshData\\RockMediumA.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(3500.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(10.f, 10.f, 10.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockMediumB.mdat", L"MeshData\\RockMediumB.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(4000.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(10.f, 10.f, 10.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockMediumC.mdat", L"MeshData\\RockMediumC.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(4500.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(10.f, 10.f, 10.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\Stone_01_Base.mdat", L"MeshData\\Stone_01_Base.mdat");
+	// ====================================================================
+	pTestObject = pRockTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(5000.f, 100.f, 1000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(10.f, 10.f, 10.f));
+	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
+	// ====================================================================
+
+
+	// ====================================================================
+	pTestObject = pTestTex->Instantiate();
+	pTestObject->SetName(L"Rock");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 100.f, 2000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(3.f, 3.f, 3.f));
 	m_pScene->FindLayer(L"Monster")->AddGameObject(pTestObject);
 	// ====================================================================
 
