@@ -44,5 +44,7 @@ public:
 
 	void SetFontColor(Vec4 vColor, int index = 0);
 	void SetBackColor(Vec4 vColor);
+
+	void SetChangeColorIndex(int index);
 };
 

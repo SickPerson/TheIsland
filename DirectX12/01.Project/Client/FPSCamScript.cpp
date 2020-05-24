@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "FPSCamScript.h"
 
+#include "PlayerScript.h"
+
 #include <Engine/Camera.h>
 
 CFPSCamScript::CFPSCamScript()
@@ -19,6 +21,9 @@ void CFPSCamScript::Update()
 {
 	if (m_pPlayer)
 	{
+		if (!m_pPlayer->GetScript<CPlayerScript>()->GetEnable())
+			return;
+
 		Vec3 vPos = m_pPlayer->Transform()->GetLocalPos();
 		Vec3 vRot = m_pPlayer->Transform()->GetLocalRot();
 

@@ -827,17 +827,63 @@ void CIngameScene::Update()
 	{
 		if (m_pChat)
 		{
-			if (m_pChat->GetScript<CInputScript>()->GetEnable()) 
+			if (m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive()) 
 			{
 				string str = m_pChat->GetScript<CInputScript>()->GetString();
-				wstring strPlayerName = m_pPlayer->GetName();
-				m_pChat->GetScript<CChatScript>()->AddChat("Test", str);
+				string strPlayerName = "Test";
+				m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
 				m_pChat->GetScript<CInputScript>()->SetEnable(false);
+				m_pChat->GetScript<CInputScript>()->Clear();
 			}
-			else
+			else if(!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 				m_pChat->GetScript<CInputScript>()->SetEnable(true);
 		}
 	}
+
+	if (KEY_TAB(KEY_TYPE::KEY_I))
+	{
+		if (!m_pChat->GetScript<CInputScript>()->GetEnable())
+		{
+			m_pInventory->GetScript<CInventoryScript>()->Show();
+		}
+	}
+
+	if (KEY_TAB(KEY_TYPE::KEY_1))
+	{
+		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
+		{
+			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(1);
+		}
+	}
+	else if (KEY_TAB(KEY_TYPE::KEY_2))
+	{
+		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
+		{
+			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(2);
+		}
+	}
+	else if (KEY_TAB(KEY_TYPE::KEY_3))
+	{
+		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
+		{
+			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(3);
+		}
+	}
+	else if (KEY_TAB(KEY_TYPE::KEY_4))
+	{
+		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
+		{
+			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(4);
+		}
+	}
+	else if (KEY_TAB(KEY_TYPE::KEY_5))
+	{
+		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
+		{
+			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(5);
+		}
+	}
+
 }
 
 void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
@@ -859,6 +905,7 @@ void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
 	int a = 1;
 	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 	pObject->AddComponent(new CQuickSlotScript);
+
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 
 	// UI QuickSlot slot
@@ -924,6 +971,7 @@ void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
 		pObject->AddChild(pChildObject);
 		m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
 	}
+	m_pQuickSlot = pObject;
 }
 
 void CIngameScene::CreatePlayerStatusUI()
@@ -1193,100 +1241,40 @@ void CIngameScene::CreateInventoryUI()
 		pInventory->AddChild(pObject);
 		m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
 	}
+	m_pInventory = pInventory;
+	m_pPlayer->GetScript<CPlayerScript>()->SetInventoryObject(m_pInventory);
 }
 
 void CIngameScene::CreateChatUI()
 {
-	//m_pChat = new CGameObject;
-	//m_pChat->SetName(L"Chat Object");
-	//m_pChat->AddComponent(new CTransform);
-	//m_pChat->AddComponent(new CInputScript);
-	//m_pChat->AddComponent(new CChatScript);
-	//m_pChat->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	//m_pChat->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pChat = new CGameObject;
+	m_pChat->SetName(L"Chat Object");
+	m_pChat->AddComponent(new CTransform);
+	m_pChat->AddComponent(new CFont);
+	m_pChat->AddComponent(new CInputScript);
+	m_pChat->AddComponent(new CChatScript);
+	m_pChat->Transform()->SetLocalPos(Vec3(-480.f, -355.f, 100.f));
+	m_pChat->Transform()->SetLocalScale(Vec3(300.f, 40.f, 1.f));
+	m_pScene->FindLayer(L"UI")->AddGameObject(m_pChat);
 
-	//CGameObject* pObject = new CGameObject;
-	//pObject->SetName(L"Chat Box");
-	//pObject->AddComponent(new CTransform);
-	//pObject->AddComponent(new CMeshRender);
+	m_pChat->Font()->SetString(" ");
+	m_pChat->GetScript<CInputScript>()->SetMaxCount(20);
+	m_pChat->GetScript<CInputScript>()->SetEnable(false);
+	
 
-	//pObject->Transform()->SetLocalPos(Vec3(-480.f, -225.f, 100.f));
-	//pObject->Transform()->SetLocalScale(Vec3(300.f, 300.f, 1.f));
-
-	//pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	//Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl");
-	//pObject->MeshRender()->SetMaterial(pMtrl->Clone());
-	//int color = 4; // White
-	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &color);
-
-	//m_pChat->AddChild(pObject);
-	//m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-
-	//// AddGameObject
-	//m_pScene->FindLayer(L"UI")->AddGameObject(m_pChat);
-
-	//pObject = new CGameObject;
-	//pObject->SetName(L"Input Chat");
-	//pObject->AddComponent(new CTransform);
-	//pObject->AddComponent(new CMeshRender);
-
-	//pObject->Transform()->SetLocalPos(Vec3(-480.f, -360.f, 1.f));
-	//pObject->Transform()->SetLocalScale(Vec3(300.f, 30.f, 1.f));
-
-	//pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	//pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
-
-	//int a = 1;
-	//pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-
-	//m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-	//m_pChat->AddChild(pObject);
-	//m_pChat->GetScript<CInputScript>()->SetFontSpace(pObject);
-
-
-	//float fontSize = 300.f / 20.f;
-	//for (int i = 0; i < 20; ++i)
-	//{
-	//	pObject = new CGameObject;
-	//	pObject->SetName(L"Chat Input Font");
-	//	pObject->AddComponent(new CTransform);
-	//	pObject->AddComponent(new CMeshRender);
-
-	//	pObject->Transform()->SetLocalPos(Vec3(-630.f + (i * fontSize) + fontSize / 2.f, -360.f, 1.f));
-	//	pObject->Transform()->SetLocalScale(Vec3(fontSize, 30.f, 1.f));
-
-	//	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	//	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
-	//	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
-
-	//	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-	//	m_pChat->AddChild(pObject);
-	//	m_pChat->GetScript<CInputScript>()->AddInputObject(pObject);
-	//}
-	//m_pChat->GetScript<CInputScript>()->SetEnable(false);
-
-
-	//fontSize = 300.f / 30.f;
-	/*for (int i = 0; i < 30; ++i)
+	for (int i = 0; i < MAX_CHAT_LINE; ++i)
 	{
-		for (int line = 0; line < MAX_CHAT_LINE; ++line)
-		{
-			pObject = new CGameObject;
-			pObject->SetName(L"Chat Font");
-			pObject->AddComponent(new CTransform);
-			pObject->AddComponent(new CMeshRender);
+		CGameObject* pObject = new CGameObject;
+		pObject->SetName(L"ChatLog Bar");
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CFont);
+		pObject->Transform()->SetLocalPos(Vec3(-480.f, -315.f + (i * 30.f), 100.f));
+		pObject->Transform()->SetLocalScale(Vec3(300.f, 30.f, 1.f));
+		pObject->Font()->SetBackColor(Vec4(0.5f, 0.5f, 0.5f, 0.3f));
+		pObject->Font()->SetString(" ");
+		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 
-			pObject->Transform()->SetLocalPos(Vec3(-630.f + (i * fontSize) + fontSize / 2.f, -330.f + (line * 30.f), 1.f));
-			pObject->Transform()->SetLocalScale(Vec3(fontSize, 30.f, 1.f));
-
-			pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-
-			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
-			pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::TEX_0, CFontMgr::GetInst()->GetFontTex().GetPointer());
-
-			m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
-			m_pChat->AddChild(pObject);
-			m_pChat->GetScript<CChatScript>()->AddChatObject(pObject, line);
-		}
-	}*/
+		m_pChat->GetScript<CChatScript>()->AddChatObject(pObject, i);
+	}
+	m_pPlayer->GetScript<CPlayerScript>()->SetChatObject(m_pChat);
 }

@@ -19,5 +19,7 @@ public:
 public:
 	void AddSlot(CGameObject* pObject);
 	bool GetInventoryActive() { return m_bActive; }
+	
+	void Show();
 };
 

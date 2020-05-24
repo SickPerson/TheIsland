@@ -17,22 +17,24 @@ CInventoryScript::~CInventoryScript()
 
 void CInventoryScript::Update()
 {
-	if (KEY_TAB(KEY_TYPE::KEY_I))
-	{
-		if (m_bActive)
-		{
-			TransferLayer(29, true);
-			m_bActive = false;
-		}
-		else
-		{
-			TransferLayer(30, true);
-			m_bActive = true;
-		}
-	}
+
 }
 
 void CInventoryScript::AddSlot(CGameObject * pObject)
 {
 	m_vItemSlot.emplace_back(pObject);
+}
+
+void CInventoryScript::Show()
+{
+	if (m_bActive)
+	{
+		TransferLayer(29, true);
+		m_bActive = false;
+	}
+	else
+	{
+		TransferLayer(30, true);
+		m_bActive = true;
+	}
 }

@@ -8,6 +8,9 @@ class CIngameScene :
 {
 	CGameObject* m_pChat;
 	CGameObject* m_pPlayer;
+	CGameObject* m_pInventory;
+	CGameObject* m_pQuickSlot;
+
 public:
 	CIngameScene();
 	virtual ~CIngameScene();

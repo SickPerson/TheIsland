@@ -6,16 +6,18 @@
 #include <Engine/Material.h>
 #include <Engine/Font.h>
 
+#include <iostream>
+
 CInputScript::CInputScript() :
 	CScript((UINT)SCRIPT_TYPE::UISCRIPT),
-	m_bEnable(true),
+	m_bEnable(false),
 	m_vFontColor(Vec4(1.f, 1.f, 1.f, 1.f)),
 	m_vHighlightColor(Vec4(0.5f, 0.5f, 0.7f, 0.5f)),
 	m_vBackColor(Vec4(0.2f, 0.2f, 0.2f, 1.f)),
 	m_iCount(0),
-	m_iMaxCount(15)
+	m_iMaxCount(20)
 {
-	m_strInput.reserve(15);
+	m_strInput.reserve(m_iMaxCount);
 }
 
 
@@ -25,6 +27,14 @@ CInputScript::~CInputScript()
 
 void CInputScript::Init()
 {
+}
+
+void CInputScript::Clear()
+{
+	m_strInput.clear();
+	m_strEmpty.clear();
+	m_iCount = 0;
+	Font()->SetString(" ");
 }
 
 void CInputScript::Update()
@@ -291,6 +301,10 @@ void CInputScript::Update()
 		{
 			WriteFont('.');
 		}
+		else if (KEY_TAB(KEY_TYPE::KEY_SPACE))
+		{
+			WriteFont(' ');
+		}
 
 		// 백스페이스
 		else if (KEY_TAB(KEY_TYPE::KEY_BACKSPACE))
@@ -298,7 +312,12 @@ void CInputScript::Update()
 			if (m_iCount > 0)
 			{
 				m_strInput.erase(m_strInput.length()-1, 1);
-				Font()->SetString(m_strInput);
+				m_iCount--;
+
+				m_strEmpty.clear();
+				m_strEmpty.resize(m_iMaxCount - m_strInput.size());
+
+				Font()->SetString(m_strInput + m_strEmpty);
 			}
 		}
 	}
@@ -309,7 +328,12 @@ void CInputScript::WriteFont(char font)
 	if (m_iCount < m_iMaxCount)
 	{
 		m_strInput.push_back(font);
-		Font()->SetString(m_strInput);
+		m_iCount++;
+
+		m_strEmpty.clear();
+		m_strEmpty.resize(m_iMaxCount - m_strInput.size());
+
+		Font()->SetString(m_strInput + m_strEmpty);
 	}
 }
 
@@ -350,6 +374,11 @@ void CInputScript::SetEnable(bool bEnable)
 	{
 		Font()->SetBackColor(m_vBackColor);
 	}
+}
+
+void CInputScript::SetMaxCount(int iCount)
+{
+	m_iMaxCount = iCount;
 }
 
 bool CInputScript::GetEnable()

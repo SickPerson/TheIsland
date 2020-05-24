@@ -9,7 +9,6 @@ private:
 	float		m_fScaleSpeed;
 
 	CGameObject* m_pPlayer;
-
 public:
 	virtual void Update();
 

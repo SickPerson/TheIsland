@@ -11,6 +11,7 @@ class CInputScript :
 	bool					m_bEnable;
 
 	string					m_strInput;
+	string					m_strEmpty;
 
 	Vec4					m_vBox;
 	// {x1, y1, x2, y2}
@@ -32,6 +33,7 @@ private:
 
 public:
 	void Init();
+	void Clear();
 	// 마우스 충돌할때 사용할 박스 {x1, y1, x2, y2}
 	void SetRect(Vec4 rc);
 	Vec4 GetRect();
@@ -42,6 +44,8 @@ public:
 	void SetBackColor(Vec4 vColor);
 
 	void SetEnable(bool bEnable);
+
+	void SetMaxCount(int iCount);
 
 	bool GetEnable();
 	string GetString();

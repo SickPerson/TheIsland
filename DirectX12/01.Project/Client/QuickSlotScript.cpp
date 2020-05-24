@@ -4,7 +4,8 @@
 
 CQuickSlotScript::CQuickSlotScript() :
 	CScript((UINT)SCRIPT_TYPE::UISCRIPT),
-	m_iSelect(-1)
+	m_iSelect(-1),
+	m_bEnable(true)
 {
 }
 
@@ -15,91 +16,39 @@ CQuickSlotScript::~CQuickSlotScript()
 
 void CQuickSlotScript::Update()
 {
-	const vector<CGameObject *>& vecObj = GetObj()->GetChild();
 
-	if (KEY_TAB(KEY_TYPE::KEY_1))
+}
+
+void CQuickSlotScript::SetEnable(bool bEnable)
+{
+	m_bEnable = bEnable;
+}
+
+bool CQuickSlotScript::GetEnable()
+{
+	return m_bEnable;
+}
+
+void CQuickSlotScript::KeyInput(int key)
+{
+	if (!m_bEnable)
 	{
-		int a = 2;
-		if (m_iSelect == 0)
-		{
-			m_iSelect = -1;
-			a = 2;
-		}
-		else
-		{
-			if (m_iSelect != -1)
-				vecObj[m_iSelect]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-			m_iSelect = 0;
-			a = 3;
-		}
-		vecObj[0]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+		return;
 	}
-	else if (KEY_TAB(KEY_TYPE::KEY_2))
+
+	const vector<CGameObject *>& vecObj = GetObj()->GetChild();
+	int a = 2;
+	if (m_iSelect == key - 1)
 	{
-		int a = 2;
-		if (m_iSelect == 1)
-		{
-			m_iSelect = -1;
-			a = 2;
-		}
-		else
-		{
-			if (m_iSelect != -1)
-				vecObj[m_iSelect]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-			m_iSelect = 1;
-			a = 3;
-		}
-		vecObj[1]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+		m_iSelect = -1;
+		a = 2;
 	}
-	else if (KEY_TAB(KEY_TYPE::KEY_3))
+	else
 	{
-		int a = 2;
-		if (m_iSelect == 2)
-		{
-			m_iSelect = -1;
-			a = 2;
-		}
-		else
-		{
-			if (m_iSelect != -1)
-				vecObj[m_iSelect]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-			m_iSelect = 2;
-			a = 3;
-		}
-		vecObj[2]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+		if (m_iSelect != -1)
+			vecObj[m_iSelect]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+		m_iSelect = key - 1;
+		a = 3;
 	}
-	else if (KEY_TAB(KEY_TYPE::KEY_4))
-	{
-		int a = 2;
-		if (m_iSelect == 3)
-		{
-			m_iSelect = -1;
-			a = 2;
-		}
-		else
-		{
-			if (m_iSelect != -1)
-				vecObj[m_iSelect]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-			m_iSelect = 3;
-			a = 3;
-		}
-		vecObj[3]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-	}
-	else if (KEY_TAB(KEY_TYPE::KEY_5))
-	{
-		int a = 2;
-		if (m_iSelect == 4)
-		{
-			m_iSelect = -1;
-			a = 2;
-		}
-		else
-		{
-			if (m_iSelect != -1)
-				vecObj[m_iSelect]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-			m_iSelect = 4;
-			a = 3;
-		}
-		vecObj[4]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
-	}
+	vecObj[key - 1]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 }

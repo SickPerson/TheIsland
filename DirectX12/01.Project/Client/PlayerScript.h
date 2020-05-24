@@ -9,6 +9,11 @@ class CPlayerScript :
 private:
 	float		m_fSpeed;
 	float		m_fScaleSpeed;
+
+	CGameObject* m_pChat;
+	CGameObject* m_pInventory;
+
+	bool		m_bEnable;
 	
 public:
 	virtual void Awake();	
@@ -20,5 +25,11 @@ public:
 public:
 	CPlayerScript();
 	virtual ~CPlayerScript();
+
+public:
+	void SetChatObject(CGameObject* pObj);
+	void SetInventoryObject(CGameObject* pObj);
+
+	bool GetEnable();
 };
 

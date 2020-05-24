@@ -59,7 +59,7 @@ void CLoginScene::Init()
 	m_pScene->GetLayer( 0 )->AddGameObject( pObject );
 
 	CreateInputID();
-	//CreateInputIP();
+	CreateInputIP();
 
 	pObject = new CGameObject;
 	pObject->SetName(L"Help Message");
@@ -98,39 +98,39 @@ void CLoginScene::Update()
 
 	if (KEY_TAB(KEY_TYPE::KEY_LBTN))
 	{
-		//tResolution tRes = CRenderMgr::GetInst()->GetResolution();
-		//POINT vPos = CKeyMgr::GetInst()->GetMousePos();
-		//Vec4 vBox = m_pIP->GetScript<CInputScript>()->GetRect();
+		tResolution tRes = CRenderMgr::GetInst()->GetResolution();
+		POINT vPos = CKeyMgr::GetInst()->GetMousePos();
+		Vec4 vBox = m_pIP->GetScript<CInputScript>()->GetRect();
 
-		//vPos.x -= tRes.fWidth / 2.f;
-		//vPos.y -= tRes.fHeight / 2.f;
-		//vPos.y *= -1.f;
+		vPos.x -= tRes.fWidth / 2.f;
+		vPos.y -= tRes.fHeight / 2.f;
+		vPos.y *= -1.f;
 
-		////std::cout << vPos.x << ", " << vPos.y << std::endl;
+		//std::cout << vPos.x << ", " << vPos.y << std::endl;
 
-		//// IP 창 클릭?
-		//if (vPos.x >= vBox.x && vPos.x <= vBox.z)
-		//{
-		//	if (vPos.y >= vBox.y && vPos.y <= vBox.w)
-		//	{
-		//		//std::cout << "클릭!" << std::endl;
-		//		m_pIP->GetScript<CInputScript>()->SetEnable(true);
-		//		m_pID->GetScript<CInputScript>()->SetEnable(false);
-		//	}
-		//}
+		// IP 창 클릭?
+		if (vPos.x >= vBox.x && vPos.x <= vBox.z)
+		{
+			if (vPos.y >= vBox.y && vPos.y <= vBox.w)
+			{
+				//std::cout << "클릭!" << std::endl;
+				m_pIP->GetScript<CInputScript>()->SetEnable(true);
+				m_pID->GetScript<CInputScript>()->SetEnable(false);
+			}
+		}
 
-		//vBox = m_pID->GetScript<CInputScript>()->GetRect();
+		vBox = m_pID->GetScript<CInputScript>()->GetRect();
 
-		//// ID 창 클릭?
-		//if (vPos.x >= vBox.x && vPos.x <= vBox.z)
-		//{
-		//	if (vPos.y >= vBox.y && vPos.y <= vBox.w)
-		//	{
-		//		//std::cout << "클릭!" << std::endl;
-		//		m_pIP->GetScript<CInputScript>()->SetEnable(false);
-		//		m_pID->GetScript<CInputScript>()->SetEnable(true);
-		//	}
-		//}
+		// ID 창 클릭?
+		if (vPos.x >= vBox.x && vPos.x <= vBox.z)
+		{
+			if (vPos.y >= vBox.y && vPos.y <= vBox.w)
+			{
+				//std::cout << "클릭!" << std::endl;
+				m_pIP->GetScript<CInputScript>()->SetEnable(false);
+				m_pID->GetScript<CInputScript>()->SetEnable(true);
+			}
+		}
 	}
 }
 
@@ -145,13 +145,15 @@ void CLoginScene::CreateInputID()
 	m_pID->AddComponent(new CFont);
 	m_pID->FrustumCheck(false);
 
-	m_pID->Transform()->SetLocalPos(Vec3(0.f, -270.f, 1.f));
-	m_pID->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
+	m_pID->Transform()->SetLocalPos(Vec3(0.f, -260.f, 1.f));
+	m_pID->Transform()->SetLocalScale(Vec3(500.f, 60.f, 1.f));
 	m_pID->AddComponent(new CInputScript);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pID);
-	m_pID->GetScript<CInputScript>()->SetRect(Vec4(-250.f, -290.f, 250.f, -250.f));
+	m_pID->GetScript<CInputScript>()->SetRect(Vec4(-250.f, -290.f, 250.f, -230.f));
+	m_pID->GetScript<CInputScript>()->SetMaxCount(10);
 	m_pID->GetScript<CInputScript>()->SetEnable(true);
+	m_pID->Font()->SetString(" ");
 
 	// ID Info 
 	{
@@ -161,8 +163,8 @@ void CLoginScene::CreateInputID()
 		pObject->AddComponent(new CMeshRender);
 		pObject->FrustumCheck(false);
 
-		pObject->Transform()->SetLocalPos(Vec3(-320.f, -270.f, 1.f));
-		pObject->Transform()->SetLocalScale(Vec3(40.f, 40.f, 1.f));
+		pObject->Transform()->SetLocalPos(Vec3(-320.f, -260.f, 1.f));
+		pObject->Transform()->SetLocalScale(Vec3(40.f, 60.f, 1.f));
 
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
@@ -195,8 +197,8 @@ void CLoginScene::CreateInputID()
 		pObject->AddComponent(new CMeshRender);
 		pObject->FrustumCheck(false);
 
-		pObject->Transform()->SetLocalPos(Vec3(-280.f, -270.f, 1.f));
-		pObject->Transform()->SetLocalScale(Vec3(40.f, 40.f, 1.f));
+		pObject->Transform()->SetLocalPos(Vec3(-280.f, -260.f, 1.f));
+		pObject->Transform()->SetLocalScale(Vec3(40.f, 60.f, 1.f));
 
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"FontMtrl"));
@@ -242,6 +244,7 @@ void CLoginScene::CreateInputIP()
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pIP);
 	m_pIP->GetScript<CInputScript>()->SetRect(Vec4(-250.f, -350.f, 250.f, -310.f));
 	m_pIP->GetScript<CInputScript>()->SetEnable(false);
+	m_pIP->Font()->SetString(" ");
 
 	// IP Info 
 	{

@@ -5,7 +5,7 @@
 class CChatScript : 
 	public CScript
 {
-	vector<CGameObject*>	m_vecChatObj[MAX_CHAT_LINE];
+	CGameObject*			m_pChatObj[MAX_CHAT_LINE];
 	string					m_strChat[MAX_CHAT_LINE];
 	string					m_strChatName[MAX_CHAT_LINE];
 
