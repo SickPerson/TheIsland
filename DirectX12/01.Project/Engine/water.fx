@@ -107,7 +107,7 @@ float4 PS_Water(VS_WATER_OUTPUT _input) : SV_Target
 
 // Tessellation Test
 
-struct HS_TEST_INPUT
+struct HS_ADV_WATER_INPUT
 {
 	float3 vPos : POSITION;
 	float2 vUV : TEXCOORD;
@@ -119,16 +119,16 @@ struct CONSTANT_OUTPUT
 	float inside : SV_InsideTessFactor;
 };
 
-struct HS_TEST_OUTPUT
+struct HS_ADV_WATER_OUTPUT
 {
 	float3 vPos : POSITION;
 	float2 vUV : TEXCOORD;
 };
 
-HS_TEST_INPUT VS_TestWater(VS_WATER_INPUT _input)
+HS_ADV_WATER_INPUT VS_AdvancedWater(VS_WATER_INPUT _input)
 {
 	// input 으로 들어온 위치정보를 투영좌표계 까지 변환한다.
-	HS_TEST_INPUT output = (HS_TEST_INPUT) 0.f;
+	HS_ADV_WATER_INPUT output = (HS_ADV_WATER_INPUT) 0.f;
 
 	output.vPos = _input.vPos;
 	output.vUV = _input.vUV;
@@ -136,7 +136,7 @@ HS_TEST_INPUT VS_TestWater(VS_WATER_INPUT _input)
 	return output;
 }
 
-CONSTANT_OUTPUT Patch_Constant_Func(InputPatch<HS_TEST_INPUT, 3> input, uint patchID : SV_PrimitiveID)
+CONSTANT_OUTPUT Patch_Constant_Func(InputPatch<HS_ADV_WATER_INPUT, 3> input, uint patchID : SV_PrimitiveID)
 {
 	CONSTANT_OUTPUT output;
 
@@ -156,9 +156,9 @@ CONSTANT_OUTPUT Patch_Constant_Func(InputPatch<HS_TEST_INPUT, 3> input, uint pat
 [outputtopology("triangle_cw")]
 [outputcontrolpoints(3)]
 [patchconstantfunc("Patch_Constant_Func")]
-HS_TEST_OUTPUT HS_TestWater(InputPatch<HS_TEST_INPUT, 3> patch, uint pointID : SV_OutputControlPointID, uint patchID : SV_PrimitiveID)
+HS_ADV_WATER_OUTPUT HS_AdvancedWater(InputPatch<HS_ADV_WATER_INPUT, 3> patch, uint pointID : SV_OutputControlPointID, uint patchID : SV_PrimitiveID)
 {
-	HS_TEST_OUTPUT output;
+	HS_ADV_WATER_OUTPUT output;
 
 	output.vPos = patch[pointID].vPos;
 
@@ -167,7 +167,7 @@ HS_TEST_OUTPUT HS_TestWater(InputPatch<HS_TEST_INPUT, 3> patch, uint pointID : S
 	return output;
 }
 
-struct PS_TEST_INPUT
+struct PS_ADV_WATER_INPUT
 {
 	float4 vOutPos : SV_Position;
 	float2 vOutUV : TEXCOORD;
@@ -175,15 +175,15 @@ struct PS_TEST_INPUT
 
 // Domain Shader
 [domain("tri")]
-PS_TEST_INPUT DS_TestWater(CONSTANT_OUTPUT input, float3 uvwCoord : SV_DomainLocation, const OutputPatch<HS_TEST_OUTPUT, 3> patch)
+PS_ADV_WATER_INPUT DS_AdvancedWater(CONSTANT_OUTPUT input, float3 uvwCoord : SV_DomainLocation, const OutputPatch<HS_ADV_WATER_OUTPUT, 3> patch)
 {
 	float3 vertexPos;
-	PS_TEST_INPUT output;
+	PS_ADV_WATER_INPUT output;
 
 	vertexPos = uvwCoord.x * patch[0].vPos + uvwCoord.y * patch[1].vPos + uvwCoord.z * patch[2].vPos;
 	output.vOutUV = patch[0].vUV * uvwCoord.x + patch[1].vUV * uvwCoord.y + patch[2].vUV * uvwCoord.z;
 
-	float height = cos(g_fAccTime * 1.f + output.vOutUV.x * 10.f) * 50.f;
+	float height = cos(g_fAccTime * 1.f + output.vOutUV.x * 10.f) * g_float_1;
 
 	vertexPos.z += height;
 
@@ -196,15 +196,15 @@ PS_TEST_INPUT DS_TestWater(CONSTANT_OUTPUT input, float3 uvwCoord : SV_DomainLoc
 	//return output;
 }
 
-float4 PS_TestWater(PS_TEST_INPUT _input) : SV_Target
+float4 PS_AdvancedWater(PS_ADV_WATER_INPUT _input) : SV_Target
 {
 	float2 vScreenUV = float2(_input.vOutPos.x / g_vResolution.x, _input.vOutPos.y / g_vResolution.y);
 	//return g_tex_0.Sample(g_sam_0, vScreenUV);
  
 
-	float2 vDir = normalize(float2(0.5f, 0.5f) - _input.vOutUV);
+	float2 vDir = normalize(float2(0.5f, 1.0f) - _input.vOutUV);
 
-	float fDist = distance(float2(0.5f, 0.5f), _input.vOutUV);
+	float fDist = distance(float2(0.5f, 1.0f), _input.vOutUV);
 
 	// 왜곡 강도에 영향을 주는 중심으로부터 떨어진 비율( 중심에 가까울 수록 0에 가깝다.)
 	float fRatio = (fDist / 0.5f);

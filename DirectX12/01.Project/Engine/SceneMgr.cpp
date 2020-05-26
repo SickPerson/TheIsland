@@ -59,8 +59,9 @@ void CSceneMgr::Init()
 
 	m_pCurScene->GetLayer( 0 )->SetName( L"Default" );
 	m_pCurScene->GetLayer( 1 )->SetName( L"Player" );
-	m_pCurScene->GetLayer( 2 )->SetName( L"Monster" );
-	m_pCurScene->GetLayer( 3 )->SetName( L"Bullet" );
+	m_pCurScene->GetLayer( 2 )->SetName( L"Animal" );
+	m_pCurScene->GetLayer( 3 )->SetName( L"Environment" );
+	m_pCurScene->GetLayer( 4 )->SetName( L"Human" );
 
 	m_pCurScene->GetLayer( 29 )->SetName( L"Invisible" );
 	m_pCurScene->GetLayer( 30 )->SetName( L"UI" );

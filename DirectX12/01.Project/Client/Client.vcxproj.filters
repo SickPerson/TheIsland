@@ -34,6 +34,9 @@
     <Filter Include="ComponentScript\Environment">
       <UniqueIdentifier>{d90432a6-0a58-4c4f-a8fb-e91220b34a46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ComponentScript\Animal">
+      <UniqueIdentifier>{78bac853-deff-47d4-a63e-bd7aefb84239}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -99,6 +102,9 @@
     <ClInclude Include="ChatScript.h">
       <Filter>ComponentScript\UI</Filter>
     </ClInclude>
+    <ClInclude Include="AnimalScript.h">
+      <Filter>ComponentScript\Animal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -145,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="ChatScript.cpp">
       <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimalScript.cpp">
+      <Filter>ComponentScript\Animal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

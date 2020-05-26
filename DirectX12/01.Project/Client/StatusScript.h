@@ -1,11 +1,14 @@
 #pragma once
 #include <Engine/Script.h>
+#define INVINCIBLE_TIME 3.f
+
 class CStatusScript :
 	public CScript
 {
 	float m_fHealth;
 	float m_fHungry;
 	float m_fThirst;
+
 public:
 	CStatusScript();
 	virtual ~CStatusScript();
@@ -15,5 +18,8 @@ public:
 
 public:
 	CLONE(CStatusScript);
+
+public:
+	void Damage(float fDamage);
 };
 

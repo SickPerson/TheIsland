@@ -12,7 +12,7 @@ CInputScript::CInputScript() :
 	CScript((UINT)SCRIPT_TYPE::UISCRIPT),
 	m_bEnable(false),
 	m_vFontColor(Vec4(1.f, 1.f, 1.f, 1.f)),
-	m_vHighlightColor(Vec4(0.5f, 0.5f, 0.7f, 0.5f)),
+	m_vHighlightColor(Vec4(0.5f, 0.5f, 0.5f, 0.75f)),
 	m_vBackColor(Vec4(0.2f, 0.2f, 0.2f, 1.f)),
 	m_iCount(0),
 	m_iMaxCount(20)

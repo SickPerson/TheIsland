@@ -29,9 +29,13 @@
 #include "Network.h"
 #include "ConstStringScript.h"
 
+#include <Engine/Light3D.h>
+
 CLoginScene::CLoginScene() :
 	m_pID(NULL),
-	m_pPassword(NULL)
+	m_pPassword(NULL),
+	m_vFontColor(Vec4(0.f, 0.f, 0.f, 1.f)),
+	m_vFontBackColor(Vec4(0.3f, 0.3f, 0.3f, 0.0f))
 
 {
 }
@@ -44,6 +48,8 @@ CLoginScene::~CLoginScene()
 void CLoginScene::Init()
 {
 	CGameObject* pObject = NULL;
+
+	CreateLoginWorld();
 
 	// ====================
 	// UI Camera
@@ -69,7 +75,7 @@ void CLoginScene::Init()
 	pObject->Transform()->SetLocalPos(Vec3(-330.f, 280.f, 1.f));
 	pObject->Transform()->SetLocalScale(Vec3(62.f, 108.f, 1.f));
 
-	pObject->GetScript<CConstStringScript>()->Init("THE ISLAND");
+	pObject->GetScript<CConstStringScript>()->Init("THE ISLAND", m_vFontColor, m_vFontBackColor);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 
@@ -81,7 +87,7 @@ void CLoginScene::Init()
 	pObject->Transform()->SetLocalPos(Vec3(150.f, 200.f, 1.f));
 	pObject->Transform()->SetLocalScale(Vec3(25.f, 40, 1.f));
 
-	pObject->GetScript<CConstStringScript>()->Init("DEMO");
+	pObject->GetScript<CConstStringScript>()->Init("DEMO", m_vFontColor, m_vFontBackColor);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 }
@@ -134,6 +140,151 @@ void CLoginScene::Update()
 	}
 }
 
+void CLoginScene::CreateLoginWorld()
+{
+	// ==================
+	// Camera Object 생성
+	// ==================
+	CGameObject* pMainCam = new CGameObject;
+	pMainCam->SetName(L"MainCam");
+	pMainCam->AddComponent(new CTransform);
+	pMainCam->AddComponent(new CCamera);
+
+	pMainCam->Transform()->SetLocalPos(Vec3(0.f, 100.f, -2000.f));
+	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
+
+	pMainCam->Camera()->SetProjType(PROJ_TYPE::PERSPECTIVE);
+	pMainCam->Camera()->SetFar(100000.f);
+	pMainCam->Camera()->SetLayerAllCheck();
+	pMainCam->Camera()->SetLayerCheck(30, false);
+	pMainCam->Camera()->SetLayerCheck(29, false);
+	m_pScene->FindLayer(L"Default")->AddGameObject(pMainCam);
+
+	// ====================
+	// 3D Light Object 추가
+	// ====================
+	CGameObject* pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CLight3D);
+
+	pObject->Light3D()->SetLightPos(Vec3(0.f, 500.f, 0.f));
+	pObject->Light3D()->SetLightType(LIGHT_TYPE::DIR);
+	pObject->Light3D()->SetDiffuseColor(Vec3(1.f, 1.f, 1.f));
+	pObject->Light3D()->SetSpecular(Vec3(0.7f, 0.7f, 0.7f));
+	pObject->Light3D()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
+	pObject->Light3D()->SetLightDir(Vec3(0.5f, -1.f, 0.f));
+	pObject->Light3D()->SetLightRange(1000.f);
+
+	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
+
+	CGameObject* pSun = pObject;
+
+	// ====================
+	// Skybox 오브젝트 생성
+	// ====================
+	Ptr<CTexture> pSky01 = CResMgr::GetInst()->Load<CTexture>(L"Sky01", L"Texture\\Skybox\\Sky01.png");
+
+	pObject = new CGameObject;
+	pObject->SetName(L"SkyBox");
+	pObject->FrustumCheck(false);
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	// MeshRender 설정
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"SphereMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"SkyboxMtrl"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pSky01.GetPointer());
+	float fLight = 1.f;
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fLight);
+
+	// AddGameObject
+	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
+
+	// =====================================================================================================
+	// Sea
+	pObject = new CGameObject;
+	pObject->SetName(L"Water");
+
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	// Material 값 셋팅
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"AdvancedWaterMtrl");
+
+	float tessellation = 128.f;
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(pMtrl);
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &tessellation);
+
+	float fHeight = 50.f;
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_1, &fHeight);
+
+	pObject->Transform()->SetLocalPos(Vec3(0.f, -200.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(20000.f, 20000.f, 1.f));
+	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
+
+	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
+	// =====================================================================================================
+
+	// =====================================================================================================
+	// Island
+	Ptr<CTexture> pColor = CResMgr::GetInst()->Load<CTexture>(L"Tile", L"Texture\\Tile\\TILE_03.tga");
+	Ptr<CTexture> pNormal = CResMgr::GetInst()->Load<CTexture>(L"Tile_n", L"Texture\\Tile\\TILE_03_N.tga");
+	pObject = new CGameObject;
+	pObject->SetName(L"Island");
+
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	// Material 값 셋팅
+	pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl")->Clone();
+	pObject->MeshRender()->SetMaterial(pMtrl);
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"SphereMesh"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+
+	pObject->Transform()->SetLocalPos(Vec3(0.f, -250.f, 6000.f));
+	pObject->Transform()->SetLocalScale(Vec3(3000.f, 500.f, 1500.f));
+
+	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
+	// =====================================================================================================
+
+	// =====================================================================================================
+	// Tree
+	Ptr<CMeshData> pTreeATex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucea.mdat", L"MeshData\\sprucea.mdat");
+	Ptr<CMeshData> pTreeBTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\spruceb.mdat", L"MeshData\\spruceb.mdat");
+	Ptr<CMeshData> pTreeCTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucec.mdat", L"MeshData\\sprucec.mdat");
+	CGameObject* pTestObject = NULL;
+	for (int i = 0; i < 30; ++i)
+	{
+		int type = rand() % 3;
+		if (type == 0)
+		{
+			pTestObject = pTreeATex->Instantiate();
+			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
+		}
+		else if (type == 1)
+		{
+			pTestObject = pTreeBTex->Instantiate();
+			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 1);
+		}
+		else
+		{
+			pTestObject = pTreeCTex->Instantiate();
+			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
+		}
+
+		float fScale = (float)(rand() % 10 + 30);
+		pTestObject->SetName(L"Tree");
+		pTestObject->Transform()->SetLocalPos(Vec3((float)(rand() % 4000 - 2000), 20.f, 5500.f + (float)(rand() % 1500 - 750)));
+		pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+		pTestObject->Transform()->SetLocalScale(Vec3(fScale, fScale, fScale));
+
+		m_pScene->FindLayer(L"Default")->AddGameObject(pTestObject);
+	}
+}
+
 void CLoginScene::CreateInputID()
 {
 	// ===================
@@ -180,8 +331,8 @@ void CLoginScene::CreateInputID()
 		float startV = tInfo.iy / sizeY;
 		float widthU = tInfo.iWidth / sizeX;
 		float heightV = tInfo.iHeight / sizeY;
-		Vec4 vFontColor = Vec4(1.f, 1.f, 1.f, 1.f);
-		Vec4 vFontBackColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		Vec4 vFontColor = m_vFontColor;
+		Vec4 vFontBackColor = m_vFontBackColor;
 		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
 		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
 		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
@@ -214,8 +365,8 @@ void CLoginScene::CreateInputID()
 		float startV = tInfo.iy / sizeY;
 		float widthU = tInfo.iWidth / sizeX;
 		float heightV = tInfo.iHeight / sizeY;
-		Vec4 vFontColor = Vec4(1.f, 1.f, 1.f, 1.f);
-		Vec4 vFontBackColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		Vec4 vFontColor = m_vFontColor;
+		Vec4 vFontBackColor = m_vFontBackColor;
 		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
 		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
 		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
@@ -271,8 +422,8 @@ void CLoginScene::CreateInputIP()
 		float startV = tInfo.iy / sizeY;
 		float widthU = tInfo.iWidth / sizeX;
 		float heightV = tInfo.iHeight / sizeY;
-		Vec4 vFontColor = Vec4(1.f, 1.f, 1.f, 1.f);
-		Vec4 vFontBackColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		Vec4 vFontColor = m_vFontColor;
+		Vec4 vFontBackColor = m_vFontBackColor;
 		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
 		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
 		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);
@@ -305,8 +456,8 @@ void CLoginScene::CreateInputIP()
 		float startV = tInfo.iy / sizeY;
 		float widthU = tInfo.iWidth / sizeX;
 		float heightV = tInfo.iHeight / sizeY;
-		Vec4 vFontColor = Vec4(1.f, 1.f, 1.f, 1.f);
-		Vec4 vFontBackColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		Vec4 vFontColor = m_vFontColor;
+		Vec4 vFontBackColor = m_vFontBackColor;
 		pMtrl->SetData(SHADER_PARAM::FLOAT_0, &startU);
 		pMtrl->SetData(SHADER_PARAM::FLOAT_1, &widthU);
 		pMtrl->SetData(SHADER_PARAM::FLOAT_2, &startV);

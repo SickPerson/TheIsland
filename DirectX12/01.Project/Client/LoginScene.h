@@ -16,6 +16,8 @@ public:
 	virtual void Update() override;
 
 public:
+	void CreateLoginWorld();
+
 	void CreateInputID();
 	void CreateInputIP();
 	void CreateInputPassword();
@@ -29,6 +31,9 @@ private:
 	string				m_strID;
 	string				m_strPassword;
 	string				m_strIP;
+
+	Vec4				m_vFontColor;
+	Vec4				m_vFontBackColor;
 
 	bool				m_bIP_Success = false;
 	bool				m_bNextScene = false;

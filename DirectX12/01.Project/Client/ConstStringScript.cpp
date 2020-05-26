@@ -7,8 +7,8 @@
 
 CConstStringScript::CConstStringScript() :
 	CScript((UINT)SCRIPT_TYPE::UISCRIPT),
-	m_vFontColor(Vec4(1.f, 1.f, 1.f, 1.f)),
-	m_vFontBackColor(Vec4(0.f, 0.f, 0.f, 0.f))
+	m_vFontColor(Vec4(0.f, 0.f, 0.f, 1.f)),
+	m_vFontBackColor(Vec4(0.5f, 0.5f, 0.5f, 0.5f))
 {
 }
 

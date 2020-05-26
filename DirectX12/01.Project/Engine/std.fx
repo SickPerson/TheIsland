@@ -242,7 +242,7 @@ float4 PS_Font( TEX_OUTPUT _input ) : SV_Target
 
 	vColor = vColor * g_vec4_0;
 
-	if ( vColor.z < 0.5f )
+	if ( vColor.w == 0.f )
 		vColor = g_vec4_1;
 
 	return vColor;

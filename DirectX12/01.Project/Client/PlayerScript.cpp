@@ -4,6 +4,7 @@
 
 #include "InputScript.h"
 #include "InventoryScript.h"
+#include "StatusScript.h"
 
 #include <Engine/Camera.h>
 
@@ -15,6 +16,8 @@ CPlayerScript::CPlayerScript()
 	, m_bEnable(true)
 	, m_pChat(NULL)
 	, m_pInventory(NULL)
+	, m_pStatus(NULL)
+	, m_bInvincible(false)
 {
 }
 
@@ -30,6 +33,11 @@ void CPlayerScript::SetChatObject(CGameObject * pObj)
 void CPlayerScript::SetInventoryObject(CGameObject * pObj)
 {
 	m_pInventory = pObj;
+}
+
+void CPlayerScript::SetStatusObject(CGameObject * pObj)
+{
+	m_pStatus = pObj;
 }
 
 bool CPlayerScript::GetEnable()
@@ -147,5 +155,13 @@ void CPlayerScript::Update()
 
 		Transform()->SetLocalPos(vPos);
 		m_bEnable = true;
+	}
+}
+
+void CPlayerScript::Damage(float fDamage)
+{
+	if (!m_bInvincible)
+	{
+		m_pStatus->GetScript<CStatusScript>()->Damage(fDamage);
 	}
 }
