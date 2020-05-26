@@ -20,7 +20,6 @@
 
 #include "MapToolScene.h"
 
-//#include "Terrain.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

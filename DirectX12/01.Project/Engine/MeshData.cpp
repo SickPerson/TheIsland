@@ -64,6 +64,8 @@ void CMeshData::Load( const wstring & strPath )
 	FILE* pFile = NULL;
 	_wfopen_s( &pFile, strPath.c_str(), L"rb" );
 
+	m_strMeshDataName = strPath;
+
 	// Mesh Load
 	wstring strMeshKey, strMeshPath;
 	strMeshKey = LoadWString( pFile );
@@ -144,7 +146,7 @@ CGameObject * CMeshData::Instantiate()
 	CGameObject* pNewObj = new CGameObject;
 	pNewObj->AddComponent( new CTransform );
 	pNewObj->AddComponent( new CMeshRender );
-
+	pNewObj->SetName( m_strMeshDataName );
 	pNewObj->MeshRender()->SetMesh( m_pMesh );
 
 	for ( UINT i = 0; i < m_vecMtrl.size(); ++i )

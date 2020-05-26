@@ -22,7 +22,6 @@ CMapToolScene::~CMapToolScene()
 
 void CMapToolScene::Init()
 {
-
 	// ==================
 	// Camera Object »ý¼º
 	// ==================

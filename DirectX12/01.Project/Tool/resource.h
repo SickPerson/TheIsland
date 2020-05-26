@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ì—ì„œ ìƒì„±í•œ í¬í•¨ íŒŒì¼ì…ë‹ˆë‹¤.
-// Tool.rcì—ì„œ ì‚¬ìš©ë˜ê³  ìˆìŠµë‹ˆë‹¤.
+// Microsoft Visual C++¿¡¼­ »ı¼ºÇÑ Æ÷ÇÔ ÆÄÀÏÀÔ´Ï´Ù.
+// Tool.rc¿¡¼­ »ç¿ëµÇ°í ÀÖ½À´Ï´Ù.
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
@@ -10,6 +10,8 @@
 #define IDC_BUTTON1                     1000
 #define IDC_BUTTON_ADDOBJECT            1000
 #define IDC_EDIT_OBJECTNAME             1001
+#define IDC_BUTTON_ADDOBJECT2           1002
+#define IDC_BUTTON_FBXLOAD              1002
 #define IDC_EDIT_POSX                   1004
 #define IDC_EDIT_POSY                   1005
 #define IDC_EDIT_POSZ                   1006
@@ -22,6 +24,7 @@
 #define IDC_BUTTON_DELOBJECT            1013
 #define IDC_COMBO_OBJECTKIND            1014
 #define IDC_COMBO_OBJECTS               1015
+#define IDC_COMBO_FBX                   1016
 
 // Next default values for new objects
 // 

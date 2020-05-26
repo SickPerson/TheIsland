@@ -10,7 +10,12 @@
 #include <Engine/SceneMgr.h>
 #include <Engine/SceneScript.h>
 
-#include <Engine/GameObject.h>
+#include <Engine/ResMgr.h>
+
+#include <Engine/Transform.h>
+
+#include <algorithm>
+
 // CMyForm
 
 IMPLEMENT_DYNCREATE(CMyForm, CFormView)
@@ -27,8 +32,9 @@ CMyForm::CMyForm()
 	, m_fRotY( 0 )
 	, m_fRotZ( 0 )
 	, m_fScaleZ( 0 )
+	, m_iSelectObject(0)
+	, m_bLoad(false)
 {
-	
 }
 
 CMyForm::~CMyForm()
@@ -52,6 +58,18 @@ void CMyForm::DoDataExchange(CDataExchange* pDX)
 	DDX_Control( pDX, IDC_BUTTON_DELOBJECT, m_btnDelObject );
 	DDX_Control( pDX, IDC_COMBO_OBJECTKIND, m_ComboObjectKind );
 	DDX_Control( pDX, IDC_COMBO_OBJECTS, m_ComboObjects );
+	DDX_Control( pDX, IDC_EDIT_OBJECTNAME, m_EditObjectName );
+	DDX_Control( pDX, IDC_COMBO_FBX, m_ComboFBX );
+	DDX_Control( pDX, IDC_EDIT_POSX, m_EditPosX );
+	DDX_Control( pDX, IDC_EDIT_POSY, m_EditPosY );
+	DDX_Control( pDX, IDC_EDIT_POSZ, m_EditPosZ );
+	DDX_Control( pDX, IDC_EDIT_SCALEX, m_EditScaleX );
+	DDX_Control( pDX, IDC_EDIT_SCALEY, m_EditScaleY );
+	DDX_Control( pDX, IDC_EDIT_SCALEZ, m_EditScaleZ );
+	DDX_Control( pDX, IDC_EDIT_ROTX, m_EditRotX );
+	DDX_Control( pDX, IDC_EDIT_ROTY, m_EditRotY );
+	DDX_Control( pDX, IDC_EDIT_ROTZ, m_EditRotZ );
+	DDX_Control( pDX, IDC_BUTTON_FBXLOAD, m_btnFBXLoad );
 }
 
 BEGIN_MESSAGE_MAP(CMyForm, CFormView)
@@ -69,6 +87,9 @@ BEGIN_MESSAGE_MAP(CMyForm, CFormView)
 	ON_BN_CLICKED( IDC_BUTTON_DELOBJECT, &CMyForm::OnBnClickedButtonDelobject )
 	ON_CBN_SELCHANGE( IDC_COMBO_OBJECTKIND, &CMyForm::OnCbnSelchangeComboObjectkind )
 	ON_CBN_SELCHANGE( IDC_COMBO_OBJECTS, &CMyForm::OnCbnSelchangeComboObjects )
+	ON_CBN_SELCHANGE( IDC_COMBO_FBX, &CMyForm::OnCbnSelchangeComboFbx )
+	ON_CBN_SELCHANGE( IDC_COMBO_FBX, &CMyForm::OnCbnSelchangeComboFbx )
+	ON_BN_CLICKED( IDC_BUTTON_FBXLOAD, &CMyForm::OnBnClickedButtonFbxload )
 END_MESSAGE_MAP()
 
 
@@ -92,13 +113,21 @@ void CMyForm::Dump(CDumpContext& dc) const
 void CMyForm::OnBnClickedButtonAddobject()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( m_strObjectName.IsEmpty() )
+		return;
 
 	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+	wstring strFBXName = L"MeshData\\" + m_strFBXName + L".mdat";	
 
-	CGameObject* pObject = new CGameObject;
+	Ptr<CMeshData> pMeshData = FindMeshData( strFBXName );
+
+	CGameObject* pObject = pMeshData->Instantiate();
+
+	m_vecGameObjet.push_back( pObject );
+
 	pScene->AddGameObject( L"Default", pObject, false );
 
-	int a = 0;
+	m_ComboObjects.AddString( m_strObjectName );
 }
 
 
@@ -116,6 +145,8 @@ void CMyForm::OnEnChangeEditObjectname()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	
+	m_EditObjectName.GetWindowTextW( m_strObjectName );
 }
 
 
@@ -127,6 +158,19 @@ void CMyForm::OnEnChangeEditPosx()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	CString posX, posY, posZ;
+	m_EditPosX.GetWindowTextW( posX );
+	m_EditPosY.GetWindowTextW( posY );
+	m_EditPosZ.GetWindowTextW( posZ );
+
+	m_fPosX = _tstof( posX );
+	m_fPosY = _tstof( posY );
+	m_fPosZ = _tstof( posZ );
+
+	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalPos( Vec3( m_fPosX, m_fPosY, m_fPosZ ) );
 }
 
 
@@ -138,6 +182,18 @@ void CMyForm::OnEnChangeEditPosy()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	CString posX, posY, posZ;
+	m_EditPosX.GetWindowTextW( posX );
+	m_EditPosY.GetWindowTextW( posY );
+	m_EditPosZ.GetWindowTextW( posZ );
+
+	m_fPosX = _tstof( posX );
+	m_fPosY = _tstof( posY );
+	m_fPosZ = _tstof( posZ );
+
+	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalPos( Vec3( m_fPosX, m_fPosY, m_fPosZ ) );
 }
 
 
@@ -149,6 +205,18 @@ void CMyForm::OnEnChangeEditPosz()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	CString posX, posY, posZ;
+	m_EditPosX.GetWindowTextW( posX );
+	m_EditPosY.GetWindowTextW( posY );
+	m_EditPosZ.GetWindowTextW( posZ );
+
+	m_fPosX = _tstof( posX );
+	m_fPosY = _tstof( posY );
+	m_fPosZ = _tstof( posZ );
+
+	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalPos( Vec3( m_fPosX, m_fPosY, m_fPosZ ) );
 }
 
 
@@ -160,6 +228,18 @@ void CMyForm::OnEnChangeEditScalex()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	CString ScaleX, ScaleY, ScaleZ;
+	m_EditScaleX.GetWindowTextW( ScaleX );
+	m_EditScaleY.GetWindowTextW( ScaleY );
+	m_EditScaleZ.GetWindowTextW( ScaleZ );
+
+	m_fScaleX = _tstof( ScaleX );
+	m_fScaleY = _tstof( ScaleY );
+	m_fScaleZ = _tstof( ScaleZ );
+
+	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalScale( Vec3( m_fScaleX, m_fScaleY, m_fScaleZ ) );
 }
 
 
@@ -171,6 +251,18 @@ void CMyForm::OnEnChangeEditScaley()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	CString ScaleX, ScaleY, ScaleZ;
+	m_EditScaleX.GetWindowTextW( ScaleX );
+	m_EditScaleY.GetWindowTextW( ScaleY );
+	m_EditScaleZ.GetWindowTextW( ScaleZ );
+
+	m_fScaleX = _tstof( ScaleX );
+	m_fScaleY = _tstof( ScaleY );
+	m_fScaleZ = _tstof( ScaleZ );
+
+	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalScale( Vec3( m_fScaleX, m_fScaleY, m_fScaleZ ) );
 }
 
 
@@ -182,6 +274,18 @@ void CMyForm::OnEnChangeEditScalez()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	CString ScaleX, ScaleY, ScaleZ;
+	m_EditScaleX.GetWindowTextW( ScaleX );
+	m_EditScaleY.GetWindowTextW( ScaleY );
+	m_EditScaleZ.GetWindowTextW( ScaleZ );
+
+	m_fScaleX = _tstof( ScaleX );
+	m_fScaleY = _tstof( ScaleY );
+	m_fScaleZ = _tstof( ScaleZ );
+
+	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalScale( Vec3( m_fScaleX, m_fScaleY, m_fScaleZ ) );
 }
 
 
@@ -193,6 +297,18 @@ void CMyForm::OnEnChangeEditRotx()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	CString RotX, RotY, RotZ;
+	m_EditRotX.GetWindowTextW( RotX );
+	m_EditRotY.GetWindowTextW( RotY );
+	m_EditRotZ.GetWindowTextW( RotZ );
+
+	m_fRotX = _tstof( RotX );
+	m_fRotY = _tstof( RotY );
+	m_fRotZ = _tstof( RotZ );
+
+	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalRot( Vec3( m_fRotX, m_fRotY, m_fRotZ ) );
 }
 
 
@@ -204,6 +320,18 @@ void CMyForm::OnEnChangeEditRoty()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	CString RotX, RotY, RotZ;
+	m_EditRotX.GetWindowTextW( RotX );
+	m_EditRotY.GetWindowTextW( RotY );
+	m_EditRotZ.GetWindowTextW( RotZ );
+
+	m_fRotX = _tstof( RotX );
+	m_fRotY = _tstof( RotY );
+	m_fRotZ = _tstof( RotZ );
+
+	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalRot( Vec3( m_fRotX, m_fRotY, m_fRotZ ) );
 }
 
 
@@ -215,6 +343,18 @@ void CMyForm::OnEnChangeEditRotz()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	CString RotX, RotY, RotZ;
+	m_EditRotX.GetWindowTextW( RotX );
+	m_EditRotY.GetWindowTextW( RotY );
+	m_EditRotZ.GetWindowTextW( RotZ );
+
+	m_fRotX = _tstof( RotX );
+	m_fRotY = _tstof( RotY );
+	m_fRotZ = _tstof( RotZ );
+
+	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalRot( Vec3( m_fRotX, m_fRotY, m_fRotZ ) );
 }
 
 
@@ -232,4 +372,120 @@ void CMyForm::OnCbnSelchangeComboObjectkind()
 void CMyForm::OnCbnSelchangeComboObjects()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	m_iSelectObject = m_ComboObjects.GetCurSel();
+
+	Vec3 vPos = m_vecGameObjet[m_iSelectObject]->Transform()->GetLocalPos();
+	Vec3 vScale = m_vecGameObjet[m_iSelectObject]->Transform()->GetLocalScale();
+	Vec3 vRot = m_vecGameObjet[m_iSelectObject]->Transform()->GetLocalRot();
+
+	CString PosX, PosY, PosZ;
+	CString RotX, RotY, RotZ;
+	CString ScaleX, ScaleY, ScaleZ;
+
+	PosX.Format( L"%f", vPos.x );
+	PosY.Format( L"%f", vPos.y );
+	PosZ.Format( L"%f", vPos.z );
+	RotX.Format( L"%f", vRot.x );
+	RotY.Format( L"%f", vRot.y );
+	RotZ.Format( L"%f", vRot.z );
+	ScaleX.Format( L"%f", vScale.x );
+	ScaleY.Format( L"%f", vScale.y );
+	ScaleZ.Format( L"%f", vScale.z );
+
+	m_EditPosX.SetWindowTextW( PosX );
+	m_EditPosY.SetWindowTextW( PosY );
+	m_EditPosZ.SetWindowTextW( PosZ );
+	m_EditRotX.SetWindowTextW( RotX );
+	m_EditRotY.SetWindowTextW( RotY );
+	m_EditRotZ.SetWindowTextW( RotZ );
+	m_EditScaleX.SetWindowTextW( ScaleX );
+	m_EditScaleY.SetWindowTextW( ScaleY );
+	m_EditScaleZ.SetWindowTextW( ScaleZ );
+}
+
+
+void CMyForm::OnCbnSelchangeComboFbx()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	// m_ComboFBX에서 선택된 셀의 값을 가져온다.
+	m_ComboFBX.GetLBText( m_ComboFBX.GetCurSel(), m_strFBXName );
+}
+
+Ptr<CMeshData> CMyForm::FindMeshData( const wstring & strFBXName )
+{
+	for ( auto iter = m_vecFBX.begin(); iter != m_vecFBX.end(); ++iter )
+	{
+		if ( ( *iter )->GetName() == strFBXName )
+			return *iter;
+	}
+
+	return nullptr;
+}
+
+void CMyForm::LoadFBX()
+{
+	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\rock01.mdat", L"MeshData\\rock01.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"rock01" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\rock02.mdat", L"MeshData\\rock02.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"rock02" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\rock03.mdat", L"MeshData\\rock03.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"rock03" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\rock04.mdat", L"MeshData\\rock04.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"rock04" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\rockdetailsa.mdat", L"MeshData\\rockdetailsa.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"rockdetailsa" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\rockdetailsb.mdat", L"MeshData\\rockdetailsb.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"rockdetailsb" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\rockmediuma.mdat", L"MeshData\\rockmediuma.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"rockmediuma" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\rockmediumb.mdat", L"MeshData\\rockmediumb.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"rockmediumb" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\rockmediumc.mdat", L"MeshData\\rockmediumc.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"rockmediumc" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\spruce_full_a.mdat", L"MeshData\\spruce_full_a.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"spruce_full_a" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\sprucea.mdat", L"MeshData\\sprucea.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"sprucea" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\spruceb.mdat", L"MeshData\\spruceb.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"spruceb" );
+
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\sprucec.mdat", L"MeshData\\sprucec.mdat" );
+	m_vecFBX.push_back( pMeshData );
+	m_ComboFBX.AddString( L"sprucec" );
+}
+
+
+void CMyForm::OnBnClickedButtonFbxload()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( m_bLoad )
+		return;
+
+	m_bLoad = true;
+	LoadFBX();
 }

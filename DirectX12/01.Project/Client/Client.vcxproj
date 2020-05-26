@@ -169,6 +169,7 @@
     <ClInclude Include="InventoryScript.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="Network.h" />
+    <ClInclude Include="Objects\StoneScript.h" />
     <ClInclude Include="PlayerCamScript.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="InventoryScript.cpp" />
     <ClCompile Include="LoginScene.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="Objects\StoneScript.cpp" />
     <ClCompile Include="PlayerCamScript.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

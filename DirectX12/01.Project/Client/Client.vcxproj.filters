@@ -25,6 +25,12 @@
     <Filter Include="Network\etc">
       <UniqueIdentifier>{aad681fd-419d-4643-9900-c2f3b2ce6f97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ComponentScript\Stone">
+      <UniqueIdentifier>{e9ebb663-2bc5-4aa4-a914-81b6297eb90d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Tree">
+      <UniqueIdentifier>{5a80baf1-5f8d-445e-baa7-8c5ed3775f1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -78,6 +84,9 @@
     <ClInclude Include="SunshineScript.h">
       <Filter>ComponentScript</Filter>
     </ClInclude>
+    <ClInclude Include="Objects\StoneScript.h">
+      <Filter>ComponentScript\Stone</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -112,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="SunshineScript.cpp">
       <Filter>ComponentScript</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\StoneScript.cpp">
+      <Filter>ComponentScript\Stone</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

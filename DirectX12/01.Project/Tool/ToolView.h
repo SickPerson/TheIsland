@@ -5,6 +5,8 @@
 #pragma once
 
 class CToolDoc;
+class CMyForm;
+
 class CToolView : public CScrollView
 {
 protected: // serialization에서만 만들어집니다.

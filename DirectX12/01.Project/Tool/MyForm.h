@@ -1,6 +1,9 @@
 #pragma once
 
 // CMyForm 폼 뷰입니다.
+#include <Engine/Ptr.h>
+#include <Engine/MeshData.h>
+#include <Engine/GameObject.h>
 
 class CMyForm : public CFormView
 {
@@ -31,6 +34,7 @@ public:
 	CButton m_btnDelObject;
 	afx_msg void OnBnClickedButtonDelobject();
 	CString m_strObjectName;
+	CEdit m_EditObjectName;
 	afx_msg void OnEnChangeEditObjectname();
 	float m_fPosX;
 	afx_msg void OnEnChangeEditPosx();
@@ -54,6 +58,39 @@ public:
 	afx_msg void OnCbnSelchangeComboObjectkind();
 	CComboBox m_ComboObjects;
 	afx_msg void OnCbnSelchangeComboObjects();
+	// Object에 추가할 FBX를 선택하기 위한 목록
+	CComboBox m_ComboFBX;
+	CString m_strFBXName;  
+	afx_msg void OnCbnSelchangeComboFbx();
+
+
+	UINT		m_iSelectObject;
+
+
+private:
+	vector<Ptr<CMeshData>>	m_vecFBX;
+	vector<CGameObject*>	m_vecGameObjet;
+
+	bool m_bLoad;
+
+private:
+	Ptr<CMeshData> FindMeshData( const wstring& strFBXName );
+
+public:
+	CEdit m_EditPosX;
+	CEdit m_EditPosY;
+	CEdit m_EditPosZ;
+	CEdit m_EditScaleX;
+	CEdit m_EditScaleY;
+	CEdit m_EditScaleZ;
+	CEdit m_EditRotX;
+	CEdit m_EditRotY;
+	CEdit m_EditRotZ;
+
+public:
+	void LoadFBX();
+	CButton m_btnFBXLoad;
+	afx_msg void OnBnClickedButtonFbxload();
 };
 
 
