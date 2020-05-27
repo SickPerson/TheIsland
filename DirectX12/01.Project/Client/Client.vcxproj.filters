@@ -37,6 +37,12 @@
     <Filter Include="ComponentScript\Animal">
       <UniqueIdentifier>{78bac853-deff-47d4-a63e-bd7aefb84239}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ComponentScript\Item">
+      <UniqueIdentifier>{bc4b39b9-eefc-477d-8a97-a69f67bee8fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Stuff">
+      <UniqueIdentifier>{e403b613-75c4-46c9-a95f-f4cbbb53e71a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -105,6 +111,12 @@
     <ClInclude Include="AnimalScript.h">
       <Filter>ComponentScript\Animal</Filter>
     </ClInclude>
+    <ClInclude Include="ItemScript.h">
+      <Filter>ComponentScript\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="StuffScript.h">
+      <Filter>ComponentScript\Item\Stuff</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -154,6 +166,12 @@
     </ClCompile>
     <ClCompile Include="AnimalScript.cpp">
       <Filter>ComponentScript\Animal</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemScript.cpp">
+      <Filter>ComponentScript\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="StuffScript.cpp">
+      <Filter>ComponentScript\Item\Stuff</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

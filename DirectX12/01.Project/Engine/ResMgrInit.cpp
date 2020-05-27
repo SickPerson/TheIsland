@@ -83,6 +83,21 @@ void CResMgr::CreateDefaultShader()
 
 	AddRes(L"UIShader", pShader);
 
+	// =================
+	// UI Shader
+	// =================
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Standard", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Standard", "ps_5_0");
+
+	// BlendState 설정
+	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+	pShader->Create(SHADER_POV::FORWARD);
+
+	pShader->AddShaderParam(tShaderParam{ L"Color", SHADER_PARAM::VEC4_0 });
+
+	AddRes(L"HighUIShader", pShader);
+
 	// ====================
 	// UI Icon Shader
 	// ====================
@@ -127,7 +142,7 @@ void CResMgr::CreateDefaultShader()
 	// pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
 
 	// DSState
-	pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE );
+	//pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE );
 
 	// Shader Parameter 알림
 	pShader->AddShaderParam( tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 } );
@@ -135,6 +150,24 @@ void CResMgr::CreateDefaultShader()
 	pShader->Create( SHADER_POV::FORWARD );
 
 	AddRes( L"TexShader", pShader );
+
+	// ==============
+	// Item Shader
+	// ==============
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Item", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Item", "ps_5_0");
+
+	// BlendState 설정
+	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+
+	// Shader Parameter 알림
+	pShader->AddShaderParam(tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 });
+	pShader->AddShaderParam(tShaderParam{ L"Count", SHADER_PARAM::INT_0 });
+
+	pShader->Create(SHADER_POV::FORWARD);
+
+	AddRes(L"ItemShader", pShader);
 
 	// =================
 	// Collider2D Shader
@@ -419,6 +452,11 @@ void CResMgr::CreateDefaultMaterial()
 
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();
+	pMtrl->SetShader(FindRes<CShader>(L"HighUIShader"));
+	AddRes(L"HighUIMtrl", pMtrl);
+
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"StrShader"));
 	AddRes(L"StrMtrl", pMtrl);
 
@@ -436,6 +474,11 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"TexShader"));
 	AddRes(L"TexMtrl", pMtrl);
+
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
+	pMtrl->SetShader(FindRes<CShader>(L"ItemShader"));
+	AddRes(L"ItemMtrl", pMtrl);
 
 	int a = 0;
 	pMtrl = new CMaterial;

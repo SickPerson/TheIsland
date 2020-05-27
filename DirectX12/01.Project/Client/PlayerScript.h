@@ -21,6 +21,10 @@ public:
 	virtual void Awake();	
 	virtual void Update();
 
+	virtual void OnCollision(CCollider2D* _pOther) override;
+	virtual void OnCollisionEnter(CCollider2D* _pOther) override;
+	virtual void OnCollisionExit(CCollider2D* _pOther) override;
+
 public:
 	CLONE(CPlayerScript);
 

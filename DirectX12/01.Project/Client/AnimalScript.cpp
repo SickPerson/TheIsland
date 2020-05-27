@@ -5,7 +5,7 @@
 #include <iostream>
 
 CAnimalScript::CAnimalScript()
-	: CScript((UINT)SCRIPT_TYPE::MONSTERSCRIPT)
+	: CScript((UINT)SCRIPT_TYPE::ANIMALSCRIPT)
 	, m_tStatus {
 		100.f, // HP
 		100.f, // Stamina

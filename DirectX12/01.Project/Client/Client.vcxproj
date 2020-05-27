@@ -169,6 +169,7 @@
     <ClInclude Include="IngameScene.h" />
     <ClInclude Include="InputScript.h" />
     <ClInclude Include="InventoryScript.h" />
+    <ClInclude Include="ItemScript.h" />
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="PlayerCamScript.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StatusScript.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StuffScript.h" />
     <ClInclude Include="SunshineScript.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -189,6 +191,7 @@
     <ClCompile Include="IngameScene.cpp" />
     <ClCompile Include="InputScript.cpp" />
     <ClCompile Include="InventoryScript.cpp" />
+    <ClCompile Include="ItemScript.cpp" />
     <ClCompile Include="LoginScene.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="PlayerCamScript.cpp" />
@@ -201,6 +204,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StuffScript.cpp" />
     <ClCompile Include="SunshineScript.cpp" />
   </ItemGroup>
   <ItemGroup>

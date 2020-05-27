@@ -158,6 +158,40 @@ void CPlayerScript::Update()
 	}
 }
 
+void CPlayerScript::OnCollision(CCollider2D * _pOther)
+{
+	if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->GetLayerIdx() != _pOther->GetObj()->GetLayerIdx())
+	{
+		Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
+
+		Vec3 vPos = Transform()->GetLocalPos();
+
+		Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
+		vDir.y = 0.f;
+
+		if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
+		{
+			vPos += vDir * m_fSpeed * DT * 5.f;
+		}
+		else
+		{
+			vPos += vDir * m_fSpeed * DT;
+		}
+
+		Vec3 vRot = _pOther->Transform()->GetLocalRot();
+
+		Transform()->SetLocalPos(vPos);
+	}
+}
+
+void CPlayerScript::OnCollisionEnter(CCollider2D * _pOther)
+{
+}
+
+void CPlayerScript::OnCollisionExit(CCollider2D * _pOther)
+{
+}
+
 void CPlayerScript::Damage(float fDamage)
 {
 	if (!m_bInvincible)
