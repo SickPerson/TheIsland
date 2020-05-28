@@ -6,10 +6,14 @@ class CItemScript;
 class CInventoryScript :
 	public CScript
 {
-	vector<CGameObject*> m_vItemSlot;
-	vector<CItemScript*> m_vItem;
+	vector<CGameObject*>	m_vItemSlot;
+	vector<CItemScript*>	m_vItem;
 
-	bool m_bActive;
+	bool					m_bActive;
+
+	bool					m_bClick;
+	int						m_iClickIdx;
+	CGameObject*			m_pClickObj;
 
 public:
 	CInventoryScript();

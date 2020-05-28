@@ -43,6 +43,9 @@
     <Filter Include="ComponentScript\Item\Stuff">
       <UniqueIdentifier>{e403b613-75c4-46c9-a95f-f4cbbb53e71a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ComponentScript\Item\Tool">
+      <UniqueIdentifier>{9b695f86-2f6d-4030-bc5f-b1d0fbd93d06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -117,6 +120,9 @@
     <ClInclude Include="StuffScript.h">
       <Filter>ComponentScript\Item\Stuff</Filter>
     </ClInclude>
+    <ClInclude Include="ToolItemScript.h">
+      <Filter>ComponentScript\Item\Tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -172,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="StuffScript.cpp">
       <Filter>ComponentScript\Item\Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolItemScript.cpp">
+      <Filter>ComponentScript\Item\Tool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

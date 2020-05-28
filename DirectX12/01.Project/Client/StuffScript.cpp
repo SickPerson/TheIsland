@@ -2,23 +2,53 @@
 #include "StuffScript.h"
 
 
-CStuffScript::CStuffScript(STUFF_TYPE eType)
-	: m_eStuff(eType)
+CStuffScript::CStuffScript(ITEM_TYPE eType, int iCount)
+	: CItemScript((UINT) eType)
 {
-	if (eType == STUFF_TYPE::STUFF_STONE)
+	if (eType == ITEM_TYPE::ITEM_STONE)
 	{
 		SetItemTex(
 			CResMgr::GetInst()->Load<CTexture>(L"Stone_Icon", L"Texture\\Item\\Tex_stone_08.png"), 
 			CResMgr::GetInst()->Load<CTexture>(L"Stone_Back_Icon", L"Texture\\Item\\Tex_stone_08_b.png")
 		);
 	}
-	else if (eType == STUFF_TYPE::STUFF_WOOD)
+	else if (eType == ITEM_TYPE::ITEM_WOOD)
 	{
 		SetItemTex(
 			CResMgr::GetInst()->Load<CTexture>(L"Wood_Icon", L"Texture\\Item\\Tex_wood_03.png"), 
 			CResMgr::GetInst()->Load<CTexture>(L"Wood_Back_Icon", L"Texture\\Item\\Tex_wood_03_b.png")
 		);
 	}
+	else if (eType == ITEM_TYPE::ITEM_WOODSTICK)
+	{
+		SetItemTex(
+			CResMgr::GetInst()->Load<CTexture>(L"WoodStick_Icon", L"Texture\\Item\\Tex_wood_01.png"),
+			CResMgr::GetInst()->Load<CTexture>(L"WoodStick_Back_Icon", L"Texture\\Item\\Tex_wood_01_b.png")
+		);
+	}
+	else if (eType == ITEM_TYPE::ITEM_LEATHER)
+	{
+		SetItemTex(
+			CResMgr::GetInst()->Load<CTexture>(L"Leather_Icon", L"Texture\\Item\\Tex_leather_07.png"),
+			CResMgr::GetInst()->Load<CTexture>(L"Leather_Back_Icon", L"Texture\\Item\\Tex_leather_07_b.png")
+		);
+	}
+	else if (eType == ITEM_TYPE::ITEM_BONE)
+	{
+		SetItemTex(
+			CResMgr::GetInst()->Load<CTexture>(L"Bone_Icon", L"Texture\\Item\\Tex_bone_07.png"),
+			CResMgr::GetInst()->Load<CTexture>(L"Bone_Back_Icon", L"Texture\\Item\\Tex_bone_07_b.png")
+		);
+	}
+	else
+	{
+		assert(NULL);
+	}
+
+	m_iMaxCount = STUFF_MAX_COUNT;
+	if (iCount > m_iMaxCount)
+		iCount = STUFF_MAX_COUNT;
+	m_iCount = iCount;
 }
 
 

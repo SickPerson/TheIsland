@@ -181,6 +181,7 @@
     <ClInclude Include="StuffScript.h" />
     <ClInclude Include="SunshineScript.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ToolItemScript.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimalScript.cpp" />
@@ -206,6 +207,7 @@
     </ClCompile>
     <ClCompile Include="StuffScript.cpp" />
     <ClCompile Include="SunshineScript.cpp" />
+    <ClCompile Include="ToolItemScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc" />

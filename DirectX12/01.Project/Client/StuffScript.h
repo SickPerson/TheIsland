@@ -1,19 +1,13 @@
 #pragma once
 #include "ItemScript.h"
 
-enum STUFF_TYPE {
-	STUFF_STONE,
-	STUFF_WOOD,
-	STUFF_END
-};
+#define STUFF_MAX_COUNT 100
 
 class CStuffScript :
 	public CItemScript
 {
-	STUFF_TYPE		m_eStuff;
-
 public:
-	CStuffScript(STUFF_TYPE eType);
+	CStuffScript(ITEM_TYPE eType, int iCount = 1);
 	virtual ~CStuffScript();
 
 public:
