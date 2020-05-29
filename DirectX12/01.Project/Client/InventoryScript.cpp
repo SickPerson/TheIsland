@@ -2,6 +2,7 @@
 #include "InventoryScript.h"
 
 #include "ItemScript.h"
+#include "ItemLootScript.h"
 
 #include <Engine/Font.h>
 
@@ -13,7 +14,8 @@ CInventoryScript::CInventoryScript() :
 	m_bActive(false),
 	m_bClick(false),
 	m_pClickObj(NULL),
-	m_iClickIdx(-1)
+	m_iClickIdx(-1),
+	m_pItemLootScript(NULL)
 {
 	m_vItemSlot.reserve(25);
 	m_vItem.reserve(25);
@@ -201,6 +203,31 @@ void CInventoryScript::AddSlot(CGameObject * pObject)
 
 void CInventoryScript::AddItem(CItemScript * pItem, int iCount)
 {
+	m_pItemLootScript->GetItemNotify(pItem->GetItemIcon(), pItem->GetName(), iCount);
+	AddItemFunc(pItem, iCount);
+}
+
+void CInventoryScript::SetItemLootScript(CItemLootScript * pScript)
+{
+	m_pItemLootScript = pScript;
+}
+
+void CInventoryScript::Show()
+{
+	if (m_bActive)
+	{
+		TransferLayer(29, true);
+		m_bActive = false;
+	}
+	else
+	{
+		TransferLayer(30, true);
+		m_bActive = true;
+	}
+}
+
+void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
+{
 	int iIdx = -1;
 	for (int i = 0; i < m_vItemSlot.size(); ++i)
 	{
@@ -292,19 +319,5 @@ void CInventoryScript::AddItem(CItemScript * pItem, int iCount)
 			AddItem(pItem->Clone(), iRemain);
 		}
 		return;
-	}
-}
-
-void CInventoryScript::Show()
-{
-	if (m_bActive)
-	{
-		TransferLayer(29, true);
-		m_bActive = false;
-	}
-	else
-	{
-		TransferLayer(30, true);
-		m_bActive = true;
 	}
 }

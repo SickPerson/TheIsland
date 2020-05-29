@@ -100,6 +100,11 @@ ITEM_TYPE CItemScript::GetItemType()
 	return m_eItemType;
 }
 
+Ptr<CTexture> CItemScript::GetItemIcon()
+{
+	return m_pIconTex;
+}
+
 bool CItemScript::Addable()
 {
 	if (m_iCount < m_iMaxCount)

@@ -2,6 +2,7 @@
 #include <Engine/Script.h>
 
 class CItemScript;
+class CItemLootScript;
 
 class CInventoryScript :
 	public CScript
@@ -14,6 +15,8 @@ class CInventoryScript :
 	bool					m_bClick;
 	int						m_iClickIdx;
 	CGameObject*			m_pClickObj;
+
+	CItemLootScript*		m_pItemLootScript;
 
 public:
 	CInventoryScript();
@@ -30,6 +33,10 @@ public:
 
 	bool GetInventoryActive() { return m_bActive; }
 	
+	void SetItemLootScript(CItemLootScript* pScript);
 	void Show();
+
+private:
+	void AddItemFunc(CItemScript* pItem, int iCount);
 };
 

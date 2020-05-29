@@ -69,6 +69,8 @@ public:
 	void SetItemType(ITEM_TYPE eType);
 	ITEM_TYPE GetItemType();
 
+	Ptr<CTexture> GetItemIcon();
+
 	bool Addable();
 };
 

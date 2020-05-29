@@ -78,7 +78,9 @@ void CPlayerScript::Update()
 			if (KEY_TAB(KEY_TYPE::KEY_LBTN))
 			{
 				POINT vPoint = CKeyMgr::GetInst()->GetMousePos();
+
 				tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+				//Vec2 vPoint = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
 
 				Matrix matProj = m_pMainCamera->GetProjMat();
 
@@ -101,19 +103,16 @@ void CPlayerScript::Update()
 					{
 						if (m_vCollisionObj[i]->GetName() == L"Tree")
 						{
-							std::cout << "나무 클릭" << std::endl;
 							CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
 							m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 						}
 						else if (m_vCollisionObj[i]->GetName() == L"Bear")
 						{
-							std::cout << "곰 클릭" << std::endl;
 							CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
 							m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 						}
 						else if (m_vCollisionObj[i]->GetName() == L"Deer")
 						{
-							std::cout << "사슴 클릭" << std::endl;
 							CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
 							m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 						}

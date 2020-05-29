@@ -155,7 +155,6 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 
 		Vec3 vRot = _pOther->Transform()->GetLocalRot();
 
-
 		Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
 		Transform()->SetLocalPos(vPos);
 

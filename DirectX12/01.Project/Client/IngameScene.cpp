@@ -33,6 +33,7 @@
 #include "SunshineScript.h"
 #include "PlayerScript.h"
 #include "FPSCamScript.h"
+#include "ItemLootScript.h"
 
 #include "InputScript.h"
 #include "ChatScript.h"
@@ -503,6 +504,7 @@ void CIngameScene::Init()
 	CreatePlayerStatusUI();
 	CreateInventoryUI();
 	CreateChatUI();
+	CreateItemUI();
 	CSceneMgr::GetInst()->CreateMRTUI();
 
 	// ====================
@@ -1127,6 +1129,68 @@ void CIngameScene::CreateInventoryUI()
 	m_pPlayer->GetScript<CPlayerScript>()->SetInventoryObject(m_pInventory);
 }
 
+void CIngameScene::CreateItemUI()
+{
+	CGameObject* pLootObject = new CGameObject;
+	pLootObject->SetName(L"Item Loot Object");
+	pLootObject->AddComponent(new CTransform);
+	pLootObject->AddComponent(new CItemLootScript);
+	pLootObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pLootObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Invisible")->AddGameObject(pLootObject);
+
+	CGameObject* pObject = new CGameObject;
+	pObject->SetName(L"Item Loot Background");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
+	pObject->MeshRender()->SetMaterial(pMtrl->Clone());
+
+	Vec4 vColor = Vec4(0.4f, 0.8f, 0.4f, 0.8f);
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
+
+	pObject->Transform()->SetLocalPos(Vec3(490.f, -210.f, 300.f));
+	pObject->Transform()->SetLocalScale(Vec3(250.f, 40.f, 1.f));
+
+	pLootObject->AddChild(pObject);
+	m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
+
+	pObject = new CGameObject;
+	pObject->SetName(L"Item Loot Icon");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ItemMtrl");
+	pObject->MeshRender()->SetMaterial(pMtrl->Clone());
+
+	pObject->Transform()->SetLocalPos(Vec3(385.f, -210.f, 250.f));
+	pObject->Transform()->SetLocalScale(Vec3(35.f, 35.f, 1.f));
+
+	pLootObject->AddChild(pObject);
+	pLootObject->GetScript<CItemLootScript>()->SetItemLootIcon(pObject->MeshRender()->GetSharedMaterial());
+	m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
+
+	pObject = new CGameObject;
+	pObject->SetName(L"Item Loot Icon");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CFont);
+
+	pObject->Transform()->SetLocalPos(Vec3(500.f, -210.f, 250.f));
+	pObject->Transform()->SetLocalScale(Vec3(180.f, 35.f, 1.f));
+
+	pObject->Font()->SetFontColor(Vec4(1.f, 1.f, 1.f, 1.f));
+	pObject->Font()->SetBackColor(Vec4(0.f, 0.f, 0.f, 0.f));
+
+	pLootObject->AddChild(pObject);
+	pLootObject->GetScript<CItemLootScript>()->SetItemLootFont(pObject->Font());
+	m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
+
+	m_pInventory->GetScript<CInventoryScript>()->SetItemLootScript(pLootObject->GetScript<CItemLootScript>());
+}
+
 void CIngameScene::CreateChatUI()
 {
 	m_pChat = new CGameObject;
@@ -1136,7 +1200,7 @@ void CIngameScene::CreateChatUI()
 	m_pChat->AddComponent(new CInputScript);
 	m_pChat->AddComponent(new CChatScript);
 	m_pChat->Transform()->SetLocalPos(Vec3(-480.f, -355.f, 500.f));
-	m_pChat->Transform()->SetLocalScale(Vec3(300.f, 40.f, 1000.f));
+	m_pChat->Transform()->SetLocalScale(Vec3(300.f, 40.f, 1.f));
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pChat);
 
 	m_pChat->Font()->SetString(" ");

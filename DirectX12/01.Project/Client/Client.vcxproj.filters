@@ -123,6 +123,9 @@
     <ClInclude Include="ToolItemScript.h">
       <Filter>ComponentScript\Item\Tool</Filter>
     </ClInclude>
+    <ClInclude Include="ItemLootScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -181,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="ToolItemScript.cpp">
       <Filter>ComponentScript\Item\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemLootScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
