@@ -60,12 +60,13 @@ public:
 	virtual void OnCollisionExit(CCollider2D* _pOther) override;
 
 public:
-	bool CollisionSphere(Vec3 vOffsetScale, CCollider2D* _pOther);
+	bool CollisionSphere(Vec3 vOffsetScale, CCollider2D* _pOther, float fOffset = 1.f);
 
 	void SetAnimalStatus(tAnimalStatus tStatus);
 	tAnimalStatus GetAnimalStatus();
 
 	void SetOffsetScale(Vec3 vScale);
+	Vec3 GetOffsetScale();
 
 	void SetBehaviorType(BEHAVIOR_TYPE eType);
 	void SetAnimalType(ANIMAL_TYPE eKind);

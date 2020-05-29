@@ -346,7 +346,7 @@ void CIngameScene::Init()
 		tStatus.eType = BEHAVIOR_TYPE::B_EVASION;
 		tStatus.eKind = ANIMAL_TYPE::A_DEER;
 
-		Vec3 vOffsetScale = Vec3(20.f, 20.f, 20.f);
+		Vec3 vOffsetScale = Vec3(30.f, 30.f, 30.f);
 
 		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
@@ -436,7 +436,7 @@ void CIngameScene::Init()
 	// Script ¼³Á¤
 	pPlayer->AddComponent(new CPlayerScript);
 	pPlayer->AddComponent(new CCollider2D);
-	pPlayer->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
+	pPlayer->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 	pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
 	pPlayer->SetName(L"Player Object");
@@ -466,6 +466,7 @@ void CIngameScene::Init()
 	pMainCam->Camera()->SetLayerCheck( 29, false );
 	pMainCam->GetScript<CFPSCamScript>()->SetPlayer(pPlayer);
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pMainCam );
+	m_pPlayer->GetScript<CPlayerScript>()->SetMainCamera(pMainCam->Camera());
 
 	// ====================
 	// Player Camera

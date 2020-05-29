@@ -159,7 +159,7 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
 		Transform()->SetLocalPos(vPos);
 
-		if (CollisionSphere(m_vOffsetScale, _pOther))
+		if (CollisionSphere(m_vOffsetScale, _pOther, 0.2f))
 		{
 			if (m_fAttackTime < 0.f)
 			{
@@ -213,7 +213,7 @@ void CAnimalScript::OnCollisionExit(CCollider2D * _pOther)
 	}
 }
 
-bool CAnimalScript::CollisionSphere(Vec3 vOffsetScale, CCollider2D* _pOther)
+bool CAnimalScript::CollisionSphere(Vec3 vOffsetScale, CCollider2D* _pOther, float fOffset)
 {
 	const Matrix& matCol1 = Collider2D()->GetColliderWorldMat();
 	const Matrix& matCol2 = _pOther->GetColliderWorldMat();
@@ -225,7 +225,7 @@ bool CAnimalScript::CollisionSphere(Vec3 vOffsetScale, CCollider2D* _pOther)
 	Vec3 vScale2 = _pOther->Transform()->GetLocalScale();
 
 	Vec3 vColScale1 = vOffsetScale;
-	Vec3 vColScale2 = _pOther->Collider2D()->GetOffsetScale();
+	Vec3 vColScale2 = _pOther->Collider2D()->GetOffsetScale() * fOffset;
 
 	float fDist = pow(vCol2.x - vCol1.x, 2) + pow(vCol2.y - vCol1.y, 2) + pow(vCol2.z - vCol1.z, 2);
 	fDist = sqrt(fDist);
@@ -249,6 +249,11 @@ tAnimalStatus CAnimalScript::GetAnimalStatus()
 void CAnimalScript::SetOffsetScale(Vec3 vScale)
 {
 	m_vOffsetScale = vScale;
+}
+
+Vec3 CAnimalScript::GetOffsetScale()
+{
+	return m_vOffsetScale;
 }
 
 void CAnimalScript::SetBehaviorType(BEHAVIOR_TYPE eType)
