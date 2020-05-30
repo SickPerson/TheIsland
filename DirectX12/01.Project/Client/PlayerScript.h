@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Script.h>
 
+#define PLAYER_ATTACK_COOLTIME 0.6f
+
 class CCamera;
 
 class CPlayerScript :
@@ -9,6 +11,9 @@ class CPlayerScript :
 private:
 	float		m_fSpeed;
 	float		m_fScaleSpeed;
+	float		m_fDamage;
+
+	float		m_fAttackCoolTime;
 
 	CGameObject* m_pChat;
 	CGameObject* m_pInventory;
@@ -20,7 +25,7 @@ private:
 
 	bool		m_bEnable;
 
-	bool m_bInvincible;
+	bool		m_bInvincible;
 	
 public:
 	virtual void Awake();	
@@ -50,5 +55,6 @@ public:
 	bool GetEnable();
 
 	void Damage(float fDamage);
+	void PlayerPicking();
 };
 

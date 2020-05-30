@@ -47,6 +47,14 @@ class CAnimalScript :
 	float			m_fAttackCoolTime;
 	float			m_fAttackTime;
 
+	bool			m_bIdleBehavior;
+	float			m_fIdleBehaviorTime;
+
+	bool			m_bAnimalDead;
+	float			m_fLivingTime;
+
+	CGameObject*	m_pParticleObj;
+	float			m_fParticleTime;
 public:
 	CAnimalScript();
 	virtual ~CAnimalScript();
@@ -72,5 +80,8 @@ public:
 	void SetAnimalType(ANIMAL_TYPE eKind);
 
 	void SetAttackCoolTime(float fTime);
+
+	void Damage(CGameObject* _pOther, float fDamage);
+	bool GetAnimalDead();
 };
 

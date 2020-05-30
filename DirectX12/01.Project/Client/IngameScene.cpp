@@ -399,6 +399,72 @@ void CIngameScene::Init()
 
 	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
 	// ====================================================================
+	// ====================================================================
+	pTestObject = pBoarTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CAnimalScript);
+
+	{
+		tAnimalStatus tStatus;
+		tStatus.fHp = 200.f;
+		tStatus.fStamina = 100.f;
+		tStatus.fDamage = 20.f;
+		tStatus.fSpeed = 150.f;
+		tStatus.fBehaviorTime = 4.f;
+		tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
+		tStatus.eKind = ANIMAL_TYPE::A_BOAR;
+
+		Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
+
+		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
+		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
+	}
+
+	pTestObject->SetName(L"Boar");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
+
+	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
+	// ====================================================================
+	// ====================================================================
+	pTestObject = pWolfTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CAnimalScript);
+
+	{
+		tAnimalStatus tStatus;
+		tStatus.fHp = 200.f;
+		tStatus.fStamina = 100.f;
+		tStatus.fDamage = 20.f;
+		tStatus.fSpeed = 200.f;
+		tStatus.fBehaviorTime = 4.f;
+		tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
+		tStatus.eKind = ANIMAL_TYPE::A_WOLF;
+
+		Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
+
+		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
+		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
+	}
+
+	pTestObject->SetName(L"Wolf");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-0.f, 20.f, 4000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
+
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
+
+	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
+	// ====================================================================
 
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>( L"TestTex", L"Texture\\Health.png" );
 	Ptr<CTexture> pExplosionTex = CResMgr::GetInst()->Load<CTexture>( L"Explosion", L"Texture\\Explosion\\Explosion80.png" );
@@ -653,15 +719,15 @@ void CIngameScene::Init()
 	// ====================
 	// Particle Object 생성
 	// ====================
-	pObject = new CGameObject;
-	pObject->SetName(L"Particle");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CParticleSystem);
+	//pObject = new CGameObject;
+	//pObject->SetName(L"Particle");
+	//pObject->AddComponent(new CTransform);
+	//pObject->AddComponent(new CParticleSystem);
 
-	pObject->FrustumCheck(false);
-	pObject->Transform()->SetLocalPos(Vec3(-300.f, 50.f, 300.f));
+	//pObject->FrustumCheck(false);
+	//pObject->Transform()->SetLocalPos(Vec3(-300.f, 50.f, 300.f));
 
-	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
+	//m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
 
 	// =============
 	// FBX 파일 로드

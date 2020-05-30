@@ -19,6 +19,7 @@
 CPlayerScript::CPlayerScript()
 	: CScript((UINT)SCRIPT_TYPE::PLAYERSCRIPT)
 	, m_fSpeed(200.f)
+	, m_fDamage(30.f)
 	, m_fScaleSpeed(1.f)
 	, m_bEnable(true)
 	, m_pChat(NULL)
@@ -26,6 +27,7 @@ CPlayerScript::CPlayerScript()
 	, m_pStatus(NULL)
 	, m_bInvincible(false)
 	, m_pMainCamera(NULL)
+	, m_fAttackCoolTime(PLAYER_ATTACK_COOLTIME)
 {
 	m_vCollisionObj.reserve(5);
 }
@@ -70,6 +72,10 @@ void CPlayerScript::Update()
 	Vec3 vPos = Transform()->GetLocalPos();
 	float fSpeed = m_fSpeed;
 
+	if(m_fAttackCoolTime > -1.f)
+		m_fAttackCoolTime -= DT;
+	
+
 	if (m_pChat && m_pInventory)
 	{
 		// 채팅창도 꺼져있고 인벤토리도 꺼져있는 경우
@@ -77,47 +83,7 @@ void CPlayerScript::Update()
 		{
 			if (KEY_TAB(KEY_TYPE::KEY_LBTN))
 			{
-				POINT vPoint = CKeyMgr::GetInst()->GetMousePos();
-
-				tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
-				//Vec2 vPoint = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
-
-				Matrix matProj = m_pMainCamera->GetProjMat();
-
-				Vec3 vDirRay, vPosRay;
-				vDirRay.x = ((2.0f * (float)vPoint.x) / vResolution.fWidth - 1.f) / matProj._11;
-				vDirRay.y = ((-2.0f * (float)vPoint.y) / vResolution.fHeight + 1.f) / matProj._22;
-				vDirRay.z = 1.f;
-
-				Matrix matView = m_pMainCamera->GetViewMat();
-				Matrix matViewInv = m_pMainCamera->GetViewMatInv();
-
-				vPosRay = XMVector3TransformCoord(vPosRay, matViewInv);
-				vDirRay = XMVector3TransformNormal(vDirRay, matViewInv);
-				vDirRay = XMVector3Normalize(vDirRay);
-
-				// 충돌반경 안에있는 물체들과 피킹을 수행
-				for (int i = 0; i < m_vCollisionObj.size(); ++i)
-				{
-					if (CollisionRay(vPosRay, vDirRay, m_vCollisionObj[i]->Collider2D()))
-					{
-						if (m_vCollisionObj[i]->GetName() == L"Tree")
-						{
-							CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-							m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
-						}
-						else if (m_vCollisionObj[i]->GetName() == L"Bear")
-						{
-							CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
-							m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
-						}
-						else if (m_vCollisionObj[i]->GetName() == L"Deer")
-						{
-							CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
-							m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
-						}
-					}
-				}
+				PlayerPicking();
 			}
 			if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
 			{
@@ -300,6 +266,95 @@ void CPlayerScript::Damage(float fDamage)
 	if (!m_bInvincible)
 	{
 		m_pStatus->GetScript<CStatusScript>()->Damage(fDamage);
+	}
+}
+
+void CPlayerScript::PlayerPicking()
+{
+	if (m_fAttackCoolTime > 0.f)
+		return;
+	else
+	{
+		m_fAttackCoolTime = PLAYER_ATTACK_COOLTIME;
+	}
+	POINT vPoint = CKeyMgr::GetInst()->GetMousePos();
+
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	//Vec2 vPoint = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
+
+	Matrix matProj = m_pMainCamera->GetProjMat();
+
+	Vec3 vDirRay, vPosRay;
+	vDirRay.x = ((2.0f * (float)vPoint.x) / vResolution.fWidth - 1.f) / matProj._11;
+	vDirRay.y = ((-2.0f * (float)vPoint.y) / vResolution.fHeight + 1.f) / matProj._22;
+	vDirRay.z = 1.f;
+
+	Matrix matView = m_pMainCamera->GetViewMat();
+	Matrix matViewInv = m_pMainCamera->GetViewMatInv();
+
+	vPosRay = XMVector3TransformCoord(vPosRay, matViewInv);
+	vDirRay = XMVector3TransformNormal(vDirRay, matViewInv);
+	vDirRay = XMVector3Normalize(vDirRay);
+
+	// 충돌반경 안에있는 물체들과 피킹을 수행
+	for (int i = 0; i < m_vCollisionObj.size(); ++i)
+	{
+		if (CollisionRay(vPosRay, vDirRay, m_vCollisionObj[i]->Collider2D()))
+		{
+			if (m_vCollisionObj[i]->GetName() == L"Tree")
+			{
+				CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
+				m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
+			}
+			else if (m_vCollisionObj[i]->GetName() == L"Bear")
+			{
+				if (!m_vCollisionObj[i]->GetScript<CAnimalScript>()->GetAnimalDead())
+				{
+					m_vCollisionObj[i]->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
+				}
+				else
+				{
+					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
+					m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
+				}
+			}
+			else if (m_vCollisionObj[i]->GetName() == L"Boar")
+			{
+				if (!m_vCollisionObj[i]->GetScript<CAnimalScript>()->GetAnimalDead())
+				{
+					m_vCollisionObj[i]->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
+				}
+				else
+				{
+					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
+					m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
+				}
+			}
+			else if (m_vCollisionObj[i]->GetName() == L"Wolf")
+			{
+				if (!m_vCollisionObj[i]->GetScript<CAnimalScript>()->GetAnimalDead())
+				{
+					m_vCollisionObj[i]->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
+				}
+				else
+				{
+					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
+					m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
+				}
+			}
+			else if (m_vCollisionObj[i]->GetName() == L"Deer")
+			{
+				if (!m_vCollisionObj[i]->GetScript<CAnimalScript>()->GetAnimalDead())
+				{
+					m_vCollisionObj[i]->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
+				}
+				else
+				{
+					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
+					m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
+				}
+			}
+		}
 	}
 }
 
