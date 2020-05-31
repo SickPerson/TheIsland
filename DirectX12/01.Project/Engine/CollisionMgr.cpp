@@ -6,6 +6,7 @@
 #include "Layer.h"
 #include "GameObject.h"
 #include "Collider2D.h"
+#include "Transform.h"
 
 #include <iostream>
 
@@ -454,13 +455,16 @@ bool CCollisionMgr::CollisionSphere(CCollider2D* _pCollider1, CCollider2D* _pCol
 	Vec3 vCol1 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol1);
 	Vec3 vCol2 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol2);
 
-	Vec3 vScale1 = Vec3(matCol1._11, matCol1._22, matCol1._33);
-	Vec3 vScale2 = Vec3(matCol2._11, matCol2._22, matCol2._33);
+	Vec3 vScale1 = _pCollider1->Transform()->GetLocalScale();
+	Vec3 vScale2 = _pCollider2->Transform()->GetLocalScale();
+
+	Vec3 vColScale1 = _pCollider1->Collider2D()->GetOffsetScale();
+	Vec3 vColScale2 = _pCollider2->Collider2D()->GetOffsetScale();
 
 	float fDist = pow(vCol2.x - vCol1.x, 2) + pow(vCol2.y - vCol1.y, 2) + pow(vCol2.z - vCol1.z, 2);
 	fDist = sqrt(fDist);
 
-	if (fDist > fabs(vScale1.x) + fabs(vScale2.x))
+	if (fDist > fabs(vScale1.x * vColScale1.x) + fabs(vScale2.x * vColScale2.x))
 		return false;
 
 	return true;

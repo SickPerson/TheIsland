@@ -52,10 +52,18 @@ VS_STD3D_OUTPUT VS_Std3D(VS_STD3D_INPUT _in)
     output.vPosition = mul(float4(_in.vPos, 1.f), g_matWVP);
     
     output.vViewPos = mul(float4(_in.vPos, 1.f), g_matWV).xyz;
+
     output.vViewTangent = normalize(mul(float4(_in.vTangent, 0.f), g_matWV).xyz);
     output.vViewNormal = normalize(mul(float4(_in.vNormal, 0.f), g_matWV).xyz);
     output.vViewBinormal = normalize(mul(float4(_in.vBinormal, 0.f), g_matWV).xyz);
-    output.vUV = _in.vUV;
+
+
+	// (0, 0), (1, 0)  ===  (0, 1), (1, 1)
+	// (0, 1), (1, 1)  ===  (0, 0), (1, 0)
+
+    //output.vUV = float2(_in.vUV.x, _in.vUV.y);
+
+	output.vUV = _in.vUV;
     
     return output;
 }
@@ -75,8 +83,12 @@ PS_STD3D_OUTPUT PS_Std3D(VS_STD3D_OUTPUT _in)
         output.vTarget0 = g_tex_0.Sample(g_sam_0, _in.vUV);
     else
         output.vTarget0 = float4(1.f, 0.f, 1.f, 1.f);
-        
+
     float3 vViewNormal = _in.vViewNormal;
+
+	//if (output.vTarget0.w < 0.01f)
+	//	clip(-1);
+
     // 노말맵이 있는경우
     if (tex_1)
     {
@@ -90,6 +102,35 @@ PS_STD3D_OUTPUT PS_Std3D(VS_STD3D_OUTPUT _in)
     output.vTarget2.xyz = _in.vViewPos;
     
     return output;
+}
+
+PS_STD3D_OUTPUT PS_Std3D_Tree(VS_STD3D_OUTPUT _in)
+{
+	PS_STD3D_OUTPUT output = (PS_STD3D_OUTPUT) 0.f;
+
+	if (tex_0)
+		output.vTarget0 = g_tex_0.Sample(g_sam_0, _in.vUV);
+	else
+		output.vTarget0 = float4(1.f, 0.f, 1.f, 1.f);
+
+	if (output.vTarget0.w < 0.5f)
+		clip(-1);
+
+	float3 vViewNormal = _in.vViewNormal;
+
+	// 노말맵이 있는경우
+	if (tex_1)
+	{
+		float3 vTSNormal = g_tex_1.Sample(g_sam_0, _in.vUV).xyz;
+		vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
+		float3x3 matTBN = { _in.vViewTangent, _in.vViewBinormal, _in.vViewNormal };
+		vViewNormal = normalize(mul(vTSNormal, matTBN));
+	}
+
+	output.vTarget1.xyz = vViewNormal;
+	output.vTarget2.xyz = _in.vViewPos;
+
+	return output;
 }
 
 

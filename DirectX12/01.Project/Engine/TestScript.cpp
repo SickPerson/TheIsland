@@ -2,7 +2,7 @@
 #include "TestScript.h"
 
 CTestScript::CTestScript()
-	: CScript((UINT)SCRIPT_TYPE::TESTSCRIPT)
+	: CScript((UINT)SCRIPT_TYPE::PLAYERSCRIPT)
 	, m_iLifeCount(2),
 	m_pTestObject(nullptr)
 {

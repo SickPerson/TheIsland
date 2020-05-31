@@ -3,7 +3,7 @@
 
 
 CBulletScript::CBulletScript()	
-	: CScript((UINT)SCRIPT_TYPE::BULLETSCRIPT)
+	: CScript((UINT)SCRIPT_TYPE::PLAYERSCRIPT)
 {
 }
 

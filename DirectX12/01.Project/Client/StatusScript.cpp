@@ -15,11 +15,12 @@ CStatusScript::~CStatusScript()
 
 void CStatusScript::Update()
 {
+	if (m_fHealth <= 0.f)
+		m_fHealth = 100.f;
+
 	if (KEY_HOLD(KEY_TYPE::KEY_SPACE))
 	{
 		m_fHealth -= 20.f * DT;
-		if (m_fHealth < 0.f)
-			m_fHealth = 100.f;
 	}
 	/*m_fHealth -= 10 * DT;
 	if (m_fHealth < 0.f)
@@ -44,4 +45,9 @@ void CStatusScript::Update()
 
 	float health = 1.f - (m_fHealth / 100.f);
 	vecObj[3]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &health);
+}
+
+void CStatusScript::Damage(float fDamage)
+{
+	m_fHealth -= fDamage;
 }
