@@ -61,6 +61,8 @@ void CLoginScene::Init()
 	pObject->Camera()->SetProjType( PROJ_TYPE::ORTHGRAPHIC ); // 직교 투영
 	pObject->Camera()->SetFar( 10000.f );
 	pObject->Camera()->SetLayerCheck( 30, true );
+	pObject->Camera()->SetWidth(CRenderMgr::GetInst()->GetResolution().fWidth);
+	pObject->Camera()->SetHeight(CRenderMgr::GetInst()->GetResolution().fHeight);
 
 	m_pScene->GetLayer( 0 )->AddGameObject( pObject );
 
@@ -172,13 +174,15 @@ void CLoginScene::CreateLoginWorld()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CLight3D);
 
-	pObject->Light3D()->SetLightPos(Vec3(0.f, 500.f, 0.f));
+	pObject->Light3D()->SetLightPos(Vec3(-500.f, 1000.f, 6000.f));
 	pObject->Light3D()->SetLightType(LIGHT_TYPE::DIR);
 	pObject->Light3D()->SetDiffuseColor(Vec3(1.f, 1.f, 1.f));
 	pObject->Light3D()->SetSpecular(Vec3(0.7f, 0.7f, 0.7f));
 	pObject->Light3D()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
 	pObject->Light3D()->SetLightDir(Vec3(0.5f, -1.f, 0.f));
 	pObject->Light3D()->SetLightRange(1000.f);
+
+	pObject->Transform()->SetLocalPos(Vec3(-500.f, 1000.f, 6000.f));
 
 	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
 
@@ -188,6 +192,8 @@ void CLoginScene::CreateLoginWorld()
 	// Skybox 오브젝트 생성
 	// ====================
 	Ptr<CTexture> pSky01 = CResMgr::GetInst()->Load<CTexture>(L"Sky01", L"Texture\\Skybox\\Sky01.png");
+	Ptr<CMaterial> pPM = CResMgr::GetInst()->FindRes<CMaterial>(L"MergeLightMtrl");
+	pPM->SetData(SHADER_PARAM::TEX_3, pSky01.GetPointer());
 
 	pObject = new CGameObject;
 	pObject->SetName(L"SkyBox");
@@ -242,12 +248,14 @@ void CLoginScene::CreateLoginWorld()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
+
 	// Material 값 셋팅
 	pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl")->Clone();
 	pObject->MeshRender()->SetMaterial(pMtrl);
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"SphereMesh"));
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+	pObject->MeshRender()->SetDynamicShadow(true);
 
 	pObject->Transform()->SetLocalPos(Vec3(0.f, -250.f, 6000.f));
 	pObject->Transform()->SetLocalScale(Vec3(3000.f, 500.f, 1500.f));
@@ -287,6 +295,8 @@ void CLoginScene::CreateLoginWorld()
 		pTestObject->Transform()->SetLocalPos(vPos);
 		pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
 		pTestObject->Transform()->SetLocalScale(Vec3(fScale, fScale, fScale));
+		pTestObject->FrustumCheck(false);
+		pTestObject->MeshRender()->SetDynamicShadow(true);
 
 		m_pScene->FindLayer(L"Default")->AddGameObject(pTestObject);
 

@@ -96,9 +96,6 @@ int CDevice::Init( HWND _hWnd, const tResolution & _res, bool _bWindow )
 	// SwapChain 만들기
 	CreateSwapChain();
 
-	// ViewPort 만들기
-	CreateViewPort();
-
 	// RootSignature 만들기
 	CreateRootSignature();
 
@@ -117,9 +114,6 @@ void CDevice::Render_Start( float( &_arrFloat )[4] )
 	// 필요한 상태 설정	
 	// RootSignature 설정	
 	CMDLIST->SetGraphicsRootSignature( CDevice::GetInst()->GetRootSignature( ROOT_SIG_TYPE::RENDER ).Get() );
-
-	m_pCmdListGraphic->RSSetViewports( 1, &m_tVP );
-	m_pCmdListGraphic->RSSetScissorRects( 1, &m_tScissorRect );
 
 	CMRT* pSwapchainMRT = CRenderMgr::GetInst()->GetMRT( MRT_TYPE::SWAPCHAIN );
 
@@ -360,12 +354,6 @@ void CDevice::CreateSwapChain()
 	tDesc.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_DISCARD; // 전면 후면 버퍼 교체 시 이전 프레임 정보 버림
 
 	HRESULT hr = m_pFactory->CreateSwapChain( m_pCmdQueue.Get(), &tDesc, &m_pSwapChain );
-}
-void CDevice::CreateViewPort()
-{
-	// DirectX 로 그려질 화면 크기를 설정한다.
-	m_tVP = D3D12_VIEWPORT{ 0.f, 0.f, m_tResolution.fWidth, m_tResolution.fHeight, 0.f, 1.f };
-	m_tScissorRect = D3D12_RECT{ 0, 0, ( LONG )m_tResolution.fWidth, ( LONG )m_tResolution.fHeight };
 }
 
 void CDevice::CreateRootSignature()

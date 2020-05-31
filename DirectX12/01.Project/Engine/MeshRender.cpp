@@ -8,6 +8,7 @@
 
 CMeshRender::CMeshRender()
 	: CComponent(COMPONENT_TYPE::MESHRender)
+	, m_bDynamicShadow(false)
 {
 	m_vecMtrl.resize( 1 );
 }
@@ -40,6 +41,32 @@ void CMeshRender::Render()
 		//std::cout << GetObj()->GetName().c_str() << std::endl;
 		m_vecMtrl[i]->UpdateData();
 		m_pMesh->Render((UINT)i);
+	}
+}
+
+void CMeshRender::Render_Shadowmap()
+{
+	int a = 1;
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ShadowMapMtrl");
+
+	for (UINT i = 0; i < m_pMesh->GetSubsetCount(); ++i)
+	{
+		if (Animator3D())
+		{
+			Animator3D()->UpdateData();
+			pMtrl->SetData(SHADER_PARAM::INT_0, &a); // Animation Mesh 알리기
+		}
+
+		Transform()->UpdateData();
+		pMtrl->UpdateData();
+		m_pMesh->Render(i);
+	}
+
+	// 정리
+	if (Animator3D())
+	{
+		a = 0;
+		pMtrl->SetData(SHADER_PARAM::INT_0, &a);
 	}
 }
 

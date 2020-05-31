@@ -333,6 +333,18 @@ void CResMgr::CreateDefaultShader()
 	pShader->Create( SHADER_POV::LIGHTING );
 	AddRes( L"MergeLightShader", pShader );
 
+	// =================
+	// ShadowMap Shader
+	// =================
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\light.fx", "VS_ShadowMap", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\light.fx", "PS_ShadowMap", "ps_5_0");
+	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::LESS);
+
+	pShader->Create(SHADER_POV::SHADOWMAP);
+
+	AddRes(L"ShadowMapShader", pShader);
+
 	//=======================
 	// Test Compute Shader
 	// int 1 °³ ÇÊ¿ä
@@ -634,6 +646,11 @@ void CResMgr::CreateDefaultMaterial()
 		AddRes(L"AdvancedWaterMtrl", pMtrl);
 	}
 
+	// ShadowMap Material
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
+	pMtrl->SetShader(FindRes<CShader>(L"ShadowMapShader"));
+	AddRes(L"ShadowMapMtrl", pMtrl);
 
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();

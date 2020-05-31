@@ -33,6 +33,8 @@ private:
 
 	float		m_fFOV;  // 원근 투영 시, 시야각
 	float		m_fScale; // 직교투영 시, 투영 범위
+	float		m_fWidth;	// 투영 해상도
+	float		m_fHeight;	// 투영 해상도
 	   
 	Matrix		m_matView;		// 뷰행렬
 	Matrix		m_matViewInv;	// 뷰역행렬
@@ -48,13 +50,21 @@ private:
 	vector<CGameObject*>			m_vecPostEffect;
 	vector<CGameObject*>			m_vecFont;
 
+	vector<CGameObject*>	m_vecShadowObj;
+
+	bool		m_bModule;
+
 	CAM_TYPE	m_eCamType;	// 일반 카메라인지 플레이어만 보는 특수한 카메라인지
 public:	
 	virtual void FinalUpdate();
+
 	void SortGameObject();
+	void SortShadowObject();
+
 	void Render_Deferred();
 	void Render_Forward();
 	void Render_PostEffect();
+	void Render_Shadowmap();
 	void Render();
 
 public:
@@ -64,6 +74,8 @@ public:
 	void SetFar(float _far) { m_fFar = _far; Changed();}
 	void SetScale(float _fScale) { m_fScale = _fScale; if (m_fScale < 0.01f) m_fScale = 0.01f; Changed(); }
 	void SetFOV(float _fAngle) { m_fFOV = _fAngle; Changed();}
+	void SetWidth(float _fWidth) { m_fWidth = _fWidth; }
+	void SetHeight(float _fHeight) { m_fHeight = _fHeight; }
 
 	float GetFar() { return m_fFar; }
 	float GetScale() { return m_fScale; }
@@ -80,6 +92,7 @@ public:
 	void SetLayerAllCheck(){m_iLayerCheck = 0xffffffff;}
 	void SetLayerAllRelease() { m_iLayerCheck = 0; }
 
+	void SetModule(bool _bModule) { m_bModule = _bModule; }
 
 	const Matrix& GetViewMat() { return m_matView; }
 	const Matrix& GetViewMatInv() { return m_matViewInv; }

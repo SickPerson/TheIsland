@@ -60,6 +60,9 @@ void CRenderMgr::Render()
 	m_vecCam[0]->Render_Deferred();
 	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->TargetToResBarrier();
 
+	// Shadowmap 만들기
+	Render_Shadowmap();
+
 	// Render Light
 	Render_Lights();
 
@@ -113,22 +116,48 @@ void CRenderMgr::Render_tool()
 	UpdateLight3D();
 }
 
+void CRenderMgr::Render_Shadowmap()
+{
+	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::SHADOWMAP)->Clear();
+	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::SHADOWMAP)->OMSet();
+
+	// 광원 시점으로 깊이를 그림
+	for (UINT i = 0; i < m_vecLight3D.size(); ++i)
+	{
+		if (m_vecLight3D[i]->GetLight3DInfo().iLightType != (UINT)LIGHT_TYPE::DIR)
+			continue;
+
+		m_vecLight3D[i]->Render_Shadowmap();
+	}
+
+	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::SHADOWMAP)->TargetToResBarrier();
+}
+
 void CRenderMgr::Render_Lights()
 {
-	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->OMSet();
+	m_arrMRT[(UINT)MRT_TYPE::LIGHT]->OMSet();
 
 	// 광원을 그린다.
-	for ( UINT i = 0; i < m_vecLight3D.size(); ++i )
+	CCamera* pMainCam = CRenderMgr::GetInst()->GetMainCam();
+	if (nullptr == pMainCam)
+		return;
+
+	// 메인 카메라 시점 기준 View, Proj 행렬로 되돌린다.
+	g_transform.matView = pMainCam->GetViewMat();
+	g_transform.matProj = pMainCam->GetProjMat();
+	g_transform.matViewInv = pMainCam->GetViewMatInv();
+
+	for (size_t i = 0; i < m_vecLight3D.size(); ++i)
 	{
 		m_vecLight3D[i]->Light3D()->Render();
 	}
 
 	m_vecLight3D.clear();
-	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->TargetToResBarrier();
+	m_arrMRT[(UINT)MRT_TYPE::LIGHT]->TargetToResBarrier();
 
 	// SwapChain MRT 셋팅
 	UINT iIdx = CDevice::GetInst()->GetSwapchainIdx();
-	m_arrMRT[( UINT )MRT_TYPE::SWAPCHAIN]->OMSet( 1, iIdx );
+	m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
 }
 
 void CRenderMgr::Merge_Light()
@@ -168,6 +197,18 @@ void CRenderMgr::UpdateLight3D()
 	CDevice::GetInst()->SetConstBufferToRegister(pLight3DBuffer, iOffsetPos);
 	
 	//m_vecLight3D.clear();
+}
+
+CCamera * CRenderMgr::GetMainCam()
+{
+	/*if (CCore::GetInst()->GetSceneMod() == SCENE_MOD::SCENE_PLAY)
+	{
+		if (!m_vecCam.empty())
+			return m_vecCam[0];
+		return nullptr;
+	}*/
+
+	return  m_vecCam[0];
 }
 
 void CRenderMgr::RegisterLight2D( const tLight2D & _Light2D )
