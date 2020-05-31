@@ -23,6 +23,7 @@ public:
 	void CreateQuickSlotUI(CGameObject* _pInventory);
 	void CreatePlayerStatusUI();
 	void CreateInventoryUI();
+	void CreateItemUI();
 	void CreateChatUI();
 };
 

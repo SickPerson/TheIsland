@@ -67,15 +67,20 @@ void CLoginScene::Init()
 	CreateInputID();
 	CreateInputIP();
 
+	Ptr<CTexture> pTitle = CResMgr::GetInst()->Load<CTexture>(L"Title", L"Texture\\Title1.png");
 	pObject = new CGameObject;
-	pObject->SetName(L"Help Message");
+	pObject->SetName(L"Title Image");
 	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CConstStringScript);
+	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(-330.f, 280.f, 1.f));
-	pObject->Transform()->SetLocalScale(Vec3(62.f, 108.f, 1.f));
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 270.f, 1.f));
+	pObject->Transform()->SetLocalScale(Vec3(800.f, 260.f, 1.f));
 
-	pObject->GetScript<CConstStringScript>()->Init("THE ISLAND", m_vFontColor, m_vFontBackColor);
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"IconMtrl"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pTitle.GetPointer());
+	float fa = 1.f;
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fa);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 
@@ -84,7 +89,7 @@ void CLoginScene::Init()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CConstStringScript);
 
-	pObject->Transform()->SetLocalPos(Vec3(150.f, 200.f, 1.f));
+	pObject->Transform()->SetLocalPos(Vec3(280.f, 220.f, 1.f));
 	pObject->Transform()->SetLocalScale(Vec3(25.f, 40, 1.f));
 
 	pObject->GetScript<CConstStringScript>()->Init("DEMO", m_vFontColor, m_vFontBackColor);
@@ -259,6 +264,9 @@ void CLoginScene::CreateLoginWorld()
 	for (int i = 0; i < 30; ++i)
 	{
 		int type = rand() % 3;
+		Vec3 vPos = Vec3((float)(rand() % 4000 - 2000), 20.f, 5500.f + (float)(rand() % 1500 - 750));
+		float fScale = (float)(rand() % 10 + 30);
+
 		if (type == 0)
 		{
 			pTestObject = pTreeATex->Instantiate();
@@ -275,10 +283,33 @@ void CLoginScene::CreateLoginWorld()
 			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
 		}
 
-		float fScale = (float)(rand() % 10 + 30);
 		pTestObject->SetName(L"Tree");
-		pTestObject->Transform()->SetLocalPos(Vec3((float)(rand() % 4000 - 2000), 20.f, 5500.f + (float)(rand() % 1500 - 750)));
+		pTestObject->Transform()->SetLocalPos(vPos);
 		pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+		pTestObject->Transform()->SetLocalScale(Vec3(fScale, fScale, fScale));
+
+		m_pScene->FindLayer(L"Default")->AddGameObject(pTestObject);
+
+		// 반사 나무
+		if (type == 0)
+		{
+			pTestObject = pTreeATex->Instantiate();
+			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
+		}
+		else if (type == 1)
+		{
+			pTestObject = pTreeBTex->Instantiate();
+			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 1);
+		}
+		else
+		{
+			pTestObject = pTreeCTex->Instantiate();
+			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
+		}
+
+		pTestObject->SetName(L"Tree");
+		pTestObject->Transform()->SetLocalPos(Vec3(vPos.x, -vPos.y, vPos.z));
+		pTestObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, XM_PI, 0.f));
 		pTestObject->Transform()->SetLocalScale(Vec3(fScale, fScale, fScale));
 
 		m_pScene->FindLayer(L"Default")->AddGameObject(pTestObject);

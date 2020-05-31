@@ -6,7 +6,7 @@
 #include <Engine/Camera.h>
 
 CFPSCamScript::CFPSCamScript()
-	: CScript(0)
+	: CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT)
 	, m_fSpeed(200.f)
 	, m_fScaleSpeed(1.f)
 	, m_pPlayer(NULL)

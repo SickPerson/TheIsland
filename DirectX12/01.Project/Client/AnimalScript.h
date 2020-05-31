@@ -47,6 +47,14 @@ class CAnimalScript :
 	float			m_fAttackCoolTime;
 	float			m_fAttackTime;
 
+	bool			m_bIdleBehavior;
+	float			m_fIdleBehaviorTime;
+
+	bool			m_bAnimalDead;
+	float			m_fLivingTime;
+
+	CGameObject*	m_pParticleObj;
+	float			m_fParticleTime;
 public:
 	CAnimalScript();
 	virtual ~CAnimalScript();
@@ -60,16 +68,20 @@ public:
 	virtual void OnCollisionExit(CCollider2D* _pOther) override;
 
 public:
-	bool CollisionSphere(Vec3 vOffsetScale, CCollider2D* _pOther);
+	bool CollisionSphere(Vec3 vOffsetScale, CCollider2D* _pOther, float fOffset = 1.f);
 
 	void SetAnimalStatus(tAnimalStatus tStatus);
 	tAnimalStatus GetAnimalStatus();
 
 	void SetOffsetScale(Vec3 vScale);
+	Vec3 GetOffsetScale();
 
 	void SetBehaviorType(BEHAVIOR_TYPE eType);
 	void SetAnimalType(ANIMAL_TYPE eKind);
 
 	void SetAttackCoolTime(float fTime);
+
+	void Damage(CGameObject* _pOther, float fDamage);
+	bool GetAnimalDead();
 };
 

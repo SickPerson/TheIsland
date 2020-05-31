@@ -2,7 +2,7 @@
 #include "MonsterScript.h"
 
 CMonsterScript::CMonsterScript()
-	: CScript((UINT)SCRIPT_TYPE::MONSTERSCRIPT)
+	: CScript((UINT)SCRIPT_TYPE::ANIMALSCRIPT)
 	, m_iDir(1)
 	, m_bUD(true)
 {

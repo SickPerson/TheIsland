@@ -33,11 +33,16 @@
 #include "SunshineScript.h"
 #include "PlayerScript.h"
 #include "FPSCamScript.h"
+#include "ItemLootScript.h"
 
 #include "InputScript.h"
 #include "ChatScript.h"
 
 #include "AnimalScript.h"
+
+#include "ItemScript.h"
+#include "StuffScript.h"
+#include "ToolItemScript.h"
 
 #include <Engine/TestScript.h>
 
@@ -342,7 +347,7 @@ void CIngameScene::Init()
 		tStatus.eType = BEHAVIOR_TYPE::B_EVASION;
 		tStatus.eKind = ANIMAL_TYPE::A_DEER;
 
-		Vec3 vOffsetScale = Vec3(20.f, 20.f, 20.f);
+		Vec3 vOffsetScale = Vec3(30.f, 30.f, 30.f);
 
 		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
@@ -394,6 +399,72 @@ void CIngameScene::Init()
 
 	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
 	// ====================================================================
+	// ====================================================================
+	pTestObject = pBoarTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CAnimalScript);
+
+	{
+		tAnimalStatus tStatus;
+		tStatus.fHp = 200.f;
+		tStatus.fStamina = 100.f;
+		tStatus.fDamage = 20.f;
+		tStatus.fSpeed = 150.f;
+		tStatus.fBehaviorTime = 4.f;
+		tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
+		tStatus.eKind = ANIMAL_TYPE::A_BOAR;
+
+		Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
+
+		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
+		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
+	}
+
+	pTestObject->SetName(L"Boar");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
+
+	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
+	// ====================================================================
+	// ====================================================================
+	pTestObject = pWolfTex->Instantiate();
+	pTestObject->AddComponent(new CCollider2D);
+	pTestObject->AddComponent(new CAnimalScript);
+
+	{
+		tAnimalStatus tStatus;
+		tStatus.fHp = 200.f;
+		tStatus.fStamina = 100.f;
+		tStatus.fDamage = 20.f;
+		tStatus.fSpeed = 200.f;
+		tStatus.fBehaviorTime = 4.f;
+		tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
+		tStatus.eKind = ANIMAL_TYPE::A_WOLF;
+
+		Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
+
+		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
+		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
+	}
+
+	pTestObject->SetName(L"Wolf");
+	pTestObject->FrustumCheck(false);
+	pTestObject->Transform()->SetLocalPos(Vec3(-0.f, 20.f, 4000.f));
+	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	pTestObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
+
+	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	pTestObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
+
+	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
+	// ====================================================================
 
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>( L"TestTex", L"Texture\\Health.png" );
 	Ptr<CTexture> pExplosionTex = CResMgr::GetInst()->Load<CTexture>( L"Explosion", L"Texture\\Explosion\\Explosion80.png" );
@@ -432,12 +503,12 @@ void CIngameScene::Init()
 	// Script 설정
 	pPlayer->AddComponent(new CPlayerScript);
 	pPlayer->AddComponent(new CCollider2D);
-	pPlayer->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
+	pPlayer->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 	pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
 	pPlayer->SetName(L"Player Object");
 	pPlayer->FrustumCheck(false);
-	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 600.f, 0.f));
+	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
 	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
 	pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
@@ -462,6 +533,7 @@ void CIngameScene::Init()
 	pMainCam->Camera()->SetLayerCheck( 29, false );
 	pMainCam->GetScript<CFPSCamScript>()->SetPlayer(pPlayer);
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pMainCam );
+	m_pPlayer->GetScript<CPlayerScript>()->SetMainCamera(pMainCam->Camera());
 
 	// ====================
 	// Player Camera
@@ -498,6 +570,7 @@ void CIngameScene::Init()
 	CreatePlayerStatusUI();
 	CreateInventoryUI();
 	CreateChatUI();
+	CreateItemUI();
 	CSceneMgr::GetInst()->CreateMRTUI();
 
 	// ====================
@@ -646,15 +719,15 @@ void CIngameScene::Init()
 	// ====================
 	// Particle Object 생성
 	// ====================
-	pObject = new CGameObject;
-	pObject->SetName(L"Particle");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CParticleSystem);
+	//pObject = new CGameObject;
+	//pObject->SetName(L"Particle");
+	//pObject->AddComponent(new CTransform);
+	//pObject->AddComponent(new CParticleSystem);
 
-	pObject->FrustumCheck(false);
-	pObject->Transform()->SetLocalPos(Vec3(-300.f, 50.f, 300.f));
+	//pObject->FrustumCheck(false);
+	//pObject->Transform()->SetLocalPos(Vec3(-300.f, 50.f, 300.f));
 
-	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
+	//m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
 
 	// =============
 	// FBX 파일 로드
@@ -679,6 +752,31 @@ void CIngameScene::Init()
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Animal" );
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Environment" );
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Animal", L"Environment" );
+
+	CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 30);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 50);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_STONE);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 150);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 60);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 67);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 243);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 20);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_STONE);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 50);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 30);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_STONE);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 80);
+	pItem = new CToolItemScript(ITEM_TYPE::ITEM_PICKAXE);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	pItem = new CToolItemScript(ITEM_TYPE::ITEM_AXE);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 }
 
 void CIngameScene::Update()
@@ -775,17 +873,16 @@ void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
 		pChildObject->AddComponent(new CTransform);
 		pChildObject->AddComponent(new CMeshRender);
 
-		//pChildObject->Transform()->SetLocalPos(Vec3(-190.f + (i * 95.f), -330.f, 500.f));
-		pChildObject->Transform()->SetLocalPos(Vec3(-0.4f + (i * 0.2f), -0.1f, -100.f));
-		pChildObject->Transform()->SetLocalScale(Vec3(75.f / 500.f, 75.f / 80.f, 1.f));
+		pChildObject->Transform()->SetLocalPos(Vec3(-200.f + (i * 100.f), -325.f, 800.f));
+		pChildObject->Transform()->SetLocalScale(Vec3(75.f, 75.f, 1.f));
 
 		pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-		pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+		pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl"));
 
-		a = 2;
-		pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
+		Vec4 vColor = Vec4(0.7f, 0.7f, 0.7f, 1.f);
+		pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
 
-		pObject->AddChild(pChildObject);
+		pObject->GetScript<CQuickSlotScript>()->AddQuickSlot(pChildObject);
 		m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
 		_pInventory->GetScript<CInventoryScript>()->AddSlot(pChildObject);
 	}
@@ -799,7 +896,7 @@ void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
 		pChildObject->AddComponent(new CMeshRender);
 
 		//pChildObject->Transform()->SetLocalPos(Vec3(-190.f + (i * 95.f), -330.f, 500.f));
-		pChildObject->Transform()->SetLocalPos(Vec3(-0.4f + (i * 0.2f), -0.6f, -100.f));
+		pChildObject->Transform()->SetLocalPos(Vec3(-0.4f + (i * 0.2f), -0.6f, -500.f));
 		pChildObject->Transform()->SetLocalScale(Vec3(20.f / 500.f, 20.f / 80.f, 1.f));
 
 		pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -982,19 +1079,11 @@ void CIngameScene::CreateInventoryUI()
 	pInventory->SetName(L"Inventory Object");
 
 	pInventory->AddComponent(new CTransform);
-	pInventory->AddComponent(new CMeshRender);
 	pInventory->AddComponent(new CInventoryScript);
 
 	pInventory->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
 
 	pInventory->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-
-	// MeshRender 설정
-	pInventory->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-
-	pInventory->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
-	int a = 4; // White
-	pInventory->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 
 	// AddGameObject
 	m_pScene->FindLayer(L"UI")->AddGameObject(pInventory);
@@ -1008,7 +1097,7 @@ void CIngameScene::CreateInventoryUI()
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CMeshRender);
 
-		pObject->Transform()->SetLocalPos(Vec3(-450.f, 0.f, 100.f));
+		pObject->Transform()->SetLocalPos(Vec3(-450.f, 0.f, 500.f));
 
 		Vec3 vScale(250.f, 450.f, 1.f);
 		pObject->Transform()->SetLocalScale(vScale);
@@ -1025,9 +1114,9 @@ void CIngameScene::CreateInventoryUI()
 	}
 
 	{
-		for (int i = 0; i < 5; ++i)
+		for (int j = 0; j < 4; ++j)
 		{
-			for(int j = 0; j < 4; ++j)
+			for(int i = 0; i < 5; ++i)
 			{
 				CGameObject* pItemSlot = new CGameObject;
 				wstring strItem = L"ItemSlot_" + char(i) + char(j);
@@ -1037,7 +1126,7 @@ void CIngameScene::CreateInventoryUI()
 				pItemSlot->AddComponent(new CTransform);
 				pItemSlot->AddComponent(new CMeshRender);
 
-				pItemSlot->Transform()->SetLocalPos(Vec3(-120.f + i * 90.f, 100.f - (j * 90.f), 1.f));
+				pItemSlot->Transform()->SetLocalPos(Vec3(-120.f + i * 90.f, 100.f - (j * 90.f), 200.f));
 
 				Vec3 vScale(80.f, 80.f, 5.f);
 				pItemSlot->Transform()->SetLocalScale(vScale);
@@ -1045,7 +1134,7 @@ void CIngameScene::CreateInventoryUI()
 				// MeshRender 설정
 				pItemSlot->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 				Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl");
-				pItemSlot->MeshRender()->SetMaterial(pMtrl->Clone());
+				pItemSlot->MeshRender()->SetMaterial(pMtrl);
 				int color = 2; // White
 				pItemSlot->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &color);
 
@@ -1062,17 +1151,17 @@ void CIngameScene::CreateInventoryUI()
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CMeshRender);
 
-		pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 1.f));
+		pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 1000.f));
 
 		Vec3 vScale(600.f, 450.f, 10.f);
 		pObject->Transform()->SetLocalScale(vScale);
 
 		// MeshRender 설정
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl");
+		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
 		pObject->MeshRender()->SetMaterial(pMtrl->Clone());
-		int color = 4; // White
-		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &color);
+		Vec4 vColor = Vec4(0.5f, 0.5f, 0.5f, 0.5f);
+		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
 
 		// AddGameObject
 		pInventory->AddChild(pObject);
@@ -1086,7 +1175,7 @@ void CIngameScene::CreateInventoryUI()
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CMeshRender);
 
-		pObject->Transform()->SetLocalPos(Vec3(470.f, 50.f, 1.f));
+		pObject->Transform()->SetLocalPos(Vec3(470.f, 50.f, 800.f));
 
 		Vec3 vScale(300.f, 550.f, 10.f);
 		pObject->Transform()->SetLocalScale(vScale);
@@ -1106,6 +1195,68 @@ void CIngameScene::CreateInventoryUI()
 	m_pPlayer->GetScript<CPlayerScript>()->SetInventoryObject(m_pInventory);
 }
 
+void CIngameScene::CreateItemUI()
+{
+	CGameObject* pLootObject = new CGameObject;
+	pLootObject->SetName(L"Item Loot Object");
+	pLootObject->AddComponent(new CTransform);
+	pLootObject->AddComponent(new CItemLootScript);
+	pLootObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pLootObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pScene->FindLayer(L"Invisible")->AddGameObject(pLootObject);
+
+	CGameObject* pObject = new CGameObject;
+	pObject->SetName(L"Item Loot Background");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
+	pObject->MeshRender()->SetMaterial(pMtrl->Clone());
+
+	Vec4 vColor = Vec4(0.4f, 0.8f, 0.4f, 0.8f);
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
+
+	pObject->Transform()->SetLocalPos(Vec3(490.f, -210.f, 300.f));
+	pObject->Transform()->SetLocalScale(Vec3(250.f, 40.f, 1.f));
+
+	pLootObject->AddChild(pObject);
+	m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
+
+	pObject = new CGameObject;
+	pObject->SetName(L"Item Loot Icon");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ItemMtrl");
+	pObject->MeshRender()->SetMaterial(pMtrl->Clone());
+
+	pObject->Transform()->SetLocalPos(Vec3(385.f, -210.f, 250.f));
+	pObject->Transform()->SetLocalScale(Vec3(35.f, 35.f, 1.f));
+
+	pLootObject->AddChild(pObject);
+	pLootObject->GetScript<CItemLootScript>()->SetItemLootIcon(pObject->MeshRender()->GetSharedMaterial());
+	m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
+
+	pObject = new CGameObject;
+	pObject->SetName(L"Item Loot Icon");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CFont);
+
+	pObject->Transform()->SetLocalPos(Vec3(500.f, -210.f, 250.f));
+	pObject->Transform()->SetLocalScale(Vec3(180.f, 35.f, 1.f));
+
+	pObject->Font()->SetFontColor(Vec4(1.f, 1.f, 1.f, 1.f));
+	pObject->Font()->SetBackColor(Vec4(0.f, 0.f, 0.f, 0.f));
+
+	pLootObject->AddChild(pObject);
+	pLootObject->GetScript<CItemLootScript>()->SetItemLootFont(pObject->Font());
+	m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
+
+	m_pInventory->GetScript<CInventoryScript>()->SetItemLootScript(pLootObject->GetScript<CItemLootScript>());
+}
+
 void CIngameScene::CreateChatUI()
 {
 	m_pChat = new CGameObject;
@@ -1114,7 +1265,7 @@ void CIngameScene::CreateChatUI()
 	m_pChat->AddComponent(new CFont);
 	m_pChat->AddComponent(new CInputScript);
 	m_pChat->AddComponent(new CChatScript);
-	m_pChat->Transform()->SetLocalPos(Vec3(-480.f, -355.f, 100.f));
+	m_pChat->Transform()->SetLocalPos(Vec3(-480.f, -355.f, 500.f));
 	m_pChat->Transform()->SetLocalScale(Vec3(300.f, 40.f, 1.f));
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pChat);
 
@@ -1129,8 +1280,8 @@ void CIngameScene::CreateChatUI()
 		pObject->SetName(L"ChatLog Bar");
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CFont);
-		pObject->Transform()->SetLocalPos(Vec3(-480.f, -315.f + (i * 30.f), 100.f));
-		pObject->Transform()->SetLocalScale(Vec3(300.f, 30.f, 1.f));
+		pObject->Transform()->SetLocalPos(Vec3(-480.f, -315.f + (i * 30.f), 900.f));
+		pObject->Transform()->SetLocalScale(Vec3(300.f, 30.f, 1000.f));
 		pObject->Font()->SetBackColor(Vec4(0.5f, 0.5f, 0.5f, 0.3f));
 		pObject->Font()->SetString(" ");
 		m_pScene->FindLayer(L"UI")->AddGameObject(pObject);

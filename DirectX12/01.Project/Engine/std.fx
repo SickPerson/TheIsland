@@ -164,6 +164,38 @@ float4 PS_Tex(TEX_OUTPUT _input) : SV_Target
     return vColor;
 }
 
+TEX_OUTPUT VS_Item(TEX_INPUT _input)
+{
+	TEX_OUTPUT output = (TEX_OUTPUT)0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.
+	float4 vWorldPos = mul(float4(_input.vPos, 1.f), g_matWorld);
+	float4 vViewPos = mul(vWorldPos, g_matView);
+	float4 vProjPos = mul(vViewPos, g_matProj);
+
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
+float4 PS_Item(TEX_OUTPUT _input) : SV_Target
+{
+	float4 vColor = (float4) 0.f;
+
+	if (g_int_1 < 0)
+		vColor = float4(0.5f, 0.5f, 0.5f, 0.5f);
+	else
+	{
+		if(tex_0)
+			vColor = g_tex_0.Sample(g_sam_1, _input.vUV);
+		else
+			vColor = float4(1.f, 0.f, 0.f, 0.5f);
+	}
+
+	return vColor;
+}
+
 
 VS_OUTPUT VS_UI_Test( VS_INPUT _input )
 {
@@ -205,6 +237,27 @@ float4 PS_UI_Test( VS_OUTPUT _input ) : SV_Target
 	color[3] = color[3] - 0.2f;
 
 	return color;
+}
+
+
+VS_OUTPUT VS_UI_Standard(VS_INPUT _input)
+{
+	VS_OUTPUT output = (VS_OUTPUT)0;
+
+	output.vOutPos = mul(float4(_input.vPos, 1.f), g_matWVP);
+	output.vViewPos = mul(float4(_input.vPos, 1.f), g_matWV).xyz;
+	output.vViewNormal = normalize(mul(float4(_input.vNormal, 0.f), g_matWV)).xyz;
+	output.vOutColor = _input.vColor;
+
+
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
+float4 PS_UI_Standard(VS_OUTPUT _input) : SV_Target
+{
+	return g_vec4_0;
 }
 
 // =======================
