@@ -1,30 +1,29 @@
 #pragma once
-
 #include <Engine/Script.h>
-
-// 사용예 : 로그인창, 채팅 입력칸 등등
+#define MAX_CHAT_LINE 9
 
 class CChatScript : 
 	public CScript
 {
+	CGameObject*			m_pChatObj[MAX_CHAT_LINE];
+	string					m_strChat[MAX_CHAT_LINE];
+	string					m_strChatName[MAX_CHAT_LINE];
+
+	Vec4					m_vNameColor;
+	Vec4					m_vChatColor;
+	Vec4					m_vBackColor;
 public:
 	CChatScript();
 	virtual ~CChatScript();
 
 	CLONE( CChatScript );
 
-private:
-	bool			m_bActive;
-	wstring			m_strChat;
-	
 public:
-	virtual void OnCollisionEnter( CCollider2D* _pOther );
-	virtual void OnCollision( CCollider2D* _pOther );
-	virtual void OnCollisionExit( CCollider2D* _pOther );
-
-	virtual void Update();
+	virtual void Update() override;
 
 public:
-	void SetChatting( const wstring& strChat );
+	void AddChatObject(CGameObject* pObject, int line);
+
+	void AddChat(string name, string chat);
 };
 

@@ -425,12 +425,7 @@ void CResMgr::CreateDefaultShader()
 	pShader->Create(SHADER_POV::POSTEFFECT, D3D_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	pShader->AddShaderParam(tShaderParam{ L"TessellationAmout", SHADER_PARAM::FLOAT_0 });
 
-<<<<<<< HEAD
-	AddRes(L"TestWaterShader", pShader);
-
-=======
 	AddRes(L"AdvancedWaterShader", pShader);
->>>>>>> master
 }
 
 

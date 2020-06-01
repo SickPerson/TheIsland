@@ -91,6 +91,10 @@ public:
 	void LoadFBX();
 	CButton m_btnFBXLoad;
 	afx_msg void OnBnClickedButtonFbxload();
+	CButton m_btnSave;
+	afx_msg void OnBnClickedButtonSave();
+	CButton m_btnLoad;
+	afx_msg void OnBnClickedButtonLoad();
 };
 
 

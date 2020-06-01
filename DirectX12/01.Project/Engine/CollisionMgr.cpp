@@ -7,6 +7,8 @@
 #include "GameObject.h"
 #include "Collider2D.h"
 #include "Transform.h"
+#include "Camera.h"
+#include "Device.h"
 
 #include <iostream>
 
@@ -467,5 +469,37 @@ bool CCollisionMgr::CollisionSphere(CCollider2D* _pCollider1, CCollider2D* _pCol
 	if (fDist > fabs(vScale1.x * vColScale1.x) + fabs(vScale2.x * vColScale2.x))
 		return false;
 
+	return true;
+}
+
+bool CCollisionMgr::CollisionSphereRay( CCollider2D * _pCollider1, CCollider2D * _pCollider2 )
+{
+	CGameObject* pMainCamObj = CSceneMgr::GetInst()->GetCurScene()->GetLayer( 0 )->GetMainCamera();
+	
+	CCamera* pMainCam = pMainCamObj->Camera();
+
+	Matrix matProj = pMainCam->GetProjMat();
+	Matrix matView = pMainCam->GetViewMat();
+
+	D3D12_VIEWPORT tVP = CDevice::GetInst()->GetViewport();
+
+	float fHalfW = tVP.Width * 0.5f;
+	float fHalfH = tVP.Height * 0.5f;
+
+	// 뷰 공간에서의 ray 구하기
+	Vec3 vPos = _pCollider2->GetObj()->Transform()->GetWorldPos();
+	Vec3 vRayDir;
+	vRayDir.x = ( vPos.x / fHalfW - 1.f ) / matProj.m[0][0];
+	vRayDir.y = ( -( vPos.y / fHalfH ) + 1.f ) / matProj.m[1][1];
+	vRayDir.z = 1.f;
+	vRayDir = vRayDir.Normalize();
+
+	// 월드공간으로 변환하여 뷰의 역행렬 구하기
+	matView = XMMatrixInverse( &XMMatrixDeterminant( matView ), matView );
+//	vRayDir = vRayDir.TransformNormal( matView );
+
+	Vec3 vRayPos;
+//	vRayPos = vRayPos.TransformNormal( matView );
+	
 	return true;
 }

@@ -28,7 +28,7 @@ public:
 	void SetLayerName(int _iIdx, const wstring& _strName);
 	void AddGameObject(const wstring& _strLayerName, CGameObject* _pObject, bool _bMoveAll);	
 	void AddGameObject(int _iLayerIdx, CGameObject* _pObject, bool _bMoveAll);
-	CLayer* FindLayer(const wstring& _strLayerName);
+	CLayer* FindLayer( const wstring& _strLayerName );
 	CLayer* GetLayer(int _iIdx) { return m_arrLayer[_iIdx]; };
 	
 private:

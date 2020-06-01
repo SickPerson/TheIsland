@@ -161,7 +161,7 @@ enum class COLLIDER2D_TYPE
 	CIRCLE,
 	CUBE,
 	SPHERE,
-	
+	RAY,	
 };
 
 enum class SHADER_PARAM

@@ -14,6 +14,9 @@
 
 #include <Engine/Transform.h>
 
+#include <Engine/CollisionMgr.h>
+#include <Engine/Collider2D.h>
+
 #include <algorithm>
 
 // CMyForm
@@ -70,6 +73,8 @@ void CMyForm::DoDataExchange(CDataExchange* pDX)
 	DDX_Control( pDX, IDC_EDIT_ROTY, m_EditRotY );
 	DDX_Control( pDX, IDC_EDIT_ROTZ, m_EditRotZ );
 	DDX_Control( pDX, IDC_BUTTON_FBXLOAD, m_btnFBXLoad );
+	DDX_Control( pDX, IDC_BUTTON_SAVE, m_btnSave );
+	DDX_Control( pDX, IDC_BUTTON_LOAD, m_btnLoad );
 }
 
 BEGIN_MESSAGE_MAP(CMyForm, CFormView)
@@ -90,6 +95,8 @@ BEGIN_MESSAGE_MAP(CMyForm, CFormView)
 	ON_CBN_SELCHANGE( IDC_COMBO_FBX, &CMyForm::OnCbnSelchangeComboFbx )
 	ON_CBN_SELCHANGE( IDC_COMBO_FBX, &CMyForm::OnCbnSelchangeComboFbx )
 	ON_BN_CLICKED( IDC_BUTTON_FBXLOAD, &CMyForm::OnBnClickedButtonFbxload )
+	ON_BN_CLICKED( IDC_BUTTON_SAVE, &CMyForm::OnBnClickedButtonSave )
+	ON_BN_CLICKED( IDC_BUTTON_LOAD, &CMyForm::OnBnClickedButtonLoad )
 END_MESSAGE_MAP()
 
 
@@ -488,4 +495,21 @@ void CMyForm::OnBnClickedButtonFbxload()
 
 	m_bLoad = true;
 	LoadFBX();
+
+	CCollider2D* pColl1 = new CCollider2D;
+	CCollider2D* pColl2 = new CCollider2D;
+
+	CCollisionMgr::GetInst()->CollisionSphereRay( pColl1, pColl2 );
+}
+
+
+void CMyForm::OnBnClickedButtonSave()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CMyForm::OnBnClickedButtonLoad()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }

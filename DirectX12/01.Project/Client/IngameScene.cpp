@@ -661,7 +661,6 @@ void CIngameScene::Init()
 	// ===================
 	// Test 오브젝트 생성
 	// ===================
-<<<<<<< HEAD
 	//for (int i = 0; i < 11; ++i)
 	//{
 	//	for (int j = 0; j < 11; ++j)
@@ -692,7 +691,6 @@ void CIngameScene::Init()
 	//		m_pScene->FindLayer(L"Monster")->AddGameObject(pObject);
 	//	}
 	//}
-=======
 	for (int i = 0; i < 11; ++i)
 	{
 		for (int j = 0; j < 11; ++j)
@@ -723,7 +721,6 @@ void CIngameScene::Init()
 			m_pScene->FindLayer(L"Environment")->AddGameObject(pObject);
 		}
 	}
->>>>>>> master
 
 	// ==========================
 	// Distortion Object 만들기

@@ -113,5 +113,7 @@ public:
 	UINT GetSwapchainIdx() { return m_iCurTargetIdx; }
 
 	tResolution GetResolution() const { return m_tResolution; }
+
+	D3D12_VIEWPORT GetViewport() const { return m_tVP; };
 };
 
