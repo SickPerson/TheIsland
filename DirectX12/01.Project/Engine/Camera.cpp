@@ -63,7 +63,7 @@ void CCamera::FinalUpdate()
 	}
 	else
 	{
-		m_matProj = XMMatrixOrthographicLH( res.fWidth * m_fScale, res.fHeight * m_fScale, m_fNear, m_fFar );
+		m_matProj = XMMatrixOrthographicLH(m_fWidth * m_fScale, m_fHeight * m_fScale, m_fNear, m_fFar);
 		//m_matProj = XMMatrixOrthographicOffCenterLH(0.f, res.fWidth, res.fHeight, 0.f, m_fNear, m_fFar);		
 	}
 
@@ -140,7 +140,7 @@ void CCamera::SortShadowObject()
 		if (nullptr == pLayer || !(m_iLayerCheck & (1 << i)))
 			continue;
 
-		const vector<CGameObject*>& vecObj = pCurScene->GetLayer(i)->GetObjects();
+		const vector<CGameObject*>& vecObj = pLayer->GetObjects();
 
 		for (size_t j = 0; j < vecObj.size(); ++j)
 		{
@@ -188,8 +188,8 @@ void CCamera::Render_Forward()
 	{
 		m_vecForward[i]->MeshRender()->Render();
 
-		if ( m_vecForward[i]->Collider2D() )
-			m_vecForward[i]->Collider2D()->Render();
+		//if ( m_vecForward[i]->Collider2D() )
+		//	m_vecForward[i]->Collider2D()->Render();
 	}
 
 	for (size_t i = 0; i < m_vecParticle.size(); ++i)
@@ -202,11 +202,11 @@ void CCamera::Render_Forward()
 		m_vecFont[i]->Font()->Render();
 	}
 
-	for ( size_t i = 0; i < m_vecDeferred.size(); ++i )
-	{
-		if ( m_vecDeferred[i]->Collider2D() )
-			m_vecDeferred[i]->Collider2D()->Render();
-	}
+	//for ( size_t i = 0; i < m_vecDeferred.size(); ++i )
+	//{
+	//	if ( m_vecDeferred[i]->Collider2D() )
+	//		m_vecDeferred[i]->Collider2D()->Render();
+	//}
 }
 
 void CCamera::Render_PostEffect()

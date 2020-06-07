@@ -200,12 +200,14 @@ struct VS_ShadowIn
 	float3 vPos : POSITION;
 	float4 vWeights : BLENDWEIGHT;
 	float4 vIndices : BLENDINDICES;
+	float2 vUV : TEXCOORD;
 };
 
 struct VS_ShadowOut
 {
 	float4 vPos : SV_Position;
 	float4 vProj : POSITION;
+	float2 vUV : TEXCOORD;
 };
 
 VS_ShadowOut VS_ShadowMap(VS_ShadowIn _in)
@@ -219,12 +221,18 @@ VS_ShadowOut VS_ShadowMap(VS_ShadowIn _in)
 
 	output.vPos = mul(float4(_in.vPos, 1.f), g_matWVP);
 	output.vProj = output.vPos;
+	output.vUV = _in.vUV;
 
 	return output;
 }
 
 float4 PS_ShadowMap(VS_ShadowOut _input) : SV_Target
 {
+	float4 vColor = g_tex_0.Sample(g_sam_0, _input.vUV);
+	//if (vColor.w < 0.5f)
+	//	clip(-1);
+	
+
 	return float4(_input.vProj.z / _input.vProj.w, 0.f, 0.f, 0.f);
 }
 #endif

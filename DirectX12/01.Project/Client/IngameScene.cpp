@@ -602,7 +602,7 @@ void CIngameScene::Init()
 	pObject->AddComponent( new CLight3D );
 	pObject->AddComponent( new CSunshineScript );
 
-	pObject->Light3D()->SetLightPos(Vec3(0.f, 1000.f, 0.f));
+	pObject->Light3D()->SetLightPos(Vec3(0.f, 500.f, 0.f));
 	pObject->Light3D()->SetLightType(LIGHT_TYPE::DIR);
 	pObject->Light3D()->SetDiffuseColor(Vec3(1.f, 1.f, 1.f));
 	pObject->Light3D()->SetSpecular(Vec3(0.3f, 0.3f, 0.3f));
@@ -707,6 +707,7 @@ void CIngameScene::Init()
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
 			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
 			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+			pObject->FrustumCheck(false);
 			pObject->MeshRender()->SetDynamicShadow(true);
 
 			// AddGameObject
