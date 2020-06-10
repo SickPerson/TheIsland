@@ -45,10 +45,12 @@ void CSunshineScript::Update()
 
 	CLight3D* pLight = Light3D();
 	Vec3 vDir = Vec3(0.f, 0.f, 0.f);
+	Vec3 vPos = Vec3(0.f, 0.f, 0.f);
 
 	if (m_iHour > 18)
 	{
 		vDir = Vec3(0.f, 0.f, 0.f);
+		vPos = Vec3(0.f, 6000.f, 0.f);
 		Light3D()->SetDiffuseColor(Vec3(0.f, 0.f, 0.f));
 		float fLight = 0.0f;
 		if (m_pSkybox)
@@ -59,6 +61,7 @@ void CSunshineScript::Update()
 	else if (m_iHour < 6)
 	{
 		vDir = Vec3(0.f, 0.f, 0.f);
+		vPos = Vec3(0.f, 6000.f, 0.f);
 		Light3D()->SetDiffuseColor(Vec3(0.f, 0.f, 0.f));
 		float fLight = 0.0f;
 		if (m_pSkybox)
@@ -92,7 +95,10 @@ void CSunshineScript::Update()
 		Light3D()->SetDiffuseColor(Vec3(fLight, fLight, fLight));
 	}
 
-	pLight->SetLightDir(vDir);
+	//pLight->SetLightDir(vDir);
+	//Transform()->SetLocalPos(vPos);
+	Light3D()->SetLightDir(Vec3(1.f, -1.f, 1.f));
+	Transform()->SetLocalPos(Vec3(-1000.f, 1000.f, 0.f));
 }
 
 float CSunshineScript::GetTime()

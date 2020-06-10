@@ -9,8 +9,6 @@
 #include <Engine/LandScape.h>
 
 
-
-
 CMapToolScene::CMapToolScene()
 {
 }
@@ -94,7 +92,5 @@ void CMapToolScene::Init()
 	pObject->FrustumCheck( false );
 
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
-
-
 
 }

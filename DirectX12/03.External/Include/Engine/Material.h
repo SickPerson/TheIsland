@@ -34,5 +34,6 @@ public:
 	virtual void Save(const wstring& _strPath);
 
 	Ptr<CShader> GetShader() { return m_pShader; }
+	Ptr<CTexture> GetTexture(int index = 0) { return m_arrTex[index]; }
 };
 

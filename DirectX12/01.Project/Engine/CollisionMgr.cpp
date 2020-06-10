@@ -9,6 +9,8 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "Device.h"
+#include "RenderMgr.h"
+#include "MRT.h"
 
 #include <iostream>
 
@@ -481,7 +483,7 @@ bool CCollisionMgr::CollisionSphereRay( CCollider2D * _pCollider1, CCollider2D *
 	Matrix matProj = pMainCam->GetProjMat();
 	Matrix matView = pMainCam->GetViewMat();
 
-	D3D12_VIEWPORT tVP = CDevice::GetInst()->GetViewport();
+	D3D12_VIEWPORT tVP = CRenderMgr::GetInst()->GetMRT( MRT_TYPE::SWAPCHAIN )->GetViewPort();
 
 	float fHalfW = tVP.Width * 0.5f;
 	float fHalfH = tVP.Height * 0.5f;
@@ -496,7 +498,7 @@ bool CCollisionMgr::CollisionSphereRay( CCollider2D * _pCollider1, CCollider2D *
 
 	// 월드공간으로 변환하여 뷰의 역행렬 구하기
 	matView = XMMatrixInverse( &XMMatrixDeterminant( matView ), matView );
-//	vRayDir = vRayDir.TransformNormal( matView );
+	vRayDir = vRayDir.TransformNormal( vRayDir, matView );
 
 	Vec3 vRayPos;
 //	vRayPos = vRayPos.TransformNormal( matView );

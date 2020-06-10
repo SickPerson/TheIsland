@@ -39,6 +39,7 @@ public:
 	void Render();
 	void Render_tool();			
 
+	void Render_Shadowmap();
 	void Render_Lights();
 	void Merge_Light();
 
@@ -54,6 +55,7 @@ public:
 	int RegisterLight3D( CLight3D* _pLight3D );
 
 	CCamera* GetCamera(int _iIdx) { return m_vecCam[_iIdx]; }
+	CCamera* GetMainCam();
 	void RegisterCamera(CCamera* _pCam) { m_vecCam.push_back(_pCam); }
 	void ClearCamera() { m_vecCam.clear(); }
 

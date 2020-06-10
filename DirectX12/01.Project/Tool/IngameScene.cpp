@@ -9,6 +9,7 @@
 
 #include <Engine/ResMgr.h>
 #include <Engine/CollisionMgr.h>
+#include <Engine/RenderMgr.h>
 #include <Engine/FontMgr.h>
 
 #include <Engine/Layer.h>
@@ -104,6 +105,9 @@ void CIngameScene::Init()
 		float fScale = (float)(rand() % 10 + 30);
 		pTestObject->SetName(L"Tree");
 		pTestObject->FrustumCheck(false);
+
+		pTestObject->MeshRender()->SetDynamicShadow(true);
+
 		pTestObject->Transform()->SetLocalPos(Vec3((float)(rand()%10000 - 5000), 20.f, (float)(rand() % 8000)));
 		pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
 		pTestObject->Transform()->SetLocalScale(Vec3(fScale, fScale, fScale));
@@ -355,6 +359,9 @@ void CIngameScene::Init()
 
 	pTestObject->SetName(L"Deer");
 	pTestObject->FrustumCheck(false);
+
+	pTestObject->MeshRender()->SetDynamicShadow(true);
+
 	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 20.f, 2000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -389,6 +396,9 @@ void CIngameScene::Init()
 
 	pTestObject->SetName(L"Bear");
 	pTestObject->FrustumCheck(false);
+
+	pTestObject->MeshRender()->SetDynamicShadow(true);
+
 	pTestObject->Transform()->SetLocalPos(Vec3(1500.f, 20.f, 2000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
@@ -422,6 +432,9 @@ void CIngameScene::Init()
 
 	pTestObject->SetName(L"Boar");
 	pTestObject->FrustumCheck(false);
+
+	pTestObject->MeshRender()->SetDynamicShadow(true);
+
 	pTestObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
@@ -455,6 +468,9 @@ void CIngameScene::Init()
 
 	pTestObject->SetName(L"Wolf");
 	pTestObject->FrustumCheck(false);
+
+	pTestObject->MeshRender()->SetDynamicShadow(true);
+
 	pTestObject->Transform()->SetLocalPos(Vec3(-0.f, 20.f, 4000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
@@ -506,6 +522,9 @@ void CIngameScene::Init()
 	// Script 설정
 	pPlayer->AddComponent(new CPlayerScript);
 	pPlayer->AddComponent(new CCollider2D);
+
+	pPlayer->MeshRender()->SetDynamicShadow(true);
+
 	pPlayer->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 	pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
@@ -567,6 +586,8 @@ void CIngameScene::Init()
 	pUICam->Camera()->SetProjType( PROJ_TYPE::ORTHGRAPHIC );
 	pUICam->Camera()->SetFar( 10000.f );
 	pUICam->Camera()->SetLayerCheck( 30, true );
+	pUICam->Camera()->SetWidth(CRenderMgr::GetInst()->GetResolution().fWidth);
+	pUICam->Camera()->SetHeight(CRenderMgr::GetInst()->GetResolution().fHeight);
 
 	m_pScene->FindLayer(L"Default")->AddGameObject(pUICam);
 
@@ -591,6 +612,8 @@ void CIngameScene::Init()
 	pObject->Light3D()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
 	pObject->Light3D()->SetLightDir(Vec3(1.f, -1.f, 1.f));
 	pObject->Light3D()->SetLightRange(1000.f);
+
+	pObject->Transform()->SetLocalPos(Vec3(-1000.f, 1000.f, 1000.f));
 
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
@@ -700,6 +723,7 @@ void CIngameScene::Init()
 			pObject->AddComponent(new CTransform);
 			pObject->AddComponent(new CMeshRender);
 
+
 			// Transform 설정
 			if(i > 9)
 				pObject->Transform()->SetLocalPos(Vec3(-5000.f + (j * 1000.f), -60.f, 9000.f - (i * 1000.f) + 20.f));
@@ -716,6 +740,8 @@ void CIngameScene::Init()
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
 			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
 			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+			pObject->FrustumCheck(false);
+			pObject->MeshRender()->SetDynamicShadow(true);
 
 			// AddGameObject
 			m_pScene->FindLayer(L"Environment")->AddGameObject(pObject);
