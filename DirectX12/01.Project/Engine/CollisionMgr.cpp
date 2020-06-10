@@ -476,6 +476,8 @@ bool CCollisionMgr::CollisionSphere(CCollider2D* _pCollider1, CCollider2D* _pCol
 
 bool CCollisionMgr::CollisionSphereRay( CCollider2D * _pCollider1, CCollider2D * _pCollider2 )
 {
+	// _pCollider1 : Sphere,	_pCollider2 : Ray
+
 	CGameObject* pMainCamObj = CSceneMgr::GetInst()->GetCurScene()->GetLayer( 0 )->GetMainCamera();
 	
 	CCamera* pMainCam = pMainCamObj->Camera();
@@ -489,19 +491,44 @@ bool CCollisionMgr::CollisionSphereRay( CCollider2D * _pCollider1, CCollider2D *
 	float fHalfH = tVP.Height * 0.5f;
 
 	// 뷰 공간에서의 ray 구하기
-	Vec3 vPos = _pCollider2->GetObj()->Transform()->GetWorldPos();
+	Vec3 vColl2Pos = _pCollider2->GetObj()->Transform()->GetWorldPos();
 	Vec3 vRayDir;
-	vRayDir.x = ( vPos.x / fHalfW - 1.f ) / matProj.m[0][0];
-	vRayDir.y = ( -( vPos.y / fHalfH ) + 1.f ) / matProj.m[1][1];
+	vRayDir.x = ( vColl2Pos.x / fHalfW - 1.f ) / matProj.m[0][0];
+	vRayDir.y = ( -( vColl2Pos.y / fHalfH ) + 1.f ) / matProj.m[1][1];
 	vRayDir.z = 1.f;
 	vRayDir = vRayDir.Normalize();
 
-	// 월드공간으로 변환하여 뷰의 역행렬 구하기
-	matView = XMMatrixInverse( &XMMatrixDeterminant( matView ), matView );
-	vRayDir = vRayDir.TransformNormal( vRayDir, matView );
+	// 뷰의 역행렬을 이용하여 방향과 위치 구하기
+	Matrix matViewInv = pMainCam->GetViewMatInv();
+	vRayDir = XMVector3TransformNormal( vRayDir, matViewInv );
+	vRayDir = XMVector3Normalize( vRayDir );
 
 	Vec3 vRayPos;
-//	vRayPos = vRayPos.TransformNormal( matView );
+	vRayPos = XMVector3TransformCoord( vRayPos, matViewInv );
+
+
+	Matrix matWorldInv = XMMatrixIdentity();
+	Vec3 vColl1Pos = _pCollider1->Transform()->GetLocalPos;
+	vColl1Pos += _pCollider1->Collider2D()->GetOffsetPos();
+
+	matWorldInv._41 = -vColl1Pos.x;
+	matWorldInv._42 = -vColl1Pos.y;
+	matWorldInv._43 = -vColl1Pos.z;
+
+	vRayPos = XMVector3TransformCoord( vRayPos, matWorldInv );
+	vRayDir = XMVector3TransformNormal( vRayDir, matWorldInv );
+
+	Vec3 dd = XMVector3Dot( vRayDir, vRayDir );
+	Vec3 pd = XMVector3Dot( vRayPos, vRayDir );
+	Vec3 pp = XMVector3Dot( vRayPos, vRayPos );
+
+	float r;
+	r = _pCollider1->Transform()->GetLocalScale().x * _pCollider1->GetOffsetScale().x;
+
+	float rr = r * r;
+
+	if ( pd.x * pd.x - dd.x * ( pp.x - rr ) >= 0 )
+		return true;
 	
-	return true;
+	return false;
 }
