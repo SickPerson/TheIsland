@@ -50,8 +50,6 @@ private:
 	UINT									m_iCBVIncreSize; // 핸들 오프셋 증감 사이즈
 
 	vector<D3D12_STATIC_SAMPLER_DESC>		m_vecSamplerDesc;
-	D3D12_VIEWPORT							m_tVP;
-	D3D12_RECT								m_tScissorRect;
 
 	HANDLE									m_hFenceEvent;
 	size_t									m_iFenceValue;
@@ -97,7 +95,6 @@ public:
 
 private:
 	void CreateSwapChain();
-	void CreateViewPort();
 	void CreateRootSignature();
 	void CreateSamplerDesc();
 
@@ -113,7 +110,5 @@ public:
 	UINT GetSwapchainIdx() { return m_iCurTargetIdx; }
 
 	tResolution GetResolution() const { return m_tResolution; }
-
-	D3D12_VIEWPORT GetViewport() const { return m_tVP; };
 };
 
