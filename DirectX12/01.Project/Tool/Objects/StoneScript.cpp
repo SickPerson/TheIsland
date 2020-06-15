@@ -23,6 +23,10 @@ void CStoneScript::OnCollisionEnter( CCollider2D * _pOther )
 
 void CStoneScript::OnCollision( CCollider2D * _pOther )
 {
+	if (_pOther->GetName() == L"Mouse")
+	{
+		int a = 0;
+	}
 }
 
 void CStoneScript::OnCollisionExit( CCollider2D * _pOther )

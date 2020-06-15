@@ -225,3 +225,39 @@ void CLandScape::ComputeTangent( vector<VTX>& vecVtx, const vector<UINT>& vecIdx
 		vecVtx[idx2].vBinormal = vecVtx[idx2].vNormal.Cross( vTangent ).Normalize();
 	}
 }
+
+void CLandScape::CreateLandScapeInfo()
+{
+	vector<Vec3>::iterator iter = m_vecPos.begin();
+	vector<Vec3>::iterator iterEnd = m_vecPos.end();
+
+	Vec3 vMin = *iter;
+	Vec3 vMax = *iter;
+
+	for ( iter = m_vecPos.begin() + 1; iter != iterEnd; ++iter )
+	{
+		if ( vMin.x > ( *iter ).x )
+			vMin.x = ( *iter ).x;
+
+		if ( vMin.y > ( *iter ).y )
+			vMin.y = ( *iter ).y;
+
+		if ( vMin.z > ( *iter ).z )
+			vMin.z = ( *iter ).z;
+
+		if ( vMax.x < ( *iter ).x )
+			vMax.x = ( *iter ).x;
+
+		if ( vMax.y < ( *iter ).y )
+			vMax.y = ( *iter ).y;
+
+		if ( vMax.z < ( *iter ).z )
+			vMax.z = ( *iter ).z;
+	}
+}
+
+float CLandScape::GetY( const Vec3 & vPos )
+{
+
+	return 0.0f;
+}

@@ -32,6 +32,8 @@
 #include "ToolCamScript.h"
 #include "GridScript.h"
 
+#include "Mouse.h"
+
 CScene* CSceneMgr::GetCurScene()
 {
 	return m_pCurScene;
@@ -66,6 +68,13 @@ void CSceneMgr::Init()
 	m_pCurScene->GetLayer( 29 )->SetName( L"Invisible" );
 	m_pCurScene->GetLayer( 30 )->SetName( L"UI" );
 	m_pCurScene->GetLayer( 31 )->SetName( L"Tool" );
+
+	CGameObject* pMouse = new CGameObject;
+	pMouse->AddComponent( new CTransform );
+	pMouse->AddComponent( new CMouse );
+
+	m_pCurScene->GetLayer( 0 )->AddGameObject( pMouse );
+
 }
 
 void CSceneMgr::Update()

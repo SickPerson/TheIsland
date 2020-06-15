@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="SceneScript">
+      <UniqueIdentifier>{feb81222-9514-42bf-b049-7a81133e97e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript">
+      <UniqueIdentifier>{2f1659d4-5d30-44a2-a9aa-db1ed73be212}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{52f171bf-d4ca-429f-88af-c401180441a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\etc">
+      <UniqueIdentifier>{aad681fd-419d-4643-9900-c2f3b2ce6f97}</UniqueIdentifier>
+    </Filter>
+<<<<<<< HEAD
+    <Filter Include="ComponentScript\Stone">
+      <UniqueIdentifier>{e9ebb663-2bc5-4aa4-a914-81b6297eb90d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Tree">
+      <UniqueIdentifier>{5a80baf1-5f8d-445e-baa7-8c5ed3775f1d}</UniqueIdentifier>
+=======
+    <Filter Include="ComponentScript\Player">
+      <UniqueIdentifier>{60a3fa7d-c7b8-4137-8e1f-0ada7e59ff62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\UI">
+      <UniqueIdentifier>{63f5e20a-d59c-4276-bf79-b783721e28ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Environment">
+      <UniqueIdentifier>{d90432a6-0a58-4c4f-a8fb-e91220b34a46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Animal">
+      <UniqueIdentifier>{78bac853-deff-47d4-a63e-bd7aefb84239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item">
+      <UniqueIdentifier>{bc4b39b9-eefc-477d-8a97-a69f67bee8fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Stuff">
+      <UniqueIdentifier>{e403b613-75c4-46c9-a95f-f4cbbb53e71a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Tool">
+      <UniqueIdentifier>{9b695f86-2f6d-4030-bc5f-b1d0fbd93d06}</UniqueIdentifier>
+>>>>>>> master
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="IngameScene.h">
+      <Filter>SceneScript</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginScene.h">
+      <Filter>SceneScript</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="header.h">
+      <Filter>Network\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="enum.h">
+      <Filter>Network\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="define.h">
+      <Filter>Network\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Server\Server\protocol.h">
+      <Filter>Network\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="StatusScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="QuickSlotScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstStringScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="InputScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerCamScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="FPSCamScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="SunshineScript.h">
+      <Filter>ComponentScript\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimalScript.h">
+      <Filter>ComponentScript\Animal</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemScript.h">
+      <Filter>ComponentScript\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="StuffScript.h">
+      <Filter>ComponentScript\Item\Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolItemScript.h">
+      <Filter>ComponentScript\Item\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemLootScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\StoneScript.h">
+      <Filter>ComponentScript\Stone</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="IngameScene.cpp">
+      <Filter>SceneScript</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginScene.cpp">
+      <Filter>SceneScript</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickSlotScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="StatusScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstStringScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="InputScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerCamScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSCamScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="SunshineScript.cpp">
+      <Filter>ComponentScript\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimalScript.cpp">
+      <Filter>ComponentScript\Animal</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemScript.cpp">
+      <Filter>ComponentScript\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="StuffScript.cpp">
+      <Filter>ComponentScript\Item\Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolItemScript.cpp">
+      <Filter>ComponentScript\Item\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemLootScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\StoneScript.cpp">
+      <Filter>ComponentScript\Stone</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="Client.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

@@ -97,6 +97,9 @@
     <Filter Include="06. GameObject\Component\Font">
       <UniqueIdentifier>{4b6071b6-b6e0-43a4-b7d6-75d369098c53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameObject\Component\Mouse">
+      <UniqueIdentifier>{17fa3afe-776d-4683-a547-8f3f1ce990a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -270,6 +273,9 @@
     <ClInclude Include="Font.h">
       <Filter>06. GameObject\Component\Font</Filter>
     </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>06. GameObject\Component\Mouse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -430,6 +436,9 @@
     </ClCompile>
     <ClCompile Include="Font.cpp">
       <Filter>06. GameObject\Component\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>06. GameObject\Component\Mouse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

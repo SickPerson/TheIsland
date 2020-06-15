@@ -16,7 +16,9 @@ private:
 	vector<Vec3>		m_vecPos;
 	vector<Vec3>		m_vecFaceNormal;
 
-	tLandScape			m_tLandScape;
+	tLandScape			m_tLandScape;	
+
+	tLandScapeInfo		m_tLandScapeInfo;
 
 public:
 	// CComponent을(를) 통해 상속됨
@@ -32,5 +34,12 @@ public:
 private:
 	void ComputeNormal( vector<VTX>& vecVtx, const vector<UINT>& vecIdx );
 	void ComputeTangent( vector<VTX>& vecVtx, const vector<UINT>& vecIdx );
+
+private:
+	void CreateLandScapeInfo();
+
+
+public:
+	float GetY( const Vec3& vPos );
 };
 

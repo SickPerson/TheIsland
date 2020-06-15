@@ -508,7 +508,7 @@ bool CCollisionMgr::CollisionSphereRay( CCollider2D * _pCollider1, CCollider2D *
 
 
 	Matrix matWorldInv = XMMatrixIdentity();
-	Vec3 vColl1Pos = _pCollider1->Transform()->GetLocalPos;
+	Vec3 vColl1Pos = _pCollider1->Transform()->GetLocalPos();
 	vColl1Pos += _pCollider1->Collider2D()->GetOffsetPos();
 
 	matWorldInv._41 = -vColl1Pos.x;
