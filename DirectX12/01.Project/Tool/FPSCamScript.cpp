@@ -28,7 +28,7 @@ void CFPSCamScript::Update()
 		Vec3 vRot = m_pPlayer->Transform()->GetLocalRot();
 
 		Vec3 vScale = Transform()->GetLocalScale();
-		vPos.y = 100.f;
+		vPos.y += 100.f;
 		Transform()->SetLocalPos(vPos);
 
 		Vec2 vDrag = CKeyMgr::GetInst()->GetDragDir();

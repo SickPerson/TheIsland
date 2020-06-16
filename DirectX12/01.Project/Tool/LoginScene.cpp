@@ -173,34 +173,34 @@ void CLoginScene::Init()
 
 
 
-	Ptr<CTexture> pTitle = CResMgr::GetInst()->Load<CTexture>(L"Title", L"Texture\\Title1.png");
-	pObject = new CGameObject;
-	pObject->SetName(L"Title Image");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
+	//Ptr<CTexture> pTitle = CResMgr::GetInst()->Load<CTexture>(L"Title", L"Texture\\Title1.png");
+	//pObject = new CGameObject;
+	//pObject->SetName(L"Title Image");
+	//pObject->AddComponent(new CTransform);
+	//pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 270.f, 1.f));
-	pObject->Transform()->SetLocalScale(Vec3(800.f, 260.f, 1.f));
+	//pObject->Transform()->SetLocalPos(Vec3(0.f, 270.f, 1.f));
+	//pObject->Transform()->SetLocalScale(Vec3(800.f, 260.f, 1.f));
 
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"IconMtrl"));
-	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pTitle.GetPointer());
-	float fa = 1.f;
-	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fa);
+	//pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	//pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"IconMtrl"));
+	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pTitle.GetPointer());
+	//float fa = 1.f;
+	//pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fa);
 
-	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+	//m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 
-	pObject = new CGameObject;
-	pObject->SetName(L"Help Message");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CConstStringScript);
+	//pObject = new CGameObject;
+	//pObject->SetName(L"Help Message");
+	//pObject->AddComponent(new CTransform);
+	//pObject->AddComponent(new CConstStringScript);
 
-	pObject->Transform()->SetLocalPos(Vec3(280.f, 220.f, 1.f));
-	pObject->Transform()->SetLocalScale(Vec3(25.f, 40, 1.f));
+	//pObject->Transform()->SetLocalPos(Vec3(280.f, 220.f, 1.f));
+	//pObject->Transform()->SetLocalScale(Vec3(25.f, 40, 1.f));
 
-	pObject->GetScript<CConstStringScript>()->Init("DEMO", m_vFontColor, m_vFontBackColor);
+	//pObject->GetScript<CConstStringScript>()->Init("DEMO", m_vFontColor, m_vFontBackColor);
 
-	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+	//m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 }
 
 void CLoginScene::Update()

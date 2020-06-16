@@ -141,7 +141,7 @@ struct tLandScapeInfo
 	Vec3 vMin;
 	Vec3 vMax;
 	int iNumX;
-	int iNumY;
+	int iNumZ;
 	vector<Vec3>* pvecPos;
 	class CTransform* pTransform;
 };

@@ -16,8 +16,8 @@ private:
 	vector<Vec3>		m_vecPos;
 	vector<Vec3>		m_vecFaceNormal;
 
-	tLandScape			m_tLandScape;
-
+	tLandScape			m_tLandScape;	
+	
 public:
 	// CComponent을(를) 통해 상속됨
 	virtual void SaveToScene( FILE * _pFile ) override;
@@ -25,6 +25,9 @@ public:
 	CLONE( CLandScape );
 
 public:
+	UINT GetNumX() const;
+	UINT GetNumZ() const;
+	vector<Vec3>* GetVecPos();
 
 public:
 	void CreateLandScape( const wstring& strPath, UINT iNumX, UINT iNumZ );

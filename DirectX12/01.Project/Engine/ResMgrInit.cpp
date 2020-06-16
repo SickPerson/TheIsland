@@ -266,7 +266,7 @@ void CResMgr::CreateDefaultShader()
 	pShader = new CShader;
 	pShader->CreateVertexShader( L"Shader\\std3d.fx", "LandScapeVS", "vs_5_0" );
 	pShader->CreatePixelShader( L"Shader\\std3d.fx", "PS_Std3D", "ps_5_0" );
-
+	pShader->SetRasterizerType( RS_TYPE::WIRE_FRAME );
 	pShader->Create( SHADER_POV::DEFERRED );
 	AddRes( L"LandScapeShader", pShader );
 

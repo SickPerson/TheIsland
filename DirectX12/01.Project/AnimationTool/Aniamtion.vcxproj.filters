@@ -68,7 +68,6 @@
     <Image Include="res\ToolDoc.ico">
       <Filter>99. Default</Filter>
     </Image>
-    <Image Include="..\..\..\..\00.AssortRock\DirectX11_Final\Tool3D\Include\res\Tool3D.ico" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00. WinApp">

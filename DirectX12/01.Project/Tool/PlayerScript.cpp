@@ -13,6 +13,8 @@
 
 #include <Engine/Camera.h>
 #include <Engine/RenderMgr.h>
+#include <Engine/LandScape.h>
+#include <Engine/NaviMgr.h>
 
 #include <iostream>
 
@@ -74,8 +76,8 @@ void CPlayerScript::Update()
 
 	if(m_fAttackCoolTime > -1.f)
 		m_fAttackCoolTime -= DT;
-	
 
+	
 	if (m_pChat && m_pInventory)
 	{
 		// 채팅창도 꺼져있고 인벤토리도 꺼져있는 경우
@@ -128,6 +130,8 @@ void CPlayerScript::Update()
 
 			Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 
+			vPos.y = CNaviMgr::GetInst()->GetY( vPos );
+
 			Transform()->SetLocalPos(vPos);
 			m_bEnable = true;
 		}
@@ -178,6 +182,8 @@ void CPlayerScript::Update()
 			vRot.y -= 360.f;
 
 		Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
+
+		vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
 
 		Transform()->SetLocalPos(vPos);
 		m_bEnable = true;
@@ -414,5 +420,6 @@ bool CPlayerScript::CollisionRay(Vec3 vPosRay, Vec3 vDirRay, CCollider2D * _pOth
 	{
 		return true;
 	}
+
 	return false;
 }

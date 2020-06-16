@@ -100,6 +100,9 @@
     <Filter Include="06. GameObject\Component\Mouse">
       <UniqueIdentifier>{17fa3afe-776d-4683-a547-8f3f1ce990a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Manager\Navigation">
+      <UniqueIdentifier>{3e66bd5a-4a5e-4374-b7c1-32ab345e108e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -276,6 +279,9 @@
     <ClInclude Include="Mouse.h">
       <Filter>06. GameObject\Component\Mouse</Filter>
     </ClInclude>
+    <ClInclude Include="NaviMgr.h">
+      <Filter>03. Manager\Navigation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -439,6 +445,9 @@
     </ClCompile>
     <ClCompile Include="Mouse.cpp">
       <Filter>06. GameObject\Component\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="NaviMgr.cpp">
+      <Filter>03. Manager\Navigation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -200,6 +200,7 @@ call EngineCopy.bat</Command>
     <ClInclude Include="MonsterScript.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="MRT.h" />
+    <ClInclude Include="NaviMgr.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PathMgr.h" />
     <ClInclude Include="Ptr.h" />
@@ -229,6 +230,7 @@ call EngineCopy.bat</Command>
     <ClCompile Include="Animator3D.cpp" />
     <ClCompile Include="BulletScript.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="NaviMgr.cpp" />
     <ClCompile Include="Collider2D.cpp" />
     <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="desc.cpp" />

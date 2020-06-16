@@ -7,6 +7,7 @@
 
 #include "Device.h"
 #include "ConstantBuffer.h"
+#include "Transform.h"
 
 CLandScape::CLandScape() : 
 	CComponent(COMPONENT_TYPE::LANDSCAPE),
@@ -27,6 +28,21 @@ void CLandScape::SaveToScene( FILE * _pFile )
 
 void CLandScape::LoadFromScene( FILE * _pFile )
 {
+}
+
+UINT CLandScape::GetNumX() const
+{
+	return m_iNumX;
+}
+
+UINT CLandScape::GetNumZ() const
+{
+	return m_iNumZ;
+}
+
+vector<Vec3>* CLandScape::GetVecPos()
+{
+	return &m_vecPos;
 }
 
 
@@ -88,7 +104,7 @@ void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNum
 
 	for ( int i = 0; i < m_iNumZ; ++i )
 	{
-		for ( int j = 0; j < m_iNumZ; ++j )
+		for ( int j = 0; j < m_iNumX; ++j )
 		{
 			VTX tVtx{ };
 
@@ -106,7 +122,7 @@ void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNum
 	delete[] pPixel;
 	pPixel = NULL;
 
-	vector<UINT> vecIndex( ( m_iNumX - 1 ) * ( m_iNumZ - 1 ) * 2 * 3 );
+ 	vector<UINT> vecIndex( ( m_iNumX - 1 ) * ( m_iNumZ - 1 ) * 2 * 3 );
 
 	int iCount = 0;
 
@@ -158,9 +174,7 @@ void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNum
 		( BYTE* )vecVtx.data(), DXGI_FORMAT_R32_UINT, 
 		( UINT )vecIndex.size(), ( BYTE* )vecIndex.data() );
 	
-	CResMgr::GetInst()->AddRes( L"LandScapeMesh", pMesh );
-
-	
+	CResMgr::GetInst()->AddRes( L"LandScapeMesh", pMesh );	
 }
 
 void CLandScape::ComputeNormal( vector<VTX>& vecVtx, const vector<UINT>& vecIdx )
@@ -224,40 +238,4 @@ void CLandScape::ComputeTangent( vector<VTX>& vecVtx, const vector<UINT>& vecIdx
 		vecVtx[idx1].vBinormal = vecVtx[idx1].vNormal.Cross( vTangent ).Normalize();
 		vecVtx[idx2].vBinormal = vecVtx[idx2].vNormal.Cross( vTangent ).Normalize();
 	}
-}
-
-void CLandScape::CreateLandScapeInfo()
-{
-	vector<Vec3>::iterator iter = m_vecPos.begin();
-	vector<Vec3>::iterator iterEnd = m_vecPos.end();
-
-	Vec3 vMin = *iter;
-	Vec3 vMax = *iter;
-
-	for ( iter = m_vecPos.begin() + 1; iter != iterEnd; ++iter )
-	{
-		if ( vMin.x > ( *iter ).x )
-			vMin.x = ( *iter ).x;
-
-		if ( vMin.y > ( *iter ).y )
-			vMin.y = ( *iter ).y;
-
-		if ( vMin.z > ( *iter ).z )
-			vMin.z = ( *iter ).z;
-
-		if ( vMax.x < ( *iter ).x )
-			vMax.x = ( *iter ).x;
-
-		if ( vMax.y < ( *iter ).y )
-			vMax.y = ( *iter ).y;
-
-		if ( vMax.z < ( *iter ).z )
-			vMax.z = ( *iter ).z;
-	}
-}
-
-float CLandScape::GetY( const Vec3 & vPos )
-{
-
-	return 0.0f;
 }
