@@ -1,5 +1,41 @@
 #pragma once
 
+#define INSTANCING_COUNT 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #define SINGLE(type) private: type(); ~type();\
 public:\
 static type* GetInst()\

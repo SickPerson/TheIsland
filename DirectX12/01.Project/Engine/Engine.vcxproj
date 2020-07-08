@@ -181,6 +181,8 @@ call EngineCopy.bat</Command>
     <ClInclude Include="func.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="GridScript.h" />
+    <ClInclude Include="InstancingBuffer.h" />
+    <ClInclude Include="InstancingMgr.h" />
     <ClInclude Include="KeyMgr.h" />
     <ClInclude Include="LandScape.h" />
     <ClInclude Include="Light2D.h" />
@@ -238,6 +240,8 @@ call EngineCopy.bat</Command>
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="func.cpp" />
     <ClCompile Include="GridScript.cpp" />
+    <ClCompile Include="InstancingBuffer.cpp" />
+    <ClCompile Include="InstancingMgr.cpp" />
     <ClCompile Include="KeyMgr.cpp" />
     <ClCompile Include="LandScape.cpp" />
     <ClCompile Include="Light2D.cpp" />

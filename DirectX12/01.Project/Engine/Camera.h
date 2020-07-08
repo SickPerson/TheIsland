@@ -44,10 +44,14 @@ private:
 	PROJ_TYPE	m_eProjType;
 	UINT		m_iLayerCheck; // 카메라가 찍는 Layer 비트값
 
-	vector<CGameObject*>			m_vecDeferred;
-	vector<CGameObject*>			m_vecForward;
+	// 인스턴싱 버전
+	map<ULONG64, vector<tInstObj>>		m_mapInstGroup_F; // Foward
+	map<ULONG64, vector<tInstObj>>		m_mapInstGroup_D; // Deferred
+	map<ULONG64, vector<tInstObj>>		m_mapInstGroup_P; // Post
+
+	map<INT_PTR, vector<tInstObj>>		m_mapSingleObj; // Single Object
+
 	vector<CGameObject*>			m_vecParticle;
-	vector<CGameObject*>			m_vecPostEffect;
 	vector<CGameObject*>			m_vecFont;
 
 	vector<CGameObject*>	m_vecShadowObj;
