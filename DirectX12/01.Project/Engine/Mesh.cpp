@@ -137,6 +137,8 @@ void CMesh::Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem
 
 void CMesh::Render( UINT iSubset )
 {
+	assert(iSubset < m_vecIdxInfo.size());
+
 	CDevice::GetInst()->UpdateTable();	
 	
 	CMDLIST->IASetVertexBuffers( 0, 1, &m_tVtxView );

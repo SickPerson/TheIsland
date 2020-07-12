@@ -200,7 +200,6 @@ float4 PS_AdvancedWater(PS_ADV_WATER_INPUT _input) : SV_Target
 {
 	float2 vScreenUV = float2(_input.vOutPos.x / g_vResolution.x, _input.vOutPos.y / g_vResolution.y);
 	//return g_tex_0.Sample(g_sam_0, vScreenUV);
- 
 
 	float2 vDir = normalize(float2(0.5f, 1.0f) - _input.vOutUV);
 
@@ -213,9 +212,11 @@ float4 PS_AdvancedWater(PS_ADV_WATER_INPUT _input) : SV_Target
 	vScreenUV += vDir * sin(abs((fRatio - g_fAccTime * 0.06f) * 80.f)) * 0.03f;
 
 	PS_STD3D_OUT output = (PS_STD3D_OUT) 0.f;
-	output.vDiffuse = g_tex_0.Sample(g_sam_0, vScreenUV);
 
 	float4 color = g_tex_0.Sample(g_sam_0, vScreenUV);
+
+	output.vDiffuse = color;
+
 
 	//float4 water = g_tex_1.Sample(g_sam_0, _input.vOutUV);
 	float4 water = g_tex_1.Sample(g_sam_0, vScreenUV);

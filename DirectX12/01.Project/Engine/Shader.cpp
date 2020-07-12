@@ -347,4 +347,13 @@ void CShader::Create( SHADER_POV _ePOV, D3D_PRIMITIVE_TOPOLOGY _eTopology )
 	HRESULT hr = DEVICE->CreateGraphicsPipelineState(&m_tPipeline, IID_PPV_ARGS(&m_pPipelineState ));
 	if (FAILED(hr))
 		assert(nullptr);
+
+	if (nullptr != m_pVSInstBlob)
+	{
+		m_tPipeline.VS = { m_pVSInstBlob->GetBufferPointer(), m_pVSInstBlob->GetBufferSize() };
+
+		HRESULT hr = DEVICE->CreateGraphicsPipelineState(&m_tPipeline, IID_PPV_ARGS(&m_pPipelineStateInst));
+		if (FAILED(hr))
+			assert(nullptr);
+	}
 }

@@ -970,7 +970,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 	pObject->SetName(L"Player Status");
-	pObject->Transform()->SetLocalPos(Vec3(490.f, -300.f, 1500.f));
+	pObject->Transform()->SetLocalPos(Vec3(490.f, -300.f, 2000.f));
 	pObject->Transform()->SetLocalScale(Vec3(250.f, 135.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -988,7 +988,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pChildObject->AddComponent(new CTransform);
 	pChildObject->AddComponent(new CMeshRender);
 	//pChildObject->Transform()->SetLocalPos(Vec3(510.f, -260.f, 1000.f));
-	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, 0.3f, -100.f));
+	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, 0.3f, -1000.f));
 	pChildObject->Transform()->SetLocalScale(Vec3(190.f / 250.f, 30.f / 135.f, 1.f));
 	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 	pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
@@ -1002,7 +1002,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pChildObject->AddComponent(new CTransform);
 	pChildObject->AddComponent(new CMeshRender);
 	//pChildObject->Transform()->SetLocalPos(Vec3(510.f, -300.f, 1000.f));
-	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, 0.f, -100.f));
+	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, 0.f, -1000.f));
 	pChildObject->Transform()->SetLocalScale(Vec3(190.f / 250.f, 30.f / 135.f, 1.f));
 	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 	pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
@@ -1014,7 +1014,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pChildObject = new CGameObject;
 	pChildObject->AddComponent(new CTransform);
 	pChildObject->AddComponent(new CMeshRender);
-	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, -0.3f, -100.f));
+	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, -0.3f, -1000.f));
 	pChildObject->Transform()->SetLocalScale(Vec3(190.f / 250.f, 30.f / 135.f, 1.f));
 	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 	pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
@@ -1030,7 +1030,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pChildObject->AddComponent(new CMeshRender);
 
 	// Transform 설정
-	pChildObject->Transform()->SetLocalPos(Vec3(-1.95f, 2.25f, -1400.f));
+	pChildObject->Transform()->SetLocalPos(Vec3(-1.95f, 2.25f, 1000.f));
 	pChildObject->Transform()->SetLocalScale(Vec3(5.2f, 5.8f, 1.f));
 
 	// MeshRender 설정
@@ -1049,7 +1049,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(390.f, -260.f, 500.f));
+	pObject->Transform()->SetLocalPos(Vec3(390.f, -260.f, 1.f));
 	pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -1067,7 +1067,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(390.f, -300.f, 500.f));
+	pObject->Transform()->SetLocalPos(Vec3(390.f, -300.f, 1.f));
 	pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -1084,7 +1084,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(390.f, -340.f, 500.f));
+	pObject->Transform()->SetLocalPos(Vec3(390.f, -340.f, 1.f));
 	pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));

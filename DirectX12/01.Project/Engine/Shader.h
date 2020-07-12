@@ -63,4 +63,3 @@ public:
 	SHADER_POV GetShaderPOV() { return m_ePOV; }
 	bool IsPossibleInstancing() { return m_pPipelineStateInst == nullptr ? false : true; }
 };
-

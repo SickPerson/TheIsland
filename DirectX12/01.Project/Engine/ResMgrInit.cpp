@@ -28,6 +28,7 @@ void CResMgr::CreateDefaultShader()
 	//=============
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Font", "vs_5_0");
+	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_Font_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Font", "ps_5_0");
 
 	// BlendState 설정
@@ -51,6 +52,7 @@ void CResMgr::CreateDefaultShader()
 	//=============
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\font.fx", "VS_Font", "vs_5_0");
+	//pShader->CreateVertexInstShader(L"Shader\\font.fx", "VS_Font_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\font.fx", "PS_Font", "ps_5_0");
 
 	// BlendState 설정
@@ -71,11 +73,12 @@ void CResMgr::CreateDefaultShader()
 	// =================
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Test", "vs_5_0");
+	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_UI_Test_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Test", "ps_5_0");
 
 	// BlendState 설정
 	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
-	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE);
+	//pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE);
 	pShader->Create(SHADER_POV::FORWARD);
 
 	pShader->AddShaderParam(tShaderParam{ L"Test Value", SHADER_PARAM::INT_0 });
@@ -88,6 +91,7 @@ void CResMgr::CreateDefaultShader()
 	// =================
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Standard", "vs_5_0");
+	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_UI_Standard_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Standard", "ps_5_0");
 
 	// BlendState 설정
@@ -103,6 +107,7 @@ void CResMgr::CreateDefaultShader()
 	// ====================
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Test", "vs_5_0");
+	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_UI_Test_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Test", "ps_5_0");
 
 	// BlendState 설정
@@ -121,6 +126,7 @@ void CResMgr::CreateDefaultShader()
 	// ============
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std3d.fx", "VS_Std3D", "vs_5_0");
+	pShader->CreateVertexInstShader(L"Shader\\std3d.fx", "VS_Std3D_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std3d.fx", "PS_Std3D", "ps_5_0");
 
 	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE);
@@ -157,6 +163,7 @@ void CResMgr::CreateDefaultShader()
 	// ==============
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Item", "vs_5_0");
+	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_Item_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Item", "ps_5_0");
 
 	// BlendState 설정
@@ -175,6 +182,7 @@ void CResMgr::CreateDefaultShader()
 	// =================
 	pShader = new CShader;
 	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Collider2D", "vs_5_0" );
+	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_Collider2D_Inst", "vs_5_0");
 	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Collider2D", "ps_5_0" );
 
 	// DepthStencilState 설정
@@ -231,6 +239,7 @@ void CResMgr::CreateDefaultShader()
 	// ============
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std3d.fx", "VS_Std3D", "vs_5_0");
+	pShader->CreateVertexInstShader(L"Shader\\std3d.fx", "VS_Std3D_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std3d.fx", "PS_Std3D_Tree", "ps_5_0");
 	
 	pShader->SetRasterizerType(RS_TYPE::CULL_NONE);
@@ -432,6 +441,7 @@ void CResMgr::CreateDefaultShader()
 	// ===========================
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\water.fx", "VS_AdvancedWater", "vs_5_0");
+	//pShader->CreateVertexInstShader(L"Shader\\water.fx", "VS_AdvancedWater_Inst", "vs_5_0");
 	pShader->CreateHullShader(L"Shader\\water.fx", "HS_AdvancedWater", "hs_5_0");
 	pShader->CreateDomainShader(L"Shader\\water.fx", "DS_AdvancedWater", "ds_5_0");
 	pShader->CreatePixelShader(L"Shader\\water.fx", "PS_AdvancedWater", "ps_5_0");

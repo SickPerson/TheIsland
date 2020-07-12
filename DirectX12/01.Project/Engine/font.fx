@@ -8,6 +8,13 @@ struct FONT_INPUT
 {
 	float3 vPos : POSITION;
 	float2 vUV : TEXCOORD;
+
+	// Instancing
+	row_major matrix matWorld : WORLD;
+	row_major matrix matWV : WV;
+	row_major matrix matWVP : WVP;
+
+	uint iInstanceID : SV_InstanceID;
 };
 
 struct FONT_OUTPUT
@@ -41,6 +48,21 @@ FONT_OUTPUT VS_Font(FONT_INPUT _input)
 
 	return output;
 }
+
+FONT_OUTPUT VS_Font_Inst(FONT_INPUT _input)
+{
+	FONT_OUTPUT output = (FONT_OUTPUT)0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.   
+	float4 vProjPos = mul(float4(_input.vPos, 1.f), _input.matWVP);
+
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
+
 // 0일떄는 start
 // 1일때는 start + width
 float4 PS_Font(FONT_OUTPUT _input) : SV_Target

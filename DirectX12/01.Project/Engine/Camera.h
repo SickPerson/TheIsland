@@ -54,7 +54,7 @@ private:
 	vector<CGameObject*>			m_vecParticle;
 	vector<CGameObject*>			m_vecFont;
 
-	vector<CGameObject*>	m_vecShadowObj;
+	vector<CGameObject*>			m_vecShadowObj;
 
 	bool		m_bModule;
 

@@ -140,4 +140,7 @@ void CCore::Progress()
 		CRenderMgr::GetInst()->Render();
 	}
 	CEventMgr::GetInst()->Update();
+
+	// 인스턴싱 버퍼 클리어
+	CInstancingMgr::GetInst()->Clear();
 }

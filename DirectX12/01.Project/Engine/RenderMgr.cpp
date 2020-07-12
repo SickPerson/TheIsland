@@ -33,6 +33,7 @@ void CRenderMgr::Render()
 	float arrColor[4] = { 0.f,0.f, 0.f, 1.f };
 	CDevice::GetInst()->Render_Start(arrColor);
 
+	// 전역버퍼 데이터 업데이트
 	static CConstantBuffer* pGlobalBuffer = CDevice::GetInst()->GetCB( CONST_REGISTER::b5 );
 	CDevice::GetInst()->SetConstBufferToRegister( pGlobalBuffer, pGlobalBuffer->AddData( &g_global ) );
 

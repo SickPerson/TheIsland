@@ -114,14 +114,14 @@ void CCamera::SortGameObject()
 							if (vecObj[i]->MeshRender()->GetSharedMaterial(iMtrl) == nullptr
 								|| vecObj[i]->MeshRender()->GetSharedMaterial(iMtrl)->GetShader() == nullptr)
 							{
-								if (vecObj[i]->ParticleSystem())
-								{
-									m_vecParticle.push_back(vecObj[i]);
-								}
-								else if (vecObj[i]->Font())
-								{
-									m_vecFont.push_back(vecObj[i]);
-								}
+								//if (vecObj[i]->ParticleSystem())
+								//{
+								//	m_vecParticle.push_back(vecObj[i]);
+								//}
+								//else if (vecObj[i]->Font())
+								//{
+								//	m_vecFont.push_back(vecObj[i]);
+								//}
 								continue;
 							}
 
@@ -155,6 +155,14 @@ void CCamera::SortGameObject()
 								iter->second.push_back(tInstObj{ vecObj[i], iMtrl });
 							}
 						}
+					}
+					else if (vecObj[i]->ParticleSystem())
+					{
+						m_vecParticle.push_back(vecObj[i]);
+					}
+					else if (vecObj[i]->Font())
+					{
+						m_vecFont.push_back(vecObj[i]);
 					}
 				}
 			}
@@ -276,11 +284,11 @@ void CCamera::Render_Deferred()
 		if (nullptr == pMtrl->GetShader())
 			continue;
 
-		CInstancingBuffer* pInstBuffer = CInstancingMgr::GetInst()->GetInstancingBuffer(pMesh->GetID());
+		CInstancingBuffer* pInstBuffer = CInstancingMgr::GetInst()->GetInstancingBuffer((long long)pObj);
 		if (pInstBuffer == nullptr)
 		{
 			// 인스턴싱 데이터를 모을 버퍼 할당
-			pInstBuffer = CInstancingMgr::GetInst()->AllocBuffer(pMesh->GetID());
+			pInstBuffer = CInstancingMgr::GetInst()->AllocBuffer((long long)pObj);
 		}
 
 		if (false == pInstBuffer->BeUpdated())
@@ -340,10 +348,13 @@ void CCamera::Render_Deferred()
 			pMtrl->UpdateData(1);
 			pMesh->Render_Instancing(pair.second[0].iMtrlIdx, pInstBuffer);
 
-			// Animatino 행렬 값 정리
-			int a = 0;
-			pMtrl->SetData(SHADER_PARAM::INT_0, &a);
-			pMtrl->SetData(SHADER_PARAM::INT_1, &a);
+			if (pInstBuffer->GetAnimInstancingCount() > 0)
+			{
+				// Animatino 행렬 값 정리
+				int a = 0;
+				pMtrl->SetData(SHADER_PARAM::INT_0, &a);
+				pMtrl->SetData(SHADER_PARAM::INT_1, &a);
+			}
 		}
 	}
 
@@ -475,10 +486,13 @@ void CCamera::Render_Forward()
 			pMtrl->UpdateData(1);
 			pMesh->Render_Instancing(pair.second[0].iMtrlIdx, pInstBuffer);
 
-			// Animatino 행렬 값 정리
-			int a = 0;
-			pMtrl->SetData(SHADER_PARAM::INT_0, &a);
-			pMtrl->SetData(SHADER_PARAM::INT_1, &a);
+			if (pInstBuffer->GetAnimInstancingCount() > 0)
+			{
+				// Animatino 행렬 값 정리
+				int a = 0;
+				pMtrl->SetData(SHADER_PARAM::INT_0, &a);
+				pMtrl->SetData(SHADER_PARAM::INT_1, &a);
+			}
 		}
 	}
 
@@ -502,6 +516,11 @@ void CCamera::Render_Forward()
 	for (size_t i = 0; i < m_vecParticle.size(); ++i)
 	{
 		m_vecParticle[i]->ParticleSystem()->Render();
+	}
+
+	for (size_t i = 0; i < m_vecFont.size(); ++i)
+	{
+		m_vecFont[i]->Font()->Render();
 	}
 
 	// Deferred Collider rendering
@@ -550,6 +569,7 @@ void CCamera::Render_PostEffect()
 	{
 		for (size_t i = 0; i < pair.second.size(); ++i)
 		{
+			CRenderMgr::GetInst()->CopySwapToPosteffect();
 			pair.second[i].pObj->MeshRender()->Render(pair.second[i].iMtrlIdx);
 		}
 	}

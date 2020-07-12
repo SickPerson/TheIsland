@@ -4,7 +4,6 @@
 #include "Transform.h"
 #include "ResMgr.h"
 #include "Animator3D.h"
-//#include <iostream>
 
 CMeshRender::CMeshRender()
 	: CComponent(COMPONENT_TYPE::MESHRender)
@@ -38,9 +37,15 @@ void CMeshRender::Render()
 			m_vecMtrl[i]->SetData(SHADER_PARAM::INT_0, &a); // Animation Mesh 알리기
 		}
 
-		//std::cout << GetObj()->GetName().c_str() << std::endl;
 		m_vecMtrl[i]->UpdateData();
 		m_pMesh->Render((UINT)i);
+
+		// 정리
+		if (Animator3D())
+		{
+			int a = 0;
+			m_vecMtrl[i]->SetData(SHADER_PARAM::INT_0, &a);
+		}
 	}
 }
 
@@ -70,8 +75,12 @@ void CMeshRender::Render(UINT _iMtrlIdx)
 	m_vecMtrl[_iMtrlIdx]->UpdateData();
 	m_pMesh->Render((UINT)_iMtrlIdx);
 
-	a = 0;
-	m_vecMtrl[_iMtrlIdx]->SetData(SHADER_PARAM::INT_0, &a); // Animation Mesh 알리기
+	// 정리
+	if (Animator3D())
+	{
+		a = 0;
+		m_vecMtrl[_iMtrlIdx]->SetData(SHADER_PARAM::INT_0, &a);
+	}
 }
 
 void CMeshRender::Render_Shadowmap()
@@ -91,13 +100,13 @@ void CMeshRender::Render_Shadowmap()
 		Transform()->UpdateData();
 		pMtrl->UpdateData();
 		m_pMesh->Render(i);
-	}
 
-	// 정리
-	if (Animator3D())
-	{
-		a = 0;
-		pMtrl->SetData(SHADER_PARAM::INT_0, &a);
+		// 정리
+		if (Animator3D())
+		{
+			a = 0;
+			pMtrl->SetData(SHADER_PARAM::INT_0, &a);
+		}
 	}
 }
 
