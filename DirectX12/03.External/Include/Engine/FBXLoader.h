@@ -2,29 +2,32 @@
 
 #include "global.h"
 
-struct tKeyFrame
+// FbxLoader class struct
+struct tFbxKeyFrame
 {
 	FbxAMatrix  matTransform;
 	double		dTime;
 };
 
-struct tBone
+struct tFbxBone
 {
-	wstring				strBoneName;
-	int					iDepth;			// °èÃþ±¸Á¶ ±íÀÌ
-	int					iParentIndx;	// ºÎ¸ð Bone ÀÇ ÀÎµ¦½º
+	wstring					strBoneName;
+	int							iDepth;			// °èÃþ±¸Á¶ ±íÀÌ
+	int							iParentIndx;	// ºÎ¸ð Bone ÀÇ ÀÎµ¦½º
 	FbxAMatrix			matOffset;		// Offset Çà·Ä( -> »Ñ¸® -> Local)
 	FbxAMatrix			matBone;
-	vector<tKeyFrame>	vecKeyFrame;
+	int							iBoneIdx;
+	vector<tFbxKeyFrame>	vecKeyFrame;
 };
 
-struct tAnimClip
+struct tFbxAnimClip
 {
 	wstring		strName;
 	FbxTime		tStartTime;
 	FbxTime		tEndTime;
 	FbxLongLong	llTimeLength;
 	FbxTime::EMode eMode;
+	vector<tFbxBone>	vecBoneFrame;
 };
 
 class CMesh;
@@ -43,9 +46,12 @@ private:
 	vector<tContainer>		m_vecContainer;
 
 	// Animation 
-	vector<tBone*>			m_vecBone;
+	vector<tFbxBone*>			m_vecBone;
 	FbxArray<FbxString*>	m_arrAnimName;
-	vector<tAnimClip*>		m_vecAnimClip;
+	vector<tFbxAnimClip*>		m_vecAnimClip;
+
+	// Mixamo
+	bool				m_bMixamo;
 
 public:
 	void Init();
@@ -54,8 +60,8 @@ public:
 public:
 	int GetContainerCount();
 	const tContainer& GetContainer( int iIdx );
-	vector<tBone*>& GetBones();
-	vector<tAnimClip*>& GetAnimClip();
+	vector<tFbxBone*>& GetBones();
+	vector<tFbxAnimClip*>& GetAnimClip();
 
 private:
 	void LoadMeshDataFromNode( FbxNode* pNode );

@@ -11,7 +11,8 @@
 CFBXLoader::CFBXLoader() :
 	m_pManager(NULL),
 	m_pScene(NULL),
-	m_pImporter(NULL)
+	m_pImporter(NULL),
+	m_bMixamo(false)
 {
 }
 
@@ -104,12 +105,12 @@ const tContainer & CFBXLoader::GetContainer( int iIdx )
 	return m_vecContainer[iIdx];
 }
 
-vector<tBone*>& CFBXLoader::GetBones()
+vector<tFbxBone*>& CFBXLoader::GetBones()
 {
 	return m_vecBone;
 }
 
-vector<tAnimClip*>& CFBXLoader::GetAnimClip()
+vector<tFbxAnimClip*>& CFBXLoader::GetAnimClip()
 {
 	return m_vecAnimClip;
 }
@@ -490,10 +491,11 @@ void CFBXLoader::LoadSkeleton_Re( FbxNode * pNode, int iDepth, int iIdx, int iPa
 
 	if ( pAttr && pAttr->GetAttributeType() == FbxNodeAttribute::eSkeleton )
 	{
-		tBone* pBone = new tBone;
+		tFbxBone* pBone = new tFbxBone;
 
 		string strBoneName = pNode->GetName();
-
+		if ( m_bMixamo )
+			pBone->strBoneName.erase( 0, 10 );
 		pBone->strBoneName = wstring( strBoneName.begin(), strBoneName.end() );
 		pBone->iDepth = iDepth++;
 		pBone->iParentIndx = iParentIdx;
@@ -519,10 +521,16 @@ void CFBXLoader::LoadAnimationClip()
 		if ( !pAnimStack )
 			continue;
 
-		tAnimClip* pAnimClip = new tAnimClip;
+		tFbxAnimClip* pAnimClip = new tFbxAnimClip;
 
 		string strClipName = pAnimStack->GetName();
+
+		if ( strClipName == "mixamo.com" )
+			m_bMixamo = true;
+
 		pAnimClip->strName = wstring( strClipName.begin(), strClipName.end() );
+
+		
 
 		FbxTakeInfo* pTakeInfo = m_pScene->GetTakeInfo( pAnimStack->GetName() );
 		pAnimClip->tStartTime = pTakeInfo->mLocalTimeSpan.GetStart();
@@ -586,8 +594,13 @@ void CFBXLoader::LoadAnimationData( FbxMesh * pMesh, tContainer * pContainer )
 					if ( !pCluster->GetLink() )
 						continue;
 
+					string strBoneName = pCluster->GetLink()->GetName();
+
+					if ( m_bMixamo )
+						strBoneName.erase( 0, 10 );
+
 					// 현재 본 인덱스를 얻어온다.
-					int iBoneIdx = FindBoneIndex( pCluster->GetLink()->GetName() );
+					int iBoneIdx = FindBoneIndex( strBoneName );
 					if ( -1 == iBoneIdx )
 						assert( NULL );
 
@@ -667,6 +680,23 @@ void CFBXLoader::LoadKeyframeTransform( FbxNode * pNode, FbxCluster * pCluster, 
 	matReflect.mData[1] = v2;
 	matReflect.mData[2] = v3;
 	matReflect.mData[3] = v4;
+	
+	if ( m_bMixamo )
+	{
+		auto iterEnd = m_vecAnimClip.end();
+		for ( auto iter = m_vecAnimClip.begin(); iter != iterEnd;)
+		{
+			if ( ( *iter )->strName != L"mixamo.com" )
+			{
+				SAFE_DELETE( ( *iter ) );
+				iter = m_vecAnimClip.erase( iter );
+				iterEnd = m_vecAnimClip.end();
+			}
+
+			else
+				++iter;
+		}
+	}
 
 	m_vecBone[iBoneIdx]->matBone = matNodeTransform;
 
@@ -677,7 +707,7 @@ void CFBXLoader::LoadKeyframeTransform( FbxNode * pNode, FbxCluster * pCluster, 
 
 	for ( FbxLongLong i = llStartFrame; i < llEndFrame; ++i )
 	{
-		tKeyFrame tFrame = {};
+		tFbxKeyFrame tFrame = {};
 		FbxTime   tTime = 0;
 
 		tTime.SetFrame( i, eTimeMode );

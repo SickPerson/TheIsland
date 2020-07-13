@@ -270,6 +270,12 @@
     <ClInclude Include="Font.h">
       <Filter>06. GameObject\Component\Font</Filter>
     </ClInclude>
+    <ClInclude Include="AnimationClip.h">
+      <Filter>06. GameObject\Component\Animation\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>06. GameObject\Component\Animation\3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -430,6 +436,12 @@
     </ClCompile>
     <ClCompile Include="Font.cpp">
       <Filter>06. GameObject\Component\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationClip.cpp">
+      <Filter>06. GameObject\Component\Animation\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>06. GameObject\Component\Animation\3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

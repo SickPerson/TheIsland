@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "File", "File", "{95018B3D-68AB-4E4D-B6AF-5227C8DF27E4}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,6 +20,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tool", "01.Project\Tool\Too
 	ProjectSection(ProjectDependencies) = postProject
 		{606E1682-A768-4AB1-B412-E9B68F47F39B} = {606E1682-A768-4AB1-B412-E9B68F47F39B}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnimationTool", "01.Project\AnimationTool\AnimationTool.vcxproj", "{D5B9E8D4-2C3C-45A0-B527-1DFA7CBB2616}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,14 @@ Global
 		{52B33994-D2EC-4513-9A09-BBFFE1A6535D}.Release|x64.Build.0 = Release|x64
 		{52B33994-D2EC-4513-9A09-BBFFE1A6535D}.Release|x86.ActiveCfg = Release|Win32
 		{52B33994-D2EC-4513-9A09-BBFFE1A6535D}.Release|x86.Build.0 = Release|Win32
+		{D5B9E8D4-2C3C-45A0-B527-1DFA7CBB2616}.Debug|x64.ActiveCfg = Debug|x64
+		{D5B9E8D4-2C3C-45A0-B527-1DFA7CBB2616}.Debug|x64.Build.0 = Debug|x64
+		{D5B9E8D4-2C3C-45A0-B527-1DFA7CBB2616}.Debug|x86.ActiveCfg = Debug|Win32
+		{D5B9E8D4-2C3C-45A0-B527-1DFA7CBB2616}.Debug|x86.Build.0 = Debug|Win32
+		{D5B9E8D4-2C3C-45A0-B527-1DFA7CBB2616}.Release|x64.ActiveCfg = Release|x64
+		{D5B9E8D4-2C3C-45A0-B527-1DFA7CBB2616}.Release|x64.Build.0 = Release|x64
+		{D5B9E8D4-2C3C-45A0-B527-1DFA7CBB2616}.Release|x86.ActiveCfg = Release|Win32
+		{D5B9E8D4-2C3C-45A0-B527-1DFA7CBB2616}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

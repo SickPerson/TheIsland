@@ -49,6 +49,9 @@ CLoginScene::~CLoginScene()
 
 void CLoginScene::Init()
 {
+	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Stepping_Forward.fbx" );
+	pTestMeshData->Save( pTestMeshData->GetPath() );
+
 	Ptr<CTexture> pSky01 = CResMgr::GetInst()->Load<CTexture>(L"Sky01", L"Texture\\Skybox\\Sky01.png");
 
 	Ptr<CMaterial> pPM = CResMgr::GetInst()->FindRes<CMaterial>(L"MergeLightMtrl");

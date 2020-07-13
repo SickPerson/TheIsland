@@ -281,7 +281,7 @@ CMesh * CMesh::CreateFromContainer( CFBXLoader & loader )
 	if ( !container->bAnimation )
 		return pMesh;
 
-	vector<tBone*>& vecBone = loader.GetBones();
+	vector<tFbxBone*>& vecBone = loader.GetBones();
 	UINT iFrameCount = 0;
 	for ( UINT i = 0; i < vecBone.size(); ++i )
 	{
@@ -318,7 +318,7 @@ CMesh * CMesh::CreateFromContainer( CFBXLoader & loader )
 		pMesh->m_vecBones.push_back( bone );
 	}
 
-	vector<tAnimClip*>& vecAnimClip = loader.GetAnimClip();
+	vector<tFbxAnimClip*>& vecAnimClip = loader.GetAnimClip();
 
 	for ( UINT i = 0; i < vecAnimClip.size(); ++i )
 	{

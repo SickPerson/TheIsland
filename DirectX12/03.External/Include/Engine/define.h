@@ -316,3 +316,11 @@ enum class SHADER_POV
 	COMPUTE,
 	SHADOWMAP,
 };
+
+enum class ANIMATION_OPTION
+{
+	LOOP,
+	ONCE_RETURN,
+	ONCE_DESTROY,
+	END,
+};

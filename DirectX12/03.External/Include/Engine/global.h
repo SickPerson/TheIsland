@@ -34,6 +34,7 @@ using namespace Microsoft::WRL;
 #include <vector>
 #include <list>
 #include <map>
+#include <unordered_map>
 
 
 using std::vector;
@@ -42,6 +43,7 @@ using std::map;
 using std::string;
 using std::wstring;
 using std::make_pair;
+using std::unordered_map;
 
 #include "d3dx12.h"	// Dx12 서포트 헤더
 #include "define.h" // 매크로, enum
