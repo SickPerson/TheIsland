@@ -169,6 +169,7 @@
     <ClInclude Include="IngameScene.h" />
     <ClInclude Include="InputScript.h" />
     <ClInclude Include="InventoryScript.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="ItemLootScript.h" />
     <ClInclude Include="ItemScript.h" />
     <ClInclude Include="LoginScene.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="PlayerCamScript.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="QuickSlotScript.h" />
+    <ClInclude Include="RecipeScript.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StatusScript.h" />
     <ClInclude Include="stdafx.h" />
@@ -193,6 +195,7 @@
     <ClCompile Include="IngameScene.cpp" />
     <ClCompile Include="InputScript.cpp" />
     <ClCompile Include="InventoryScript.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemLootScript.cpp" />
     <ClCompile Include="ItemScript.cpp" />
     <ClCompile Include="LoginScene.cpp" />
@@ -200,6 +203,7 @@
     <ClCompile Include="PlayerCamScript.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="QuickSlotScript.cpp" />
+    <ClCompile Include="RecipeScript.cpp" />
     <ClCompile Include="StatusScript.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

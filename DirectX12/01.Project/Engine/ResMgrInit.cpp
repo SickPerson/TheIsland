@@ -479,6 +479,15 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->SetShader(FindRes<CShader>(L"HighUIShader"));
 	AddRes(L"HighUIMtrl", pMtrl);
 
+	{
+		pMtrl = new CMaterial;
+		pMtrl->DisableFileSave();
+		pMtrl->SetShader(FindRes<CShader>(L"HighUIShader"));
+		Vec4 vColor = Vec4(0.5f, 0.5f, 0.8f, 1.f);
+		pMtrl->SetData(SHADER_PARAM::VEC4_0, &vColor);
+		AddRes(L"BackUIMtrl", pMtrl);
+	}
+
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"StrShader"));

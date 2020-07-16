@@ -1154,7 +1154,7 @@ void CIngameScene::CreateInventoryUI()
 
 				pItemSlot->Transform()->SetLocalPos(Vec3(-120.f + i * 90.f, 100.f - (j * 90.f), 200.f));
 
-				Vec3 vScale(80.f, 80.f, 5.f);
+				Vec3 vScale(80.f, 80.f, 1.f);
 				pItemSlot->Transform()->SetLocalScale(vScale);
 
 				// MeshRender 설정
@@ -1179,7 +1179,7 @@ void CIngameScene::CreateInventoryUI()
 
 		pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 1000.f));
 
-		Vec3 vScale(600.f, 450.f, 10.f);
+		Vec3 vScale(600.f, 450.f, 1.f);
 		pObject->Transform()->SetLocalScale(vScale);
 
 		// MeshRender 설정
@@ -1203,15 +1203,16 @@ void CIngameScene::CreateInventoryUI()
 
 		pObject->Transform()->SetLocalPos(Vec3(470.f, 50.f, 800.f));
 
-		Vec3 vScale(300.f, 550.f, 10.f);
+		Vec3 vScale(300.f, 550.f, 1.f);
 		pObject->Transform()->SetLocalScale(vScale);
 
 		// MeshRender 설정
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl");
-		pObject->MeshRender()->SetMaterial(pMtrl->Clone());
-		int color = 4; // White
-		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::INT_0, &color);
+		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
+		pObject->MeshRender()->SetMaterial(pMtrl);
+		
+		Vec4 vColor = Vec4(0.5f, 0.5f, 0.5f, 0.5f);
+		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
 
 		// AddGameObject
 		pInventory->AddChild(pObject);
@@ -1266,7 +1267,7 @@ void CIngameScene::CreateItemUI()
 	m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
 
 	pObject = new CGameObject;
-	pObject->SetName(L"Item Loot Icon");
+	pObject->SetName(L"Item Loot Name");
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CFont);
 

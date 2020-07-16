@@ -126,6 +126,12 @@
     <ClInclude Include="ItemLootScript.h">
       <Filter>ComponentScript\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>ComponentScript\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="RecipeScript.h">
+      <Filter>ComponentScript\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -187,6 +193,12 @@
     </ClCompile>
     <ClCompile Include="ItemLootScript.cpp">
       <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RecipeScript.cpp">
+      <Filter>ComponentScript\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>ComponentScript\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

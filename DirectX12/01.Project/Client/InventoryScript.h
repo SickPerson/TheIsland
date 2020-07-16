@@ -7,8 +7,11 @@ class CItemLootScript;
 class CInventoryScript :
 	public CScript
 {
-	vector<CGameObject*>	m_vItemSlot;
-	vector<CItemScript*>	m_vItem;
+	vector<CGameObject*>	m_vecItemSlot;
+	vector<CItemScript*>	m_vecItem;
+
+	vector<CGameObject*>	m_vecRecipe;
+	UINT					m_iRecipePage;
 
 	bool					m_bActive;
 
@@ -38,5 +41,8 @@ public:
 
 private:
 	void AddItemFunc(CItemScript* pItem, int iCount);
+
+	void RecipeInit();
+	void ShowRecipe();
 };
 

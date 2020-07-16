@@ -3,11 +3,15 @@
 
 #include "ItemScript.h"
 #include "ItemLootScript.h"
+#include "RecipeScript.h"
+
+#include "StuffScript.h"
+#include "ToolItemScript.h"
 
 #include <Engine/Font.h>
 
 #include <Engine/RenderMgr.h>
-
+#include <iostream>
 
 CInventoryScript::CInventoryScript() :
 	CScript((UINT)SCRIPT_TYPE::UISCRIPT),
@@ -15,17 +19,21 @@ CInventoryScript::CInventoryScript() :
 	m_bClick(false),
 	m_pClickObj(NULL),
 	m_iClickIdx(-1),
-	m_pItemLootScript(NULL)
+	m_pItemLootScript(NULL),
+	m_iRecipePage(0)
 {
-	m_vItemSlot.reserve(25);
-	m_vItem.reserve(25);
+	m_vecItemSlot.reserve(25);
+	m_vecItem.reserve(25);
+	m_vecRecipe.reserve(25);
+
+	RecipeInit();
 }
 
 
 CInventoryScript::~CInventoryScript()
 {
-	m_vItemSlot.clear();
-	m_vItem.clear();
+	m_vecItemSlot.clear();
+	m_vecItem.clear();
 }
 
 void CInventoryScript::Update()
@@ -39,22 +47,86 @@ void CInventoryScript::Update()
 
 			Vec2 vMousePos = Vec2((float)vPoint.x - vResolution.fWidth / 2.f, vResolution.fHeight / 2.f - (float)vPoint.y);
 
-			for (int i = 0; i < m_vItemSlot.size(); ++i)
+			// 아이템 클릭
+			for (int i = 0; i < m_vecItemSlot.size(); ++i)
 			{
-				Vec3 vPos = m_vItemSlot[i]->Transform()->GetLocalPos();
-				Vec3 vScale = m_vItemSlot[i]->Transform()->GetLocalScale();
+				Vec3 vPos = m_vecItemSlot[i]->Transform()->GetLocalPos();
+				Vec3 vScale = m_vecItemSlot[i]->Transform()->GetLocalScale();
 
 				if (vMousePos.x > vPos.x - vScale.x / 2.f && vMousePos.x < vPos.x + vScale.x / 2.f)
 				{
 					if (vMousePos.y > vPos.y - vScale.y / 2.f && vMousePos.y < vPos.y + vScale.y / 2.f)
 					{
-						if (m_vItem[i] == NULL)
+						if (m_vecItem[i] == NULL)
 							break;
 
 						m_bClick = true;
 						m_iClickIdx = i;
-						m_vItem[i]->GetObj()->ClearParent(NULL);
-						m_pClickObj = m_vItem[i]->GetObj();
+						m_vecItem[i]->GetObj()->ClearParent(NULL);
+						m_pClickObj = m_vecItem[i]->GetObj();
+						break;
+					}
+				}
+			}
+
+			// 조합 클릭
+			for (CGameObject* pObj : m_vecRecipe)
+			{
+				Vec3 vPos = pObj->GetScript<CRecipeScript>()->GetClickPosition();
+				Vec3 vScale = pObj->GetScript<CRecipeScript>()->GetClickScale();
+
+				if (vMousePos.x > vPos.x - vScale.x / 2.f && vMousePos.x < vPos.x + vScale.x / 2.f)
+				{
+					if (vMousePos.y > vPos.y - vScale.y / 2.f && vMousePos.y < vPos.y + vScale.y / 2.f)
+					{
+						vector<tItemRecipe> vecRecipe = pObj->GetScript<CRecipeScript>()->GetRecipe();
+						vector<bool> vecCheck;
+						vecCheck.resize(vecRecipe.size());
+						// 조합 조건 체크
+						for (int recipe = 0; recipe < vecRecipe.size(); ++recipe)
+						{
+							vecCheck[recipe] = false;
+							for (int item = 0; item < m_vecItemSlot.size(); ++item)
+							{
+								if (m_vecItem[item] == NULL)
+									continue;
+
+								if (m_vecItem[item]->GetItemType() == vecRecipe[recipe].eItem)
+								{
+									if (m_vecItem[item]->CheckItemCount(vecRecipe[recipe].iCount))
+									{
+										vecCheck[recipe] = true;
+										break;
+									}
+								}
+							}
+						}
+						bool check = true;
+						// 조합 조건 체크2
+						for (int i = 0; i < vecCheck.size(); ++i)
+						{
+							if (vecCheck[i] == false)
+							{
+								check = false;
+								break;
+							}
+						}
+						// 아이템 조합 조건 충족
+						if (check == true)
+						{
+							ITEM_TYPE eType = pObj->GetScript<CRecipeScript>()->GetItemType();
+							if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
+							{
+								CItemScript* pItem = new CToolItemScript(eType);
+								AddItem(pItem, 1);
+							}
+
+							else if (eType > ITEM_STUFF && eType < ITEM_STUFF_END)
+							{
+								CItemScript* pItem = new CStuffScript(eType);
+								AddItem(pItem, 1);
+							}
+						}
 						break;
 					}
 				}
@@ -68,8 +140,8 @@ void CInventoryScript::Update()
 
 			Vec2 vMousePos = Vec2((float)vPoint.x - vResolution.fWidth / 2.f, vResolution.fHeight / 2.f - (float)vPoint.y);
 
-			Vec3 vPos = m_vItemSlot[m_iClickIdx]->Transform()->GetLocalPos();
-			Vec3 vScale = m_vItemSlot[m_iClickIdx]->Transform()->GetLocalScale();
+			Vec3 vPos = m_vecItemSlot[m_iClickIdx]->Transform()->GetLocalPos();
+			Vec3 vScale = m_vecItemSlot[m_iClickIdx]->Transform()->GetLocalScale();
 
 			//m_pClickObj->Transform()->SetLocalPos(Vec3((vMousePos.x - vPos.x) / vScale.x, (vMousePos.y - vPos.y) / vScale.y, -10.f));
 			m_pClickObj->Transform()->SetLocalPos(Vec3(vMousePos.x, vMousePos.y, 10.f));
@@ -83,37 +155,38 @@ void CInventoryScript::Update()
 
 			Vec2 vMousePos = Vec2((float)vPoint.x - vResolution.fWidth / 2.f, vResolution.fHeight / 2.f - (float)vPoint.y);
 
-			for (int i = 0; i < m_vItemSlot.size(); ++i)
+			// 아이템 이동 종료
+			for (int i = 0; i < m_vecItemSlot.size(); ++i)
 			{
-				Vec3 vPos = m_vItemSlot[i]->Transform()->GetLocalPos();
-				Vec3 vScale = m_vItemSlot[i]->Transform()->GetLocalScale();
+				Vec3 vPos = m_vecItemSlot[i]->Transform()->GetLocalPos();
+				Vec3 vScale = m_vecItemSlot[i]->Transform()->GetLocalScale();
 
 				if (vMousePos.x > vPos.x - vScale.x / 2.f && vMousePos.x < vPos.x + vScale.x / 2.f)
 				{
 					if (vMousePos.y > vPos.y - vScale.y / 2.f && vMousePos.y < vPos.y + vScale.y / 2.f)
 					{
-						if (m_vItem[i] == NULL)
+						if (m_vecItem[i] == NULL)
 						{
-							m_vItem[m_iClickIdx]->GetObj()->ClearParent(m_vItemSlot[i]);
+							m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[i]);
 
-							m_vItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-							m_vItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+							m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+							m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 						}
-						else if (m_vItem[i]->GetItemType() == m_vItem[m_iClickIdx]->GetItemType())
+						else if (m_vecItem[i]->GetItemType() == m_vecItem[m_iClickIdx]->GetItemType())
 						{
-							if (m_vItem[i]->Addable())
+							if (m_vecItem[i]->Addable())
 							{
-								int iRemain = m_vItem[i]->GetRemainCount();
-								int iCount = m_vItem[m_iClickIdx]->GetItemCount();
+								int iRemain = m_vecItem[i]->GetRemainCount();
+								int iCount = m_vecItem[m_iClickIdx]->GetItemCount();
 								if (iCount > iRemain)
 								{
-									m_vItem[i]->SetItemIncrease(iRemain);
-									m_vItem[m_iClickIdx]->SetItemCount(iCount - iRemain);
+									m_vecItem[i]->SetItemIncrease(iRemain);
+									m_vecItem[m_iClickIdx]->SetItemCount(iCount - iRemain);
 
-									m_vItem[m_iClickIdx]->GetObj()->ClearParent(m_vItemSlot[m_iClickIdx]);
+									m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[m_iClickIdx]);
 
-									m_vItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-									m_vItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
 									m_bClick = false;
 									m_iClickIdx = -1;
@@ -123,13 +196,13 @@ void CInventoryScript::Update()
 								}
 								else
 								{
-									m_vItem[i]->SetItemIncrease(iCount);
+									m_vecItem[i]->SetItemIncrease(iCount);
 
 									tEvent tEv;
 									tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-									tEv.wParam = (DWORD_PTR)m_vItem[m_iClickIdx]->GetObj();
+									tEv.wParam = (DWORD_PTR)m_vecItem[m_iClickIdx]->GetObj();
 									CEventMgr::GetInst()->AddEvent(tEv);
-									m_vItem[m_iClickIdx] = NULL;
+									m_vecItem[m_iClickIdx] = NULL;
 
 									m_bClick = false;
 									m_iClickIdx = -1;
@@ -140,18 +213,18 @@ void CInventoryScript::Update()
 							}
 							else
 							{
-								m_vItem[i]->GetObj()->ClearParent(m_vItemSlot[m_iClickIdx]);
-								m_vItem[m_iClickIdx]->GetObj()->ClearParent(m_vItemSlot[i]);
+								m_vecItem[i]->GetObj()->ClearParent(m_vecItemSlot[m_iClickIdx]);
+								m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[i]);
 
-								m_vItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-								m_vItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+								m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+								m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
-								m_vItem[i]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-								m_vItem[i]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+								m_vecItem[i]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+								m_vecItem[i]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
-								CItemScript* pTemp = m_vItem[i];
-								m_vItem[i] = m_vItem[m_iClickIdx];
-								m_vItem[m_iClickIdx] = pTemp;
+								CItemScript* pTemp = m_vecItem[i];
+								m_vecItem[i] = m_vecItem[m_iClickIdx];
+								m_vecItem[m_iClickIdx] = pTemp;
 
 								m_bClick = false;
 								m_iClickIdx = -1;
@@ -161,19 +234,19 @@ void CInventoryScript::Update()
 						}
 						else
 						{
-							m_vItem[i]->GetObj()->ClearParent(m_vItemSlot[m_iClickIdx]);
-							m_vItem[m_iClickIdx]->GetObj()->ClearParent(m_vItemSlot[i]);
+							m_vecItem[i]->GetObj()->ClearParent(m_vecItemSlot[m_iClickIdx]);
+							m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[i]);
 
-							m_vItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-							m_vItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+							m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+							m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
-							m_vItem[i]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-							m_vItem[i]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+							m_vecItem[i]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+							m_vecItem[i]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 						}
 
-						CItemScript* pTemp = m_vItem[i];
-						m_vItem[i] = m_vItem[m_iClickIdx];
-						m_vItem[m_iClickIdx] = pTemp;
+						CItemScript* pTemp = m_vecItem[i];
+						m_vecItem[i] = m_vecItem[m_iClickIdx];
+						m_vecItem[m_iClickIdx] = pTemp;
 
 						m_bClick = false;
 						m_iClickIdx = -1;
@@ -183,10 +256,10 @@ void CInventoryScript::Update()
 				}
 			}
 
-			m_vItemSlot[m_iClickIdx]->AddChild(m_pClickObj);
+			m_vecItemSlot[m_iClickIdx]->AddChild(m_pClickObj);
 
-			m_vItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-			m_vItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+			m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+			m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
 			m_bClick = false;
 			m_iClickIdx = -1;
@@ -197,8 +270,8 @@ void CInventoryScript::Update()
 
 void CInventoryScript::AddSlot(CGameObject * pObject)
 {
-	m_vItemSlot.emplace_back(pObject);
-	m_vItem.push_back(NULL);
+	m_vecItemSlot.emplace_back(pObject);
+	m_vecItem.push_back(NULL);
 }
 
 void CInventoryScript::AddItem(CItemScript * pItem, int iCount)
@@ -224,33 +297,37 @@ void CInventoryScript::Show()
 		TransferLayer(30, true);
 		m_bActive = true;
 	}
+	for (CGameObject* pRecipe : m_vecRecipe)
+	{
+		pRecipe->GetScript<CRecipeScript>()->Show(m_bActive);
+	}
 }
 
 void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 {
 	int iIdx = -1;
-	for (int i = 0; i < m_vItemSlot.size(); ++i)
+	for (int i = 0; i < m_vecItemSlot.size(); ++i)
 	{
-		if (m_vItem[i] == NULL)
+		if (m_vecItem[i] == NULL)
 		{
 			if (iIdx == -1)
 				iIdx = i;
 		}
 		else
 		{
-			if (m_vItem[i]->GetItemType() == pItem->GetItemType())
+			if (m_vecItem[i]->GetItemType() == pItem->GetItemType())
 			{
-				if (m_vItem[i]->Addable())
+				if (m_vecItem[i]->Addable())
 				{
-					int iRemain = m_vItem[i]->GetRemainCount();
+					int iRemain = m_vecItem[i]->GetRemainCount();
 					if (iRemain >= iCount)
 					{
-						m_vItem[i]->SetItemIncrease(iCount);
+						m_vecItem[i]->SetItemIncrease(iCount);
 						return;
 					}
 					else
 					{
-						m_vItem[i]->SetItemIncrease(iRemain);
+						m_vecItem[i]->SetItemIncrease(iRemain);
 						AddItem(pItem, iCount - iRemain);
 						return;
 					}
@@ -277,18 +354,18 @@ void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 		pObj->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 		pObj->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"ItemMtrl")->Clone());
 
-		m_vItem[iIdx] = pItem;
+		m_vecItem[iIdx] = pItem;
 
-		Vec3 vPos = m_vItemSlot[iIdx]->Transform()->GetLocalPos();
-		Vec3 vScale = m_vItemSlot[iIdx]->Transform()->GetLocalScale();
+		Vec3 vPos = m_vecItemSlot[iIdx]->Transform()->GetLocalPos();
+		Vec3 vScale = m_vecItemSlot[iIdx]->Transform()->GetLocalScale();
 
 		vPos = Vec3(0.f, 0.f, 0.f);
 		vScale = Vec3(1.f, 1.f, 1.f);
 
-		m_vItem[iIdx]->Transform()->SetLocalPos(Vec3(vPos.x, vPos.y, -10.f));
-		m_vItem[iIdx]->Transform()->SetLocalScale(vScale);
+		m_vecItem[iIdx]->Transform()->SetLocalPos(Vec3(vPos.x, vPos.y, -10.f));
+		m_vecItem[iIdx]->Transform()->SetLocalScale(vScale);
 
-		m_vItemSlot[iIdx]->AddChild(pObj);
+		m_vecItemSlot[iIdx]->AddChild(pObj);
 
 		CGameObject* pCountObj = new CGameObject;
 		pCountObj->AddComponent(new CTransform);
@@ -299,11 +376,11 @@ void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 		pCountObj->Transform()->SetLocalPos(Vec3(-0.31f, 0.35f, -1.f));
 		pCountObj->Transform()->SetLocalScale(Vec3(0.4f, 0.4f, 1.f));
 		pObj->AddChild(pCountObj);
-		m_vItem[iIdx]->SetFontObject(pCountObj);
+		m_vecItem[iIdx]->SetFontObject(pCountObj);
 
-		m_vItem[iIdx]->SetItemCount(iCount);
+		m_vecItem[iIdx]->SetItemCount(iCount);
 
-		if (iIdx < 5)
+		if (iIdx < 5 || m_bActive)
 		{
 			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"UI")->AddGameObject(pObj);
 			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"UI")->AddGameObject(pCountObj);
@@ -321,3 +398,48 @@ void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 		return;
 	}
 }
+
+void CInventoryScript::ShowRecipe()
+{
+}
+
+
+
+void CInventoryScript::RecipeInit()
+{
+	UINT iNum = 0;
+
+	CGameObject* pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_PICKAXE));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_AXE));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_HAMMER));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+}
+
