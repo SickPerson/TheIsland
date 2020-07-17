@@ -12,6 +12,7 @@
 
 #include "PathMgr.h"
 #include "ConstantBuffer.h"
+#include "InstancingMgr.h"
 
 #include "FontMgr.h"
 
@@ -54,6 +55,8 @@ int CCore::Init(HWND _hWnd, const tResolution & _resolution, bool _bWindow)
 	CDevice::GetInst()->SetGlobalConstBufferToRegister(CDevice::GetInst()->GetCB(CONST_REGISTER::b4), 0);
 	CDevice::GetInst()->SetGlobalConstBufferToRegister(CDevice::GetInst()->GetCB(CONST_REGISTER::b5), 0);
 
+	// InstancingBuffer 초기화
+	CInstancingMgr::GetInst()->Init();
 
 	CPathMgr::Init();
 	CKeyMgr::GetInst()->Init();
@@ -95,6 +98,8 @@ int CCore::ToolInit( HINSTANCE _hInstance, HWND _hWnd, const tResolution& _start
 	CDevice::GetInst()->SetGlobalConstBufferToRegister( CDevice::GetInst()->GetCB( CONST_REGISTER::b4 ), 0 );
 	CDevice::GetInst()->SetGlobalConstBufferToRegister( CDevice::GetInst()->GetCB( CONST_REGISTER::b5 ), 0 );
 
+	// InstancingBuffer 초기화
+	CInstancingMgr::GetInst()->Init();
 
 	CPathMgr::Init();
 	CKeyMgr::GetInst()->Init();
@@ -135,4 +140,7 @@ void CCore::Progress()
 		CRenderMgr::GetInst()->Render();
 	}
 	CEventMgr::GetInst()->Update();
+
+	// 인스턴싱 버퍼 클리어
+	CInstancingMgr::GetInst()->Clear();
 }

@@ -97,6 +97,9 @@
     <Filter Include="06. GameObject\Component\Font">
       <UniqueIdentifier>{4b6071b6-b6e0-43a4-b7d6-75d369098c53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Manager\Instancing">
+      <UniqueIdentifier>{44071d1a-0a69-4202-9dda-6f94456f1b57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -270,6 +273,12 @@
     <ClInclude Include="Font.h">
       <Filter>06. GameObject\Component\Font</Filter>
     </ClInclude>
+    <ClInclude Include="InstancingMgr.h">
+      <Filter>03. Manager\Instancing</Filter>
+    </ClInclude>
+    <ClInclude Include="InstancingBuffer.h">
+      <Filter>03. Manager\Instancing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -430,6 +439,12 @@
     </ClCompile>
     <ClCompile Include="Font.cpp">
       <Filter>06. GameObject\Component\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="InstancingMgr.cpp">
+      <Filter>03. Manager\Instancing</Filter>
+    </ClCompile>
+    <ClCompile Include="InstancingBuffer.cpp">
+      <Filter>03. Manager\Instancing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

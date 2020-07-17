@@ -12,6 +12,13 @@ struct VS_INPUT
     float3 vNormal : NORMAL;
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
+
+	// Instancing
+	row_major matrix matWorld : WORLD;
+	row_major matrix matWV : WV;
+	row_major matrix matWVP : WVP;
+
+	uint iInstanceID : SV_InstanceID;
 };
 
 struct VS_OUTPUT
@@ -127,8 +134,15 @@ float4 PS_Color(VS_COL_OUTPUT _input) : SV_Target
 // =============================
 struct TEX_INPUT
 {
-    float3 vPos : POSITION;
-    float2 vUV : TEXCOORD;
+	float3 vPos : POSITION;
+	float2 vUV : TEXCOORD;
+
+	// Instancing
+	row_major matrix matWorld : WORLD;
+	row_major matrix matWV : WV;
+	row_major matrix matWVP : WVP;
+
+	uint iInstanceID : SV_InstanceID;
 };
 
 struct TEX_OUTPUT
@@ -150,6 +164,19 @@ TEX_OUTPUT VS_Tex(TEX_INPUT _input)
     output.vUV = _input.vUV;
 
     return output;
+}
+
+TEX_OUTPUT VS_Tex_Inst(TEX_INPUT _input)
+{
+	TEX_OUTPUT output = (TEX_OUTPUT)0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.   
+	float4 vProjPos = mul(float4(_input.vPos, 1.f), _input.matWVP);
+
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
 }
 
 float4 PS_Tex(TEX_OUTPUT _input) : SV_Target
@@ -179,6 +206,19 @@ TEX_OUTPUT VS_Item(TEX_INPUT _input)
 	return output;
 }
 
+TEX_OUTPUT VS_Item_Inst(TEX_INPUT _input)
+{
+	TEX_OUTPUT output = (TEX_OUTPUT)0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.   
+	float4 vProjPos = mul(float4(_input.vPos, 1.f), _input.matWVP);
+
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
 float4 PS_Item(TEX_OUTPUT _input) : SV_Target
 {
 	float4 vColor = (float4) 0.f;
@@ -196,7 +236,6 @@ float4 PS_Item(TEX_OUTPUT _input) : SV_Target
 	return vColor;
 }
 
-
 VS_OUTPUT VS_UI_Test( VS_INPUT _input )
 {
 	VS_OUTPUT output = ( VS_OUTPUT )0;
@@ -211,6 +250,21 @@ VS_OUTPUT VS_UI_Test( VS_INPUT _input )
 
 	return output;
 }
+
+VS_OUTPUT VS_UI_Test_Inst(VS_INPUT _input)
+{
+	VS_OUTPUT output = (VS_OUTPUT)0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.   
+	float4 vProjPos = mul(float4(_input.vPos, 1.f), _input.matWVP);
+
+	output.vOutColor = _input.vColor;
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
 
 float4 PS_UI_Test( VS_OUTPUT _input ) : SV_Target
 {
@@ -255,6 +309,20 @@ VS_OUTPUT VS_UI_Standard(VS_INPUT _input)
 	return output;
 }
 
+VS_OUTPUT VS_UI_Standard_Inst(VS_INPUT _input)
+{
+	VS_OUTPUT output = (VS_OUTPUT)0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.   
+	float4 vProjPos = mul(float4(_input.vPos, 1.f), _input.matWVP);
+
+	output.vOutColor = _input.vColor;
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
 float4 PS_UI_Standard(VS_OUTPUT _input) : SV_Target
 {
 	return g_vec4_0;
@@ -277,6 +345,20 @@ TEX_OUTPUT VS_Font( TEX_INPUT _input )
 
 	return output;
 }
+
+TEX_OUTPUT VS_Font_Inst(TEX_INPUT _input)
+{
+	TEX_OUTPUT output = (TEX_OUTPUT)0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.   
+	float4 vProjPos = mul(float4(_input.vPos, 1.f), _input.matWVP);
+
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
 // 0일떄는 start
 // 1일때는 start + width
 float4 PS_Font( TEX_OUTPUT _input ) : SV_Target
@@ -318,6 +400,20 @@ TEX_OUTPUT VS_Collider2D(TEX_INPUT _input)
 
     return output;
 }
+
+TEX_OUTPUT VS_Collider2D_Inst(TEX_INPUT _input)
+{
+	TEX_OUTPUT output = (TEX_OUTPUT)0;
+
+	// 투영좌표계를 반환할 때에는 float4 4번째 w 요소에 1.f 을 넣어준다.   
+	float4 vProjPos = mul(float4(_input.vPos, 1.f), _input.matWVP);
+
+	output.vOutPos = vProjPos;
+	output.vUV = _input.vUV;
+
+	return output;
+}
+
 
 float4 PS_Collider2D(TEX_OUTPUT _input) : SV_Target
 {

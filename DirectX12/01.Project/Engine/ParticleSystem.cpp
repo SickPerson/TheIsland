@@ -85,7 +85,7 @@ void CParticleSystem::Render()
 	m_pMtrl->SetData( SHADER_PARAM::FLOAT_1, &m_fEndScale );
 
 	m_pMtrl->UpdateData();
-	m_pMesh->Render_Instancing( m_iMaxParticle );
+	m_pMesh->Render_Particle( m_iMaxParticle );
 }
 
 void CParticleSystem::SetStartColor( const Vec4 & vColor )

@@ -6,6 +6,8 @@
 #include "Texture.h"
 #include "StructuredBuffer.h"
 
+class CInstancingBuffer;
+
 struct tIndexInfo
 {
 	ComPtr<ID3D12Resource>		pIB;
@@ -43,8 +45,9 @@ private:
 public:
 	void Create(UINT _iVtxSize, UINT _iVtxCount, BYTE* _pVtxSysMem
 		, DXGI_FORMAT _iIdxFormat, UINT _iIdxCount, BYTE* _pIdxSysMem);
-	void Render( UINT iSubSet = 0 );
-	void Render_Instancing( UINT iInstancCount, UINT iSubset = 0 );
+	void Render(UINT iSubSet = 0);
+	void Render_Particle(UINT _iInstancCount, UINT _iSubset = 0);
+	void Render_Instancing(UINT _iSubset, CInstancingBuffer* _pInstBuffer);
 	static CMesh* CreateFromContainer( CFBXLoader & loader );
 
 public:

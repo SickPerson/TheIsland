@@ -9,14 +9,17 @@
 
 CItemScript::CItemScript(UINT iItemType)
 	: CScript((UINT)SCRIPT_TYPE::ITEMSCRIPT)
-	, m_pIconTex(NULL)
-	, m_pIconTex_B(NULL)
 	, m_iCount(-1)
 	, m_eItemType(ITEM_TYPE(iItemType))
-	, m_bShowBackTex(false)
 	, m_pCountObj(NULL)
 	, m_iMaxCount(1)
+	, m_bInit(false)
 {
+	m_pIconTex = GetItemIconByType((ITEM_TYPE)iItemType);
+	string strName = GetItemNameByType((ITEM_TYPE)iItemType);
+	wstring wstrName;
+	wstrName.assign(strName.begin(), strName.end());
+	SetName(wstrName);
 }
 
 
@@ -26,15 +29,11 @@ CItemScript::~CItemScript()
 
 void CItemScript::Update()
 {
-	if(!m_bShowBackTex)
+	if (m_bInit == false)
+	{
 		MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, m_pIconTex.GetPointer());
-	else
-		MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, m_pIconTex_B.GetPointer());
-}
-
-void CItemScript::SetShowTexWithBackground(bool bShow)
-{
-	m_bShowBackTex = bShow;
+		m_bInit = true;
+	}
 }
 
 void CItemScript::SetItemCount(int iCount)
@@ -48,7 +47,7 @@ void CItemScript::SetItemCount(int iCount)
 		m_pCountObj->Font()->SetString(std::to_string(m_iCount));
 }
 
-void CItemScript::SetItemIncrease(int iAmount)
+bool CItemScript::SetItemIncrease(int iAmount)
 {
 	if (m_iCount + iAmount > m_iMaxCount)
 		m_iCount = m_iMaxCount;
@@ -61,7 +60,20 @@ void CItemScript::SetItemIncrease(int iAmount)
 	if (m_iCount <= 0)
 	{
 		// ¾ÆÀÌÅÛ ¼Ò¸ê
+		tEvent tEv;
+		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+		tEv.wParam = (DWORD_PTR)GetObj();
+		CEventMgr::GetInst()->AddEvent(tEv);
+		return false;
 	}
+	return true;
+}
+
+bool CItemScript::CheckItemCount(int iCount)
+{
+	if (m_iCount >= iCount)
+		return true;
+	return false;
 }
 
 int CItemScript::GetItemCount()
@@ -79,10 +91,9 @@ int CItemScript::GetMaxCount()
 	return m_iMaxCount;
 }
 
-void CItemScript::SetItemTex(Ptr<CTexture> pTex, Ptr<CTexture> pTexBack)
+void CItemScript::SetItemTex(Ptr<CTexture> pTex)
 {
 	m_pIconTex = pTex;
-	m_pIconTex_B = pTexBack;
 }
 
 void CItemScript::SetFontObject(CGameObject* pCountObj)
@@ -93,6 +104,7 @@ void CItemScript::SetFontObject(CGameObject* pCountObj)
 void CItemScript::SetItemType(ITEM_TYPE eType)
 {
 	m_eItemType = eType;
+	SetItemTex(GetItemIconByType(eType));
 }
 
 ITEM_TYPE CItemScript::GetItemType()

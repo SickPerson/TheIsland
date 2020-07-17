@@ -33,16 +33,14 @@ private:
 	bool						m_bFinalMatUpdate; // 최종행렬 연산 수행여부
 
 public:
-	void SetBones( const vector<tMTBone>* vecBones );
-	void SetAnimClip( const vector<tMTAnimClip>* vecAnimClip );
-	//void SetBoneTex( Ptr<CTexture> pBoneTex );
-	//Ptr<CTexture> GetBornTex();
-
+	void SetBones(const vector<tMTBone>* _vecBones) { m_pVecBones = _vecBones; m_vecFinalBoneMat.resize(m_pVecBones->size()); }
+	void SetAnimClip(const vector<tMTAnimClip>* _vecAnimClip);
 	void UpdateData();
+	void UpdateData_Inst(CStructuredBuffer* _pBoneBuffer, UINT _iRow);
+	void SetClipTime(int _iClipIdx, float _fTime) { m_vecClipUpdateTime[_iClipIdx] = _fTime; }
 
-	void SetClipTime( int iClipIdx, float fTime );
-
-	vector<Matrix>& GetFinalBoneMat();
+	CStructuredBuffer* GetFinalBoneMat() { return m_pBoneFinalMat; }
+	UINT GetBoneCount() { return (UINT)m_pVecBones->size(); }
 
 private:
 	void Check_Mesh( Ptr<CMesh> pMesh );

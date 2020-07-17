@@ -14,15 +14,23 @@
 // ==========================
 struct VS_STD3D_INPUT
 {
-    float3 vPos : POSITION;
-    float2 vUV : TEXCOORD;
-    
-    float3 vTangent : TANGENT;
-    float3 vNormal : NORMAL;
-    float3 vBinormal : BINORMAL;
-    
-    float4 vWeight : BLENDWEIGHT;
-    float4 vIndices : BLENDINDICES;
+	float3 vPos : POSITION;
+	float2 vUV : TEXCOORD;
+
+	float3 vTangent : TANGENT;
+	float3 vNormal : NORMAL;
+	float3 vBinormal : BINORMAL;
+
+	float4 vWeight : BLENDWEIGHT;
+	float4 vIndices : BLENDINDICES;
+
+	// Instancing
+	row_major matrix matWorld : WORLD;
+	row_major matrix matWV : WV;
+	row_major matrix matWVP : WVP;
+	int iRowIdx : ROWINDEX; // Animaion За·Д За
+
+	uint iInstanceID : SV_InstanceID;
 };
 
 struct VS_STD3D_OUTPUT
@@ -102,6 +110,28 @@ PS_STD3D_OUTPUT PS_Std3D(VS_STD3D_OUTPUT _in)
     output.vTarget2.xyz = _in.vViewPos;
     
     return output;
+}
+
+VS_STD3D_OUTPUT VS_Std3D_Inst(VS_STD3D_INPUT _in)
+{
+	VS_STD3D_OUTPUT output = (VS_STD3D_OUTPUT) 0.f;
+
+	if (g_int_0)
+	{
+		Skinning(_in.vPos, _in.vTangent
+			, _in.vBinormal, _in.vNormal
+			, _in.vWeight, _in.vIndices, _in.iRowIdx);
+	}
+
+	output.vPosition = mul(float4(_in.vPos, 1.f), _in.matWVP);
+
+	output.vViewPos = mul(float4(_in.vPos, 1.f), _in.matWV).xyz;
+	output.vViewTangent = normalize(mul(float4(_in.vTangent, 0.f), _in.matWV).xyz);
+	output.vViewNormal = normalize(mul(float4(_in.vNormal, 0.f), _in.matWV).xyz);
+	output.vViewBinormal = normalize(mul(float4(_in.vBinormal, 0.f), _in.matWV).xyz);
+	output.vUV = _in.vUV;
+
+	return output;
 }
 
 PS_STD3D_OUTPUT PS_Std3D_Tree(VS_STD3D_OUTPUT _in)
