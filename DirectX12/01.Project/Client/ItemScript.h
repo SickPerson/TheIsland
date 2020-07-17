@@ -28,7 +28,7 @@ public:
 
 public:
 	void SetItemCount(int iCount);
-	void SetItemIncrease(int iAmount);
+	bool SetItemIncrease(int iAmount);
 	bool CheckItemCount(int iCount);
 	int GetItemCount();
 	int GetRemainCount();

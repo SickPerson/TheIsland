@@ -47,7 +47,7 @@ void CItemScript::SetItemCount(int iCount)
 		m_pCountObj->Font()->SetString(std::to_string(m_iCount));
 }
 
-void CItemScript::SetItemIncrease(int iAmount)
+bool CItemScript::SetItemIncrease(int iAmount)
 {
 	if (m_iCount + iAmount > m_iMaxCount)
 		m_iCount = m_iMaxCount;
@@ -60,7 +60,13 @@ void CItemScript::SetItemIncrease(int iAmount)
 	if (m_iCount <= 0)
 	{
 		// ¾ÆÀÌÅÛ ¼Ò¸ê
+		tEvent tEv;
+		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+		tEv.wParam = (DWORD_PTR)GetObj();
+		CEventMgr::GetInst()->AddEvent(tEv);
+		return false;
 	}
+	return true;
 }
 
 bool CItemScript::CheckItemCount(int iCount)

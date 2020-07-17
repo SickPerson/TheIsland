@@ -20,7 +20,8 @@ CInventoryScript::CInventoryScript() :
 	m_pClickObj(NULL),
 	m_iClickIdx(-1),
 	m_pItemLootScript(NULL),
-	m_iRecipePage(0)
+	m_iRecipePage(0),
+	m_bAddable(true)
 {
 	m_vecItemSlot.reserve(25);
 	m_vecItem.reserve(25);
@@ -70,67 +71,85 @@ void CInventoryScript::Update()
 			}
 
 			// 조합 클릭
-			for (CGameObject* pObj : m_vecRecipe)
+			if (m_bAddable)
 			{
-				Vec3 vPos = pObj->GetScript<CRecipeScript>()->GetClickPosition();
-				Vec3 vScale = pObj->GetScript<CRecipeScript>()->GetClickScale();
-
-				if (vMousePos.x > vPos.x - vScale.x / 2.f && vMousePos.x < vPos.x + vScale.x / 2.f)
+				for (CGameObject* pObj : m_vecRecipe)
 				{
-					if (vMousePos.y > vPos.y - vScale.y / 2.f && vMousePos.y < vPos.y + vScale.y / 2.f)
-					{
-						vector<tItemRecipe> vecRecipe = pObj->GetScript<CRecipeScript>()->GetRecipe();
-						vector<bool> vecCheck;
-						vecCheck.resize(vecRecipe.size());
-						// 조합 조건 체크
-						for (int recipe = 0; recipe < vecRecipe.size(); ++recipe)
-						{
-							vecCheck[recipe] = false;
-							for (int item = 0; item < m_vecItemSlot.size(); ++item)
-							{
-								if (m_vecItem[item] == NULL)
-									continue;
+					Vec3 vPos = pObj->GetScript<CRecipeScript>()->GetClickPosition();
+					Vec3 vScale = pObj->GetScript<CRecipeScript>()->GetClickScale();
 
-								if (m_vecItem[item]->GetItemType() == vecRecipe[recipe].eItem)
+					if (vMousePos.x > vPos.x - vScale.x / 2.f && vMousePos.x < vPos.x + vScale.x / 2.f)
+					{
+						if (vMousePos.y > vPos.y - vScale.y / 2.f && vMousePos.y < vPos.y + vScale.y / 2.f)
+						{
+							vector<tItemRecipe> vecRecipe = pObj->GetScript<CRecipeScript>()->GetRecipe();
+							vector<bool> vecCheck;
+							vector<int> vecIndex;
+							vecCheck.resize(vecRecipe.size());
+							vecIndex.resize(vecRecipe.size());
+							// 조합 조건 체크
+							for (int recipe = 0; recipe < vecRecipe.size(); ++recipe)
+							{
+								vecCheck[recipe] = false;
+								for (int item = 0; item < m_vecItemSlot.size(); ++item)
 								{
-									if (m_vecItem[item]->CheckItemCount(vecRecipe[recipe].iCount))
+									if (m_vecItem[item] == NULL)
+										continue;
+
+									if (m_vecItem[item]->GetItemType() == vecRecipe[recipe].eItem)
 									{
-										vecCheck[recipe] = true;
-										break;
+										if (m_vecItem[item]->CheckItemCount(vecRecipe[recipe].iCount))
+										{
+											vecCheck[recipe] = true;
+											vecIndex[recipe] = item;
+											break;
+										}
 									}
 								}
 							}
-						}
-						bool check = true;
-						// 조합 조건 체크2
-						for (int i = 0; i < vecCheck.size(); ++i)
-						{
-							if (vecCheck[i] == false)
+							bool check = true;
+							// 조합 조건 체크2
+							for (int i = 0; i < vecCheck.size(); ++i)
 							{
-								check = false;
-								break;
+								if (vecCheck[i] == false)
+								{
+									check = false;
+									break;
+								}
 							}
-						}
-						// 아이템 조합 조건 충족
-						if (check == true)
-						{
-							ITEM_TYPE eType = pObj->GetScript<CRecipeScript>()->GetItemType();
-							if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
+							// 아이템 조합 조건 충족
+							if (check == true)
 							{
-								CItemScript* pItem = new CToolItemScript(eType);
-								AddItem(pItem, 1);
-							}
+								ITEM_TYPE eType = pObj->GetScript<CRecipeScript>()->GetItemType();
+								if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
+								{
+									CItemScript* pItem = new CToolItemScript(eType);
+									AddItem(pItem, 1);
+								}
 
-							else if (eType > ITEM_STUFF && eType < ITEM_STUFF_END)
-							{
-								CItemScript* pItem = new CStuffScript(eType);
-								AddItem(pItem, 1);
+								else if (eType > ITEM_STUFF && eType < ITEM_STUFF_END)
+								{
+									CItemScript* pItem = new CStuffScript(eType);
+									AddItem(pItem, 1);
+								}
+
+								// 재료 아이템 제거
+								for (int i = 0; i < vecIndex.size(); ++i)
+								{
+									if (!m_vecItem[vecIndex[i]]->SetItemIncrease(-vecRecipe[i].iCount))
+									{
+										m_vecItem[vecIndex[i]] = NULL;
+										m_bAddable = true;
+									}
+								}
 							}
+							break;
 						}
-						break;
 					}
 				}
-			}
+
+			} // if(m_bAddable)
+			
 		}
 
 		if (KEY_HOLD(KEY_TYPE::KEY_LBTN) && m_bClick)
@@ -335,7 +354,7 @@ void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 			}
 		}
 	}
-	if (iIdx != -1)
+	if (iIdx != -1 && m_bAddable)
 	{
 		int iMax = pItem->GetMaxCount();
 		int iRemain = 0;
@@ -395,8 +414,23 @@ void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 		{
 			AddItem(pItem->Clone(), iRemain);
 		}
+		CheckAddable();
 		return;
 	}
+}
+
+void CInventoryScript::CheckAddable()
+{
+	bool bAddable = false;
+	for (int i = 0; i < m_vecItemSlot.size(); ++i)
+	{
+		if (m_vecItem[i] == NULL)
+		{
+			bAddable = true;
+			break;
+		}
+	}
+	m_bAddable = bAddable;
 }
 
 void CInventoryScript::ShowRecipe()

@@ -14,6 +14,7 @@ class CInventoryScript :
 	UINT					m_iRecipePage;
 
 	bool					m_bActive;
+	bool					m_bAddable;
 
 	bool					m_bClick;
 	int						m_iClickIdx;
@@ -41,6 +42,8 @@ public:
 
 private:
 	void AddItemFunc(CItemScript* pItem, int iCount);
+
+	void CheckAddable();
 
 	void RecipeInit();
 	void ShowRecipe();

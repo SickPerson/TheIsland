@@ -84,23 +84,23 @@ vector<tItemRecipe> GetItemRecipe(ITEM_TYPE eType)
 		tInfo.iCount = 5;
 		vRecipe.push_back(tInfo);
 		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
-		tInfo.iCount = 5;
+		tInfo.iCount = 4;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_PICKAXE:
 		tInfo.eItem = ITEM_TYPE::ITEM_STONE;
-		tInfo.iCount = 5;
+		tInfo.iCount = 3;
 		vRecipe.push_back(tInfo);
 		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
-		tInfo.iCount = 5;
+		tInfo.iCount = 2;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_AXE:
 		tInfo.eItem = ITEM_TYPE::ITEM_STONE;
-		tInfo.iCount = 5;
+		tInfo.iCount = 1;
 		vRecipe.push_back(tInfo);
 		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
-		tInfo.iCount = 5;
+		tInfo.iCount = 6;
 		vRecipe.push_back(tInfo);
 		break;
 	default:
