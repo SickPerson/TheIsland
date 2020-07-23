@@ -4,6 +4,7 @@
 #define PLAYER_ATTACK_COOLTIME 0.6f
 
 class CCamera;
+class CQuickSlotScript;
 
 class CPlayerScript :
 	public CScript
@@ -18,6 +19,7 @@ private:
 	CGameObject* m_pChat;
 	CGameObject* m_pInventory;
 	CGameObject* m_pStatus;
+	CQuickSlotScript* m_pQuickSlot;
 
 	CCamera*	m_pMainCamera;
 
@@ -49,6 +51,10 @@ public:
 	void SetChatObject(CGameObject* pObj);
 	void SetInventoryObject(CGameObject* pObj);
 	void SetStatusObject(CGameObject* pObj);
+	void SetQuickSlot(CQuickSlotScript* pQuickSlot);
+	CGameObject* GetStatusObject();
+	CGameObject* GetInventoryObject();
+	CGameObject* GetChatObject();
 
 	void SetMainCamera(CCamera* pCamera);
 

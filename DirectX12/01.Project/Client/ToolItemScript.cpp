@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ToolItemScript.h"
 
+#include <iostream>
 
 CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 	: CItemScript((UINT) eType)
@@ -21,6 +22,12 @@ void CToolItemScript::Update()
 	CItemScript::Update();
 }
 
-void CToolItemScript::Use()
+void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
+	std::cout << "Tool Item Right Use" << std::endl;
+}
+
+void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
+{
+	std::cout << "Tool Item Left Use" << std::endl;
 }

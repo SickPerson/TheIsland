@@ -22,12 +22,12 @@ void CStatusScript::Update()
 	{
 		m_fHealth -= 20.f * DT;
 	}
-	/*m_fHealth -= 10 * DT;
-	if (m_fHealth < 0.f)
-		m_fHealth = 100.f;
+	//m_fHealth -= 10 * DT;
+	//if (m_fHealth < 0.f)
+	//	m_fHealth = 100.f;
 	m_fHungry -= 15 * DT;
 	if (m_fHungry < 0.f)
-		m_fHungry = 100.f;*/
+		m_fHungry = 100.f;
 	m_fThirst -= 20 * DT;
 	if (m_fThirst < 0.f)
 		m_fThirst = 100.f;
@@ -50,4 +50,25 @@ void CStatusScript::Update()
 void CStatusScript::Damage(float fDamage)
 {
 	m_fHealth -= fDamage;
+}
+
+void CStatusScript::SetIncreaseHealth(float fAmount)
+{
+	m_fHealth += fAmount;
+	if (m_fHealth > 100.f)
+		m_fHealth = 100.f;
+}
+
+void CStatusScript::SetIncreaseHungry(float fAmount)
+{
+	m_fHungry += fAmount;
+	if (m_fHungry > 100.f)
+		m_fHungry = 100.f;
+}
+
+void CStatusScript::SetIncreasefThirst(float fAmount)
+{
+	m_fThirst += fAmount;
+	if (m_fThirst > 100.f)
+		m_fThirst = 100.f;
 }

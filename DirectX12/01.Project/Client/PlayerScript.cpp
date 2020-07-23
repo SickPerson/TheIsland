@@ -5,6 +5,7 @@
 #include "InputScript.h"
 #include "InventoryScript.h"
 #include "StatusScript.h"
+#include "QuickSlotScript.h"
 
 #include "AnimalScript.h"
 
@@ -52,6 +53,26 @@ void CPlayerScript::SetStatusObject(CGameObject * pObj)
 	m_pStatus = pObj;
 }
 
+void CPlayerScript::SetQuickSlot(CQuickSlotScript * pQuickSlot)
+{
+	m_pQuickSlot = pQuickSlot;
+}
+
+CGameObject * CPlayerScript::GetStatusObject()
+{
+	return m_pStatus;
+}
+
+CGameObject * CPlayerScript::GetInventoryObject()
+{
+	return m_pInventory;
+}
+
+CGameObject * CPlayerScript::GetChatObject()
+{
+	return m_pChat;
+}
+
 void CPlayerScript::SetMainCamera(CCamera * pCamera)
 {
 	m_pMainCamera = pCamera;
@@ -85,33 +106,39 @@ void CPlayerScript::Update()
 			{
 				PlayerPicking();
 			}
-			if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
+			else if (KEY_TAB(KEY_TYPE::KEY_RBTN))
+			{
+				int num = m_pQuickSlot->GetSelect();
+				m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), NULL, num);
+			}
+
+			else if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
 			{
 				fSpeed *= 5.f;
 			}
 
-			if (KEY_HOLD(KEY_TYPE::KEY_W))
+			else if (KEY_HOLD(KEY_TYPE::KEY_W))
 			{
 				Vec3 vFront = Transform()->GetWorldDir(DIR_TYPE::FRONT);
 				vPos += vFront * fSpeed * DT;
 				vPos.y = 0.f;
 			}
 
-			if (KEY_HOLD(KEY_TYPE::KEY_S))
+			else if (KEY_HOLD(KEY_TYPE::KEY_S))
 			{
 				Vec3 vBack = -Transform()->GetWorldDir(DIR_TYPE::FRONT);
 				vPos += vBack * fSpeed * DT;
 				vPos.y = 0.f;
 			}
 
-			if (KEY_HOLD(KEY_TYPE::KEY_A))
+			else if (KEY_HOLD(KEY_TYPE::KEY_A))
 			{
 				Vec3 vLeft = -Transform()->GetWorldDir(DIR_TYPE::RIGHT);
 				vPos += vLeft * fSpeed * DT;
 				vPos.y = 0.f;
 			}
 
-			if (KEY_HOLD(KEY_TYPE::KEY_D))
+			else if (KEY_HOLD(KEY_TYPE::KEY_D))
 			{
 				Vec3 vRight = Transform()->GetWorldDir(DIR_TYPE::RIGHT);
 				vPos += vRight * fSpeed * DT;
@@ -296,11 +323,13 @@ void CPlayerScript::PlayerPicking()
 	vDirRay = XMVector3TransformNormal(vDirRay, matViewInv);
 	vDirRay = XMVector3Normalize(vDirRay);
 
+	CGameObject* pCollider = NULL;
 	// 충돌반경 안에있는 물체들과 피킹을 수행
 	for (int i = 0; i < m_vCollisionObj.size(); ++i)
 	{
 		if (CollisionRay(vPosRay, vDirRay, m_vCollisionObj[i]->Collider2D()))
 		{
+			pCollider = m_vCollisionObj[i];
 			if (m_vCollisionObj[i]->GetName() == L"Tree")
 			{
 				CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
@@ -356,6 +385,8 @@ void CPlayerScript::PlayerPicking()
 			}
 		}
 	}
+	int num = m_pQuickSlot->GetSelect();
+	m_pInventory->GetScript<CInventoryScript>()->Use_Left(GetObj(), pCollider, num);
 }
 
 

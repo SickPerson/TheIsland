@@ -19,6 +19,9 @@ Ptr<CTexture> GetItemIconByType(ITEM_TYPE eType)
 	case ITEM_LEATHER:
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Leather_Icon", L"Texture\\Item\\T_Cloth_256x256.tga");
 		break;
+	case ITEM_CLOTH:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Leather_Icon", L"Texture\\Item\\T_Paper_256x256.tga");
+		break;
 	case ITEM_HAMMER:
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Hammer_Icon", L"Texture\\Item\\T_Hammer_256x256.tga");
 		break;
@@ -30,6 +33,63 @@ Ptr<CTexture> GetItemIconByType(ITEM_TYPE eType)
 		break;
 	case ITEM_BONE:
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Bone_Icon", L"Texture\\Item\\T_Animal_Skull_256x256.tga");
+		break;
+	case ITEM_MACHETTE:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Machette_Icon", L"Texture\\Item\\T_Machette_256x256.tga");
+		break;
+	case ITEM_BOW:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Bow_Icon", L"Texture\\Item\\T_Bow_256x256.tga");
+		break;
+	case ITEM_CAMPFIRE:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Campfire_Icon", L"Texture\\Item\\T_Bonfire_256x256.tga");
+		break;
+	case ITEM_MAP:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Map_Icon", L"Texture\\Item\\T_Map_256x256.tga");
+		break;
+	case ITEM_ARROW:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Arrow_Icon", L"Texture\\Item\\T_Arrows_256x256.tga");
+		break;
+	case ITEM_MEAT:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"RawMeat_Icon", L"Texture\\Item\\T_Cooked_Meat_02_256x256.tga");
+		break;
+	case ITEM_COOKMEAT:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"CookedMeat_Icon", L"Texture\\Item\\T_Cooked_Meat_02_256x256.tga");
+		break;
+	case ITEM_CHOCOLATEBAR:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"ChocolateBar_Icon", L"Texture\\Item\\T_Chocolate_bar_256x256.tga");
+		break;
+	case ITEM_APPLE:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Apple_Icon", L"Texture\\Item\\T_Apple_256x256.tga");
+		break;
+	case ITEM_CAN:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Can_Icon", L"Texture\\Item\\T_Can_of_Beans_Small_256x256.tga");
+		break;
+	case ITEM_EMPTY_BOTTLE:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"EmptyBottle_Icon", L"Texture\\Item\\T_Bottle_256x256.tga");
+		break;
+	case ITEM_WATER_BOTTLE:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"WaterBottle_Icon", L"Texture\\Item\\T_Bottle_256x256.tga");
+		break;
+	case ITEM_SODA:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Soda_Icon", L"Texture\\Item\\T_Soda_256x256.tga");
+		break;
+	case ITEM_MEDICKIT:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"MedicKit_Icon", L"Texture\\Item\\T_Medic_Box_256x256.tga");
+		break;
+	case ITEM_BANDAGE:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Bandage_Icon", L"Texture\\Item\\T_Bandage_256x256.tga");
+		break;
+	case ITEM_TSHIRT:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"TShirt_Icon", L"Texture\\Item\\T_NewTshirt_256x256.tga");
+		break;
+	case ITEM_SHIRT:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Shirt_Icon", L"Texture\\Item\\T_NewShirt_256x256.tga");
+		break;
+	case ITEM_JACKET:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Jacket_Icon", L"Texture\\Item\\T_NewJacket_256x256.tga");
+		break;
+	case ITEM_BLUEPRINT:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Blueprint_Icon", L"Texture\\Item\\T_Tent_256x256.tga");
 		break;
 	default:
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"None_Icon", L"Texture\\Item\\T_Powder_256x256.tga");
@@ -54,6 +114,9 @@ string GetItemNameByType(ITEM_TYPE eType)
 	case ITEM_LEATHER:
 		strName = "Leather";
 		break;
+	case ITEM_CLOTH:
+		strName = "Cloth";
+		break;
 	case ITEM_HAMMER:
 		strName = "Hammer";
 		break;
@@ -65,6 +128,63 @@ string GetItemNameByType(ITEM_TYPE eType)
 		break;
 	case ITEM_BONE:
 		strName = "Bone";
+		break;
+	case ITEM_MACHETTE:
+		strName = "Machette";
+		break;
+	case ITEM_BOW:
+		strName = "Bow";
+		break;
+	case ITEM_CAMPFIRE:
+		strName = "Campfire";
+		break;
+	case ITEM_MAP:
+		strName = "Map";
+		break;
+	case ITEM_ARROW:
+		strName = "Arrow";
+		break;
+	case ITEM_MEAT:
+		strName = "Raw Meat";
+		break;
+	case ITEM_COOKMEAT:
+		strName = "Cooked Meat";
+		break;
+	case ITEM_CHOCOLATEBAR:
+		strName = "Chocolate Bar";
+		break;
+	case ITEM_APPLE:
+		strName = "Apple";
+		break;
+	case ITEM_CAN:
+		strName = "Can of beans";
+		break;
+	case ITEM_EMPTY_BOTTLE:
+		strName = "Empty Bottle";
+		break;
+	case ITEM_WATER_BOTTLE:
+		strName = "Water Bottle";
+		break;
+	case ITEM_SODA:
+		strName = "Soda";
+		break;
+	case ITEM_MEDICKIT:
+		strName = "Medic Kit";
+		break;
+	case ITEM_BANDAGE:
+		strName = "Bandage";
+		break;
+	case ITEM_TSHIRT:
+		strName = "T-Shirt";
+		break;
+	case ITEM_SHIRT:
+		strName = "Shirt";
+		break;
+	case ITEM_JACKET:
+		strName = "Jacket";
+		break;
+	case ITEM_BLUEPRINT:
+		strName = "House Blueprint";
 		break;
 	default:
 		strName = "NoneItem";
@@ -81,26 +201,91 @@ vector<tItemRecipe> GetItemRecipe(ITEM_TYPE eType)
 	switch (eType) {
 	case ITEM_HAMMER:
 		tInfo.eItem = ITEM_TYPE::ITEM_STONE;
-		tInfo.iCount = 5;
+		tInfo.iCount = 8;
 		vRecipe.push_back(tInfo);
 		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
-		tInfo.iCount = 4;
+		tInfo.iCount = 8;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_PICKAXE:
 		tInfo.eItem = ITEM_TYPE::ITEM_STONE;
-		tInfo.iCount = 3;
+		tInfo.iCount = 5;
 		vRecipe.push_back(tInfo);
 		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
-		tInfo.iCount = 2;
+		tInfo.iCount = 5;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_AXE:
 		tInfo.eItem = ITEM_TYPE::ITEM_STONE;
-		tInfo.iCount = 1;
+		tInfo.iCount = 5;
 		vRecipe.push_back(tInfo);
 		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
-		tInfo.iCount = 6;
+		tInfo.iCount = 5;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_MACHETTE:
+		tInfo.eItem = ITEM_TYPE::ITEM_STONE;
+		tInfo.iCount = 8;
+		vRecipe.push_back(tInfo);
+		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
+		tInfo.iCount = 3;
+		vRecipe.push_back(tInfo);
+		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
+		tInfo.iCount = 3;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_BOW:
+		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
+		tInfo.iCount = 5;
+		vRecipe.push_back(tInfo);
+		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
+		tInfo.iCount = 3;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_CAMPFIRE:
+		tInfo.eItem = ITEM_TYPE::ITEM_STONE;
+		tInfo.iCount = 3;
+		vRecipe.push_back(tInfo);
+		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
+		tInfo.iCount = 3;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_MAP:
+		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
+		tInfo.iCount = 8;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_ARROW:
+		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
+		tInfo.iCount = 1;
+		vRecipe.push_back(tInfo);
+		tInfo.eItem = ITEM_TYPE::ITEM_STONE;
+		tInfo.iCount = 1;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_BANDAGE:
+		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
+		tInfo.iCount = 1;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_TSHIRT:
+		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
+		tInfo.iCount = 5;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_SHIRT:
+		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
+		tInfo.iCount = 10;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_JACKET:
+		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
+		tInfo.iCount = 20;
+		vRecipe.push_back(tInfo);
+		break;
+	case ITEM_BLUEPRINT:
+		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
+		tInfo.iCount = 3;
 		vRecipe.push_back(tInfo);
 		break;
 	default:

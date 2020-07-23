@@ -44,6 +44,7 @@
 #include "ItemScript.h"
 #include "StuffScript.h"
 #include "ToolItemScript.h"
+#include "UsableScript.h"
 
 #include <Engine/TestScript.h>
 
@@ -780,29 +781,17 @@ void CIngameScene::Init()
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Animal", L"Environment" );
 
 	CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 30);
-	pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 50);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 100);
 	pItem = new CStuffScript(ITEM_TYPE::ITEM_STONE);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 150);
-	pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 60);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 100);
 	pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 67);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 100);
 	pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 243);
-	pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 20);
-	pItem = new CStuffScript(ITEM_TYPE::ITEM_STONE);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 50);
-	pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 30);
-	pItem = new CStuffScript(ITEM_TYPE::ITEM_STONE);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 80);
-	pItem = new CToolItemScript(ITEM_TYPE::ITEM_PICKAXE);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
-	pItem = new CToolItemScript(ITEM_TYPE::ITEM_AXE);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 100);
+	pItem = new CUsableScript(ITEM_TYPE::ITEM_COOKMEAT);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 5);
+	pItem = new CUsableScript(ITEM_TYPE::ITEM_WATER_BOTTLE);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 5);
 }
 
 void CIngameScene::Update()
@@ -955,6 +944,7 @@ void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
 		m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
 	}
 	m_pQuickSlot = pObject;
+	m_pPlayer->GetScript<CPlayerScript>()->SetQuickSlot(m_pQuickSlot->GetScript<CQuickSlotScript>());
 }
 
 void CIngameScene::CreatePlayerStatusUI()
@@ -1218,6 +1208,7 @@ void CIngameScene::CreateInventoryUI()
 		pInventory->AddChild(pObject);
 		m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
 	}
+	pInventory->GetScript<CInventoryScript>()->Init();
 	m_pInventory = pInventory;
 	m_pPlayer->GetScript<CPlayerScript>()->SetInventoryObject(m_pInventory);
 }

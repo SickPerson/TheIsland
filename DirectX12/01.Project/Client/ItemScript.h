@@ -22,9 +22,10 @@ public:
 	CItemScript(UINT iItemType);
 	virtual ~CItemScript();
 public:
-	virtual void Use() {}
+	virtual void Use_Right(CGameObject* pHost, CGameObject* pObj, int num) = 0;
+	virtual void Use_Left(CGameObject* pHost, CGameObject* pObj, int num) = 0;
 	virtual void Update() override;
-	CLONE(CItemScript);
+	virtual CItemScript* Clone() = 0;
 
 public:
 	void SetItemCount(int iCount);
