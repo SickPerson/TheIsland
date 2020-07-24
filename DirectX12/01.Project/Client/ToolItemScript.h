@@ -6,6 +6,7 @@
 class CToolItemScript :
 	public CItemScript
 {
+	float m_fDamage;
 public:
 	CToolItemScript(ITEM_TYPE eType, int iCount = 1);
 	virtual ~CToolItemScript();

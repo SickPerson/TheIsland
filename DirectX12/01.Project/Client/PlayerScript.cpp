@@ -112,12 +112,12 @@ void CPlayerScript::Update()
 				m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), NULL, num);
 			}
 
-			else if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
+			if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
 			{
 				fSpeed *= 5.f;
 			}
 
-			else if (KEY_HOLD(KEY_TYPE::KEY_W))
+			if (KEY_HOLD(KEY_TYPE::KEY_W))
 			{
 				Vec3 vFront = Transform()->GetWorldDir(DIR_TYPE::FRONT);
 				vPos += vFront * fSpeed * DT;
@@ -330,59 +330,7 @@ void CPlayerScript::PlayerPicking()
 		if (CollisionRay(vPosRay, vDirRay, m_vCollisionObj[i]->Collider2D()))
 		{
 			pCollider = m_vCollisionObj[i];
-			if (m_vCollisionObj[i]->GetName() == L"Tree")
-			{
-				CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-				m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-			}
-			else if (m_vCollisionObj[i]->GetName() == L"Bear")
-			{
-				if (!m_vCollisionObj[i]->GetScript<CAnimalScript>()->GetAnimalDead())
-				{
-					m_vCollisionObj[i]->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
-				}
-				else
-				{
-					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
-					m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-				}
-			}
-			else if (m_vCollisionObj[i]->GetName() == L"Boar")
-			{
-				if (!m_vCollisionObj[i]->GetScript<CAnimalScript>()->GetAnimalDead())
-				{
-					m_vCollisionObj[i]->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
-				}
-				else
-				{
-					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
-					m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-				}
-			}
-			else if (m_vCollisionObj[i]->GetName() == L"Wolf")
-			{
-				if (!m_vCollisionObj[i]->GetScript<CAnimalScript>()->GetAnimalDead())
-				{
-					m_vCollisionObj[i]->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
-				}
-				else
-				{
-					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
-					m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-				}
-			}
-			else if (m_vCollisionObj[i]->GetName() == L"Deer")
-			{
-				if (!m_vCollisionObj[i]->GetScript<CAnimalScript>()->GetAnimalDead())
-				{
-					m_vCollisionObj[i]->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
-				}
-				else
-				{
-					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
-					m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-				}
-			}
+			break;
 		}
 	}
 	int num = m_pQuickSlot->GetSelect();

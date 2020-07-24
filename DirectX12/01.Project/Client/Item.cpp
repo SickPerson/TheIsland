@@ -20,7 +20,10 @@ Ptr<CTexture> GetItemIconByType(ITEM_TYPE eType)
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Leather_Icon", L"Texture\\Item\\T_Cloth_256x256.tga");
 		break;
 	case ITEM_CLOTH:
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"Leather_Icon", L"Texture\\Item\\T_Paper_256x256.tga");
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Cloth_Icon", L"Texture\\Item\\T_Paper_256x256.tga");
+		break;
+	case ITEM_WOODCLUB:
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"WoodClub_Icon", L"Texture\\Item\\T_Three_Stick_256x256.tga");
 		break;
 	case ITEM_HAMMER:
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Hammer_Icon", L"Texture\\Item\\T_Hammer_256x256.tga");
@@ -132,6 +135,9 @@ string GetItemNameByType(ITEM_TYPE eType)
 	case ITEM_MACHETTE:
 		strName = "Machette";
 		break;
+	case ITEM_WOODCLUB:
+		strName = "WoodClub";
+		break;
 	case ITEM_BOW:
 		strName = "Bow";
 		break;
@@ -234,6 +240,10 @@ vector<tItemRecipe> GetItemRecipe(ITEM_TYPE eType)
 		tInfo.iCount = 3;
 		vRecipe.push_back(tInfo);
 		break;
+	case ITEM_WOODCLUB:
+		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
+		tInfo.iCount = 1;
+		vRecipe.push_back(tInfo);
 	case ITEM_BOW:
 		tInfo.eItem = ITEM_TYPE::ITEM_WOOD;
 		tInfo.iCount = 5;

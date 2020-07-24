@@ -792,6 +792,8 @@ void CIngameScene::Init()
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 5);
 	pItem = new CUsableScript(ITEM_TYPE::ITEM_WATER_BOTTLE);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 5);
+	pItem = new CToolItemScript(ITEM_TYPE::ITEM_WOODCLUB);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 }
 
 void CIngameScene::Update()
