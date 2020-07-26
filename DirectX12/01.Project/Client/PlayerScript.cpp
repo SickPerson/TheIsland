@@ -114,12 +114,11 @@ void CPlayerScript::Update()
 		{
 			if (KEY_TAB(KEY_TYPE::KEY_LBTN))
 			{
-				PlayerPicking();
+				PlayerPicking(LEFT_CLICK);
 			}
 			else if (KEY_TAB(KEY_TYPE::KEY_RBTN))
 			{
-				int num = m_pQuickSlot->GetSelect();
-				m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), NULL, num);
+				PlayerPicking(RIGHT_CLICK);
 			}
 			int num = m_pQuickSlot->GetSelect();
 			m_pInventory->GetScript<CInventoryScript>()->Use_Highlight(GetObj(), NULL, num);
@@ -308,7 +307,7 @@ void CPlayerScript::Damage(float fDamage)
 	}
 }
 
-void CPlayerScript::PlayerPicking()
+void CPlayerScript::PlayerPicking(bool bLeft)
 {
 	if (m_fAttackCoolTime > 0.f)
 		return;
@@ -346,7 +345,10 @@ void CPlayerScript::PlayerPicking()
 		}
 	}
 	int num = m_pQuickSlot->GetSelect();
-	m_pInventory->GetScript<CInventoryScript>()->Use_Left(GetObj(), pCollider, num);
+	if(bLeft)
+		m_pInventory->GetScript<CInventoryScript>()->Use_Left(GetObj(), pCollider, num);
+	else
+		m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), pCollider, num);
 }
 
 

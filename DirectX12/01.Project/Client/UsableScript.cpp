@@ -12,7 +12,7 @@ CUsableScript::CUsableScript(ITEM_TYPE eType, int iCount)
 	switch (eType)
 	{
 	case ITEM_MEAT:
-		m_fValue = -5.f;
+		m_fValue = 15.f;
 		break;
 	case ITEM_COOKMEAT:
 		m_fValue = 25.f;
@@ -61,6 +61,19 @@ void CUsableScript::Update()
 void CUsableScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	std::cout << "Usable Item Right Use" << std::endl;
+	if (pObj == NULL)
+		return;
+
+	if (m_eItemType == ITEM_MEAT && pObj->GetName() == L"Campfire")
+	{
+		CItemScript* pItem = new CUsableScript(ITEM_COOKMEAT);
+		pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+
+		if (!SetItemIncrease(-1))
+		{
+			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->OnAddable(num);
+		}
+	}
 }
 
 void CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
@@ -68,7 +81,16 @@ void CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	std::cout << "Usable Item Left Use" << std::endl;
 	if (m_eItemType > ITEM_FOOD && m_eItemType < ITEM_FOOD_END)
 	{
-		pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreaseHungry(m_fValue);
+		if (m_eItemType == ITEM_MEAT)
+		{
+			pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->Damage(m_fValue);
+			pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreaseHungry(m_fValue);
+
+		}
+		else
+		{
+			pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreaseHungry(m_fValue);
+		}
 	}
 	else if (m_eItemType > ITEM_DRINK && m_eItemType < ITEM_DRINK_END)
 	{

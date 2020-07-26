@@ -20,6 +20,7 @@ public:
 	virtual void Init() override;
 	virtual void Update() override;
 
+	void GiveStartItem();
 
 	void CreateQuickSlotUI(CGameObject* _pInventory);
 	void CreatePlayerStatusUI();

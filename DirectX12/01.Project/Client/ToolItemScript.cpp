@@ -45,7 +45,7 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 		m_fDamage = 30.f;
 		break;
 	case ITEM_CAMPFIRE:
-		pTex = CResMgr::GetInst()->Load<CMeshData>(L"Campfire", L"MeshData\\campfire.mdat");
+		pTex = CResMgr::GetInst()->Load<CMeshData>(L"Campfire.mdat", L"MeshData\\campfire.mdat");
 		m_pObj = pTex->Instantiate();
 		m_pObj->AddComponent(new CBuildScript);
 		m_pObj->AddComponent(new CCollider2D);

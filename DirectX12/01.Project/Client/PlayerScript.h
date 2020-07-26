@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Script.h>
 
+#define LEFT_CLICK true
+#define RIGHT_CLICK false
 #define PLAYER_ATTACK_COOLTIME 0.6f
 
 class CCamera;
@@ -64,6 +66,6 @@ public:
 	bool GetEnable();
 
 	void Damage(float fDamage);
-	void PlayerPicking();
+	void PlayerPicking(bool bLeft = LEFT_CLICK);
 };
 

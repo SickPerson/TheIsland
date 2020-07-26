@@ -787,6 +787,11 @@ void CIngameScene::Init()
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"House");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Human");
 
+	GiveStartItem();
+}
+
+void CIngameScene::GiveStartItem()
+{
 	CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 100);
 	pItem = new CStuffScript(ITEM_TYPE::ITEM_STONE);
@@ -801,6 +806,8 @@ void CIngameScene::Init()
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 5);
 	pItem = new CToolItemScript(ITEM_TYPE::ITEM_WOODCLUB);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	pItem = new CUsableScript(ITEM_TYPE::ITEM_MEAT);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 4);
 }
 
 void CIngameScene::Update()
