@@ -52,7 +52,7 @@ void CFBXLoader::Init()
 		assert( NULL );
 }
 
-void CFBXLoader::LoadFbx( const wstring & wstrPath )
+void CFBXLoader::LoadFbx( const wstring & wstrPath, int iShaderType)
 {
 	m_vecContainer.clear();
 
@@ -91,7 +91,7 @@ void CFBXLoader::LoadFbx( const wstring & wstrPath )
 	LoadTexture();
 
 	// 필요한 메테리얼 생성
-	CreateMaterial();
+	CreateMaterial(iShaderType);
 }
 
 int CFBXLoader::GetContainerCount()
@@ -431,7 +431,7 @@ void CFBXLoader::LoadTexture()
 	}
 }
 
-void CFBXLoader::CreateMaterial()
+void CFBXLoader::CreateMaterial(int iShaderType)
 {
 	wstring strKey;
 	wstring strPath;
@@ -454,7 +454,10 @@ void CFBXLoader::CreateMaterial()
 			pMaterial->SetName( strKey );
 			pMaterial->SetPath( strPath );
 
-			pMaterial->SetShader( CResMgr::GetInst()->FindRes<CShader>( L"Std3DShader" ) );
+			if(iShaderType == 0)
+				pMaterial->SetShader( CResMgr::GetInst()->FindRes<CShader>( L"Std3DShader" ) );
+			else
+				pMaterial->SetShader( CResMgr::GetInst()->FindRes<CShader>( L"HousingShader" ) );
 
 			wstring strTexKey = CPathMgr::GetFileName( m_vecContainer[i].vecMtrl[j].strDiff.c_str() );
 			Ptr<CTexture> pTex = CResMgr::GetInst()->FindRes<CTexture>( strTexKey );

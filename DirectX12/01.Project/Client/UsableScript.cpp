@@ -83,3 +83,8 @@ void CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->OnAddable(num);
 	}
 }
+
+void CUsableScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)
+{
+
+}

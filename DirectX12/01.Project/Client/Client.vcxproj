@@ -160,6 +160,7 @@
     <ClInclude Include="..\..\..\Server\Server\protocol.h" />
     <ClInclude Include="AnimalScript.h" />
     <ClInclude Include="ArmorScript.h" />
+    <ClInclude Include="BuildScript.h" />
     <ClInclude Include="ConstStringScript.h" />
     <ClInclude Include="ChatScript.h" />
     <ClInclude Include="Client.h" />
@@ -192,6 +193,7 @@
   <ItemGroup>
     <ClCompile Include="AnimalScript.cpp" />
     <ClCompile Include="ArmorScript.cpp" />
+    <ClCompile Include="BuildScript.cpp" />
     <ClCompile Include="ConstStringScript.cpp" />
     <ClCompile Include="ChatScript.cpp" />
     <ClCompile Include="Client.cpp" />

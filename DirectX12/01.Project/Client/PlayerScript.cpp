@@ -73,6 +73,16 @@ CGameObject * CPlayerScript::GetChatObject()
 	return m_pChat;
 }
 
+void CPlayerScript::EnableItem(int num)
+{
+	m_pInventory->GetScript<CInventoryScript>()->EnableItem(GetObj(), num);
+}
+
+void CPlayerScript::DisableItem(int num)
+{
+	m_pInventory->GetScript<CInventoryScript>()->DisableItem(GetObj(), num);
+}
+
 void CPlayerScript::SetMainCamera(CCamera * pCamera)
 {
 	m_pMainCamera = pCamera;
@@ -111,6 +121,8 @@ void CPlayerScript::Update()
 				int num = m_pQuickSlot->GetSelect();
 				m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), NULL, num);
 			}
+			int num = m_pQuickSlot->GetSelect();
+			m_pInventory->GetScript<CInventoryScript>()->Use_Highlight(GetObj(), NULL, num);
 
 			if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
 			{
@@ -119,28 +131,28 @@ void CPlayerScript::Update()
 
 			if (KEY_HOLD(KEY_TYPE::KEY_W))
 			{
-				Vec3 vFront = Transform()->GetWorldDir(DIR_TYPE::FRONT);
+				Vec3 vFront = -Transform()->GetWorldDir(DIR_TYPE::FRONT);
 				vPos += vFront * fSpeed * DT;
 				vPos.y = 0.f;
 			}
 
-			else if (KEY_HOLD(KEY_TYPE::KEY_S))
+			if (KEY_HOLD(KEY_TYPE::KEY_S))
 			{
-				Vec3 vBack = -Transform()->GetWorldDir(DIR_TYPE::FRONT);
+				Vec3 vBack = Transform()->GetWorldDir(DIR_TYPE::FRONT);
 				vPos += vBack * fSpeed * DT;
 				vPos.y = 0.f;
 			}
 
-			else if (KEY_HOLD(KEY_TYPE::KEY_A))
+			if (KEY_HOLD(KEY_TYPE::KEY_A))
 			{
-				Vec3 vLeft = -Transform()->GetWorldDir(DIR_TYPE::RIGHT);
+				Vec3 vLeft = Transform()->GetWorldDir(DIR_TYPE::RIGHT);
 				vPos += vLeft * fSpeed * DT;
 				vPos.y = 0.f;
 			}
 
-			else if (KEY_HOLD(KEY_TYPE::KEY_D))
+			if (KEY_HOLD(KEY_TYPE::KEY_D))
 			{
-				Vec3 vRight = Transform()->GetWorldDir(DIR_TYPE::RIGHT);
+				Vec3 vRight = -Transform()->GetWorldDir(DIR_TYPE::RIGHT);
 				vPos += vRight * fSpeed * DT;
 				vPos.y = 0.f;
 			}

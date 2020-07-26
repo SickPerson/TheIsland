@@ -26,9 +26,16 @@ void CFPSCamScript::Update()
 
 		Vec3 vPos = m_pPlayer->Transform()->GetLocalPos();
 		Vec3 vRot = m_pPlayer->Transform()->GetLocalRot();
+		Vec3 vDir = m_pPlayer->Transform()->GetWorldDir(DIR_TYPE::FRONT);
 
 		Vec3 vScale = Transform()->GetLocalScale();
-		vPos.y = 100.f;
+		float fOffset = 20.f;
+		if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
+		{
+			fOffset = 60.f;
+		}
+		vPos += -vDir * fOffset;
+		vPos.y += 100.f;
 		Transform()->SetLocalPos(vPos);
 
 		Vec2 vDrag = CKeyMgr::GetInst()->GetDragDir();
@@ -39,7 +46,7 @@ void CFPSCamScript::Update()
 		if (vCameraRot.x > 360.f)
 			vCameraRot.x -= 360.f;
 
-		Transform()->SetLocalRot(Vec3(vCameraRot.x, vRot.y, 0.f));
+		Transform()->SetLocalRot(Vec3(vCameraRot.x, vRot.y + 3.141592f, 0.f));
 	}
 }
 

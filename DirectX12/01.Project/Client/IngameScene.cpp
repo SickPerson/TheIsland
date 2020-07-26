@@ -65,7 +65,7 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\player.fbx");
+	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\campfire.fbx", 1);
 	//pTestMeshData->Save(pTestMeshData->GetPath());
 	//Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
 	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
@@ -510,11 +510,10 @@ void CIngameScene::Init()
 	CGameObject* pObject = nullptr;
 	CGameObject* pChildObject = nullptr;
 
-
 	// ===================
 	// Player 오브젝트 생성
 	// ===================
-	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
+	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\islandplayer.mdat", L"MeshData\\islandplayer.mdat");
 
 	CGameObject* pPlayer = pMeshData->Instantiate();
 	// Script 설정
@@ -523,14 +522,14 @@ void CIngameScene::Init()
 
 	pPlayer->MeshRender()->SetDynamicShadow(true);
 
-	pPlayer->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
+	pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
 	pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
 	pPlayer->SetName(L"Player Object");
 	pPlayer->FrustumCheck(false);
-	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	pPlayer->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
-	pPlayer->Transform()->SetLocalRot(Vec3(0.f, 180.f, 0.f));
+	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 10.f, 0.f));
+	pPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
+	//pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
 
@@ -543,7 +542,7 @@ void CIngameScene::Init()
 	pMainCam->AddComponent( new CCamera );
 	pMainCam->AddComponent( new CFPSCamScript );
 
-	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 100.f, 0.f ) );
+	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 110.f, 0.f ) );
 	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
 
 	pMainCam->Camera()->SetProjType( PROJ_TYPE::PERSPECTIVE );
@@ -778,7 +777,15 @@ void CIngameScene::Init()
 	// Player Layer 와 Monster Layer 는 충돌 검사 진행
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Animal" );
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Environment" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"House" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Human");
+
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Animal", L"Environment" );
+
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Environment");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"House");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Human");
 
 	CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 100);
@@ -828,6 +835,16 @@ void CIngameScene::Update()
 		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 		{
 			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(1);
+			if (m_iSelect != 1)
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				m_iSelect = 1;
+				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+			}
+			else
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+			}
 		}
 	}
 	else if (KEY_TAB(KEY_TYPE::KEY_2))
@@ -835,6 +852,16 @@ void CIngameScene::Update()
 		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 		{
 			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(2);
+			if (m_iSelect != 2)
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				m_iSelect = 2;
+				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+			}
+			else
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+			}
 		}
 	}
 	else if (KEY_TAB(KEY_TYPE::KEY_3))
@@ -842,6 +869,16 @@ void CIngameScene::Update()
 		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 		{
 			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(3);
+			if (m_iSelect != 3)
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				m_iSelect = 3;
+				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+			}
+			else
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+			}
 		}
 	}
 	else if (KEY_TAB(KEY_TYPE::KEY_4))
@@ -849,6 +886,16 @@ void CIngameScene::Update()
 		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 		{
 			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(4);
+			if (m_iSelect != 4)
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				m_iSelect = 4;
+				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+			}
+			else
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+			}
 		}
 	}
 	else if (KEY_TAB(KEY_TYPE::KEY_5))
@@ -856,6 +903,16 @@ void CIngameScene::Update()
 		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 		{
 			m_pQuickSlot->GetScript<CQuickSlotScript>()->KeyInput(5);
+			if (m_iSelect != 5)
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				m_iSelect = 5;
+				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+			}
+			else
+			{
+				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+			}
 		}
 	}
 

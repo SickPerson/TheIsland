@@ -49,7 +49,7 @@ private:
 
 public:
 	void Init();
-	void LoadFbx( const wstring& wstrPath );
+	void LoadFbx( const wstring& wstrPath, int iShaderType = 0 );
 
 public:
 	int GetContainerCount();
@@ -71,7 +71,7 @@ private:
 	wstring GetMtrlTextureName( FbxSurfaceMaterial* pSurface, const char* pMtrlProperty );
 	
 	void LoadTexture();
-	void CreateMaterial();
+	void CreateMaterial(int iShaderType = 0);
 
 	// Animation
 	void LoadSkeleton( FbxNode* pNode );

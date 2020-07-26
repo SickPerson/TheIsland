@@ -31,3 +31,8 @@ void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	std::cout << "Housing Item Left Use" << std::endl;
 }
+
+void CHousingScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)
+{
+
+}

@@ -56,6 +56,9 @@ public:
 	CGameObject* GetInventoryObject();
 	CGameObject* GetChatObject();
 
+	void EnableItem(int num);
+	void DisableItem(int num);
+
 	void SetMainCamera(CCamera* pCamera);
 
 	bool GetEnable();

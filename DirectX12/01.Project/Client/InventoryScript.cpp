@@ -383,6 +383,27 @@ void CInventoryScript::Use_Right(CGameObject * pHost, CGameObject * pObj, int in
 	m_vecItem[index]->Use_Right(pHost, pObj, index);
 }
 
+void CInventoryScript::Use_Highlight(CGameObject * pHost, CGameObject * pObj, int index)
+{
+	if (index == -1 || m_vecItem[index] == NULL)
+		return;
+	m_vecItem[index]->Use_Highlight(pHost, pObj, index);
+}
+
+void CInventoryScript::DisableItem(CGameObject* pHost, int index)
+{
+	if (index < 0 || m_vecItem[index] == NULL)
+		return;
+	m_vecItem[index]->DisableItem(pHost, index);
+}
+
+void CInventoryScript::EnableItem(CGameObject* pHost, int index)
+{
+	if (index < 0 || m_vecItem[index] == NULL)
+		return;
+	m_vecItem[index]->EnableItem(pHost, index);
+}
+
 void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 {
 	int iIdx = -1;

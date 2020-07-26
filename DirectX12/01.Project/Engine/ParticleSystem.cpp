@@ -34,7 +34,7 @@ CParticleSystem::CParticleSystem()
 
 	// Material
 	m_pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ParticleMtrl");
-	Ptr<CTexture> pParticle = CResMgr::GetInst()->Load<CTexture>(L"Texture\\Particle\\smokeparticle.png", L"Texture\\Particle\\dust_3.tga");
+	Ptr<CTexture> pParticle = CResMgr::GetInst()->Load<CTexture>(L"Dust", L"Texture\\Particle\\dust_3.tga");
 	m_pMtrl->SetData(SHADER_PARAM::TEX_0, pParticle.GetPointer());
 
 	// ParticleUpdate

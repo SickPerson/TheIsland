@@ -50,7 +50,7 @@ public:
 	Ptr<CTexture> CreateTextureFromResource( const wstring& _strName, ComPtr<ID3D12Resource> _pTex2D );
 
 	// FBX
-	Ptr<CMeshData> LoadFBX( const wstring& strPath );
+	Ptr<CMeshData> LoadFBX( const wstring& strPath, int iShaderType = 0 );
 };
 
 template<typename T>

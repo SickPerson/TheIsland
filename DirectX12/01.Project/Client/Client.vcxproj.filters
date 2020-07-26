@@ -55,6 +55,9 @@
     <Filter Include="ComponentScript\Item\Housing">
       <UniqueIdentifier>{f6be3114-af7d-491e-a0f6-83a4e8a13136}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ComponentScript\Housing">
+      <UniqueIdentifier>{3dbed70e-88a0-4a9c-9ab3-bbef192e1a8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -150,6 +153,9 @@
     <ClInclude Include="ArmorScript.h">
       <Filter>ComponentScript\Item\Armor</Filter>
     </ClInclude>
+    <ClInclude Include="BuildScript.h">
+      <Filter>ComponentScript\Housing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -226,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="ArmorScript.cpp">
       <Filter>ComponentScript\Item\Armor</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildScript.cpp">
+      <Filter>ComponentScript\Housing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

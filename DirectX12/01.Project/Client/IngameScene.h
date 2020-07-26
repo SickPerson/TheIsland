@@ -11,6 +11,7 @@ class CIngameScene :
 	CGameObject* m_pInventory;
 	CGameObject* m_pQuickSlot;
 
+	int m_iSelect = -1;
 public:
 	CIngameScene();
 	virtual ~CIngameScene();
