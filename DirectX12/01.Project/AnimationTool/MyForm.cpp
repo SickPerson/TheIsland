@@ -11,6 +11,12 @@
 #include <Engine/SceneScript.h>
 
 #include <Engine/GameObject.h>
+#include <Engine/Transform.h>
+
+#include <Engine/Ptr.h>
+#include <Engine/MeshData.h>
+#include <Engine/ResMgr.h>
+
 // CMyForm
 
 IMPLEMENT_DYNCREATE(CMyForm, CFormView)
@@ -18,17 +24,9 @@ IMPLEMENT_DYNCREATE(CMyForm, CFormView)
 CMyForm::CMyForm()
 	: CFormView(IDD_MYFORM)
 	, m_strObjectName( _T( "" ) )
-	, m_fPosX( 0 )
-	, m_fPosY( 0 )
-	, m_fPosZ( 0 )
-	, m_fScaleX( 0 )
-	, m_fScaleY( 0 )
-	, m_fRotX( 0 )
-	, m_fRotY( 0 )
-	, m_fRotZ( 0 )
-	, m_fScaleZ( 0 )
+	, m_pGameObject(NULL)
 {
-	
+	m_vScale = Vec3::One;
 }
 
 CMyForm::~CMyForm()
@@ -38,24 +36,22 @@ CMyForm::~CMyForm()
 void CMyForm::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange( pDX );
-	DDX_Control( pDX, IDC_BUTTON_ADDOBJECT, m_btnAddObject );
+	DDX_Control( pDX, IDC_BUTTON_MESHLOAD, m_btnMeshLoad );
 	DDX_Text( pDX, IDC_EDIT_OBJECTNAME, m_strObjectName );
-	DDX_Text( pDX, IDC_EDIT_POSX, m_fPosX );
-	DDX_Text( pDX, IDC_EDIT_POSY, m_fPosY );
-	DDX_Text( pDX, IDC_EDIT_POSZ, m_fPosZ );
-	DDX_Text( pDX, IDC_EDIT_SCALEX, m_fScaleX );
-	DDX_Text( pDX, IDC_EDIT_SCALEY, m_fScaleY );
-	DDX_Text( pDX, IDC_EDIT_SCALEZ, m_fScaleZ );
-	DDX_Text( pDX, IDC_EDIT_ROTX, m_fRotX );
-	DDX_Text( pDX, IDC_EDIT_ROTY, m_fRotY );
-	DDX_Text( pDX, IDC_EDIT_ROTZ, m_fRotZ );
-	DDX_Control( pDX, IDC_BUTTON_DELOBJECT, m_btnDelObject );
-	DDX_Control( pDX, IDC_COMBO_OBJECTKIND, m_ComboObjectKind );
-	DDX_Control( pDX, IDC_COMBO_OBJECTS, m_ComboObjects );
+	DDX_Text( pDX, IDC_EDIT_POSX, m_vPos.x );
+	DDX_Text( pDX, IDC_EDIT_POSY, m_vPos.y );
+	DDX_Text( pDX, IDC_EDIT_POSZ, m_vPos.z );
+	DDX_Text( pDX, IDC_EDIT_SCALEX, m_vScale.x );
+	DDX_Text( pDX, IDC_EDIT_SCALEY, m_vScale.y );
+	DDX_Text( pDX, IDC_EDIT_SCALEZ, m_vScale.z );
+	DDX_Text( pDX, IDC_EDIT_ROTX, m_vRot.x );
+	DDX_Text( pDX, IDC_EDIT_ROTY, m_vRot.y );
+	DDX_Text( pDX, IDC_EDIT_ROTZ, m_vRot.z );
 }
 
 BEGIN_MESSAGE_MAP(CMyForm, CFormView)
-	ON_BN_CLICKED( IDC_BUTTON_ADDOBJECT, &CMyForm::OnBnClickedButtonAddobject )
+	
+	ON_BN_CLICKED( IDC_BUTTON_MESHLOAD, &CMyForm::OnBnClickedButtonMeshload )
 	ON_EN_CHANGE( IDC_EDIT_OBJECTNAME, &CMyForm::OnEnChangeEditObjectname )
 	ON_EN_CHANGE( IDC_EDIT_POSX, &CMyForm::OnEnChangeEditPosx )
 	ON_EN_CHANGE( IDC_EDIT_POSY, &CMyForm::OnEnChangeEditPosy )
@@ -66,10 +62,6 @@ BEGIN_MESSAGE_MAP(CMyForm, CFormView)
 	ON_EN_CHANGE( IDC_EDIT_ROTX, &CMyForm::OnEnChangeEditRotx )
 	ON_EN_CHANGE( IDC_EDIT_ROTY, &CMyForm::OnEnChangeEditRoty )
 	ON_EN_CHANGE( IDC_EDIT_ROTZ, &CMyForm::OnEnChangeEditRotz )
-	ON_BN_CLICKED( IDC_BUTTON_DELOBJECT, &CMyForm::OnBnClickedButtonDelobject )
-	ON_CBN_SELCHANGE( IDC_COMBO_OBJECTKIND, &CMyForm::OnCbnSelchangeComboObjectkind )
-	ON_CBN_SELCHANGE( IDC_COMBO_OBJECTS, &CMyForm::OnCbnSelchangeComboObjects )
-	ON_LBN_SELCHANGE( IDC_LIST1, &CMyForm::OnLbnSelchangeList1 )
 END_MESSAGE_MAP()
 
 
@@ -89,23 +81,40 @@ void CMyForm::Dump(CDumpContext& dc) const
 #endif
 #endif //_DEBUG
 
-
-void CMyForm::OnBnClickedButtonAddobject()
+void CMyForm::OnBnClickedButtonMeshload()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.	   
+	wchar_t	strFilter[] = L"모든파일(*.*)|*.*|||";
+	CFileDialog	dlg( TRUE, NULL, L"Mesh",	OFN_HIDEREADONLY, strFilter );
 
-	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+	if ( IDOK == dlg.DoModal() )
+	{
+		CString strName = dlg.GetFileTitle();				// 파일 이름 읽기
+		CString strExt = dlg.GetFileExt();
+		wstring strMeshPath = L"MeshData\\" + strName + "." + strExt;
+		wstring strFbxPath = L"FBX\\" + strName + "." + strExt;
 
-	CGameObject* pObject = new CGameObject;
-	pScene->AddGameObject( L"Default", pObject, false );
+		strExt.MakeUpper();		
 
-	int a = 0;
-}
+		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 
+		if ( lstrcmp( strExt, L"FBX" ) == 0 )
+		{
+			Ptr<CMeshData> pMeshData = CResMgr::GetInst()->LoadFBX( strFbxPath );
+			int  a = 0;
+		}
 
-void CMyForm::OnBnClickedButtonDelobject()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+		else if ( lstrcmp( strExt, L"MDAT" ) == 0 )
+		{
+			Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>( strMeshPath, strMeshPath );
+
+			m_pGameObject = pMeshData->Instantiate();
+			m_pGameObject->SetName( m_strObjectName.GetString() );
+			m_pGameObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
+			m_pGameObject->Transform()->SetLocalRot( Vec3( 0.f, 0.f, 0.f ) );
+			pScene->AddGameObject( L"Default", m_pGameObject, false );
+		}
+	}
 }
 
 
@@ -117,8 +126,8 @@ void CMyForm::OnEnChangeEditObjectname()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	//UpdateData( TRUE );
 }
-
 
 void CMyForm::OnEnChangeEditPosx()
 {
@@ -128,6 +137,11 @@ void CMyForm::OnEnChangeEditPosx()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( !m_pGameObject )
+		return;
+
+	UpdateData( TRUE );
+	m_pGameObject->Transform()->SetLocalPos( m_vPos );
 }
 
 
@@ -139,6 +153,11 @@ void CMyForm::OnEnChangeEditPosy()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( !m_pGameObject )
+		return;
+
+	UpdateData( TRUE );
+	m_pGameObject->Transform()->SetLocalPos( m_vPos );
 }
 
 
@@ -150,6 +169,11 @@ void CMyForm::OnEnChangeEditPosz()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( !m_pGameObject )
+		return;
+
+	UpdateData( TRUE );
+	m_pGameObject->Transform()->SetLocalPos( m_vPos );
 }
 
 
@@ -161,6 +185,11 @@ void CMyForm::OnEnChangeEditScalex()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( !m_pGameObject )
+		return;
+
+	UpdateData( TRUE );
+	m_pGameObject->Transform()->SetLocalPos( m_vScale );
 }
 
 
@@ -172,6 +201,11 @@ void CMyForm::OnEnChangeEditScaley()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( !m_pGameObject )
+		return;
+
+	UpdateData( TRUE );
+	m_pGameObject->Transform()->SetLocalPos( m_vScale );
 }
 
 
@@ -183,6 +217,11 @@ void CMyForm::OnEnChangeEditScalez()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( !m_pGameObject )
+		return;
+
+	UpdateData( TRUE );
+	m_pGameObject->Transform()->SetLocalPos( m_vScale );
 }
 
 
@@ -194,6 +233,11 @@ void CMyForm::OnEnChangeEditRotx()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( !m_pGameObject )
+		return;
+
+	UpdateData( TRUE );
+	m_pGameObject->Transform()->SetLocalPos( m_vRot );
 }
 
 
@@ -205,6 +249,11 @@ void CMyForm::OnEnChangeEditRoty()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( !m_pGameObject )
+		return;
+
+	UpdateData( TRUE );
+	m_pGameObject->Transform()->SetLocalPos( m_vRot );
 }
 
 
@@ -216,27 +265,9 @@ void CMyForm::OnEnChangeEditRotz()
 	// 이 알림 메시지를 보내지 않습니다.
 
 	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
+	if ( !m_pGameObject )
+		return;
 
-
-void CMyForm::OnCbnSelchangeComboObjectkind()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-
-	int  iSel = m_ComboObjectKind.GetCurSel();
-
-	//CString strScriptName;
-	//m_ComboObjectKind.GetLBText( iSel, strScriptName);
-}
-
-
-void CMyForm::OnCbnSelchangeComboObjects()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
-
-
-void CMyForm::OnLbnSelchangeList1()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData( TRUE );
+	m_pGameObject->Transform()->SetLocalPos( m_vRot );
 }

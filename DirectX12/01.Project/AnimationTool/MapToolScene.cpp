@@ -20,7 +20,6 @@ CMapToolScene::~CMapToolScene()
 
 void CMapToolScene::Init()
 {
-
 	// ==================
 	// Camera Object »ý¼º
 	// ==================
@@ -30,7 +29,7 @@ void CMapToolScene::Init()
 	pMainCam->AddComponent( new CCamera );
 	pMainCam->AddComponent( new CToolCamScript );
 
-	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 100.f, 0.f ) );
+	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 0.f, -500.f ) );
 	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
 
 	pMainCam->Camera()->SetProjType( PROJ_TYPE::PERSPECTIVE );
@@ -73,4 +72,16 @@ void CMapToolScene::Init()
 	pObject->Light3D()->SetLightRange( 1000.f );
 
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+
+	//Ptr<CMeshData> pRockTex = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\genericcliffb.mdat", L"MeshData\\genericcliffb.mdat" );
+	//// ====================================================================
+	//pObject = pRockTex->Instantiate();
+	//pObject->SetName( L"Rock" );
+	//pObject->FrustumCheck( false );
+	//pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
+	//pObject->Transform()->SetLocalRot( Vec3( 0.f, 0.f, 0.f ) );
+	//pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
+	//pObject->Transform()->SetLocalScale( Vec3( 12.f, 12.f, 12.f ) );
+	//m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+	// ====================================================================
 }

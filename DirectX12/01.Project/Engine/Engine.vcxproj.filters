@@ -97,6 +97,9 @@
     <Filter Include="06. GameObject\Component\Font">
       <UniqueIdentifier>{4b6071b6-b6e0-43a4-b7d6-75d369098c53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameObject\BoneSocket">
+      <UniqueIdentifier>{5ee8898c-6cc0-49f6-b636-3d8b41a47d76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -276,6 +279,9 @@
     <ClInclude Include="Animation.h">
       <Filter>06. GameObject\Component\Animation\3D</Filter>
     </ClInclude>
+    <ClInclude Include="BoneSocket.h">
+      <Filter>06. GameObject\BoneSocket</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -442,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>06. GameObject\Component\Animation\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="BoneSocket.cpp">
+      <Filter>06. GameObject\BoneSocket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
