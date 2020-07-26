@@ -159,6 +159,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\Server\Server\protocol.h" />
     <ClInclude Include="AnimalScript.h" />
+    <ClInclude Include="ArmorScript.h" />
+    <ClInclude Include="BuildScript.h" />
     <ClInclude Include="ConstStringScript.h" />
     <ClInclude Include="ChatScript.h" />
     <ClInclude Include="Client.h" />
@@ -166,6 +168,7 @@
     <ClInclude Include="enum.h" />
     <ClInclude Include="FPSCamScript.h" />
     <ClInclude Include="header.h" />
+    <ClInclude Include="HousingScript.h" />
     <ClInclude Include="IngameScene.h" />
     <ClInclude Include="InputScript.h" />
     <ClInclude Include="InventoryScript.h" />
@@ -185,13 +188,17 @@
     <ClInclude Include="SunshineScript.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ToolItemScript.h" />
+    <ClInclude Include="UsableScript.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimalScript.cpp" />
+    <ClCompile Include="ArmorScript.cpp" />
+    <ClCompile Include="BuildScript.cpp" />
     <ClCompile Include="ConstStringScript.cpp" />
     <ClCompile Include="ChatScript.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="FPSCamScript.cpp" />
+    <ClCompile Include="HousingScript.cpp" />
     <ClCompile Include="IngameScene.cpp" />
     <ClCompile Include="InputScript.cpp" />
     <ClCompile Include="InventoryScript.cpp" />
@@ -214,6 +221,7 @@
     <ClCompile Include="StuffScript.cpp" />
     <ClCompile Include="SunshineScript.cpp" />
     <ClCompile Include="ToolItemScript.cpp" />
+    <ClCompile Include="UsableScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc" />

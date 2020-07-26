@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "QuickSlotScript.h"
+#include "ItemScript.h"
 
+#include <iostream>
 
 CQuickSlotScript::CQuickSlotScript() :
 	CScript((UINT)SCRIPT_TYPE::UISCRIPT),
@@ -52,6 +54,11 @@ void CQuickSlotScript::KeyInput(int key)
 		m_iSelect = key - 1;
 	}
 	m_vQuickSlot[key - 1]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &m_vHighlightSlotColor);
+}
+
+int CQuickSlotScript::GetSelect()
+{
+	return m_iSelect;
 }
 
 void CQuickSlotScript::AddQuickSlot(CGameObject * pObj)

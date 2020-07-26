@@ -21,7 +21,7 @@ private:
 	vector<Ptr<CMaterial>>	m_vecMtrl;
 
 public:
-	static CMeshData* LoadFromFBX( const wstring& strPath );
+	static CMeshData* LoadFromFBX( const wstring& strPath, int iShaderType = 0 );
 
 	virtual void Load( const wstring& strPath );
 	virtual void Save( const wstring& strPath );

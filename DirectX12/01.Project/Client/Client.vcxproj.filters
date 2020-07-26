@@ -46,6 +46,18 @@
     <Filter Include="ComponentScript\Item\Tool">
       <UniqueIdentifier>{9b695f86-2f6d-4030-bc5f-b1d0fbd93d06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ComponentScript\Item\Usable">
+      <UniqueIdentifier>{5cb1299c-cf5a-495b-8316-9cbd7ee565a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Armor">
+      <UniqueIdentifier>{3e0f537e-dd40-450a-9f0c-24ff6e593e21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Housing">
+      <UniqueIdentifier>{f6be3114-af7d-491e-a0f6-83a4e8a13136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Housing">
+      <UniqueIdentifier>{3dbed70e-88a0-4a9c-9ab3-bbef192e1a8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -132,6 +144,18 @@
     <ClInclude Include="RecipeScript.h">
       <Filter>ComponentScript\Item</Filter>
     </ClInclude>
+    <ClInclude Include="UsableScript.h">
+      <Filter>ComponentScript\Item\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="HousingScript.h">
+      <Filter>ComponentScript\Item\Housing</Filter>
+    </ClInclude>
+    <ClInclude Include="ArmorScript.h">
+      <Filter>ComponentScript\Item\Armor</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildScript.h">
+      <Filter>ComponentScript\Housing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -199,6 +223,18 @@
     </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>ComponentScript\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="UsableScript.cpp">
+      <Filter>ComponentScript\Item\Usable</Filter>
+    </ClCompile>
+    <ClCompile Include="HousingScript.cpp">
+      <Filter>ComponentScript\Item\Housing</Filter>
+    </ClCompile>
+    <ClCompile Include="ArmorScript.cpp">
+      <Filter>ComponentScript\Item\Armor</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildScript.cpp">
+      <Filter>ComponentScript\Housing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

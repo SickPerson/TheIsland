@@ -248,6 +248,20 @@ void CResMgr::CreateDefaultShader()
 	AddRes(L"TreeShader", pShader);
 
 	// ============
+	// Housing Shader
+	// ============
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\std3d.fx", "VS_Std3D", "vs_5_0");
+	pShader->CreateVertexInstShader(L"Shader\\std3d.fx", "VS_Std3D_Inst", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\std3d.fx", "PS_Housing", "ps_5_0");
+
+	// BlendState ¼³Á¤
+	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+
+	pShader->Create(SHADER_POV::DEFERRED);
+	AddRes(L"HousingShader", pShader);
+
+	// ============
 	// Skybox Shader
 	// ============
 	pShader = new CShader;
@@ -550,6 +564,14 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"Std3DShader"));
 	AddRes(L"Std3DMtrl", pMtrl);
+
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
+	pMtrl->SetShader(FindRes<CShader>(L"HousingShader"));
+	a = -1;
+	pMtrl->SetData(SHADER_PARAM::INT_3, &a);
+	AddRes(L"HousingMtrl", pMtrl);
+
 
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();

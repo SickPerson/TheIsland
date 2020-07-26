@@ -72,7 +72,7 @@ void CRecipeScript::Init()
 		pObject->SetName(L"Icon");
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CMeshRender);
-		pObject->Transform()->SetLocalPos(Vec3(430.f + (75.f * i), 260.f, 50.f));
+		pObject->Transform()->SetLocalPos(Vec3(430.f + (65.f * i), 260.f, 50.f));
 		pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
 
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -85,10 +85,10 @@ void CRecipeScript::Init()
 		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
 
 		pObject = new CGameObject;
-		pObject->SetName(L"ItemRecipeName");
+		pObject->SetName(L"ItemCount");
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CFont);
-		pObject->Transform()->SetLocalPos(Vec3(465.f + (75.f * i), 260.f, 50.f));
+		pObject->Transform()->SetLocalPos(Vec3(455.f + (65.f * i), 260.f, 50.f));
 		pObject->Transform()->SetLocalScale(Vec3(25.f, 25.f, 1.f));
 
 		string strFont = std::to_string(m_vecRecipe[i].iCount);
@@ -103,7 +103,7 @@ void CRecipeScript::Init()
 void CRecipeScript::SetNum(UINT iNum)
 {
 	m_iNum = iNum;
-	Vec4 vPos = Transform()->GetLocalPos();
+	Vec4 vPos = Vec3(0.f, 0.f, 0.f);
 	vPos.y -= 85.f * iNum;
 	Transform()->SetLocalPos(vPos);
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <Engine/Script.h>
+
 class CQuickSlotScript :
 	public CScript
 {
@@ -25,6 +26,8 @@ public:
 	void SetEnable(bool bEnable);
 	bool GetEnable();
 	void KeyInput(int key);
+
+	int GetSelect();
 
 	void AddQuickSlot(CGameObject* pObj);
 

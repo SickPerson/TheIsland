@@ -20,14 +20,14 @@ CMeshData::~CMeshData()
 {
 }
 
-CMeshData * CMeshData::LoadFromFBX( const wstring & strPath )
+CMeshData * CMeshData::LoadFromFBX( const wstring & strPath, int iShaderType)
 {
 	wstring strFullPath = CPathMgr::GetResPath();
 	strFullPath += strPath;
 
 	CFBXLoader loader;
 	loader.Init();
-	loader.LoadFbx( strFullPath );
+	loader.LoadFbx( strFullPath, iShaderType );
 
 	// 메쉬 가져오기
 	CMesh* pMesh = CMesh::CreateFromContainer( loader );

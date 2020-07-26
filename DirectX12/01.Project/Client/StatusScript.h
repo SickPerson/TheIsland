@@ -21,5 +21,9 @@ public:
 
 public:
 	void Damage(float fDamage);
+
+	void SetIncreaseHealth(float fAmount);
+	void SetIncreaseHungry(float fAmount);
+	void SetIncreasefThirst(float fAmount);
 };
 

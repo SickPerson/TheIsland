@@ -60,6 +60,7 @@ bool CItemScript::SetItemIncrease(int iAmount)
 	if (m_iCount <= 0)
 	{
 		// ¾ÆÀÌÅÛ ¼Ò¸ê
+		GetObj()->ClearParent();
 		tEvent tEv;
 		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
 		tEv.wParam = (DWORD_PTR)GetObj();

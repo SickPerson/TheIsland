@@ -163,6 +163,44 @@ PS_STD3D_OUTPUT PS_Std3D_Tree(VS_STD3D_OUTPUT _in)
 	return output;
 }
 
+PS_STD3D_OUTPUT PS_Housing(VS_STD3D_OUTPUT _in)
+{
+	PS_STD3D_OUTPUT output = (PS_STD3D_OUTPUT) 0.f;
+
+	if (tex_0)
+	{
+		if (g_int_3 == -1)
+			output.vTarget0 = float4(1.f, 1.f, 1.f, 0.8f);
+		else if (g_int_3 == -2)
+			output.vTarget0 = float4(1.f, 0.f, 0.f, 0.8f);
+		else 
+		{
+			output.vTarget0 = g_tex_0.Sample(g_sam_0, _in.vUV);
+			output.vTarget0.w = 1.f;
+		}
+	}
+	else
+		output.vTarget0 = float4(1.f, 0.f, 1.f, 1.f);
+
+	float3 vViewNormal = _in.vViewNormal;
+
+	//if (output.vTarget0.w < 0.01f)
+	//	clip(-1);
+
+	// 노말맵이 있는경우
+	if (tex_1)
+	{
+		float3 vTSNormal = g_tex_1.Sample(g_sam_0, _in.vUV).xyz;
+		vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
+		float3x3 matTBN = { _in.vViewTangent, _in.vViewBinormal, _in.vViewNormal };
+		vViewNormal = normalize(mul(vTSNormal, matTBN));
+	}
+
+	output.vTarget1.xyz = vViewNormal;
+	output.vTarget2.xyz = _in.vViewPos;
+
+	return output;
+}
 
 // =============
 // Skybox Shader

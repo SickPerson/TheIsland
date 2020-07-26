@@ -11,6 +11,7 @@ class CIngameScene :
 	CGameObject* m_pInventory;
 	CGameObject* m_pQuickSlot;
 
+	int m_iSelect = -1;
 public:
 	CIngameScene();
 	virtual ~CIngameScene();
@@ -19,6 +20,7 @@ public:
 	virtual void Init() override;
 	virtual void Update() override;
 
+	void GiveStartItem();
 
 	void CreateQuickSlotUI(CGameObject* _pInventory);
 	void CreatePlayerStatusUI();

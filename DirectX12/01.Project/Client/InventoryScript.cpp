@@ -7,6 +7,9 @@
 
 #include "StuffScript.h"
 #include "ToolItemScript.h"
+#include "UsableScript.h"
+#include "HousingScript.h"
+#include "ArmorScript.h"
 
 #include <Engine/Font.h>
 
@@ -21,7 +24,9 @@ CInventoryScript::CInventoryScript() :
 	m_iClickIdx(-1),
 	m_pItemLootScript(NULL),
 	m_iRecipePage(0),
-	m_bAddable(true)
+	m_bAddable(true),
+	m_pNextPage(NULL),
+	m_pPrevPage(NULL)
 {
 	m_vecItemSlot.reserve(25);
 	m_vecItem.reserve(25);
@@ -35,6 +40,10 @@ CInventoryScript::~CInventoryScript()
 {
 	m_vecItemSlot.clear();
 	m_vecItem.clear();
+	m_vecRecipe.clear();
+	SAFE_DELETE(m_pNextPage);
+	SAFE_DELETE(m_pPrevPage);
+	SAFE_DELETE(m_pClickObj);
 }
 
 void CInventoryScript::Update()
@@ -70,19 +79,39 @@ void CInventoryScript::Update()
 				}
 			}
 
-			// 조합 클릭
-			if (m_bAddable)
+			if (CheckClickUI(vMousePos, m_pNextPage))
 			{
-				for (CGameObject* pObj : m_vecRecipe)
+				if (m_iRecipePage < m_vecRecipe.size() / 6)
 				{
-					Vec3 vPos = pObj->GetScript<CRecipeScript>()->GetClickPosition();
-					Vec3 vScale = pObj->GetScript<CRecipeScript>()->GetClickScale();
+					m_iRecipePage++;
+					ShowRecipe();
+				}
+			}
+			else if(CheckClickUI(vMousePos, m_pPrevPage))
+			{
+				if (m_iRecipePage > 0)
+				{
+					m_iRecipePage--;
+					ShowRecipe();
+				}
+			}
+			// 조합 클릭
+			else if (m_bAddable)
+			{
+				for (int num = m_iRecipePage * 6; num < m_iRecipePage * 6 + 6; ++num)
+				{
+					if (m_vecRecipe.size() <= num)
+					{
+						break;
+					}
+					Vec3 vPos = m_vecRecipe[num]->GetScript<CRecipeScript>()->GetClickPosition();
+					Vec3 vScale = m_vecRecipe[num]->GetScript<CRecipeScript>()->GetClickScale();
 
 					if (vMousePos.x > vPos.x - vScale.x / 2.f && vMousePos.x < vPos.x + vScale.x / 2.f)
 					{
 						if (vMousePos.y > vPos.y - vScale.y / 2.f && vMousePos.y < vPos.y + vScale.y / 2.f)
 						{
-							vector<tItemRecipe> vecRecipe = pObj->GetScript<CRecipeScript>()->GetRecipe();
+							vector<tItemRecipe> vecRecipe = m_vecRecipe[num]->GetScript<CRecipeScript>()->GetRecipe();
 							vector<bool> vecCheck;
 							vector<int> vecIndex;
 							vecCheck.resize(vecRecipe.size());
@@ -120,19 +149,32 @@ void CInventoryScript::Update()
 							// 아이템 조합 조건 충족
 							if (check == true)
 							{
-								ITEM_TYPE eType = pObj->GetScript<CRecipeScript>()->GetItemType();
+								ITEM_TYPE eType = m_vecRecipe[num]->GetScript<CRecipeScript>()->GetItemType();
 								if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
 								{
 									CItemScript* pItem = new CToolItemScript(eType);
 									AddItem(pItem, 1);
 								}
-
 								else if (eType > ITEM_STUFF && eType < ITEM_STUFF_END)
 								{
 									CItemScript* pItem = new CStuffScript(eType);
 									AddItem(pItem, 1);
 								}
-
+								else if (eType > ITEM_USABLE && eType < ITEM_USABLE_END)
+								{
+									CItemScript* pItem = new CUsableScript(eType);
+									AddItem(pItem, 1);
+								}
+								else if (eType > ITEM_HOUSING && eType < ITEM_HOUSING_END)
+								{
+									CItemScript* pItem = new CHousingScript(eType);
+									AddItem(pItem, 1);
+								}
+								else if (eType > ITEM_ARMOR && eType < ITEM_ARMOR_END)
+								{
+									CItemScript* pItem = new CArmorScript(eType);
+									AddItem(pItem, 1);
+								}
 								// 재료 아이템 제거
 								for (int i = 0; i < vecIndex.size(); ++i)
 								{
@@ -310,16 +352,56 @@ void CInventoryScript::Show()
 	{
 		TransferLayer(29, true);
 		m_bActive = false;
+		HideRecipe();
 	}
 	else
 	{
 		TransferLayer(30, true);
 		m_bActive = true;
+		m_iRecipePage = 0;
+		ShowRecipe();
 	}
-	for (CGameObject* pRecipe : m_vecRecipe)
-	{
-		pRecipe->GetScript<CRecipeScript>()->Show(m_bActive);
-	}
+}
+
+void CInventoryScript::OnAddable(int index)
+{
+	m_vecItem[index] = NULL;
+	m_bAddable = true;
+}
+
+void CInventoryScript::Use_Left(CGameObject * pHost, CGameObject * pObj, int index)
+{
+	if (index == -1 || m_vecItem[index] == NULL)
+		return;
+	m_vecItem[index]->Use_Left(pHost, pObj, index);
+}
+
+void CInventoryScript::Use_Right(CGameObject * pHost, CGameObject * pObj, int index)
+{
+	if (index == -1 || m_vecItem[index] == NULL)
+		return;
+	m_vecItem[index]->Use_Right(pHost, pObj, index);
+}
+
+void CInventoryScript::Use_Highlight(CGameObject * pHost, CGameObject * pObj, int index)
+{
+	if (index == -1 || m_vecItem[index] == NULL)
+		return;
+	m_vecItem[index]->Use_Highlight(pHost, pObj, index);
+}
+
+void CInventoryScript::DisableItem(CGameObject* pHost, int index)
+{
+	if (index < 0 || m_vecItem[index] == NULL)
+		return;
+	m_vecItem[index]->DisableItem(pHost, index);
+}
+
+void CInventoryScript::EnableItem(CGameObject* pHost, int index)
+{
+	if (index < 0 || m_vecItem[index] == NULL)
+		return;
+	m_vecItem[index]->EnableItem(pHost, index);
 }
 
 void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
@@ -419,6 +501,22 @@ void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 	}
 }
 
+bool CInventoryScript::CheckClickUI(Vec2 vMousePos, CGameObject * pObj)
+{
+	Vec3 vPos = pObj->Transform()->GetLocalPos();
+	Vec3 vScale = pObj->Transform()->GetLocalScale();
+
+	if (vMousePos.x > vPos.x - vScale.x / 2.f && vMousePos.x < vPos.x + vScale.x / 2.f)
+	{
+		if (vMousePos.y > vPos.y - vScale.y / 2.f && vMousePos.y < vPos.y + vScale.y / 2.f)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void CInventoryScript::CheckAddable()
 {
 	bool bAddable = false;
@@ -435,8 +533,50 @@ void CInventoryScript::CheckAddable()
 
 void CInventoryScript::ShowRecipe()
 {
+	HideRecipe();
+	for (int i = 0; i < 6; ++i)
+	{
+		if (m_vecRecipe.size() <= i + (m_iRecipePage * 6))
+		{
+			break;
+		}
+		m_vecRecipe[i + (m_iRecipePage * 6)]->GetScript<CRecipeScript>()->Show(true);
+		m_vecRecipe[i + (m_iRecipePage * 6)]->GetScript<CRecipeScript>()->SetNum(i);
+	}
 }
 
+void CInventoryScript::HideRecipe()
+{
+	for (CGameObject* pRecipe : m_vecRecipe)
+	{
+		pRecipe->GetScript<CRecipeScript>()->Show(false);
+	}
+}
+
+void CInventoryScript::Init()
+{
+	m_pNextPage = new CGameObject;
+	m_pNextPage->AddComponent(new CTransform);
+	m_pNextPage->AddComponent(new CFont);
+	m_pNextPage->Font()->SetString("Next");
+	m_pNextPage->Font()->SetBackColor(Vec4(0.5f, 0.5f, 0.8f, 1.f));
+	m_pNextPage->SetName(L"Next Page");
+	m_pNextPage->Transform()->SetLocalPos(Vec3(560.f, -210.f, 50.f));
+	m_pNextPage->Transform()->SetLocalScale(Vec3(60.f, 20.f, 1.f));
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pNextPage);
+	GetObj()->AddChild(m_pNextPage);
+
+	m_pPrevPage = new CGameObject;
+	m_pPrevPage->AddComponent(new CTransform);
+	m_pPrevPage->AddComponent(new CFont);
+	m_pPrevPage->Font()->SetString("Prev");
+	m_pPrevPage->Font()->SetBackColor(Vec4(0.5f, 0.5f, 0.8f, 1.f));
+	m_pPrevPage->SetName(L"Prev Page");
+	m_pPrevPage->Transform()->SetLocalPos(Vec3(380.f, -210.f, 50.f));
+	m_pPrevPage->Transform()->SetLocalScale(Vec3(60.f, 20.f, 1.f));
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pPrevPage);
+	GetObj()->AddChild(m_pPrevPage);
+}
 
 
 void CInventoryScript::RecipeInit()
@@ -471,6 +611,116 @@ void CInventoryScript::RecipeInit()
 	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
 	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_HAMMER));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_MACHETTE));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_BOW));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_ARROW));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_CAMPFIRE));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_MAP));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_BANDAGE));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_TSHIRT));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_SHIRT));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_JACKET));
+	pObject->GetScript<CRecipeScript>()->Init();
+	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
+	m_vecRecipe.emplace_back(pObject);
+
+	pObject = new CGameObject;
+	pObject->AddComponent(new CTransform);
+	pObject->SetName(L"Item Recipe");
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	pObject->AddComponent(new CRecipeScript(ITEM_TYPE::ITEM_BLUEPRINT));
 	pObject->GetScript<CRecipeScript>()->Init();
 	pObject->GetScript<CRecipeScript>()->SetNum(iNum++);
 	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(pObject);
