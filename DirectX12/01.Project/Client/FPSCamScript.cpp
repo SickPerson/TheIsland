@@ -4,6 +4,9 @@
 #include "PlayerScript.h"
 
 #include <Engine/Camera.h>
+#include <Engine/RenderMgr.h>
+
+#include <iostream>
 
 CFPSCamScript::CFPSCamScript()
 	: CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT)
@@ -38,15 +41,20 @@ void CFPSCamScript::Update()
 		vPos.y += 100.f;
 		Transform()->SetLocalPos(vPos);
 
-		Vec2 vDrag = CKeyMgr::GetInst()->GetDragDir();
+		POINT vMousePos = CKeyMgr::GetInst()->GetMousePos();
+		tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+		Vec2 vCenter = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
+
+		Vec2 vDrag = Vec2((float)(vMousePos.x - vCenter.x), (float)(vCenter.y - vMousePos.y));
+
 		Vec3 vCameraRot = Transform()->GetLocalRot();
 
+		vDrag.y -= 41.f;
 		vCameraRot.x -= vDrag.y * DT * 3.f;
 
-		if (vCameraRot.x > 360.f)
-			vCameraRot.x -= 360.f;
+		if(vCameraRot.x > -XM_PI / 2.f && vCameraRot.x < XM_PI / 2.f)
+			Transform()->SetLocalRot(Vec3(vCameraRot.x, vRot.y + 3.141592f, 0.f));
 
-		Transform()->SetLocalRot(Vec3(vCameraRot.x, vRot.y + 3.141592f, 0.f));
 	}
 }
 

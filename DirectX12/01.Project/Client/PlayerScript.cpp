@@ -100,6 +100,11 @@ void CPlayerScript::Awake()
 
 void CPlayerScript::Update()
 {
+	if (m_pStatus->GetScript<CStatusScript>()->GetGameOver())
+	{
+		return;
+	}
+
 	Vec3 vPos = Transform()->GetLocalPos();
 	float fSpeed = m_fSpeed;
 
@@ -156,10 +161,19 @@ void CPlayerScript::Update()
 				vPos.y = 0.f;
 			}
 
-			Vec2 vDrag = CKeyMgr::GetInst()->GetDragDir();
+			POINT vMousePos = CKeyMgr::GetInst()->GetMousePos();
+			tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+			Vec2 vCenter = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
+
+			Vec2 vDrag = Vec2((float)(vMousePos.x - vCenter.x), (float)(vCenter.y - vMousePos.y));
+
 			Vec3 vRot = Transform()->GetLocalRot();
 
-			vRot.y += vDrag.x * DT * 1.5f;
+			//std::cout << vDrag.y << std::endl;
+			// x -= 18, y -= 41
+			vDrag.x += 18.f;
+
+			vRot.y += vDrag.x * DT * 0.5f;
 
 			if (vRot.y > 360.f)
 				vRot.y -= 360.f;
@@ -167,6 +181,9 @@ void CPlayerScript::Update()
 			Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 
 			Transform()->SetLocalPos(vPos);
+
+			SetCursorPos(vCenter.x, vCenter.y);
+
 			m_bEnable = true;
 		}
 		else

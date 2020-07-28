@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "StatusScript.h"
 
+#include "GameOverScript.h"
 
 CStatusScript::CStatusScript() :
 	CScript((UINT)SCRIPT_TYPE::UISCRIPT),
-	m_fHealth(100.f), m_fHungry(100.f), m_fThirst(100.f)
+	m_fHealth(100.f), m_fHungry(100.f), m_fThirst(100.f),
+	m_bGameOver(false)
 {
 }
 
@@ -15,12 +17,12 @@ CStatusScript::~CStatusScript()
 
 void CStatusScript::Update()
 {
-	if (m_fHealth <= 0.f)
-		m_fHealth = 100.f;
+	//if (m_fHealth <= 0.f)
+	//	m_fHealth = 100.f;
 
 	if (KEY_HOLD(KEY_TYPE::KEY_SPACE))
 	{
-		m_fHealth -= 20.f * DT;
+		Damage(20.f * DT);
 	}
 	//m_fHealth -= 10 * DT;
 	//if (m_fHealth < 0.f)
@@ -50,6 +52,19 @@ void CStatusScript::Update()
 void CStatusScript::Damage(float fDamage)
 {
 	m_fHealth -= fDamage;
+	if (m_fHealth <= 0.f && m_bGameOver == false)
+	{
+		CGameObject* pObject = new CGameObject;
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CGameOverScript);
+		pObject->SetName(L"GameOver");
+		pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+		pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+		pObject->GetScript<CGameOverScript>()->Init();
+		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"UI")->AddGameObject(pObject);
+		m_bGameOver = true;
+		ShowCursor(true);
+	}
 }
 
 void CStatusScript::SetIncreaseHealth(float fAmount)
@@ -71,4 +86,9 @@ void CStatusScript::SetIncreasefThirst(float fAmount)
 	m_fThirst += fAmount;
 	if (m_fThirst > 100.f)
 		m_fThirst = 100.f;
+}
+
+bool CStatusScript::GetGameOver()
+{
+	return m_bGameOver;
 }

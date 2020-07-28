@@ -48,6 +48,9 @@ public:
 	void SetStartColor( const Vec4& vColor );
 	void SetEndColor( const Vec4& vColor );
 
+	void SetStartSpeed(float fSpeed);
+	void SetEndSpeed(float fSpeed);
+
 public:
 	virtual void SaveToScene( FILE* _pFile );
 	virtual void LoadFromScene( FILE* _pFile );
