@@ -73,7 +73,7 @@ void CResMgr::CreateDefaultShader()
 	// =================
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Test", "vs_5_0");
-	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_UI_Test_Inst", "vs_5_0");
+	//pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_UI_Test_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Test", "ps_5_0");
 
 	// BlendState 설정
@@ -91,7 +91,7 @@ void CResMgr::CreateDefaultShader()
 	// =================
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Standard", "vs_5_0");
-	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_UI_Standard_Inst", "vs_5_0");
+	//pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_UI_Standard_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Standard", "ps_5_0");
 
 	// BlendState 설정
@@ -107,7 +107,7 @@ void CResMgr::CreateDefaultShader()
 	// ====================
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_UI_Test", "vs_5_0");
-	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_UI_Test_Inst", "vs_5_0");
+	//pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_UI_Test_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_UI_Test", "ps_5_0");
 
 	// BlendState 설정
@@ -142,7 +142,7 @@ void CResMgr::CreateDefaultShader()
 	// ==============
 	pShader = new CShader;
 	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_Tex", "vs_5_0" );
-	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_Tex_Inst", "vs_5_0");
+	//pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_Tex_Inst", "vs_5_0");
 	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Tex", "ps_5_0" );
 
 	// BlendState 설정
@@ -163,7 +163,7 @@ void CResMgr::CreateDefaultShader()
 	// ==============
 	pShader = new CShader;
 	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Item", "vs_5_0");
-	pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_Item_Inst", "vs_5_0");
+	//pShader->CreateVertexInstShader(L"Shader\\std.fx", "VS_Item_Inst", "vs_5_0");
 	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Item", "ps_5_0");
 
 	// BlendState 설정
@@ -256,7 +256,7 @@ void CResMgr::CreateDefaultShader()
 	pShader->CreatePixelShader(L"Shader\\std3d.fx", "PS_Housing", "ps_5_0");
 
 	// BlendState 설정
-	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+	//pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
 
 	pShader->Create(SHADER_POV::DEFERRED);
 	AddRes(L"HousingShader", pShader);

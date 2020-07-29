@@ -167,6 +167,7 @@
     <ClInclude Include="define.h" />
     <ClInclude Include="enum.h" />
     <ClInclude Include="FPSCamScript.h" />
+    <ClInclude Include="GameOverScript.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="HousingScript.h" />
     <ClInclude Include="IngameScene.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="ItemLootScript.h" />
     <ClInclude Include="ItemScript.h" />
     <ClInclude Include="LoginScene.h" />
+    <ClInclude Include="NaturalScript.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="PlayerCamScript.h" />
     <ClInclude Include="PlayerScript.h" />
@@ -198,6 +200,7 @@
     <ClCompile Include="ChatScript.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="FPSCamScript.cpp" />
+    <ClCompile Include="GameOverScript.cpp" />
     <ClCompile Include="HousingScript.cpp" />
     <ClCompile Include="IngameScene.cpp" />
     <ClCompile Include="InputScript.cpp" />
@@ -206,6 +209,7 @@
     <ClCompile Include="ItemLootScript.cpp" />
     <ClCompile Include="ItemScript.cpp" />
     <ClCompile Include="LoginScene.cpp" />
+    <ClCompile Include="NaturalScript.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="PlayerCamScript.cpp" />
     <ClCompile Include="PlayerScript.cpp" />

@@ -98,6 +98,16 @@ void CParticleSystem::SetEndColor( const Vec4 & vColor )
 	m_vEndColor = vColor;
 }
 
+void CParticleSystem::SetStartSpeed(float fSpeed)
+{
+	m_fMinSpeed = fSpeed;
+}
+
+void CParticleSystem::SetEndSpeed(float fSpeed)
+{
+	m_fMaxSpeed = fSpeed;
+}
+
 void CParticleSystem::SaveToScene( FILE * _pFile )
 {
 }

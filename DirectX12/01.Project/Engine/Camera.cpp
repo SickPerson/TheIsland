@@ -30,6 +30,7 @@ CCamera::CCamera()
 	, m_iLayerCheck( 0 )
 	, m_eCamType( CAM_TYPE::BASIC )
 	, m_bModule(false)
+	, m_bShowCollision(false)
 {
 }
 
@@ -39,6 +40,9 @@ CCamera::~CCamera()
 
 void CCamera::FinalUpdate()
 {
+	if (KEY_TAB(KEY_TYPE::KEY_C))
+		m_bShowCollision = !m_bShowCollision;
+
 	// 뷰행렬
 	Vec3 vPos = Transform()->GetWorldPos();
 	Matrix matViewTrans = XMMatrixTranslation( -vPos.x, -vPos.y, -vPos.z );
@@ -102,8 +106,12 @@ void CCamera::SortGameObject()
 
 			for (UINT i = 0; i < vecObj.size(); ++i)
 			{
+				Vec3 vOffsetScale = Vec3(1.f, 1.f, 1.f);
+				if (vecObj[i]->Collider2D() != NULL)
+					vOffsetScale = vecObj[i]->Collider2D()->GetOffsetScale();
+
 				if (!vecObj[i]->GetFrustumCheck()
-					|| m_frustum.CheckFrustumSphere(vecObj[i]->Transform()->GetWorldPos(), vecObj[i]->Transform()->GetMaxScale()))
+					|| m_frustum.CheckFrustumSphere(vecObj[i]->Transform()->GetWorldPos(), vecObj[i]->Transform()->GetMaxScale() * vOffsetScale.y))
 				{
 					if (vecObj[i]->MeshRender() && vecObj[i]->MeshRender()->GetMesh() != nullptr)
 					{
@@ -224,8 +232,12 @@ void CCamera::SortShadowObject()
 
 		for (size_t j = 0; j < vecObj.size(); ++j)
 		{
+			Vec3 vOffsetScale = Vec3(1.f, 1.f, 1.f);
+			if (vecObj[j]->Collider2D() != NULL)
+				vOffsetScale = vecObj[j]->Collider2D()->GetOffsetScale();
+
 			if (!vecObj[j]->GetFrustumCheck()
-				|| m_frustum.CheckFrustumSphere(vecObj[j]->Transform()->GetWorldPos(), vecObj[j]->Transform()->GetMaxScale()))
+				|| m_frustum.CheckFrustumSphere(vecObj[j]->Transform()->GetWorldPos(), vecObj[j]->Transform()->GetMaxScale() * vOffsetScale.y))
 			{
 				if (vecObj[j]->MeshRender()
 					&& vecObj[j]->MeshRender()->GetMesh() != nullptr
@@ -507,7 +519,7 @@ void CCamera::Render_Forward()
 			tInstObj.pObj->MeshRender()->Render(tInstObj.iMtrlIdx);
 
 			// 충돌체 보유 시, 충돌체도 그려준다.
-			if (tInstObj.pObj->Collider2D())
+			if (tInstObj.pObj->Collider2D() && m_bShowCollision)
 				tInstObj.pObj->Collider2D()->Render();
 		}
 	}
@@ -528,7 +540,7 @@ void CCamera::Render_Forward()
 	{
 		for (size_t i = 0; i < pair.second.size(); ++i)
 		{
-			if (pair.second[i].pObj->Collider2D())
+			if (pair.second[i].pObj->Collider2D() && m_bShowCollision)
 			{
 				pair.second[i].pObj->Collider2D()->Render();
 			}
@@ -605,7 +617,7 @@ void CCamera::Render()
 						vecObj[i]->MeshRender()->Render();
 					}
 
-					if ( vecObj[i]->Collider2D() )
+					if ( vecObj[i]->Collider2D() && m_bShowCollision)
 					{
 						vecObj[i]->Collider2D()->Render();
 					}

@@ -156,6 +156,12 @@
     <ClInclude Include="BuildScript.h">
       <Filter>ComponentScript\Housing</Filter>
     </ClInclude>
+    <ClInclude Include="GameOverScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="NaturalScript.h">
+      <Filter>ComponentScript\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -235,6 +241,12 @@
     </ClCompile>
     <ClCompile Include="BuildScript.cpp">
       <Filter>ComponentScript\Housing</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOverScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="NaturalScript.cpp">
+      <Filter>ComponentScript\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

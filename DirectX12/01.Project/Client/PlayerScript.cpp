@@ -12,6 +12,8 @@
 #include "ItemScript.h"
 #include "StuffScript.h"
 
+#include "BuildScript.h"
+
 #include <Engine/Camera.h>
 #include <Engine/RenderMgr.h>
 
@@ -100,6 +102,11 @@ void CPlayerScript::Awake()
 
 void CPlayerScript::Update()
 {
+	if (m_pStatus->GetScript<CStatusScript>()->GetGameOver())
+	{
+		return;
+	}
+
 	Vec3 vPos = Transform()->GetLocalPos();
 	float fSpeed = m_fSpeed;
 
@@ -120,8 +127,6 @@ void CPlayerScript::Update()
 			{
 				PlayerPicking(RIGHT_CLICK);
 			}
-			int num = m_pQuickSlot->GetSelect();
-			m_pInventory->GetScript<CInventoryScript>()->Use_Highlight(GetObj(), NULL, num);
 
 			if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
 			{
@@ -156,10 +161,25 @@ void CPlayerScript::Update()
 				vPos.y = 0.f;
 			}
 
-			Vec2 vDrag = CKeyMgr::GetInst()->GetDragDir();
+			POINT vMousePos = CKeyMgr::GetInst()->GetMousePos();
+			tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+			Vec2 vCenter = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
+
+			Vec2 vDrag = Vec2((float)(vMousePos.x - vCenter.x), (float)(vCenter.y - vMousePos.y));
+
 			Vec3 vRot = Transform()->GetLocalRot();
 
-			vRot.y += vDrag.x * DT * 1.5f;
+			//std::cout << vDrag.y << std::endl;
+			// x -= 18, y -= 41
+			vDrag.x += 18.f;
+
+			if (vDrag.x != 0.f)
+			{
+				int num = m_pQuickSlot->GetSelect();
+				m_pInventory->GetScript<CInventoryScript>()->Use_Highlight(GetObj(), NULL, num);
+			}
+
+			vRot.y += vDrag.x * DT * 0.5f;
 
 			if (vRot.y > 360.f)
 				vRot.y -= 360.f;
@@ -167,6 +187,9 @@ void CPlayerScript::Update()
 			Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 
 			Transform()->SetLocalPos(vPos);
+
+			SetCursorPos(vCenter.x, vCenter.y);
+
 			m_bEnable = true;
 		}
 		else
@@ -229,6 +252,42 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 	// 플레이어와 충돌한게 동물아 아닌 종류들 - 
 	if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->GetLayerIdx() != _pOther->GetObj()->GetLayerIdx())
 	{
+		// 건물과 부딪힌건지 건물은 OBB로 충돌체크 수행
+		if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
+		{
+			if (_pOther->GetObj()->GetScript<CBuildScript>()->GetHousingType() == HOUSING_TYPE::HOUSING_FOUNDATION)
+			{
+				if (CollisionBox(_pOther, Vec3(200.f, 200.f, 200.f), 0.2f))
+				{
+					Vec3 vPos = Transform()->GetLocalPos();
+					Vec3 vBuildPos = _pOther->Transform()->GetLocalPos();
+
+					float fDiff = vBuildPos.y - vPos.y;
+					if (fDiff < 30.f)
+					{
+						vPos.y = vBuildPos.y;
+						Transform()->SetLocalPos(vPos);
+					}
+					else
+					{
+						Vec3 vDir = XMVector3Normalize(vPos - vBuildPos);
+						vDir.y = 0.f;
+						if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
+						{
+							vPos += vDir * m_fSpeed * DT * 5.f;
+						}
+						else
+						{
+							vPos += vDir * m_fSpeed * DT;
+						}
+						Vec3 vRot = _pOther->Transform()->GetLocalRot();
+						Transform()->SetLocalPos(vPos);
+					}
+				}
+			}
+			return;
+		}
+
 		// 실제의 충돌크기의 오브젝트와 부딪힌건지
 		if (CollisionSphere(_pOther, _pOther->GetOffsetScale(), 0.2f))
 		{
@@ -408,4 +467,39 @@ bool CPlayerScript::CollisionRay(Vec3 vPosRay, Vec3 vDirRay, CCollider2D * _pOth
 		return true;
 	}
 	return false;
+}
+
+bool CPlayerScript::CollisionBox(CCollider2D* _pOther, Vec3 vOffsetScale, float fOffset)
+{
+	const Matrix& matCol1 = Collider2D()->GetColliderWorldMat();
+	const Matrix& matCol2 = _pOther->GetColliderWorldMat();
+
+	Vec3 vCol1 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol1);
+	Vec3 vCol2 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol2);
+
+	Vec3 vScale1 = Transform()->GetLocalScale();
+	Vec3 vScale2 = _pOther->Transform()->GetLocalScale();
+
+	Vec3 vColScale1 = Vec3(20.f, 60.f, 20.f);
+	Vec3 vColScale2 = vOffsetScale;
+
+	vScale1 *= vColScale1;
+	vScale2 *= vColScale2;
+
+	Vec3 vMax, vOtherMax;
+	Vec3 vMin, vOtherMin;
+
+	Vec3 vPos = Transform()->GetLocalPos();
+	vPos.y += 50.f;
+
+	vMax = vPos + vScale1;
+	vMin = vPos - vScale1;
+	vOtherMax = vCol2 + vScale2;
+	vOtherMin = vCol2 + -vScale2;
+
+	if (vMax.x < vOtherMin.x || vMin.x > vOtherMax.x) return false;
+	if (vMax.y < vOtherMin.y || vMin.y > vOtherMax.y) return false;
+	if (vMax.z < vOtherMin.z || vMin.z > vOtherMax.z) return false;
+
+	return true;
 }

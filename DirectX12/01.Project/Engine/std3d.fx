@@ -170,9 +170,9 @@ PS_STD3D_OUTPUT PS_Housing(VS_STD3D_OUTPUT _in)
 	if (tex_0)
 	{
 		if (g_int_3 == -1)
-			output.vTarget0 = float4(1.f, 1.f, 1.f, 0.8f);
+			output.vTarget0 = float4(1.f, 1.f, 1.f, 1.f);
 		else if (g_int_3 == -2)
-			output.vTarget0 = float4(1.f, 0.f, 0.f, 0.8f);
+			output.vTarget0 = float4(1.f, 0.f, 0.f, 1.f);
 		else 
 		{
 			output.vTarget0 = g_tex_0.Sample(g_sam_0, _in.vUV);

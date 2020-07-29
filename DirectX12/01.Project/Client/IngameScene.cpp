@@ -40,6 +40,7 @@
 #include "ChatScript.h"
 
 #include "AnimalScript.h"
+#include "NaturalScript.h"
 
 #include "ItemScript.h"
 #include "StuffScript.h"
@@ -65,8 +66,8 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\campfire.fbx", 1);
-	//pTestMeshData->Save(pTestMeshData->GetPath());
+	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\housing_foundation.fbx", 1);
+	pTestMeshData->Save(pTestMeshData->GetPath());
 	//Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
 	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
 	//pTestMeshData->Save( pTestMeshData->GetPath() );
@@ -105,12 +106,13 @@ void CIngameScene::Init()
 
 		float fScale = (float)(rand() % 10 + 30);
 		pTestObject->SetName(L"Tree");
-		pTestObject->FrustumCheck(false);
+		pTestObject->AddComponent(new CNaturalScript(NATURAL_TYPE::NATURAL_TREE));
+		//pTestObject->FrustumCheck(false);
 
 		pTestObject->MeshRender()->SetDynamicShadow(true);
 
 		pTestObject->Transform()->SetLocalPos(Vec3((float)(rand()%10000 - 5000), 20.f, (float)(rand() % 8000)));
-		pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, XM_PI, 0.f));
+		pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 		pTestObject->Transform()->SetLocalScale(Vec3(fScale, fScale, fScale));
 
 		pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
@@ -124,7 +126,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-5000.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -136,7 +137,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-4000.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -148,7 +148,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-3500.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -160,7 +159,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-2500.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -172,7 +170,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-1500.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -184,7 +181,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-1000.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -196,7 +192,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(-500.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -208,7 +203,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -220,7 +214,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(500.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -232,7 +225,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(1000.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -244,7 +236,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(1500.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -256,7 +247,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(2000.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -268,7 +258,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(2500.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -280,7 +269,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(3000.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -292,7 +280,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(3500.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -304,7 +291,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(4000.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -316,7 +302,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(4500.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -328,7 +313,6 @@ void CIngameScene::Init()
 	// ====================================================================
 	pTestObject = pRockTex->Instantiate();
 	pTestObject->SetName(L"Rock");
-	pTestObject->FrustumCheck(false);
 	pTestObject->Transform()->SetLocalPos(Vec3(5000.f, 100.f, 1000.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -359,7 +343,6 @@ void CIngameScene::Init()
 	}
 
 	pTestObject->SetName(L"Deer");
-	pTestObject->FrustumCheck(false);
 
 	pTestObject->MeshRender()->SetDynamicShadow(true);
 
@@ -396,7 +379,6 @@ void CIngameScene::Init()
 	}
 
 	pTestObject->SetName(L"Bear");
-	pTestObject->FrustumCheck(false);
 
 	pTestObject->MeshRender()->SetDynamicShadow(true);
 
@@ -432,7 +414,6 @@ void CIngameScene::Init()
 	}
 
 	pTestObject->SetName(L"Boar");
-	pTestObject->FrustumCheck(false);
 
 	pTestObject->MeshRender()->SetDynamicShadow(true);
 
@@ -468,7 +449,6 @@ void CIngameScene::Init()
 	}
 
 	pTestObject->SetName(L"Wolf");
-	pTestObject->FrustumCheck(false);
 
 	pTestObject->MeshRender()->SetDynamicShadow(true);
 
@@ -527,11 +507,31 @@ void CIngameScene::Init()
 
 	pPlayer->SetName(L"Player Object");
 	pPlayer->FrustumCheck(false);
-	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 10.f, 0.f));
+	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
 	pPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 	//pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
+
+	//CGameObject* pTest = pMeshData->Instantiate();
+	//// Script 설정
+	//pTest->AddComponent(new CCollider2D);
+
+	//pTest->MeshRender()->SetDynamicShadow(true);
+
+	////pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
+	////pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+
+	//pTest->Collider2D()->SetOffsetScale(Vec3(20.f, 60.f, 20.f));
+	//pTest->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	//pTest->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
+
+	//pTest->SetName(L"Player Object");
+	//pTest->FrustumCheck(false);
+	//pTest->Transform()->SetLocalPos(Vec3(0.f, 30.f, 200.f));
+	//pTest->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
+	////pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//m_pScene->FindLayer(L"Player")->AddGameObject(pTest);
 
 	// ==================
 	// Camera Object 생성
@@ -542,7 +542,7 @@ void CIngameScene::Init()
 	pMainCam->AddComponent( new CCamera );
 	pMainCam->AddComponent( new CFPSCamScript );
 
-	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 110.f, 0.f ) );
+	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 100.f, 0.f ) );
 	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
 
 	pMainCam->Camera()->SetProjType( PROJ_TYPE::PERSPECTIVE );
@@ -707,7 +707,6 @@ void CIngameScene::Init()
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
 			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
 			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
-			pObject->FrustumCheck(false);
 			pObject->MeshRender()->SetDynamicShadow(true);
 
 			// AddGameObject
@@ -788,6 +787,7 @@ void CIngameScene::Init()
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Human");
 
 	GiveStartItem();
+	ShowCursor(m_bShowCursor);
 }
 
 void CIngameScene::GiveStartItem()
@@ -834,6 +834,14 @@ void CIngameScene::Update()
 		if (!m_pChat->GetScript<CInputScript>()->GetEnable())
 		{
 			m_pInventory->GetScript<CInventoryScript>()->Show();
+			m_bShowCursor = !m_bShowCursor;
+			ShowCursor(m_bShowCursor);
+			if (!m_bShowCursor)
+			{
+				tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+				Vec2 vCenter = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
+				SetCursorPos(vCenter.x, vCenter.y);
+			}
 		}
 	}
 
@@ -1030,10 +1038,11 @@ void CIngameScene::CreatePlayerStatusUI()
 	pObject->Transform()->SetLocalScale(Vec3(250.f, 135.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
+	pObject->MeshRender()->SetMaterial(pMtrl->Clone());
+	Vec4 vColor = Vec4(0.5f, 0.5f, 0.5f, 1.f);
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
 
-	int a = 4; // White
-	pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 	pObject->AddComponent(new CStatusScript);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
@@ -1048,7 +1057,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pChildObject->Transform()->SetLocalScale(Vec3(190.f / 250.f, 30.f / 135.f, 1.f));
 	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 	pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"UIMtrl"));
-	a = 5; // Green
+	int a = 5; // Green
 	pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 	pObject->AddChild(pChildObject);
 	m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
@@ -1196,6 +1205,31 @@ void CIngameScene::CreateInventoryUI()
 	}
 
 	{
+		CGameObject* pObject = new CGameObject;
+		pObject->SetName(L"Inventory BackGround");
+
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+
+		pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 2000.f));
+
+		tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+		Vec3 vScale(vResolution.fWidth, vResolution.fHeight, 1.f);
+		pObject->Transform()->SetLocalScale(vScale);
+
+		// MeshRender 설정
+		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
+		pObject->MeshRender()->SetMaterial(pMtrl->Clone());
+		Vec4 vColor = Vec4(0.f, 0.f, 0.f, 0.8f);
+		pObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
+
+		// AddGameObject
+		pInventory->AddChild(pObject);
+		m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
+	}
+
+	{
 		for (int j = 0; j < 4; ++j)
 		{
 			for(int i = 0; i < 5; ++i)
@@ -1242,7 +1276,7 @@ void CIngameScene::CreateInventoryUI()
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
 		pObject->MeshRender()->SetMaterial(pMtrl->Clone());
-		Vec4 vColor = Vec4(0.5f, 0.5f, 0.5f, 0.5f);
+		Vec4 vColor = Vec4(0.2f, 0.2f, 0.2f, 1.f);
 		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
 
 		// AddGameObject
@@ -1267,7 +1301,7 @@ void CIngameScene::CreateInventoryUI()
 		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
 		pObject->MeshRender()->SetMaterial(pMtrl);
 		
-		Vec4 vColor = Vec4(0.5f, 0.5f, 0.5f, 0.5f);
+		Vec4 vColor = Vec4(0.2f, 0.2f, 0.2f, 1.f);
 		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
 
 		// AddGameObject

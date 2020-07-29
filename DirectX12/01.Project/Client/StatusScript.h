@@ -9,6 +9,7 @@ class CStatusScript :
 	float m_fHungry;
 	float m_fThirst;
 
+	bool m_bGameOver;
 public:
 	CStatusScript();
 	virtual ~CStatusScript();
@@ -25,5 +26,7 @@ public:
 	void SetIncreaseHealth(float fAmount);
 	void SetIncreaseHungry(float fAmount);
 	void SetIncreasefThirst(float fAmount);
+
+	bool GetGameOver();
 };
 

@@ -7,6 +7,7 @@
 #include "UsableScript.h"
 
 #include "BuildScript.h"
+#include "NaturalScript.h"
 
 #include <Engine/ParticleSystem.h>
 #include <Engine/Light3D.h>
@@ -47,7 +48,7 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 	case ITEM_CAMPFIRE:
 		pTex = CResMgr::GetInst()->Load<CMeshData>(L"Campfire.mdat", L"MeshData\\campfire.mdat");
 		m_pObj = pTex->Instantiate();
-		m_pObj->AddComponent(new CBuildScript);
+		m_pObj->AddComponent(new CBuildScript(HOUSING_ETC));
 		m_pObj->AddComponent(new CCollider2D);
 
 		m_pObj->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
@@ -98,11 +99,12 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	case ITEM_WOODCLUB:
 		if (pObj == NULL)
 			break;
+		// Animal Attack
 		if (pObj->GetScript<CAnimalScript>())
 		{
 			if (!pObj->GetScript<CAnimalScript>()->GetAnimalDead())
 			{
-				pObj->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
+				pObj->GetScript<CAnimalScript>()->Damage(pHost, m_fDamage);
 			}
 			else
 			{
@@ -121,13 +123,37 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 			}
 		}
-		else if (pObj->GetName() == L"Tree")
+		// Environment Attack (Tree, Stone, Bush)
+		else if (pObj->GetScript<CNaturalScript>())
 		{
-			int iAmount = 1;
-			if (m_eItemType == ITEM_AXE)
-				iAmount = 3;
-			CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+			if (!pObj->GetScript<CNaturalScript>()->GetDestroy())
+			{
+				pObj->GetScript<CNaturalScript>()->Damage(pHost, m_fDamage);
+
+				NATURAL_TYPE eType = pObj->GetScript<CNaturalScript>()->GetNaturalType();
+				if (eType == NATURAL_TREE)
+				{
+					int iAmount = 1;
+					if (m_eItemType == ITEM_AXE)
+						iAmount = 3;
+					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
+					pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+				}
+				else if (eType == NATURAL_STONE)
+				{
+					int iAmount = 1;
+					if (m_eItemType == ITEM_PICKAXE)
+						iAmount = 3;
+					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_STONE);
+					pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+				}
+				else if (eType == NATURAL_BUSH)
+				{
+					int iAmount = 2;
+					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_CLOTH);
+					pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+				}
+			}
 		}
 		break;
 	case ITEM_BOW:
