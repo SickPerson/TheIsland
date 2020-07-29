@@ -186,14 +186,14 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 			pObject->AddComponent(new CLight3D);
 			pObject->SetName(L"FireLight");
 
-			pObject->Light3D()->SetLightPos(Vec3(0.f, 0.f, 40.f));
+			pObject->Light3D()->SetLightPos(Vec3(0.f, 40.f, 0.f));
 			pObject->Light3D()->SetLightType(LIGHT_TYPE::POINT);
 			pObject->Light3D()->SetDiffuseColor(Vec3(1.f, 1.f, 1.f));
 			pObject->Light3D()->SetSpecular(Vec3(0.3f, 0.3f, 0.3f));
 			pObject->Light3D()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
 			pObject->Light3D()->SetLightRange(1000.f);
 
-			pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 40.f));
+			pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 			m_pObj->AddChild(pObject);
 

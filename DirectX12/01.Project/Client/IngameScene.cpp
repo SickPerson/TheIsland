@@ -513,23 +513,21 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
 
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\housing_wall.mdat", L"MeshData\\housing_wall.mdat");
+
+
 	//CGameObject* pTest = pMeshData->Instantiate();
 	//// Script ¼³Á¤
 	//pTest->AddComponent(new CCollider2D);
-
-	//pTest->MeshRender()->SetDynamicShadow(true);
-
-	////pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
-	////pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-
-	//pTest->Collider2D()->SetOffsetScale(Vec3(20.f, 60.f, 20.f));
-	//pTest->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	//pTest->Collider2D()->SetOffsetScale(Vec3(40.f, 400.f, 400.f));
+	//pTest->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
 	//pTest->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
 
 	//pTest->SetName(L"Player Object");
 	//pTest->FrustumCheck(false);
-	//pTest->Transform()->SetLocalPos(Vec3(0.f, 30.f, 200.f));
-	//pTest->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
+	//pTest->Transform()->SetLocalPos(Vec3(0.f, 20.f, 200.f));
+	//pTest->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	//pTest->Transform()->SetLocalScale(Vec3(0.6f, 0.6f, 0.6f));
 	////pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//m_pScene->FindLayer(L"Player")->AddGameObject(pTest);
 
