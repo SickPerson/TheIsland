@@ -1,41 +1,49 @@
 #pragma once
 #include "stdafx.h"
 #include "Playerpool.h"
+#include "Monsterpool.h"
 
 class CProcess
 {
 public:
 	explicit CProcess();
 	virtual ~CProcess();
-public:
-	recursive_mutex	m_rmProcessMutex;
-public:
-	static CPlayerpool*	m_pPlayerPool;
-	static concurrent_unordered_set<unsigned int> m_cusLoginList;
-	static concurrent_priority_queue<Object_Event>	m_cpqEventQueue;
 
 public:
-	void InitProcessData();
+	static void InitBeforeStart()
+	{
+		CProcess::m_cpqEventQueue.clear();
+		CProcess::m_cusLoginList.clear();
+	}
+
+public:
+	recursive_mutex	m_rmProcessMutex;
+
+public:
+	static CPlayerpool*	m_pPlayerPool;
+	static CMonsterpool* m_pMonsterPool;
+	//static concurrent_unordered_map<unsigned int, wstring> m_cumLoginList; // 로그인 리스트
+	static concurrent_unordered_set<unsigned int>	m_cusLoginList; // 로그인 리스트
+	static concurrent_priority_queue<Update_Event>	m_cpqEventQueue; // 이벤트 큐(Timer 이벤트)
 
 public:
 	concurrent_unordered_set<unsigned int>& GetLoginList()
 	{
 		lock_guard<recursive_mutex>lock(m_rmProcessMutex);
-		auto au = m_cusLoginList;
-		return au;
+		return m_cusLoginList;
 	}
-	void CopyBefore(concurrent_unordered_set<unsigned int>& _cusList)
+	void CopyBeforeLoginList(concurrent_unordered_set<unsigned int>& _cusList)
 	{
 		lock_guard<recursive_mutex> lock(m_rmProcessMutex);
 		_cusList = m_cusLoginList;
 	}
-	void DeleteList(unsigned int _usID)
+	void DeleteLoginList(unsigned int& login_Id)
 	{
 		concurrent_unordered_set<unsigned int> list;
-		CopyBefore(list);
+		CopyBeforeLoginList(list);
 		for (auto au = list.begin(); au != list.end();)
 		{
-			if (*au == _usID)
+			if (*au == login_Id)
 			{
 				au = list.unsafe_erase(au);
 				break;
@@ -46,47 +54,41 @@ public:
 		lock_guard<recursive_mutex>	lock(m_rmProcessMutex);
 		m_cusLoginList = list;
 	}
-	void InsertList(unsigned int _usID)
+	void InsertLoginList(unsigned int& login_Id)
 	{
 		lock_guard<recursive_mutex>	lock(m_rmProcessMutex);
-		m_cusLoginList.insert(_usID);
+		m_cusLoginList.insert(login_Id);
 	}
-	bool CheckList(unsigned int _usID)
+	bool ExistLoginList(unsigned int& login_Id)
 	{
-		if (m_cusLoginList.count(_usID) != 0)
+		if (m_cusLoginList.count(login_Id) != 0)
 			return true;
 		return false;
 	}
-	static unsigned int GetNewID();
 public:
-	static void InitializeBeforeStart()
+	static void PushEventQueue(Update_Event& _ev)
 	{
-		CProcess::m_cpqEventQueue.clear();
-		CProcess::m_cusLoginList.clear();
+		m_cpqEventQueue.push(_ev);
 	}
-public:
-	static void PostEvent(unsigned int _usID, unsigned int _usOther, EVENT_TYPE _cOverEvent, EVENT_TYPE _cEvent, const std::chrono::high_resolution_clock::time_point& _TimePoint)
+	static bool TryPopEventQueue(Update_Event& _ev)
 	{
-		m_cpqEventQueue.push(Object_Event{ _TimePoint, _cEvent, _cOverEvent, _usID, _usOther });
+		return m_cpqEventQueue.try_pop(_ev);
 	}
-	static bool TryPopEvent(Object_Event& _ObjectEvent)
-	{
-		return m_cpqEventQueue.try_pop(_ObjectEvent);
-	}
-	static bool StateEventQueue()
+	static bool EmptyEventQueue()
 	{
 		return m_cpqEventQueue.empty();
 	}
-	static bool CheckEventStart(Object_Event& _ObjectEvent)
+	static bool CheckEventStart(Update_Event& _ev)
 	{
-		if (m_cpqEventQueue.try_pop(_ObjectEvent))
+		if (m_cpqEventQueue.try_pop(_ev))
 		{
-			if (_ObjectEvent.wakeup_time > std::chrono::high_resolution_clock::now())
+			if (_ev.wakeup_time > std::chrono::high_resolution_clock::now())
 			{
-				CProcess::PostEvent(_ObjectEvent.m_usID, _ObjectEvent.m_usOtherID, _ObjectEvent.m_OverType, _ObjectEvent.m_EventType, _ObjectEvent.wakeup_time);
+				PushEventQueue(_ev);
 				return false;
 			}
-			return true;
+			else
+				return true;
 		}
 		return false;
 	}

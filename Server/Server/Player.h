@@ -1,11 +1,21 @@
 #pragma once
 #include "Object.h"
 
-enum LOCK_TYPE {
-	LOCK_SOCKET,
-	LOCK_CONNECT,
-	LOCK_ID,
-	LOCK_END
+//float fHP;
+//float fHungry;
+//float fStamina;
+//float fThirst;
+enum PLAYER_LOCK_TYPE {
+	PLAYER_LOCK_STATUS,
+	PLAYER_LOCK_HP,
+	PLAYER_LOCK_HUNGRY,
+	PLAYER_LOCK_STAMINA,
+	PLAYER_LOCK_THIRST,
+	PLAYER_LOCK_SOCKET,
+	PLAYER_LOCK_CONNECT,
+	PLAYER_LOCK_NUMID,
+	PLAYER_LOCK_WCID,
+	PLAYER_LOCK_END
 };
 
 class CPlayer : public CObject
@@ -15,48 +25,45 @@ public:
 	virtual ~CPlayer();
 
 private:
-	unsigned int	m_usID;
+	unsigned int	m_uiID;
+	wchar_t			m_wcID[MAX_STR_LEN];
+	tPlayerStatus	m_tPlayerStatus;
 	volatile bool	m_bConnect;
 	SOCKET			m_sSocket;
 	OVER_EX			m_over;
 	int				m_iPrevsize;
 	int				m_iCursize;
 
+private:
 	concurrent_unordered_set<unsigned int> m_cusViewList;
-	shared_mutex m_rmPlayerStatusMutex[LOCK_END];
+	shared_mutex m_smPlayerStatusMutex[PLAYER_LOCK_END];
 	recursive_mutex	m_rmPlayerListMutex;
 
 public:
-	void Init();
-public:
 	void SetRecvState();
-	char* RecvEvent(DWORD data_size, char * _packet);
-public:
-	void SetPlayerSocket(const SOCKET& _sSocket) {
-		unique_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_SOCKET]); // Write Lock(1개의 스레드만 접근할 수 있는 락)
-		m_sSocket = _sSocket;
-	}
-	void SetPlayerConnect(bool _bState) {
-		unique_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_CONNECT]); // Write Lock(1개의 스레드만 접근할 수 있는 락)
-		m_bConnect = _bState;
-	}
-	void SetPlayerID(const unsigned int& _usID) {
-		unique_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_ID]); // Write Lock(1개의 스레드만 접근할 수 있는 락)
-		m_usID = _usID;
-	}
+	char* RecvEvent(DWORD dataSize, char * packet);
 
-	const SOCKET GetPlayerSocket() {
-		shared_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_SOCKET]);
-		return m_sSocket;
-	}
-	const bool GetPlayerConnect() {
-		shared_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_CONNECT]);
-		return m_bConnect;
-	}
-	const unsigned int GetPlayerID() {
-		shared_lock<shared_mutex>lock(m_rmPlayerStatusMutex[LOCK_ID]);
-		return m_usID;
-	}
+public:
+	void SetPlayerStatus(const tPlayerStatus& status);
+	void SetHP(const float& fHP);
+	void SetHungry(const float& fHungry);
+	void SetStamina(const float& fStamina);
+	void SetThirst(const float& fThirst);
+	void SetNumID(const unsigned int& numID);
+	void SetWcID(wchar_t* wcID);
+	void SetConnect(bool bConnect);
+	void SetSocket(const SOCKET& socket);
+
+public:
+	tPlayerStatus& GetPlayerStatus();
+	float&	GetHP();
+	float&	GetHungry();
+	float&	GetStamina();
+	float&	GetThirst();
+	unsigned int&	GetNumID();
+	wchar_t*	GetWcID();
+	bool	GetConnect();
+	SOCKET&	GetSocket();
 
 public:
 	void CopyBefore(concurrency::concurrent_unordered_set<unsigned int>& _usCopyList)
@@ -99,7 +106,7 @@ public:
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		m_cusViewList.insert(_usID);
 	}
-	bool CheckList(unsigned int _usID)
+	bool ExistList(unsigned int _usID)
 	{
 		if (m_cusViewList.count(_usID) != 0)
 			return true;

@@ -1,10 +1,8 @@
 #pragma once
 #include "header.h"
 
-#include <Engine/SceneScript.h>
-
 class CGameObject;
-class CPlayer;
+class CScene;
 
 class CNetwork
 {
@@ -38,12 +36,14 @@ private:
 	bool m_bClientClose;
 	bool m_bCollision;
 
-	CScene* pScene;
-
 public:
-	static unsigned short m_usID;
+	CScene* pScene;
+	static unsigned int m_usID;
+	CGameObject* m_pPlayer;
+	CGameObject*	m_pChat;
+
 	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
-	static concurrent_unordered_set<unsigned int> m_cusViewList;
+	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumAnimal;
 
 public:
 	static void Err_quit(const char* msg, int err_no);
@@ -59,8 +59,8 @@ public:
 	void ProcessPacket(char* _packet);
 
 public:
-	void SetID(unsigned short _id);
-	unsigned short GetID();
+	void InitPlayer();
+	void InitAnimal();
 
 public:
 	void SetLogin(bool _bLogin)
@@ -89,56 +89,24 @@ public:
 	bool GetPushKey() { return m_bPushKey; }
 	bool GetClientClose() { return m_bClientClose; }
 	bool GetCollision() { return m_bCollision; }
-public:
-	void CopyBefore(concurrent_unordered_set<unsigned int>& _usCopyList)
-	{
-		lock_guard<recursive_mutex>	lock(m_rmListMutex);
-		_usCopyList = m_cusViewList;
-
-	}
-	void InsertList(unsigned int _usID)
-	{
-		m_cusViewList.insert(_usID);
-	}
-	void DeleteList(unsigned int _usID)
-	{
-		concurrent_unordered_set<unsigned int> List;
-		CopyBefore(List);
-		for (auto iter = List.begin(); iter != List.end();)
-		{
-			if (*iter == _usID)
-			{
-				iter = List.unsafe_erase(iter);
-				break;
-			}
-			else
-				++iter;
-		}
-		lock_guard<recursive_mutex> lock(m_rmListMutex);
-		m_cusViewList = List;
-	}
-	void ClearList()
-	{
-		lock_guard<recursive_mutex> lock(m_rmListMutex);
-		m_cusViewList.clear();
-	}
-	bool CheckList(unsigned int _usID)
-	{
-		if (m_cusViewList.count(_usID) != 0)
-			return true;
-		else
-			return false;
-	}
 
 public:
-	void SendLoginPacket(string _sPlayerID);
-	void SendPosPacket();
-	void SendDirPacket();
-	void SendChatPacket(string _message);
+	void Send_Login_Packet(wstring playerID);
+	void Send_Move_Packet(float fSpeed, Vec3 Dir, Vec3 Rot);
+	void Send_Rot_Packet(Vec2 Drag, Vec3 Rot);
+	void Send_Chat_Packet(string message);
+public:
+	void Recv_Login_OK_Packet(char* packet);
+	void Recv_Put_Player_Packet(char* packet);
+	void Recv_Remove_Player_Packet(char* packet);
+	void Recv_Pos_Packet(char* packet);
+	void Recv_Chat_Packet(char* packet);
 
 public:
-	void RecvLoginPacket(char* _packet);
-	void RecvConnectPacket(char* _packet);
-	void RecvPosPacket(char* _packet);
-	void RecvChatPacket(char* _packet);
+	void Recv_Put_Npc_Packet(char* packet);
+	void Recv_Remove_Npc_Packet(char* packet);
+	void Recv_Pos_Npc_Packet(char* packet);
+public:
+	void SetChatObj(CGameObject* pObj) { m_pChat = pObj; }
+	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }
 };
