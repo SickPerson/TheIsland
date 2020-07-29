@@ -12,12 +12,16 @@ CPlayer::CPlayer()
 
 	m_over.m_Event = EV_RECV;
 	m_over.m_DataBuffer.buf = m_over.m_MessageBuffer;
+<<<<<<< HEAD
 	m_over.m_DataBuffer.len = MAX_BUF;
 }
 
 CPlayer::~CPlayer()
 {
 	m_cusViewList.clear();
+=======
+	m_over.m_DataBuffer.len = 1024;
+>>>>>>> master
 }
 
 void CPlayer::SetRecvState()
@@ -39,8 +43,14 @@ void CPlayer::SetRecvState()
 
 char* CPlayer::RecvEvent(DWORD dataSize, char * packet)
 {
+<<<<<<< HEAD
 	int rest_size = dataSize;
 	char* cPacket = packet;
+=======
+
+	int rest_size = data_size;
+	char* packet = _packet;
+>>>>>>> master
 	int curr = m_iCursize;
 	int prev = m_iPrevsize;
 	char* packetBuf = m_over.m_MessageBuffer;
@@ -62,6 +72,7 @@ char* CPlayer::RecvEvent(DWORD dataSize, char * packet)
 			prev = 0;
 			curr = 0;
 			rest_size -= need_size;
+<<<<<<< HEAD
 			cPacket += need_size;
 			return cPacket;
 		}
@@ -71,6 +82,17 @@ char* CPlayer::RecvEvent(DWORD dataSize, char * packet)
 			prev += rest_size;
 			rest_size = -rest_size;
 			cPacket += rest_size;
+=======
+			packet += need_size;
+			return packet;
+		}
+		else
+		{
+			memcpy(packetBuf + prev, packet, rest_size);
+			prev += rest_size;
+			rest_size = -rest_size;
+			packet += rest_size;
+>>>>>>> master
 		}
 	}
 	return nullptr;

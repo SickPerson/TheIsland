@@ -29,7 +29,7 @@ void CDataBase::HandleDiagnosticRecord(SQLHANDLE _hHandle, SQLSMALLINT _hType, R
 		fwprintf(stderr, L"Invalid handle!\n");
 		return;
 	}
-	while (SQLGetDiagRec(_hType, _hHandle, ++iRec, (SQLCHAR*)wszState, &iError, (SQLCHAR*)wszMessage,
+	while (SQLGetDiagRec(_hType, _hHandle, ++iRec, (SQLWCHAR*)wszState, &iError, (SQLWCHAR*)wszMessage,
 		(SQLSMALLINT)(sizeof(wszMessage) / sizeof(WCHAR)), (SQLSMALLINT*)NULL) == SQL_SUCCESS) {
 		// Hide data truncated..
 		if (wcsncmp(wszState, L"01004", 5)) {
@@ -48,7 +48,11 @@ bool CDataBase::ConnectDataBase()
 			ret = SQLAllocHandle(SQL_HANDLE_DBC, m_hEnv, &m_hDbc);
 			if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 				ret = SQLSetConnectAttr(m_hDbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)(5), 0);
+<<<<<<< HEAD
 				ret = SQLConnect(m_hDbc, (SQLCHAR*)L"game_db_odbc", SQL_NTS, (SQLCHAR*)NULL, 0, NULL, 0);
+=======
+				ret = SQLConnect(m_hDbc, (SQLWCHAR*)L"TheIsLand", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
+>>>>>>> master
 				if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 					ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
 					cout << "DataBase Connect" << endl;
@@ -193,7 +197,11 @@ bool CDataBase::IsIDExist(wstring login_id)
 	return isExist;
 }
 
+<<<<<<< HEAD
 void CDataBase::AddUserInfo(DB_Event & _ev)
+=======
+bool CDataBase::GetIsLogin(unsigned int usID)
+>>>>>>> master
 {
 	wstring execFunc = L"EXEC insert_info";
 	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.ihp) + L", " + to_wstring(_ev.istamina) +
@@ -217,7 +225,11 @@ void CDataBase::AddUserInfo(DB_Event & _ev)
 	SQLCancel(m_hStmt);
 }
 
+<<<<<<< HEAD
 void CDataBase::UpdateUserInfo(DB_Event & _ev)
+=======
+void CDataBase::SetIsLogin(int iPlayerNum, unsigned int usID, std::string ID)
+>>>>>>> master
 {
 	wstring execFunc = L"EXEC update_info ";
 	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.ihp) + L", " + to_wstring(_ev.istamina) +
@@ -235,7 +247,11 @@ void CDataBase::UpdateUserInfo(DB_Event & _ev)
 	SQLCancel(m_hStmt);
 }
 
+<<<<<<< HEAD
 DB_Event & CDataBase::GetUserInfo(wstring & login_id)
+=======
+int CDataBase::FindIsLogin(unsigned int usID, wchar_t * user_id, bool bDelete)
+>>>>>>> master
 {
 	wstring execFunc = L"EXEC select_info " + login_id;
 

@@ -45,7 +45,10 @@
 
 #include <sdkddkver.h>
 #include <DirectXMath.h>
+<<<<<<< HEAD
 #include "SimpleMath.h"
+=======
+>>>>>>> master
 
 using namespace std;
 using namespace chrono;

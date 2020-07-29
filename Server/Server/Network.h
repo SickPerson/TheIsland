@@ -2,7 +2,11 @@
 #include "stdafx.h"
 
 class CPlayerProcess;
+<<<<<<< HEAD
 class CMonsterProcess;
+=======
+class CPlayer;
+>>>>>>> master
 
 class CNetwork
 {
@@ -12,8 +16,11 @@ private:
 	vector<shared_ptr<thread>>		m_vWorkerThread;
 	shared_ptr<thread>				m_pAcceptThread;
 	shared_ptr<thread>				m_pUpdateThread;
+<<<<<<< HEAD
 	shared_ptr<thread>				m_pDatabaseThread;
 
+=======
+>>>>>>> master
 private:
 	HANDLE			m_hIocp;
 	SOCKET			m_ListenSock;
@@ -24,6 +31,7 @@ private:
 	volatile bool	m_bRunningServer;
 
 private:
+<<<<<<< HEAD
 	CPlayerProcess*		m_pPlayerProcess;
 	CMonsterProcess*	m_pMonsterProcess;
 
@@ -31,6 +39,15 @@ private:
 	volatile unsigned int m_UserID;
 
 public:
+=======
+	CPlayerProcess*	m_pPlayerProcess;
+
+private:
+	volatile unsigned int m_usUserID;
+
+public:
+
+>>>>>>> master
 	void Initialize();
 	void StartServer();
 	void CloseServer();

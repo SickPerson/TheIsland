@@ -52,9 +52,23 @@ public:
 	}
 
 public:
+<<<<<<< HEAD
 	bool	IsIDExist(wstring login_id);
 	void	AddUserInfo(DB_Event& _ev);
 	void	UpdateUserInfo(DB_Event& _ev);
 	DB_Event& GetUserInfo(wstring& login_id);
+=======
+	void BindDataBaseFP();
+	bool DataBaseQueueIsEmpty();
+	void InsertToDataBaseQueue(DataBase_Event& event);
+	bool PopFromDataBaseQueue(DataBase_Event& event);
+	void InsertToStateQueue(DataBase_Event& event);
+	bool PopFromStateQueue(DataBase_Event& event);
+
+	bool	GetIsLogin(std::string sID);
+	bool	GetIsLogin(unsigned int usID);
+	void	SetIsLogin(int iPlayerNum, unsigned int usID, std::string ID);
+	int		FindIsLogin(unsigned int usID, wchar_t* user_id, bool bDelete = false);
+>>>>>>> master
 };
 

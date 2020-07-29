@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClInclude Include="MonsterProcess.h" />
     <ClInclude Include="DataBase.h" />
     <ClInclude Include="define.h" />
@@ -147,6 +148,12 @@
     </ClInclude>
     <ClInclude Include="Monsterpool.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+=======
+    <ClInclude Include="DataBase.h" />
+    <ClInclude Include="define.h" />
+    <ClInclude Include="directXmath.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+>>>>>>> master
     </ClInclude>
     <ClInclude Include="Network.h" />
     <ClInclude Include="Object.h" />
@@ -164,7 +171,10 @@
     <ClInclude Include="types.h" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="MonsterProcess.cpp" />
+=======
+>>>>>>> master
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monster.cpp">

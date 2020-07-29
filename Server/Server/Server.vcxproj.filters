@@ -34,6 +34,12 @@
     <Filter Include="03. Process\02. Player">
       <UniqueIdentifier>{04ced422-0a38-4cdc-a826-c2b1d14be0e7}</UniqueIdentifier>
     </Filter>
+<<<<<<< HEAD
+=======
+    <Filter Include="03. Process\02. Animal">
+      <UniqueIdentifier>{c655b8ec-3b79-4cc6-af96-3cfbe3d2a890}</UniqueIdentifier>
+    </Filter>
+>>>>>>> master
     <Filter Include="04. Object\01. Dynamic">
       <UniqueIdentifier>{784145b7-bc7b-4d3e-95f1-91e9a62ba34a}</UniqueIdentifier>
     </Filter>
@@ -102,6 +108,7 @@
     <ClCompile Include="main.cpp">
       <Filter>01. Main</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="Monster.cpp">
       <Filter>04. Object\01. Dynamic\02. Monster</Filter>
     </ClCompile>
@@ -114,6 +121,8 @@
     <ClCompile Include="MonsterProcess.cpp">
       <Filter>03. Process\03. Monster</Filter>
     </ClCompile>
+=======
+>>>>>>> master
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -159,6 +168,7 @@
     <ClInclude Include="Object.h">
       <Filter>04. Object</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Monster.h">
       <Filter>04. Object\01. Dynamic\02. Monster</Filter>
     </ClInclude>
@@ -170,6 +180,10 @@
     </ClInclude>
     <ClInclude Include="MonsterProcess.h">
       <Filter>03. Process\03. Monster</Filter>
+=======
+    <ClInclude Include="directXmath.h">
+      <Filter>99.default\01.header</Filter>
+>>>>>>> master
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
