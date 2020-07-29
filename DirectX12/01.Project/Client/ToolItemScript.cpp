@@ -48,7 +48,7 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 	case ITEM_CAMPFIRE:
 		pTex = CResMgr::GetInst()->Load<CMeshData>(L"Campfire.mdat", L"MeshData\\campfire.mdat");
 		m_pObj = pTex->Instantiate();
-		m_pObj->AddComponent(new CBuildScript);
+		m_pObj->AddComponent(new CBuildScript(HOUSING_ETC));
 		m_pObj->AddComponent(new CCollider2D);
 
 		m_pObj->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));

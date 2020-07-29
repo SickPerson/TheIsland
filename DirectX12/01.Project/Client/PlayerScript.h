@@ -49,6 +49,7 @@ public:
 public:
 	bool CollisionSphere(CCollider2D* _pOther, Vec3 vOffsetScale, float fOffset = 1.f);
 	bool CollisionRay(Vec3 vPosRay, Vec3 vDirRay, CCollider2D* _pOther);
+	bool CollisionBox(CCollider2D* _pOther, Vec3 vOffsetScale, float fOffset);
 
 	void SetChatObject(CGameObject* pObj);
 	void SetInventoryObject(CGameObject* pObj);

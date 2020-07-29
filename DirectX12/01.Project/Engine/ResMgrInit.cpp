@@ -256,7 +256,7 @@ void CResMgr::CreateDefaultShader()
 	pShader->CreatePixelShader(L"Shader\\std3d.fx", "PS_Housing", "ps_5_0");
 
 	// BlendState ¼³Á¤
-	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+	//pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
 
 	pShader->Create(SHADER_POV::DEFERRED);
 	AddRes(L"HousingShader", pShader);

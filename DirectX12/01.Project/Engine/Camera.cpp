@@ -30,6 +30,7 @@ CCamera::CCamera()
 	, m_iLayerCheck( 0 )
 	, m_eCamType( CAM_TYPE::BASIC )
 	, m_bModule(false)
+	, m_bShowCollision(false)
 {
 }
 
@@ -39,6 +40,9 @@ CCamera::~CCamera()
 
 void CCamera::FinalUpdate()
 {
+	if (KEY_TAB(KEY_TYPE::KEY_C))
+		m_bShowCollision = !m_bShowCollision;
+
 	// 뷰행렬
 	Vec3 vPos = Transform()->GetWorldPos();
 	Matrix matViewTrans = XMMatrixTranslation( -vPos.x, -vPos.y, -vPos.z );
@@ -515,7 +519,7 @@ void CCamera::Render_Forward()
 			tInstObj.pObj->MeshRender()->Render(tInstObj.iMtrlIdx);
 
 			// 충돌체 보유 시, 충돌체도 그려준다.
-			if (tInstObj.pObj->Collider2D())
+			if (tInstObj.pObj->Collider2D() && m_bShowCollision)
 				tInstObj.pObj->Collider2D()->Render();
 		}
 	}
@@ -536,7 +540,7 @@ void CCamera::Render_Forward()
 	{
 		for (size_t i = 0; i < pair.second.size(); ++i)
 		{
-			if (pair.second[i].pObj->Collider2D())
+			if (pair.second[i].pObj->Collider2D() && m_bShowCollision)
 			{
 				pair.second[i].pObj->Collider2D()->Render();
 			}
@@ -613,7 +617,7 @@ void CCamera::Render()
 						vecObj[i]->MeshRender()->Render();
 					}
 
-					if ( vecObj[i]->Collider2D() )
+					if ( vecObj[i]->Collider2D() && m_bShowCollision)
 					{
 						vecObj[i]->Collider2D()->Render();
 					}

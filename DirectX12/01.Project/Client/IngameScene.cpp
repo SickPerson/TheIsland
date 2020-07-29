@@ -66,8 +66,8 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\islandplayer.fbx");
-	//pTestMeshData->Save(pTestMeshData->GetPath());
+	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\housing_foundation.fbx", 1);
+	pTestMeshData->Save(pTestMeshData->GetPath());
 	//Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
 	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
 	//pTestMeshData->Save( pTestMeshData->GetPath() );
@@ -507,11 +507,31 @@ void CIngameScene::Init()
 
 	pPlayer->SetName(L"Player Object");
 	pPlayer->FrustumCheck(false);
-	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 10.f, 0.f));
+	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
 	pPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 	//pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
+
+	//CGameObject* pTest = pMeshData->Instantiate();
+	//// Script 설정
+	//pTest->AddComponent(new CCollider2D);
+
+	//pTest->MeshRender()->SetDynamicShadow(true);
+
+	////pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
+	////pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+
+	//pTest->Collider2D()->SetOffsetScale(Vec3(20.f, 60.f, 20.f));
+	//pTest->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	//pTest->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
+
+	//pTest->SetName(L"Player Object");
+	//pTest->FrustumCheck(false);
+	//pTest->Transform()->SetLocalPos(Vec3(0.f, 30.f, 200.f));
+	//pTest->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
+	////pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//m_pScene->FindLayer(L"Player")->AddGameObject(pTest);
 
 	// ==================
 	// Camera Object 생성
@@ -522,7 +542,7 @@ void CIngameScene::Init()
 	pMainCam->AddComponent( new CCamera );
 	pMainCam->AddComponent( new CFPSCamScript );
 
-	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 110.f, 0.f ) );
+	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 100.f, 0.f ) );
 	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
 
 	pMainCam->Camera()->SetProjType( PROJ_TYPE::PERSPECTIVE );

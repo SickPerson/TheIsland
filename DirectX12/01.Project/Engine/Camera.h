@@ -59,6 +59,7 @@ private:
 	bool		m_bModule;
 
 	CAM_TYPE	m_eCamType;	// 일반 카메라인지 플레이어만 보는 특수한 카메라인지
+	bool		m_bShowCollision;
 public:	
 	virtual void FinalUpdate();
 

@@ -43,7 +43,6 @@ void CNaturalScript::Update()
 	{
 		m_fParticleTime -= DT;
 
-
 		if (m_fParticleTime < 0.f)
 		{
 			tEvent tEv;
