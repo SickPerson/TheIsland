@@ -14,6 +14,7 @@
 
 #include <Engine/Camera.h>
 #include <Engine/RenderMgr.h>
+#include <Engine/NaviMgr.h>
 
 #include <iostream>
 
@@ -166,6 +167,8 @@ void CPlayerScript::Update()
 
 			Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 
+			Vec3 vWorldPos = Transform()->GetWorldPos();
+			vPos.y = CNaviMgr::GetInst()->GetY( vWorldPos ) + 100.f;
 			Transform()->SetLocalPos(vPos);
 			m_bEnable = true;
 		}
@@ -217,7 +220,8 @@ void CPlayerScript::Update()
 
 		Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 
-		Transform()->SetLocalPos(vPos);
+		vPos.y = CNaviMgr::GetInst()->GetY( vPos );
+		Transform()->SetLocalPos( vPos );
 		m_bEnable = true;
 	}
 }

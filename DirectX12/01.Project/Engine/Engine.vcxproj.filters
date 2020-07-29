@@ -100,6 +100,9 @@
     <Filter Include="03. Manager\Instancing">
       <UniqueIdentifier>{44071d1a-0a69-4202-9dda-6f94456f1b57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Manager\Navigation">
+      <UniqueIdentifier>{bfc104a1-d88f-4221-9ae5-5644fe95b2fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -279,6 +282,9 @@
     <ClInclude Include="InstancingBuffer.h">
       <Filter>03. Manager\Instancing</Filter>
     </ClInclude>
+    <ClInclude Include="NaviMgr.h">
+      <Filter>03. Manager\Navigation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -445,6 +451,9 @@
     </ClCompile>
     <ClCompile Include="InstancingBuffer.cpp">
       <Filter>03. Manager\Instancing</Filter>
+    </ClCompile>
+    <ClCompile Include="NaviMgr.cpp">
+      <Filter>03. Manager\Navigation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

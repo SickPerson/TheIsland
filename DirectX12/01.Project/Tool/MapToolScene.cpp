@@ -78,21 +78,21 @@ void CMapToolScene::Init()
 	// ====================
 	// Skybox 오브젝트 생성
 	// ====================
-	Ptr<CTexture> pSky01 = CResMgr::GetInst()->Load<CTexture>( L"Sky01", L"Texture\\Skybox\\Sky01.png" );
+	//Ptr<CTexture> pSky01 = CResMgr::GetInst()->Load<CTexture>( L"Sky01", L"Texture\\Skybox\\Sky01.png" );
 
-	pObject = new CGameObject;
-	pObject->SetName( L"SkyBox" );
-	pObject->FrustumCheck( false );
-	pObject->AddComponent( new CTransform );
-	pObject->AddComponent( new CMeshRender );
+	//pObject = new CGameObject;
+	//pObject->SetName( L"SkyBox" );
+	//pObject->FrustumCheck( false );
+	//pObject->AddComponent( new CTransform );
+	//pObject->AddComponent( new CMeshRender );
 
-	// MeshRender 설정
-	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"SphereMesh" ) );
-	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"SkyboxMtrl" ) );
-	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pSky01.GetPointer() );
+	//// MeshRender 설정
+	//pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"SphereMesh" ) );
+	//pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"SkyboxMtrl" ) );
+	//pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pSky01.GetPointer() );
 
-	// AddGameObject
-	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+	//// AddGameObject
+	//m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
 
 }

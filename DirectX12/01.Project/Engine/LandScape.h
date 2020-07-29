@@ -30,5 +30,10 @@ public:
 private:
 	void ComputeNormal( vector<VTX>& vecVtx, const vector<UINT>& vecIdx );
 	void ComputeTangent( vector<VTX>& vecVtx, const vector<UINT>& vecIdx );
+
+public:
+	UINT GetNumX() const;
+	UINT GetNumZ() const;
+	vector<Vec3>* GetVecPos();
 };
 

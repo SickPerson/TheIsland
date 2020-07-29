@@ -11,6 +11,7 @@
 #include <Engine/CollisionMgr.h>
 #include <Engine/RenderMgr.h>
 #include <Engine/FontMgr.h>
+#include <Engine/NaviMgr.h>
 
 #include <Engine/Layer.h>
 #include <Engine/Scene.h>
@@ -637,20 +638,21 @@ void CIngameScene::Init()
 	// =======================
 	// LandScape 오브젝트 생성
 	// =======================
-	/*pObject = new CGameObject;
-	pObject->SetName(L"LandScape Object");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
-	pObject->AddComponent(new CLandScape);
-	pObject->LandScape()->CreateLandScape(L"Texture/TestLandScape.bmp", 219, 219);
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"LandScapeMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"LandScapeMtrl"));
-	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pSky01.GetPointer());
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	pObject->Transform()->SetLocalScale(Vec3(15.f, 15.f, 15.f));
-	pObject->FrustumCheck(false);
+	pObject = new CGameObject;
+	pObject->SetName( L"LandScape Object" );
+	pObject->AddComponent( new CTransform );
+	pObject->AddComponent( new CMeshRender );
+	pObject->AddComponent( new CLandScape );
+	pObject->LandScape()->CreateLandScape( L"Texture/TestLandScape.bmp", 219, 219 );
+	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"LandScapeMesh" ) );
+	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" ) );
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pColor.GetPointer() );
+	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
+	pObject->Transform()->SetLocalScale( Vec3( 15.f, 15.f, 15.f ) );
+	pObject->FrustumCheck( false );
 
-	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);*/
+	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+	CNaviMgr::GetInst()->SetLandScape( pObject->LandScape() );
 
 
 	// ====================
@@ -681,39 +683,39 @@ void CIngameScene::Init()
 	// ===================
 	// Test 오브젝트 생성
 	// ===================
-	for (int i = 0; i < 11; ++i)
-	{
-		for (int j = 0; j < 11; ++j)
-		{
-			pObject = new CGameObject;
-			pObject->SetName(L"Test Object");
-			pObject->AddComponent(new CTransform);
-			pObject->AddComponent(new CMeshRender);
+	//for (int i = 0; i < 11; ++i)
+	//{
+	//	for (int j = 0; j < 11; ++j)
+	//	{
+	//		pObject = new CGameObject;
+	//		pObject->SetName(L"Test Object");
+	//		pObject->AddComponent(new CTransform);
+	//		pObject->AddComponent(new CMeshRender);
 
 
-			// Transform 설정
-			if(i > 9)
-				pObject->Transform()->SetLocalPos(Vec3(-5000.f + (j * 1000.f), -60.f, 9000.f - (i * 1000.f) + 20.f));
-			else
-				pObject->Transform()->SetLocalPos(Vec3(-5000.f + (j * 1000.f), 10.f, 9000.f - (i * 1000.f)));
-			pObject->Transform()->SetLocalScale(Vec3(1000.f, 1000.f, 1.f));
-			if(i > 9)
-				pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.2f, 0.f, 0.f));
-			else
-				pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
+	//		// Transform 설정
+	//		if(i > 9)
+	//			pObject->Transform()->SetLocalPos(Vec3(-5000.f + (j * 1000.f), -60.f, 9000.f - (i * 1000.f) + 20.f));
+	//		else
+	//			pObject->Transform()->SetLocalPos(Vec3(-5000.f + (j * 1000.f), 10.f, 9000.f - (i * 1000.f)));
+	//		pObject->Transform()->SetLocalScale(Vec3(1000.f, 1000.f, 1.f));
+	//		if(i > 9)
+	//			pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.2f, 0.f, 0.f));
+	//		else
+	//			pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
 
-			// MeshRender 설정
-			pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
-			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
-			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
-			pObject->FrustumCheck(false);
-			pObject->MeshRender()->SetDynamicShadow(true);
+	//		// MeshRender 설정
+	//		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	//		pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
+	//		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
+	//		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
+	//		pObject->FrustumCheck(false);
+	//		pObject->MeshRender()->SetDynamicShadow(true);
 
-			// AddGameObject
-			m_pScene->FindLayer(L"Environment")->AddGameObject(pObject);
-		}
-	}
+	//		// AddGameObject
+	//		m_pScene->FindLayer(L"Environment")->AddGameObject(pObject);
+	//	}
+	//}
 
 	// ==========================
 	// Distortion Object 만들기

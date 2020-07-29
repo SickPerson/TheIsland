@@ -36,45 +36,47 @@ void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNum
 	DWORD* pPixel = NULL;
 	int iBitCount = 3;
 
-	FILE* pFile = NULL;	
+	FILE* pFile = NULL;
 
 	fopen_s( &pFile, strFullPath.c_str(), "rb" );
 
-	if ( pFile )
+	if ( !pFile )
 	{
-		BITMAPFILEHEADER fh;
-		BITMAPINFOHEADER ih;
-
-		fread( &fh, sizeof( fh ), 1, pFile );
-		fread( &ih, sizeof( ih ), 1, pFile );
-
-		// 파일 위치 변경, SEEK_SET : 파일이 시작점
-		fseek( pFile, fh.bfOffBits, SEEK_SET );
-
-		pPixel = new DWORD[ih.biWidth * ih.biHeight];
-
-		fread( pPixel, sizeof( DWORD ), ih.biWidth * ih.biHeight, pFile );
-
-		// 비트맵 구조상 상하가 뒤집어져 저장되기에 바꾸어 준다.
-		DWORD*	pLine = new DWORD[ih.biWidth];
-
-		for ( int i = 0; i < ih.biHeight / 2; ++i )
-		{
-			memcpy( pLine, &pPixel[i * ih.biWidth], sizeof( DWORD ) * ih.biWidth );
-
-			memcpy( &pPixel[i * ih.biWidth],
-				&pPixel[( ih.biWidth - 1 - i ) * ih.biWidth],
-				sizeof( DWORD ) * ih.biWidth );
-
-			memcpy( &pPixel[( ih.biWidth - 1 - i ) * ih.biWidth],
-				pLine, sizeof( DWORD ) * ih.biWidth );
-		}
-
-		delete[] pLine;
-		pLine = NULL;
-
-		fclose( pFile );
+		int a = 0;
+		return;
 	}
+	BITMAPFILEHEADER fh;
+	BITMAPINFOHEADER ih;
+
+	fread( &fh, sizeof( fh ), 1, pFile );
+	fread( &ih, sizeof( ih ), 1, pFile );
+
+	// 파일 위치 변경, SEEK_SET : 파일이 시작점
+	fseek( pFile, fh.bfOffBits, SEEK_SET );
+
+	pPixel = new DWORD[ih.biWidth * ih.biHeight];
+
+	fread( pPixel, sizeof( DWORD ), ih.biWidth * ih.biHeight, pFile );
+
+	// 비트맵 구조상 상하가 뒤집어져 저장되기에 바꾸어 준다.
+	DWORD*	pLine = new DWORD[ih.biWidth];
+
+	for ( int i = 0; i < ih.biHeight / 2; ++i )
+	{
+		memcpy( pLine, &pPixel[i * ih.biWidth], sizeof( DWORD ) * ih.biWidth );
+
+		memcpy( &pPixel[i * ih.biWidth],
+			&pPixel[( ih.biWidth - 1 - i ) * ih.biWidth],
+			sizeof( DWORD ) * ih.biWidth );
+
+		memcpy( &pPixel[( ih.biWidth - 1 - i ) * ih.biWidth],
+			pLine, sizeof( DWORD ) * ih.biWidth );
+	}
+
+	delete[] pLine;
+	pLine = NULL;
+
+	fclose( pFile );
 
 	m_iNumX = iNumX;
 	m_iNumZ = iNumZ;
@@ -150,13 +152,11 @@ void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNum
 	ComputeTangent( vecVtx, vecIndex );
 
 	Ptr<CMesh>	pMesh = new CMesh;
-	pMesh->Create( sizeof( VTX ), ( UINT )vecVtx.size(), 
-		( BYTE* )vecVtx.data(), DXGI_FORMAT_R32_UINT, 
+	pMesh->Create( sizeof( VTX ), ( UINT )vecVtx.size(),
+		( BYTE* )vecVtx.data(), DXGI_FORMAT_R32_UINT,
 		( UINT )vecIndex.size(), ( BYTE* )vecIndex.data() );
-	
-	CResMgr::GetInst()->AddRes( L"LandScapeMesh", pMesh );
 
-	
+	CResMgr::GetInst()->AddRes( L"LandScapeMesh", pMesh );
 }
 
 void CLandScape::ComputeNormal( vector<VTX>& vecVtx, const vector<UINT>& vecIdx )
@@ -220,4 +220,19 @@ void CLandScape::ComputeTangent( vector<VTX>& vecVtx, const vector<UINT>& vecIdx
 		vecVtx[idx1].vBinormal = vecVtx[idx1].vNormal.Cross( vTangent ).Normalize();
 		vecVtx[idx2].vBinormal = vecVtx[idx2].vNormal.Cross( vTangent ).Normalize();
 	}
+}
+
+UINT CLandScape::GetNumX() const
+{
+	return m_iNumX;
+}
+
+UINT CLandScape::GetNumZ() const
+{
+	return m_iNumZ;
+}
+
+vector<Vec3>* CLandScape::GetVecPos()
+{
+	return &m_vecPos;
 }
