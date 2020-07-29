@@ -77,9 +77,9 @@ void CNaturalScript::Update()
 				evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
 				CEventMgr::GetInst()->AddEvent(evt);
 			}
-			Vec3 vRot = m_vOrginRot;
-			vRot.x += m_fAngle;
-			Transform()->SetLocalRot(Vec3(vRot.x, 0.f, 0.f));
+			Vec3 vRot = m_vOrginRot + Vec3(0.f, m_vTargetRot.y, 0.f);
+			vRot.x -= m_fAngle;
+			Transform()->SetLocalRot(vRot);
 		}
 		else
 		{
@@ -120,6 +120,7 @@ bool CNaturalScript::Damage(CGameObject* pObj, float fDamage)
 		m_bDestory = true;
 		m_fTime = NATURAL_RESPAWN_TIME;
 		m_fAngle = 0.f;
+		m_vTargetRot = pObj->Transform()->GetLocalRot();
 	}
 
 	if (m_pParticleObj == NULL)

@@ -104,7 +104,7 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		{
 			if (!pObj->GetScript<CAnimalScript>()->GetAnimalDead())
 			{
-				pObj->GetScript<CAnimalScript>()->Damage(GetObj(), m_fDamage);
+				pObj->GetScript<CAnimalScript>()->Damage(pHost, m_fDamage);
 			}
 			else
 			{
@@ -128,7 +128,7 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		{
 			if (!pObj->GetScript<CNaturalScript>()->GetDestroy())
 			{
-				pObj->GetScript<CNaturalScript>()->Damage(GetObj(), m_fDamage);
+				pObj->GetScript<CNaturalScript>()->Damage(pHost, m_fDamage);
 
 				NATURAL_TYPE eType = pObj->GetScript<CNaturalScript>()->GetNaturalType();
 				if (eType == NATURAL_TREE)

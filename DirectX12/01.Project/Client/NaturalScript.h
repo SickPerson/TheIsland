@@ -23,6 +23,7 @@ class CNaturalScript :
 	bool			m_bRotate;
 
 	Vec3			m_vOrginRot;
+	Vec3			m_vTargetRot;
 
 	CGameObject*	m_pParticleObj;
 	float			m_fParticleTime;
