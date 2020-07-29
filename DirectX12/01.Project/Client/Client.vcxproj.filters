@@ -25,11 +25,41 @@
     <Filter Include="Network\etc">
       <UniqueIdentifier>{aad681fd-419d-4643-9900-c2f3b2ce6f97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ComponentScript\Player">
+      <UniqueIdentifier>{60a3fa7d-c7b8-4137-8e1f-0ada7e59ff62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\UI">
+      <UniqueIdentifier>{63f5e20a-d59c-4276-bf79-b783721e28ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Environment">
+      <UniqueIdentifier>{d90432a6-0a58-4c4f-a8fb-e91220b34a46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Animal">
+      <UniqueIdentifier>{78bac853-deff-47d4-a63e-bd7aefb84239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item">
+      <UniqueIdentifier>{bc4b39b9-eefc-477d-8a97-a69f67bee8fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Stuff">
+      <UniqueIdentifier>{e403b613-75c4-46c9-a95f-f4cbbb53e71a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Tool">
+      <UniqueIdentifier>{9b695f86-2f6d-4030-bc5f-b1d0fbd93d06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Usable">
+      <UniqueIdentifier>{5cb1299c-cf5a-495b-8316-9cbd7ee565a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Armor">
+      <UniqueIdentifier>{3e0f537e-dd40-450a-9f0c-24ff6e593e21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Item\Housing">
+      <UniqueIdentifier>{f6be3114-af7d-491e-a0f6-83a4e8a13136}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComponentScript\Housing">
+      <UniqueIdentifier>{3dbed70e-88a0-4a9c-9ab3-bbef192e1a8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -42,17 +72,8 @@
     <ClInclude Include="IngameScene.h">
       <Filter>SceneScript</Filter>
     </ClInclude>
-    <ClInclude Include="ChatScript.h">
-      <Filter>ComponentScript</Filter>
-    </ClInclude>
     <ClInclude Include="LoginScene.h">
       <Filter>SceneScript</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerCamScript.h">
-      <Filter>ComponentScript</Filter>
-    </ClInclude>
-    <ClInclude Include="InventoryScript.h">
-      <Filter>ComponentScript</Filter>
     </ClInclude>
     <ClInclude Include="Network.h">
       <Filter>Network</Filter>
@@ -69,8 +90,77 @@
     <ClInclude Include="..\..\..\Server\Server\protocol.h">
       <Filter>Network\etc</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="StatusScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="QuickSlotScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstStringScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
     <ClInclude Include="InputScript.h">
-      <Filter>ComponentScript</Filter>
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerCamScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="FPSCamScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryScript.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="SunshineScript.h">
+      <Filter>ComponentScript\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimalScript.h">
+      <Filter>ComponentScript\Animal</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemScript.h">
+      <Filter>ComponentScript\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="StuffScript.h">
+      <Filter>ComponentScript\Item\Stuff</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolItemScript.h">
+      <Filter>ComponentScript\Item\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemLootScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>ComponentScript\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="RecipeScript.h">
+      <Filter>ComponentScript\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UsableScript.h">
+      <Filter>ComponentScript\Item\Usable</Filter>
+    </ClInclude>
+    <ClInclude Include="HousingScript.h">
+      <Filter>ComponentScript\Item\Housing</Filter>
+    </ClInclude>
+    <ClInclude Include="ArmorScript.h">
+      <Filter>ComponentScript\Item\Armor</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildScript.h">
+      <Filter>ComponentScript\Housing</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOverScript.h">
+      <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="NaturalScript.h">
+      <Filter>ComponentScript\Environment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -83,23 +173,80 @@
     <ClCompile Include="IngameScene.cpp">
       <Filter>SceneScript</Filter>
     </ClCompile>
-    <ClCompile Include="ChatScript.cpp">
-      <Filter>ComponentScript</Filter>
-    </ClCompile>
     <ClCompile Include="LoginScene.cpp">
       <Filter>SceneScript</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerCamScript.cpp">
-      <Filter>ComponentScript</Filter>
-    </ClCompile>
-    <ClCompile Include="InventoryScript.cpp">
-      <Filter>ComponentScript</Filter>
     </ClCompile>
     <ClCompile Include="Network.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="QuickSlotScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="StatusScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstStringScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
     <ClCompile Include="InputScript.cpp">
-      <Filter>ComponentScript</Filter>
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerCamScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="FPSCamScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="SunshineScript.cpp">
+      <Filter>ComponentScript\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimalScript.cpp">
+      <Filter>ComponentScript\Animal</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemScript.cpp">
+      <Filter>ComponentScript\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="StuffScript.cpp">
+      <Filter>ComponentScript\Item\Stuff</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolItemScript.cpp">
+      <Filter>ComponentScript\Item\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemLootScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RecipeScript.cpp">
+      <Filter>ComponentScript\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>ComponentScript\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="UsableScript.cpp">
+      <Filter>ComponentScript\Item\Usable</Filter>
+    </ClCompile>
+    <ClCompile Include="HousingScript.cpp">
+      <Filter>ComponentScript\Item\Housing</Filter>
+    </ClCompile>
+    <ClCompile Include="ArmorScript.cpp">
+      <Filter>ComponentScript\Item\Armor</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildScript.cpp">
+      <Filter>ComponentScript\Housing</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOverScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="NaturalScript.cpp">
+      <Filter>ComponentScript\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

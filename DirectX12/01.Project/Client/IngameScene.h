@@ -1,5 +1,4 @@
 #pragma once
-#include "header.h"
 #include <Engine/SceneScript.h>
 
 class CGameObject;
@@ -7,19 +6,28 @@ class CGameObject;
 class CIngameScene :
 	public CSceneScript
 {
-public:
-	static concurrency::concurrent_unordered_set<unsigned short> m_cusLoginList; // 로그인한 플레이어들 
-	static concurrency::concurrent_unordered_map<unsigned short, CGameObject*> m_cumPlayer; // 로그인한 플레이어들과 각 상태들
+	CGameObject* m_pChat;
+	CGameObject* m_pPlayer;
+	CGameObject* m_pInventory;
+	CGameObject* m_pQuickSlot;
+
+	int m_iSelect = -1;
+	bool m_bShowCursor = false;
+
 public:
 	CIngameScene();
 	virtual ~CIngameScene();
 
 	// CSceneScript을(를) 통해 상속됨
 	virtual void Init() override;
+	virtual void Update() override;
 
+	void GiveStartItem();
 
 	void CreateQuickSlotUI(CGameObject* _pInventory);
 	void CreatePlayerStatusUI();
 	void CreateInventoryUI();
+	void CreateItemUI();
+	void CreateChatUI();
 };
 

@@ -2,7 +2,7 @@
 #include "GridScript.h"
 
 CGridScript::CGridScript()
-	: CScript((UINT)COMPONENT_TYPE::SCRIPT)
+	: CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT)
 	, m_vGridColor(Vec4(0.6f, 0.6f, 0.6f, 1.f))
 	, m_vToolCamPos()
 	, m_pToolCam(nullptr)

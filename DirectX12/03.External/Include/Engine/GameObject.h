@@ -13,6 +13,9 @@ class CLight2D;
 class CLight3D;
 class CCamera;
 class CLandScape;
+class CAnimator3D;
+class CParticleSystem;
+class CFont;
 
 class CGameObject :
 	public CEntity
@@ -49,10 +52,13 @@ public:
 	CCollider2D* Collider2D() { return (CCollider2D*)m_arrCom[(UINT)COMPONENT_TYPE::COLLIDER2D]; }
 	CCollider3D* Collider3D() { return (CCollider3D*)m_arrCom[(UINT)COMPONENT_TYPE::COLLIDER3D]; }
 	CAnimator2D* Animator2D() { return (CAnimator2D*)m_arrCom[(UINT)COMPONENT_TYPE::ANIMATOR2D]; }
+	CAnimator3D* Animator3D() { return (CAnimator3D*)m_arrCom[(UINT)COMPONENT_TYPE::ANIMATOR3D]; }
 	CCamera* Camera() { return (CCamera*)m_arrCom[(UINT)COMPONENT_TYPE::CAMERA]; }
 	CLight2D* Light2D() { return (CLight2D*)m_arrCom[(UINT)COMPONENT_TYPE::LIGHT2D]; }
 	CLight3D* Light3D() { return (CLight3D*)m_arrCom[(UINT)COMPONENT_TYPE::LIGHT3D]; }
 	CLandScape* LandScape() { return ( CLandScape* )m_arrCom[( UINT )COMPONENT_TYPE::LANDSCAPE]; }
+	CParticleSystem* ParticleSystem() { return ( CParticleSystem* )m_arrCom[( UINT )COMPONENT_TYPE::PARTICLESYSTEM]; }
+	CFont* Font() { return (CFont*)m_arrCom[(UINT)COMPONENT_TYPE::FONT]; }
 
 	const vector<CScript*>& GetScripts() const { return m_vecScript; }
 

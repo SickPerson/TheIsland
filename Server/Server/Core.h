@@ -14,6 +14,9 @@ private:
 	shared_ptr<thread>				m_pAcceptThread;
 	shared_ptr<thread>				m_pUpdateThread;
 	//shared_ptr<thread>	m_pDataBaseThread;
+	/*vector<thread> m_vWorkerThread;
+	thread m_tAcceptThread;
+	thread m_tUpdateThread;*/
 
 public:
 	void CheckThisCpuCount();

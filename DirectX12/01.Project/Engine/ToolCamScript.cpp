@@ -3,8 +3,10 @@
 
 #include "Camera.h"
 
+#include <iostream>
+
 CToolCamScript::CToolCamScript()
-	: CScript(0)
+	: CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT)
 	, m_fSpeed(200.f)
 	, m_fScaleSpeed(1.f)
 {
@@ -71,6 +73,5 @@ void CToolCamScript::Update()
 
 		Transform()->SetLocalRot(vRot);
 	}
-
 	Transform()->SetLocalPos(vPos);
 }

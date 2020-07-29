@@ -19,10 +19,10 @@ void CPlayerCamScript::Update()
 	Vec3 vPos = m_pPlayer->Transform()->GetLocalPos();
 	Vec3 vRot = m_pPlayer->Transform()->GetLocalRot();
 
-	vPos += vDir * 150.f;
-	vPos.y = 25.f;
+	vPos += -vDir * 100.f;
+	vPos.y = 80.f;
 
-	vRot.y = vRot.y + XM_PI;
+	vRot.y = vRot.y;
 
 	Transform()->SetLocalPos(vPos);
 	Transform()->SetLocalRot(vRot);

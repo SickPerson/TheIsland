@@ -1,131 +1,60 @@
 #include "Object.h"
 
 
-CObject::CObject()
+CObject::CObject() :
+	m_vPos(Vec3(0.f, 25.f, 0.f)),
+	m_vRot(Vec3(0.f, 180.f, 0.f))
 {
-	Init();
 }
 
 CObject::~CObject()
 {
 }
 
-void CObject::Init()
+void CObject::SetPos(const float& fPosX, const float& fPosY, const float& fPosZ)
 {
-	m_Obj.iHp = 100;
-	m_Obj.iHunger = 100;
-	m_Obj.iStamina = 100;
-	m_Obj.iThirst = 100;
-
-	m_Obj.fDirX = 0.f;
-	m_Obj.fDirY = 0.f;
-	m_Obj.fDirZ = 0.f;
-
-	m_Obj.fPosX = 0.f;
-	m_Obj.fPosY = 25.f;
-	m_Obj.fPosZ = 0.f;
-
-	m_Obj.m_tStartTime = chrono::high_resolution_clock::now();
+	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_LOCK_POS]);
+	m_vPos = Vec3(fPosX, fPosY, fPosZ);
 }
 
-void CObject::SetHP(int iHP)
+void CObject::SetPos(const Vec3& vPos)
 {
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_HP]);
-	m_Obj.iHp = iHP;
+	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_LOCK_POS]);
+	m_vPos = vPos;
 }
 
-void CObject::SetStamina(int iStamina)
+void CObject::SetRot(const float& fRotX, const float& fRotY, const float& fRotZ)
 {
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_STAMINA]);
-	m_Obj.iStamina = iStamina;
+	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_LOCK_ROT]);
+	m_vRot = Vec3(fRotX, fRotY, fRotZ);
 }
 
-void CObject::SetHunger(int iHunger)
+void CObject::SetRot(const Vec3& vRot)
 {
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_HUNGER]);
-	m_Obj.iHunger = iHunger;
+	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_LOCK_ROT]);
+	m_vRot = vRot;
 }
 
-void CObject::SetThirst(int iThirst)
+void CObject::SetState(const char& cState)
 {
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_THIRST]);
-	m_Obj.iThirst = iThirst;
+	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_LOCK_STATE]);
+	m_cState = cState;
 }
 
-void CObject::SetPos(float _px, float _py, float _pz)
+const Vec3& CObject::GetPos()
 {
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_POS]);
-	m_Obj.fPosX = _px;
-	m_Obj.fPosY = _py;
-	m_Obj.fPosZ = _pz;
+	shared_lock<shared_mutex>lock(m_ObjMutex[OBJ_LOCK_POS]);
+	return m_vPos;
 }
 
-void CObject::SetPos(const DirectX::XMFLOAT3 & _pos)
+const Vec3& CObject::GetRot() 
 {
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_POS]);
-	m_Obj.fPosX = _pos.x;
-	m_Obj.fPosY = _pos.y;
-	m_Obj.fPosZ = _pos.z;
+	shared_lock<shared_mutex>lock(m_ObjMutex[OBJ_LOCK_ROT]);
+	return m_vRot;
 }
 
-void CObject::SetDir(float _dx, float _dy, float _dz)
+const char & CObject::GetState()
 {
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_DIR]);
-	m_Obj.fDirX = _dx;
-	m_Obj.fDirY = _dy;
-	m_Obj.fDirZ = _dz;
-}
-
-void CObject::SetDir(const DirectX::XMFLOAT3 & _dir)
-{
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_DIR]);
-	m_Obj.fDirX = _dir.x;
-	m_Obj.fDirY = _dir.y;
-	m_Obj.fDirZ = _dir.z;
-}
-
-void CObject::SetAniTime()
-{
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_ANITIME]);
-	m_Obj.m_tStartTime = high_resolution_clock::now();
-}
-
-const int CObject::GetHP()
-{
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_HP]);
-	return m_Obj.iHp;
-}
-
-const int CObject::GetStamina()
-{
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_STAMINA]);
-	return m_Obj.iStamina;
-}
-
-const int CObject::GetHunger()
-{
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_HUNGER]);
-	return m_Obj.iHunger;
-}
-
-const int CObject::GetThirst()
-{
-	unique_lock<shared_mutex>lock(m_ObjMutex[OBJ_THIRST]);
-	return m_Obj.iThirst;
-}
-
-const DirectX::XMFLOAT3 & CObject::GetPos()
-{
-	shared_lock<shared_mutex>lock(m_ObjMutex[OBJ_POS]);
-	DirectX::XMFLOAT3 xmfPos = DirectX::XMFLOAT3(m_Obj.fPosX, m_Obj.fPosY, m_Obj.fPosZ);
-	return xmfPos;
-	// TODO: 여기에 반환 구문을 삽입합니다.
-}
-
-const DirectX::XMFLOAT3 & CObject::GetDir()
-{
-	shared_lock<shared_mutex>lock(m_ObjMutex[OBJ_DIR]);
-	DirectX::XMFLOAT3 xmfDir = DirectX::XMFLOAT3(m_Obj.fDirX, m_Obj.fDirX, m_Obj.fDirZ);
-	return xmfDir;
-	// TODO: 여기에 반환 구문을 삽입합니다.
+	shared_lock<shared_mutex>lock(m_ObjMutex[OBJ_LOCK_STATE]);
+	return m_cState;
 }

@@ -39,6 +39,7 @@ public:
 	void Render();
 	void Render_tool();			
 
+	void Render_Shadowmap();
 	void Render_Lights();
 	void Merge_Light();
 
@@ -51,9 +52,10 @@ private:
 public:
 	void RegisterLight2D( const tLight2D& _Light2D );
 
-	void RegisterLight3D( CLight3D* _pLight3D );
+	int RegisterLight3D( CLight3D* _pLight3D );
 
 	CCamera* GetCamera(int _iIdx) { return m_vecCam[_iIdx]; }
+	CCamera* GetMainCam();
 	void RegisterCamera(CCamera* _pCam) { m_vecCam.push_back(_pCam); }
 	void ClearCamera() { m_vecCam.clear(); }
 
@@ -61,6 +63,9 @@ public:
 	HWND GetHwnd() { return m_hWnd; }
 
 	CMRT*	GetMRT( MRT_TYPE eType );
+
+	void CopySwapToPosteffect();
+
 	UINT	GetRTVHeapSize();
 };
 

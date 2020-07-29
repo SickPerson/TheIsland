@@ -21,6 +21,7 @@ private:
 	Vec3		m_vWorldDir[(UINT)DIR_TYPE::END]; // GameObject 의 Front, Up, Right 방향
 
 	Matrix		m_matWorld;
+	Matrix		m_matWorldInv;
 
 public:
 	const Vec3& GetLocalPos() { return m_vLocalPos; }
@@ -41,6 +42,8 @@ public:
 
 	bool IsCasting(const Vec3& _vPos);
 	float GetMaxScale();
+
+	void LookAt(const Vec3 & _vLook);
 
 	// Transform 정보를 상수데이터 및 레지스터로 전달한다.
 	void UpdateData();

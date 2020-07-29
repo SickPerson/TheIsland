@@ -1,5 +1,10 @@
 #pragma once
 
+#define INSTANCING_COUNT 2
+
+
+
+
 #define SINGLE(type) private: type(); ~type();\
 public:\
 static type* GetInst()\
@@ -148,14 +153,19 @@ enum class COMPONENT_TYPE
 	LIGHT2D,
 	LIGHT3D,
 	LANDSCAPE,
-	END,
+	PARTICLESYSTEM,
+	FONT,
 	SCRIPT,
+	END,
 };
 
 enum class COLLIDER2D_TYPE
 {
 	RECT,
 	CIRCLE,
+	CUBE,
+	SPHERE,
+	
 };
 
 enum class SHADER_PARAM
@@ -305,7 +315,9 @@ enum class SHADER_POV
 {
 	DEFERRED,
 	FORWARD,
-	POST_EFFECT,
+	POSTEFFECT,
 	LIGHTING,
+	PARTICLE,
 	COMPUTE,
+	SHADOWMAP,
 };

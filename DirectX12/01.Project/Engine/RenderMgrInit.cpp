@@ -24,6 +24,8 @@ void CRenderMgr::CreateMRT()
 	// RenderTargetViewHeap의 메모리 사이즈
 	m_iRTVHeapSize = DEVICE->GetDescriptorHandleIncrementSize( D3D12_DESCRIPTOR_HEAP_TYPE_RTV );
 
+	// 전역버퍼에 현재 해상도정보 업데이트
+	g_global.vResolution = m_tResolution;
 
 	// =============
 	// SwapChain MRT
@@ -84,27 +86,27 @@ void CRenderMgr::CreateMRT()
 	{
 		tRT arrRT[2] = {};
 
-		arrRT[0].vClearColor = Vec4( 0.f, 0.f, 0.f, 0.f );
-		arrRT[0].pTarget = CResMgr::GetInst()->CreateTexture( L"DiffuseLightTargetTex"
-			, ( UINT )m_tResolution.fWidth, ( UINT )m_tResolution.fHeight
-			, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES( D3D12_HEAP_TYPE_DEFAULT ), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClearColor );
+		arrRT[0].vClearColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		arrRT[0].pTarget = CResMgr::GetInst()->CreateTexture(L"DiffuseLightTargetTex"
+			, (UINT)m_tResolution.fWidth, (UINT)m_tResolution.fHeight
+			, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClearColor);
 
-		arrRT[1].vClearColor = Vec4( 0.f, 0.f, 0.f, 0.f );
-		arrRT[1].pTarget = CResMgr::GetInst()->CreateTexture( L"SpecularLightTargetTex"
-			, ( UINT )m_tResolution.fWidth, ( UINT )m_tResolution.fHeight
-			, DXGI_FORMAT_R32G32B32A32_FLOAT, CD3DX12_HEAP_PROPERTIES( D3D12_HEAP_TYPE_DEFAULT ), D3D12_HEAP_FLAG_NONE
-			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClearColor );
+		arrRT[1].vClearColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		arrRT[1].pTarget = CResMgr::GetInst()->CreateTexture(L"SpecularLightTargetTex"
+			, (UINT)m_tResolution.fWidth, (UINT)m_tResolution.fHeight
+			, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClearColor);
 
-		m_arrMRT[( UINT )MRT_TYPE::LIGHT] = new CMRT;
-		m_arrMRT[( UINT )MRT_TYPE::LIGHT]->Create( 2, arrRT, pDSTex ); // 깊이 텍스쳐는 SwapChain 것을 사용한다.
+		m_arrMRT[(UINT)MRT_TYPE::LIGHT] = new CMRT;
+		m_arrMRT[(UINT)MRT_TYPE::LIGHT]->Create(2, arrRT, pDSTex); // 깊이 텍스쳐는 SwapChain 것을 사용한다.
 	}
 
 	// ============
-	// Deferred MRT
+	// Player MRT
 	// ============
 	{
-		tRT arrRT[8] = {};
+		tRT arrRT[3] = {};
 
 		arrRT[0].vClearColor = Vec4(0.5f, 0.5f, 0.5f, 0.f);
 		arrRT[0].pTarget = CResMgr::GetInst()->CreateTexture(L"PlayerTex"
@@ -128,4 +130,34 @@ void CRenderMgr::CreateMRT()
 		m_arrMRT[(UINT)MRT_TYPE::PLAYER] = new CMRT;
 		m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Create(3, arrRT, pDSTex); // 깊이 텍스쳐는 SwapChain 것을 사용한다.
 	}
+
+	// ===============
+	// SHADOWMAP MRT
+	// ===============
+	{
+		tRT arrRT[8] = {};
+
+		arrRT[0].vClearColor = Vec4(0.f, 0.f, 0.f, 0.f);
+		arrRT[0].pTarget = CResMgr::GetInst()->CreateTexture(L"ShadowMapTargetTex"
+			, 4096 * 2, 4096 * 2
+			, DXGI_FORMAT_R32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, arrRT[0].vClearColor);
+
+		// 별도의 깊이버퍼를 가짐
+		Ptr<CTexture> pTempDSTex = CResMgr::GetInst()->CreateTexture(L"ShadowMapDepthTex"
+			, 4096 * 2, 4096 * 2
+			, DXGI_FORMAT_D32_FLOAT, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+			, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+
+		m_arrMRT[(UINT)MRT_TYPE::SHADOWMAP] = new CMRT;
+		m_arrMRT[(UINT)MRT_TYPE::SHADOWMAP]->Create(1, arrRT, pTempDSTex); // 별도의 깊이버퍼 를 가짐
+	}
+
+	// =================
+	// PostEffectTexture
+	// =================
+	CResMgr::GetInst()->CreateTexture(L"PosteffectTargetTex"
+		, (UINT)m_tResolution.fWidth, (UINT)m_tResolution.fHeight
+		, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE
+		, D3D12_RESOURCE_FLAG_NONE, Vec4(0.f, 0.f, 0.f, 0.f));
 }

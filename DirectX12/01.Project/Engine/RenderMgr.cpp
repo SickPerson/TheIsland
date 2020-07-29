@@ -33,6 +33,10 @@ void CRenderMgr::Render()
 	float arrColor[4] = { 0.f,0.f, 0.f, 1.f };
 	CDevice::GetInst()->Render_Start(arrColor);
 
+	// 전역버퍼 데이터 업데이트
+	static CConstantBuffer* pGlobalBuffer = CDevice::GetInst()->GetCB( CONST_REGISTER::b5 );
+	CDevice::GetInst()->SetConstBufferToRegister( pGlobalBuffer, pGlobalBuffer->AddData( &g_global ) );
+
 	// 광원 정보 업데이트
 	UpdateLight2D();
 	UpdateLight3D();
@@ -43,7 +47,6 @@ void CRenderMgr::Render()
 
 	// DeferredMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->Clear();
-	m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
 
 	// LightMRT 초기화
 	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->Clear();
@@ -58,6 +61,9 @@ void CRenderMgr::Render()
 	m_vecCam[0]->Render_Deferred();
 	m_arrMRT[( UINT )MRT_TYPE::DEFERRED]->TargetToResBarrier();
 
+	// Shadowmap 만들기
+	Render_Shadowmap();
+
 	// Render Light
 	Render_Lights();
 
@@ -67,6 +73,9 @@ void CRenderMgr::Render()
 	// Forward Render
 	m_vecCam[0]->Render_Forward(); // skybox, grid, ui
 
+	// PostEffectRender
+	m_vecCam[0]->Render_PostEffect();
+
 	//=================================
 	// 추가 카메라는 forward render 만
 	//=================================
@@ -74,12 +83,16 @@ void CRenderMgr::Render()
 	{
 		if (m_vecCam[i]->GetCamType() == CAM_TYPE::INVENTORY)
 		{
+			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->Clear();
 			m_vecCam[i]->SortGameObject();
 
+			//m_arrMRT[(UINT)MRT_TYPE::PLAYER]->ResToTargetBarrier();
 			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
 			m_vecCam[i]->Render_Deferred();
+			m_arrMRT[(UINT)MRT_TYPE::PLAYER]->TargetToResBarrier();
 
-			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
+			UINT _iIdx = CDevice::GetInst()->GetSwapchainIdx();
+			m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, _iIdx);
 			m_vecCam[i]->Render_Forward();
 		}
 		else
@@ -88,42 +101,6 @@ void CRenderMgr::Render()
 			m_vecCam[i]->Render_Forward();
 		}
 	}
-
-	// 카메라 반복문 돌면서
-	//for (size_t i = 0; i < m_vecCam.size(); ++i)
-	//{
-	//	// 물체 분류 작업 forward로 출력할것인지 deffered로 출력할 것인지
-	//	m_vecCam[i]->SortGameObject();
-
-	//	// 일반적인 카메라
-	//	if (CAM_TYPE::BASIC == m_vecCam[i]->GetCamType())
-	//	{
-	//		// Deferred MRT 셋팅
-	//		m_arrMRT[(UINT)MRT_TYPE::DEFERRED]->OMSet();
-	//		m_vecCam[i]->Render_Deferred();
-
-	//		// Light MRT 셋팅
-
-	//		// SwapChain MRT 셋팅		
-	//		m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
-	//		m_vecCam[i]->Render_Forward();
-	//		// 타겟이 SwapChain으로 바꼈으니 카메라 Render도 Forward로 변경해서 Rendering
-
-	//		// Merge (Diffuse Target, Diffuse Light Target, Specular Light Target)
-	//	}
-	//	else if (CAM_TYPE::INVENTORY == m_vecCam[i]->GetCamType())
-	//	{
-	//		// Deferred MRT 셋팅
-	//		m_arrMRT[(UINT)MRT_TYPE::PLAYER]->OMSet();
-	//		m_vecCam[i]->Render_Deferred();
-
-	//		// Light MRT 셋팅
-
-	//		// SwapChain MRT 셋팅		
-	//		m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
-	//		m_vecCam[i]->Render_Forward();
-	//	}
-	//}	
 
 	// 출력
 	CDevice::GetInst()->Render_Present();
@@ -140,22 +117,48 @@ void CRenderMgr::Render_tool()
 	UpdateLight3D();
 }
 
+void CRenderMgr::Render_Shadowmap()
+{
+	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::SHADOWMAP)->Clear();
+	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::SHADOWMAP)->OMSet();
+
+	// 광원 시점으로 깊이를 그림
+	for (UINT i = 0; i < m_vecLight3D.size(); ++i)
+	{
+		if (m_vecLight3D[i]->GetLight3DInfo().iLightType != (UINT)LIGHT_TYPE::DIR)
+			continue;
+
+		m_vecLight3D[i]->Render_Shadowmap();
+	}
+
+	CRenderMgr::GetInst()->GetMRT(MRT_TYPE::SHADOWMAP)->TargetToResBarrier();
+}
+
 void CRenderMgr::Render_Lights()
 {
-	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->OMSet();
+	m_arrMRT[(UINT)MRT_TYPE::LIGHT]->OMSet();
 
 	// 광원을 그린다.
-	for ( UINT i = 0; i < m_vecLight3D.size(); ++i )
+	CCamera* pMainCam = CRenderMgr::GetInst()->GetMainCam();
+	if (nullptr == pMainCam)
+		return;
+
+	// 메인 카메라 시점 기준 View, Proj 행렬로 되돌린다.
+	g_transform.matView = pMainCam->GetViewMat();
+	g_transform.matProj = pMainCam->GetProjMat();
+	g_transform.matViewInv = pMainCam->GetViewMatInv();
+
+	for (size_t i = 0; i < m_vecLight3D.size(); ++i)
 	{
 		m_vecLight3D[i]->Light3D()->Render();
 	}
 
 	m_vecLight3D.clear();
-	m_arrMRT[( UINT )MRT_TYPE::LIGHT]->TargetToResBarrier();
+	m_arrMRT[(UINT)MRT_TYPE::LIGHT]->TargetToResBarrier();
 
 	// SwapChain MRT 셋팅
 	UINT iIdx = CDevice::GetInst()->GetSwapchainIdx();
-	m_arrMRT[( UINT )MRT_TYPE::SWAPCHAIN]->OMSet( 1, iIdx );
+	m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->OMSet(1, iIdx);
 }
 
 void CRenderMgr::Merge_Light()
@@ -194,7 +197,19 @@ void CRenderMgr::UpdateLight3D()
 	UINT iOffsetPos = pLight3DBuffer->AddData(&tLight3DArray);
 	CDevice::GetInst()->SetConstBufferToRegister(pLight3DBuffer, iOffsetPos);
 	
-	m_vecLight3D.clear();
+	//m_vecLight3D.clear();
+}
+
+CCamera * CRenderMgr::GetMainCam()
+{
+	/*if (CCore::GetInst()->GetSceneMod() == SCENE_MOD::SCENE_PLAY)
+	{
+		if (!m_vecCam.empty())
+			return m_vecCam[0];
+		return nullptr;
+	}*/
+
+	return  m_vecCam[0];
 }
 
 void CRenderMgr::RegisterLight2D( const tLight2D & _Light2D )
@@ -207,16 +222,38 @@ void CRenderMgr::RegisterLight2D( const tLight2D & _Light2D )
 	m_tLight2DInfo.arrLight2D[m_tLight2DInfo.iCount++] = _Light2D;
 }
 
-void CRenderMgr::RegisterLight3D( CLight3D * _pLight3D )
+int CRenderMgr::RegisterLight3D( CLight3D * _pLight3D )
 {
-	if ( m_vecLight3D.size() >= 100 )
-		return;
-	m_vecLight3D.push_back( _pLight3D );
+	if (m_vecLight3D.size() >= 100)
+		return -1;
+	m_vecLight3D.push_back(_pLight3D);
+	return (int)m_vecLight3D.size() - 1;
 }
 
 CMRT * CRenderMgr::GetMRT( MRT_TYPE eType )
 {
 	return m_arrMRT[(UINT)eType];
+}
+
+void CRenderMgr::CopySwapToPosteffect()
+{
+	static CTexture* pPostEffectTex = CResMgr::GetInst()->FindRes<CTexture>(L"PosteffectTargetTex").GetPointer();
+
+	UINT iIdx = CDevice::GetInst()->GetSwapchainIdx();
+
+	// SwapChain Target Texture 를 RenderTarget -> CopySource 상태로 변경
+	CMDLIST->ResourceBarrier(1
+		, &CD3DX12_RESOURCE_BARRIER::Transition(m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->GetRTTex(iIdx)->GetTex2D().Get()
+			, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE));
+
+	// SwapChainTex -> PostEfectTex 로 복사
+	CMDLIST->CopyResource(pPostEffectTex->GetTex2D().Get()
+		, m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->GetRTTex(iIdx)->GetTex2D().Get());
+
+	// SwapChain Target Texture 를 CopySource -> RenderTarget 상태로 변경
+	CMDLIST->ResourceBarrier(1
+		, &CD3DX12_RESOURCE_BARRIER::Transition(m_arrMRT[(UINT)MRT_TYPE::SWAPCHAIN]->GetRTTex(iIdx)->GetTex2D().Get()
+			, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET));
 }
 
 UINT CRenderMgr::GetRTVHeapSize()

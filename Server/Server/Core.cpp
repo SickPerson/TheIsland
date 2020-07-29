@@ -32,27 +32,35 @@ void CCore::CheckThisCpuCount()
 
 void CCore::StartServer()
 {
+	for (int i = 0; i < m_iNumWorkerThread; ++i) {
+		m_vWorkerThread.emplace_back(std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } }));
+		//m_vWorkerThread.emplace_back(thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } });
+	}
+	std::cout << "WorkerThread Create" << std::endl;
+
 	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
+	//m_tAcceptThread = thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } };
 	std::cout << "AcceptThread Create" << std::endl;
 
 	m_pUpdateThread = std::shared_ptr< std::thread > (new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
-	std::cout << "UpdateThread Create" << std::endl;
-
-	for (int i = 0; i < m_iNumWorkerThread; ++i) {
-		m_vWorkerThread.push_back(std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } }));
-	}
-	std::cout << "WorkerThread Create" << std::endl;
+	//std::cout << "UpdateThread Create" << std::endl;
 
 	std::cout << "Server Start" << std::endl;
 }
 
 void CCore::CloseServer()
 {
-	m_pAcceptThread->join();
+	
 	m_pUpdateThread->join();
+	cout << "³ª¿Íµµ µÅ" << endl;
+	m_pAcceptThread->join();
+	//m_tAcceptThread.join();
+	cout << "³ª¿À¸é ¾ÈµÅ" << endl;
 
 	for (auto& thread : m_vWorkerThread)
 		thread->join();
+	/*for (auto& thread : m_vWorkerThread)
+		thread.join();*/
 
 	CNetwork::GetInst()->EndServer();
 	CNetwork::GetInst()->Disconnect();

@@ -1,4 +1,5 @@
 #include "DataBase.h"
+#include "Network.h"
 
 CDataBase::CDataBase()
 {
@@ -6,9 +7,7 @@ CDataBase::CDataBase()
 		std::cout << "DataBaseConnect Fail" << std::endl;
 	}
 	else {
-		m_ccqDataBaseQueue.clear();
-		m_ccqSaveStateQueue.clear();
-		m_UserData.clear();
+		m_ccqDBQueue.clear();
 		BindDataBaseFP();
 	}
 }
@@ -49,23 +48,21 @@ bool CDataBase::ConnectDataBase()
 			ret = SQLAllocHandle(SQL_HANDLE_DBC, m_hEnv, &m_hDbc);
 			if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 				ret = SQLSetConnectAttr(m_hDbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)(5), 0);
-				ret = SQLConnect(m_hDbc, (SQLCHAR*)L"TheIsLand", SQL_NTS, (SQLCHAR*)NULL, 0, NULL, 0);
+				ret = SQLConnect(m_hDbc, (SQLCHAR*)L"game_db_odbc", SQL_NTS, (SQLCHAR*)NULL, 0, NULL, 0);
 				if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 					ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
-					cout << "Connect DataBase" << endl;
+					cout << "DataBase Connect" << endl;
 					return true;
 				}
 				else {
 					HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
 					return false;
 				}
-			}
-			else {
+			}else {
 				HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
 				return false;
 			}
-		}
-		else {
+		}else {
 			HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
 			return false;
 		}
@@ -82,83 +79,193 @@ void CDataBase::DisConnectDataBase()
 	SQLDisconnect(m_hDbc);
 }
 
-void CDataBase::RunDataBase(DataBase_Event & event)
+void CDataBase::RunDataBase(DB_Event & _ev)
 {
-	m_fpDataBaseProcess[event.state](event);
+	m_fpDataBaseProcess[_ev.state](_ev);
 }
 
-void CDataBase::LogInPorcess(DataBase_Event & event)
+void CDataBase::LogInProcess(DB_Event & _ev)
+{
+	//if (IsIDExist(_ev.sid)) {
+	//	// ID 정보 존재 -> DB에서 불러옵니다.
+	//}
+	//else {
+	//	// ID 정보 X -> 새로운 정보를 넣습니다.
+	//}
+	//char* id;
+	//int for_str_len = WideCharToMultiByte(CP_ACP, 0, _ev., -1, NULL, 0, NULL, NULL);
+	//id = new char[for_str_len];
+	//WideCharToMultiByte(CP_ACP, 0, _ev.id, -1, id, for_str_len, 0, 0);
+	//OVER_EX* lpover_ex = new OVER_EX;
+	//ZeroMemory(&lpover_ex->m_Overlapped, sizeof(WSAOVERLAPPED));
+	//lpover_ex->m_Event = EV_DB;
+
+	//if (GetIsLogin(id)) {
+	//	lpover_ex->m_Event = EV_DB;
+	//	//lpover_ex->m_Status = DATA
+	//	PostQueuedCompletionStatus(CNetwork::GetInst()->GetIocp(), 10, _ev.client_num, &lpover_ex->m_Overlapped);
+	//	return;
+	//}
+
+	//wchar_t querry[MAX_BUF];
+
+	//swprintf_s(querry, L"SELECT NUM, ID, HP, STAMINA, HUNGER, THIRST, POSX, POSY, POSZ, DIRX, DIRY, DIRZ FROM dbo.PlayerInfo WHERE ID = %s", event.id);
+
+	//SQLWCHAR	name[MAX_STR_LEN];
+	//SQLINTEGER	num, hp, stamina, hunger, thirst;
+	//SQLFLOAT	posx, posy, posz, dirx, diry, dirz;
+	//SQLLEN	b_num, b_name, b_hp, b_stamina, b_hunger, b_thirst, b_posx, b_posy, b_posz, b_dirx, b_diry, b_dirz;
+
+	//SQLRETURN	ret;
+
+	//ret = SQLExecDirect(m_hStmt, (SQLCHAR *)querry, SQL_NTS);
+	//if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
+	//	ret = SQLBindCol(m_hStmt, 1, SQL_C_LONG, &num, 4, &b_num);
+	//	ret = SQLBindCol(m_hStmt, 2, SQL_C_CHAR, name, MAX_STR_LEN, &b_name);
+	//	ret = SQLBindCol(m_hStmt, 3, SQL_C_LONG, &hp, 4, &b_hp);
+	//	ret = SQLBindCol(m_hStmt, 4, SQL_C_LONG, &stamina, 4, &b_stamina);
+	//	ret = SQLBindCol(m_hStmt, 5, SQL_C_LONG, &hunger, 4, &b_hunger);
+	//	ret = SQLBindCol(m_hStmt, 6, SQL_C_LONG, &thirst, 4, &b_thirst);
+	//	ret = SQLBindCol(m_hStmt, 7, SQL_C_FLOAT, &posx, 8, &b_posx);
+	//	ret = SQLBindCol(m_hStmt, 8, SQL_C_FLOAT, &posy, 8, &b_posy);
+	//	ret = SQLBindCol(m_hStmt, 9, SQL_C_FLOAT, &posz, 8, &b_posz);
+	//	ret = SQLBindCol(m_hStmt, 10, SQL_C_FLOAT, &dirx, 8, &b_dirx);
+	//	ret = SQLBindCol(m_hStmt, 11, SQL_C_FLOAT, &diry, 8, &b_diry);
+	//	ret = SQLBindCol(m_hStmt, 12, SQL_C_FLOAT, &dirz, 8, &b_dirz);
+	//	ret = SQLFetch(m_hStmt);
+	//	if (ret == SQL_ERROR)
+	//		printf("SQLFetch In UserLoginData error\n");
+	//	if (ret == SQL_NO_DATA_FOUND || ret == SQL_NO_DATA) {
+	//		DB_Event db_event;
+	//		db_event.state = DBS_LOGIN_FAIL;
+	//		db_event.client_num = event.client_num;
+	//		InsertToStateQueue(db_event);
+	//		PostQueuedCompletionStatus(CNetwork::GetInst()->GetIocp(), 10, event.client_num, &lpover_ex->m_Overlapped);
+	//		SQLCancel(m_hStmt);
+	//		return;
+	//	}
+	//	if (ret == SQL_SUCCESS || SQL_SUCCESS_WITH_INFO) {
+	//		//SetIsLogin()
+	//		SQLCancel(m_hStmt);
+	//	}
+	//}
+	//else {
+	//	SQLCancel(m_hStmt);
+	//	HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
+	//	return;
+	//}
+}
+
+void CDataBase::LogOutProcess(DB_Event & event)
 {
 }
 
-void CDataBase::LogOutPorcess(DataBase_Event & event)
+void CDataBase::GetItemProcess(DB_Event & event)
 {
 }
 
-void CDataBase::BindDataBaseFP()
+void CDataBase::RemoveItemProcess(DB_Event & event)
 {
-	m_fpDataBaseProcess[DB_LOGIN] = [&](DataBase_Event& event) {LogInPorcess(event); };
-	m_fpDataBaseProcess[DB_LOGOUT] = [&](DataBase_Event& event) {LogOutPorcess(event); };
 }
 
-bool CDataBase::DataBaseQueueIsEmpty()
+bool CDataBase::IsIDExist(wstring login_id)
 {
-	return m_ccqDataBaseQueue.empty();
-}
+	wstring execFunc = L"EXEC select_id " + login_id;
 
-void CDataBase::InsertToDataBaseQueue(DataBase_Event & event)
-{
-	m_ccqDataBaseQueue.push(event);
-}
+	SQLRETURN ret;
+	ret = SQLExecDirect(m_hStmt, (SQLCHAR*)execFunc.c_str(), SQL_NTS);
+	ret = SQLBindCol(m_hStmt, 1, SQL_C_WCHAR, &m_dUserId, MAX_STR_LEN, &cbID);
 
-bool CDataBase::PopFromDataBaseQueue(DataBase_Event & event)
-{
-	return m_ccqDataBaseQueue.try_pop(event);
-}
+	bool isExist = false;
 
-void CDataBase::InsertToStateQueue(DataBase_Event & event)
-{
-	m_ccqSaveStateQueue.push(event);
-}
-
-bool CDataBase::PopFromStateQueue(DataBase_Event & event)
-{
-	return m_ccqSaveStateQueue.try_pop(event);
-}
-
-bool CDataBase::GetIsLogin(std::string sID)
-{
-	for (auto& player : m_UserData) {
-		if (player.m_sID == sID)
-			return true;
-	}
-	return false;
-}
-
-bool CDataBase::GetIsLogin(unsigned short usID)
-{
-	for (auto& player : m_UserData) {
-		if (player.m_usID == usID) {
-			return true;
-		}
-	}
-	return false;
-}
-
-void CDataBase::SetIsLogin(int iPlayerNum, unsigned short usID, std::string ID)
-{
-	m_UserData.emplace_back(User_Data{ ID, usID, iPlayerNum });
-}
-
-int CDataBase::FindIsLogin(unsigned short usID, wchar_t * user_id, bool bDelete)
-{
-	std::vector<User_Data>::iterator	iter;
-	for (iter = m_UserData.begin(); iter != m_UserData.end();) {
-		if (iter->m_usID == usID) {
-			return iter->m_iPlayerNum;
-		}
+	for (int i = 0;; ++i)
+	{
+		ret = SQLFetch(m_hStmt);
+		if (ret == SQL_ERROR || ret == SQL_SUCCESS_WITH_INFO)
+			HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
+		if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO);
 		else
-			++iter;
+			break;
+		isExist = true;
 	}
-	return static_cast<int>(MAX_USER);
+
+	SQLCancel(m_hStmt);
+	return isExist;
+}
+
+void CDataBase::AddUserInfo(DB_Event & _ev)
+{
+	wstring execFunc = L"EXEC insert_info";
+	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.ihp) + L", " + to_wstring(_ev.istamina) +
+		L", " + to_wstring(_ev.ihungry) + L", " + to_wstring(_ev.ithirst) + L", " +
+		to_wstring(_ev.fposx) + L", " + to_wstring(_ev.fposy) + L", " + to_wstring(_ev.fposz);
+	execFunc += var;
+
+	SQLRETURN ret;
+	ret = SQLExecDirect(m_hStmt, (SQLCHAR*)execFunc.c_str(), SQL_NTS);
+	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
+	{
+		ret = SQLBindCol(m_hStmt, 2, SQL_C_WCHAR, &m_dUserId, 100, &cbID);
+		if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
+			ret = SQLFetch(m_hStmt);
+		else
+			HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
+	}
+	else
+		HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
+
+	SQLCancel(m_hStmt);
+}
+
+void CDataBase::UpdateUserInfo(DB_Event & _ev)
+{
+	wstring execFunc = L"EXEC update_info ";
+	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.ihp) + L", " + to_wstring(_ev.istamina) +
+		L", " + to_wstring(_ev.ihungry) + L", " + to_wstring(_ev.ithirst) + L", " +
+		to_wstring(_ev.fposx) + L", " + to_wstring(_ev.fposy) + L", " + to_wstring(_ev.fposz);
+	execFunc += var;
+
+	SQLRETURN ret;
+	ret = SQLExecDirect(m_hStmt, (SQLCHAR*)execFunc.c_str(), SQL_NTS);
+	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
+		ret = SQLFetch(m_hStmt);
+	else
+		HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
+
+	SQLCancel(m_hStmt);
+}
+
+DB_Event & CDataBase::GetUserInfo(wstring & login_id)
+{
+	wstring execFunc = L"EXEC select_info " + login_id;
+
+	SQLRETURN ret = SQLExecDirect(m_hStmt, (SQLCHAR*)execFunc.c_str(), SQL_NTS);
+
+	ret = SQLBindCol(m_hStmt, 1, SQL_C_LONG, &m_dUserNum, 100, &cbNum);
+	ret = SQLBindCol(m_hStmt, 2, SQL_C_WCHAR, &m_dUserId, MAX_STR_LEN + 1, &cbID);
+	ret = SQLBindCol(m_hStmt, 3, SQL_C_SHORT, &m_dUserHp, 100, &cbHp);
+	ret = SQLBindCol(m_hStmt, 4, SQL_C_SHORT, &m_dUserStamina, 100, &cbStamina);
+	ret = SQLBindCol(m_hStmt, 5, SQL_C_SHORT, &m_dUserHungry, 100, &cbHungry);
+	ret = SQLBindCol(m_hStmt, 6, SQL_C_SHORT, &m_dUserThirst, 100, &cbThirst);
+	ret = SQLBindCol(m_hStmt, 7, SQL_C_DOUBLE, &m_dUserX, 100, &cbX);
+	ret = SQLBindCol(m_hStmt, 8, SQL_C_DOUBLE, &m_dUserY, 100, &cbY);
+	ret = SQLBindCol(m_hStmt, 9, SQL_C_DOUBLE, &m_dUserZ, 100, &cbZ);
+
+	DB_Event ev{};
+	ret = SQLFetch(m_hStmt);
+	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
+		cout << "Error" << endl;
+	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
+		ev.inum = m_dUserNum;
+		ev.sid = m_dUserId;
+		ev.ihp = m_dUserHp;
+		ev.istamina = m_dUserStamina;
+		ev.ihungry = m_dUserHungry;
+		ev.ithirst = m_dUserThirst;
+		ev.fposx = m_dUserX;
+		ev.fposy = m_dUserY;
+		ev.fposz = m_dUserZ;
+	}
+	SQLCancel(m_hStmt);
+	return ev;
 }
