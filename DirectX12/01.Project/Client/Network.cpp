@@ -85,10 +85,6 @@ void CNetwork::Init()
 
 	m_in_packet_size = 0;
 	m_saved_packet_size = 0;
-
-
-	InitPlayer();
-	InitAnimal();
 }
 
 bool CNetwork::ConnectServer(string ipAddr)
@@ -220,10 +216,15 @@ void CNetwork::ProcessPacket(char* packet)
 {
 	switch (packet[1])
 	{
-	case SC_LOGIN_OK: {
+	case SC_LOGIN_OK: 
+	{
 		SetLogin(true);
 		Recv_Login_OK_Packet(packet);
 		break;
+	}
+	case SC_LOGIN_FAIL:
+	{
+
 	}
 	case SC_PUT_PLAYER: {
 		SetLoopStart(true);
@@ -235,7 +236,7 @@ void CNetwork::ProcessPacket(char* packet)
 		break;
 	}
 	case SC_POS: {
-		Recv_Pos_Packet(packet);
+		Recv_Pos_Player_Packet(packet);
 		break;
 	}
 	case SC_ROT: {
@@ -260,79 +261,6 @@ void CNetwork::ProcessPacket(char* packet)
 		Recv_Remove_Npc_Packet(packet);
 		break;
 	}
-	}
-}
-
-void CNetwork::InitPlayer()
-{
-	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
-
-	for (int i = 0; i < MAX_USER; ++i) {
-		m_cumPlayer.insert(make_pair(i, pMeshData->Instantiate()));
-		m_cumPlayer[i]->SetName(L"Other Player");
-		m_cumPlayer[i]->AddComponent(new CCollider2D);
-		m_cumPlayer[i]->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
-		m_cumPlayer[i]->FrustumCheck(false);
-		m_cumPlayer[i]->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
-	}
-}
-
-void CNetwork::InitAnimal()
-{
-	Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
-	Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
-	Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
-	Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
-
-	for (int i = 0; i < MAX_ANIMAL; ++i)
-	{
-		// °øÅë
-		m_cumAnimal[i]->AddComponent(new CCollider2D);
-		m_cumAnimal[i]->AddComponent(new CAnimalScript);
-		m_cumAnimal[i]->FrustumCheck(false);
-		m_cumAnimal[i]->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
-		m_cumAnimal[i]->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-		m_cumAnimal[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-		if (i < ANIMAL_BEAR)
-		{
-			m_cumAnimal[i] = pBearTex->Instantiate();
-			m_cumAnimal[i]->SetName(L"Bear");
-
-			Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
-			m_cumAnimal[i]->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-
-			m_cumAnimal[i]->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-		}
-		else if (i < ANIMAL_BOAR)
-		{
-			m_cumAnimal[i] = pBoarTex->Instantiate();
-			m_cumAnimal[i]->SetName(L"Animal");
-
-			Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
-			m_cumAnimal[i]->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-
-			m_cumAnimal[i]->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
-		}
-		else if (i < ANIMAL_DEER)
-		{
-			m_cumAnimal[i] = pDeerTex->Instantiate();
-			m_cumAnimal[i]->SetName(L"Deer");
-
-			Vec3 vOffsetScale = Vec3(30.f, 30.f, 30.f);
-			m_cumAnimal[i]->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-
-			m_cumAnimal[i]->Collider2D()->SetOffsetScale(Vec3(300.f, 300.f, 300.f));
-		}
-		else if (i < ANIMAL_WOLF)
-		{
-			m_cumAnimal[i] = pWolfTex->Instantiate();
-			m_cumAnimal[i]->SetName(L"Wolf");
-
-			Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
-			m_cumAnimal[i]->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-
-			m_cumAnimal[i]->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-		}
 	}
 }
 
@@ -411,6 +339,11 @@ void CNetwork::Recv_Login_OK_Packet(char * packet)
 	m_usID = login_packet->id;
 }
 
+void CNetwork::Recv_Login_Fail_Packet(char * packet)
+{
+	SetLogin(false);
+}
+
 void CNetwork::Recv_Put_Player_Packet(char * packet)
 {
 	sc_put_player_packet* put_player_packet = reinterpret_cast<sc_put_player_packet*>(packet);
@@ -447,7 +380,7 @@ void CNetwork::Recv_Remove_Player_Packet(char * packet)
 	}
 }
 
-void CNetwork::Recv_Pos_Packet(char * packet)
+void CNetwork::Recv_Pos_Player_Packet(char * packet)
 {
 	sc_pos_player_packet*	pos_packet = reinterpret_cast<sc_pos_player_packet*>(packet);
 	unsigned int player_id = pos_packet->id;
@@ -475,6 +408,10 @@ void CNetwork::Recv_Chat_Packet(char * packet)
 	m_pChat->GetScript<CChatScript>()->AddChat(name, Msg);
 	m_pChat->GetScript<CInputScript>()->SetEnable(false);
 	m_pChat->GetScript<CInputScript>()->Clear();
+}
+
+void CNetwork::Recv_WakeUp_Npc_Packet(char * packet)
+{
 }
 
 void CNetwork::Recv_Put_Npc_Packet(char * packet)

@@ -59,10 +59,6 @@ public:
 	void ProcessPacket(char* _packet);
 
 public:
-	void InitPlayer();
-	void InitAnimal();
-
-public:
 	void SetLogin(bool _bLogin)
 	{
 		lock_guard<recursive_mutex> lock(m_rmLoginStateLock[LT_LOGIN_SUCCESS]);
@@ -93,20 +89,24 @@ public:
 public:
 	void Send_Login_Packet(wstring playerID);
 	void Send_Move_Packet(float fSpeed, Vec3 Dir, Vec3 Rot);
-	void Send_Rot_Packet(Vec2 Drag, Vec3 Rot);
+	//void Send_Rot_Packet(Vec2 Drag, Vec3 Rot);
 	void Send_Chat_Packet(string message);
 public:
 	void Recv_Login_OK_Packet(char* packet);
+	void Recv_Login_Fail_Packet(char* packet);
 	void Recv_Put_Player_Packet(char* packet);
 	void Recv_Remove_Player_Packet(char* packet);
-	void Recv_Pos_Packet(char* packet);
+	void Recv_Pos_Player_Packet(char* packet);
 	void Recv_Chat_Packet(char* packet);
 
 public:
+	void Recv_WakeUp_Npc_Packet(char* packet);
 	void Recv_Put_Npc_Packet(char* packet);
 	void Recv_Remove_Npc_Packet(char* packet);
 	void Recv_Pos_Npc_Packet(char* packet);
 public:
 	void SetChatObj(CGameObject* pObj) { m_pChat = pObj; }
 	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }
+	void SetOtherPlayerObj(concurrent_unordered_map<unsigned int, CGameObject*> pObjs) { m_cumPlayer = pObjs; }
+	void SetAnimalObj(concurrent_unordered_map<unsigned int, CGameObject*> pObjs) { m_cumPlayer = pObjs; }
 };
