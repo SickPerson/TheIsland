@@ -83,6 +83,39 @@ void CToolItemScript::Update()
 void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	std::cout << "Tool Item Right Use" << std::endl;
+	switch (m_eItemType)
+	{
+	case ITEM_PICKAXE:
+		break;
+	case ITEM_AXE:
+		break;
+	case ITEM_HAMMER:
+	{
+		if (pObj == NULL)
+			return;
+
+		if (pObj->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx())
+		{
+			tEvent tEv;
+			tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+			tEv.wParam = (DWORD_PTR)pObj;
+			CEventMgr::GetInst()->AddEvent(tEv);
+		}
+	}
+		break;
+	case ITEM_MACHETTE:
+		break;
+	case ITEM_WOODCLUB:
+		break;
+	case ITEM_BOW:
+		break;
+	case ITEM_CAMPFIRE:
+		break;
+	case ITEM_MAP:
+		break;
+	default:
+		break;
+	}
 }
 
 void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)

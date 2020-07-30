@@ -109,7 +109,7 @@ void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		m_pObj[m_eType]->AddComponent(new CCollider2D);
 		m_pObj[m_eType]->Collider2D()->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
 		if (m_eType >= HOUSING_WALL && m_eType < HOUSING_FLOOR)
-			m_pObj[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
+			m_pObj[m_eType]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
 		m_pObj[m_eType]->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
 		Vec3 vDir = pHost->Transform()->GetWorldDir(DIR_TYPE::FRONT);
