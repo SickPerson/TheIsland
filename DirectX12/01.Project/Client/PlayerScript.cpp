@@ -482,7 +482,6 @@ bool CPlayerScript::CollisionHouse(CCollider2D* _pOther, Vec3 vOffsetScale, UINT
 		vColScale2 = vOffsetScale;
 		break;
 	case HOUSING_WALL:
-	case HOUSING_DOOR:
 	case HOUSING_WINDOW:
 	{
 		Vec3 vRot = _pOther->Transform()->GetLocalRot();
@@ -497,8 +496,33 @@ bool CPlayerScript::CollisionHouse(CCollider2D* _pOther, Vec3 vOffsetScale, UINT
 		}
 	}
 		break;
+	case HOUSING_DOOR:
+	{
+		Vec3 vRot = _pOther->Transform()->GetLocalRot();
+		Vec3 vOffsetPos = Vec3(0.f, 0.f, 0.f);
+		if (vRot.y != 0.f)
+		{
+			vColScale2 = Vec3(vOffsetScale.z / 3.5f, vOffsetScale.y / 3.5f, vOffsetScale.x);
+			vOffsetPos = Vec3(80.f, 0.f, 0.f);
+		}
+		else
+		{
+			// vOffsetScale.x = 20.f;
+			vColScale2 = Vec3(vOffsetScale.x, vOffsetScale.y / 3.5f, vOffsetScale.z / 3.5f);
+			vOffsetPos = Vec3(0.f, 0.f, 80.f);
+		}
+		if (CollisionHouse_Door(_pOther, vColScale2, vOffsetPos))
+			return true;
+		if (CollisionHouse_Door(_pOther, vColScale2, -vOffsetPos))
+			return true;
+
+		return false;
+	}
+		break;
 	case HOUSING_FLOOR:
+	{
 		vColScale2 = vOffsetScale;
+	}
 		break;
 	default:
 		vColScale2 = vOffsetScale;
@@ -521,6 +545,42 @@ bool CPlayerScript::CollisionHouse(CCollider2D* _pOther, Vec3 vOffsetScale, UINT
 
 	//std::cout << "Player : " << vPos.x << " || " << vPos.y << " || " << vPos.z << " || " << std::endl;
 	//std::cout << "House : " << vCol2.x << " || " << vCol2.y << " || " << vCol2.z << " || " << std::endl;
+
+	if (vMax.x < vOtherMin.x || vMin.x > vOtherMax.x) return false;
+	if (vMax.y < vOtherMin.y || vMin.y > vOtherMax.y) return false;
+	if (vMax.z < vOtherMin.z || vMin.z > vOtherMax.z) return false;
+
+	return true;
+}
+
+bool CPlayerScript::CollisionHouse_Door(CCollider2D * _pOther, Vec3 vOffsetScale, Vec3 vOffsetPos)
+{
+	const Matrix& matCol1 = Collider2D()->GetColliderWorldMat();
+	const Matrix& matCol2 = _pOther->GetColliderWorldMat();
+
+	Vec3 vCol1 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol1);
+	Vec3 vCol2 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol2);
+
+	Vec3 vScale1 = Transform()->GetLocalScale();
+	Vec3 vScale2 = _pOther->Transform()->GetLocalScale();
+
+	Vec3 vColScale1 = Vec3(20.f, 60.f, 20.f);
+
+	vScale1 *= vColScale1;
+	vScale2 *= vOffsetScale;
+
+	Vec3 vMax, vOtherMax;
+	Vec3 vMin, vOtherMin;
+
+	Vec3 vPos = Transform()->GetLocalPos();
+	vPos.y += 50.f;
+
+	vCol2 += vOffsetPos;
+
+	vMax = vPos + vScale1;
+	vMin = vPos - vScale1;
+	vOtherMax = vCol2 + vScale2;
+	vOtherMin = vCol2 - vScale2;
 
 	if (vMax.x < vOtherMin.x || vMin.x > vOtherMax.x) return false;
 	if (vMax.y < vOtherMin.y || vMin.y > vOtherMax.y) return false;
