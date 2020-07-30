@@ -37,6 +37,7 @@
 
 unsigned int CNetwork::m_usID = 0;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumPlayer;
+concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumAnimal;
 
 CNetwork::CNetwork()
 {
