@@ -15,6 +15,7 @@ public:
 	void BindMonsterUpdate() {
 		m_fpMonsterUpdate[OBJ_STATE_ATTACK] = [&](unsigned int uiMonster, unsigned int uiTarget) {this->AttackEvent(uiMonster, uiTarget); };
 		m_fpMonsterUpdate[OBJ_STATE_FOLLOW] = [&](unsigned int uiMonster, unsigned int uiTarget) {this->FollowEvent(uiMonster, uiTarget); };
+		m_fpMonsterUpdate[OBJ_STATE_EVASION] = [&](unsigned int uiMonster, unsigned int uiTarget) {EvastionEvent(uiMonster, uiTarget); };
 		m_fpMonsterUpdate[OBJ_STATE_IDLE] = [&](unsigned int uiMonster, unsigned int uiTarget) {this->IdleEvent(uiTarget); };
 	}
 	void BindMonsterDamaged() {
@@ -37,6 +38,7 @@ public:
 public:
 	void AttackEvent(unsigned int uiMonster, unsigned int uiTarget);
 	void FollowEvent(unsigned int uiMonster, unsigned int uiTarget);
+	void EvastionEvent(unsigned int uiMonster, unsigned int uiTarget);
 	void IdleEvent(unsigned int uiMonster);
 	void RespawnEvent(unsigned int uiMonster);
 

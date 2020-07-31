@@ -29,7 +29,7 @@ void CDataBase::HandleDiagnosticRecord(SQLHANDLE _hHandle, SQLSMALLINT _hType, R
 		fwprintf(stderr, L"Invalid handle!\n");
 		return;
 	}
-	while (SQLGetDiagRec(_hType, _hHandle, ++iRec, (SQLCHAR*)wszState, &iError, (SQLCHAR*)wszMessage,
+	while (SQLGetDiagRec(_hType, _hHandle, ++iRec, (SQLWCHAR*)wszState, &iError, (SQLWCHAR*)wszMessage,
 		(SQLSMALLINT)(sizeof(wszMessage) / sizeof(WCHAR)), (SQLSMALLINT*)NULL) == SQL_SUCCESS) {
 		// Hide data truncated..
 		if (wcsncmp(wszState, L"01004", 5)) {
@@ -48,7 +48,7 @@ bool CDataBase::ConnectDataBase()
 			ret = SQLAllocHandle(SQL_HANDLE_DBC, m_hEnv, &m_hDbc);
 			if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 				ret = SQLSetConnectAttr(m_hDbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)(5), 0);
-				ret = SQLConnect(m_hDbc, (SQLCHAR*)L"game_db_odbc", SQL_NTS, (SQLCHAR*)NULL, 0, NULL, 0);
+				ret = SQLConnect(m_hDbc, (SQLWCHAR*)L"game_db_odbc", SQL_NTS, (SQLWCHAR*)NULL, 0, NULL, 0);
 				if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 					ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
 					cout << "DataBase Connect" << endl;
@@ -173,7 +173,7 @@ bool CDataBase::IsIDExist(wstring login_id)
 	wstring execFunc = L"EXEC select_id " + login_id;
 
 	SQLRETURN ret;
-	ret = SQLExecDirect(m_hStmt, (SQLCHAR*)execFunc.c_str(), SQL_NTS);
+	ret = SQLExecDirect(m_hStmt, (SQLWCHAR*)execFunc.c_str(), SQL_NTS);
 	ret = SQLBindCol(m_hStmt, 1, SQL_C_WCHAR, &m_dUserId, MAX_STR_LEN, &cbID);
 
 	bool isExist = false;
@@ -202,7 +202,7 @@ void CDataBase::AddUserInfo(DB_Event & _ev)
 	execFunc += var;
 
 	SQLRETURN ret;
-	ret = SQLExecDirect(m_hStmt, (SQLCHAR*)execFunc.c_str(), SQL_NTS);
+	ret = SQLExecDirect(m_hStmt, (SQLWCHAR*)execFunc.c_str(), SQL_NTS);
 	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
 	{
 		ret = SQLBindCol(m_hStmt, 2, SQL_C_WCHAR, &m_dUserId, 100, &cbID);
@@ -226,7 +226,7 @@ void CDataBase::UpdateUserInfo(DB_Event & _ev)
 	execFunc += var;
 
 	SQLRETURN ret;
-	ret = SQLExecDirect(m_hStmt, (SQLCHAR*)execFunc.c_str(), SQL_NTS);
+	ret = SQLExecDirect(m_hStmt, (SQLWCHAR*)execFunc.c_str(), SQL_NTS);
 	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
 		ret = SQLFetch(m_hStmt);
 	else
@@ -239,7 +239,7 @@ DB_Event & CDataBase::GetUserInfo(wstring & login_id)
 {
 	wstring execFunc = L"EXEC select_info " + login_id;
 
-	SQLRETURN ret = SQLExecDirect(m_hStmt, (SQLCHAR*)execFunc.c_str(), SQL_NTS);
+	SQLRETURN ret = SQLExecDirect(m_hStmt, (SQLWCHAR*)execFunc.c_str(), SQL_NTS);
 
 	ret = SQLBindCol(m_hStmt, 1, SQL_C_LONG, &m_dUserNum, 100, &cbNum);
 	ret = SQLBindCol(m_hStmt, 2, SQL_C_WCHAR, &m_dUserId, MAX_STR_LEN + 1, &cbID);

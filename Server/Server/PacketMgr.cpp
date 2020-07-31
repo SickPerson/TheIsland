@@ -66,7 +66,7 @@ void CPacketMgr::Send_Put_Player_Packet(unsigned int playerId, unsigned int Othe
 	packet.vPos = vPos;
 	packet.vRot = vRot;
 
-	CPacketMgr::Send_Packet(playerId, &packet);
+	Send_Packet(playerId, &packet);
 
 	if (playerId == OtherId) return;
 
@@ -87,9 +87,9 @@ void CPacketMgr::Send_Pos_Player_Packet(unsigned int playerId, unsigned int Othe
 	packet.vRot = rot;
 
 	if (0 != CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->ExistList(OtherId))
-		CPacketMgr::Send_Packet(playerId, &packet);
+		Send_Packet(playerId, &packet);
 	else
-		CPacketMgr::Send_Put_Player_Packet(playerId, OtherId);
+		Send_Put_Player_Packet(playerId, OtherId);
 }
 
 void CPacketMgr::Send_Remove_Player_Packet(unsigned int playerId, unsigned int OtherId)
@@ -110,7 +110,26 @@ void CPacketMgr::Send_Chat_Packet(unsigned int playerId, unsigned int OtherId, c
 	packet.type = SC_CHAT;
 	wcscpy_s(packet.wcid, CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetWcID());
 	strcpy_s(packet.meesage, message);
-	CPacketMgr::Send_Packet(OtherId, &packet);
+	Send_Packet(OtherId, &packet);
+}
+
+void CPacketMgr::Send_Animation_Player_Packet(unsigned int playerId, unsigned int OtherId, char AnimationType)
+{
+	sc_animation_player_packet packet;
+	packet.size = sizeof(sc_animation_npc_packet);
+	packet.type = SC_ANIMATION_PLAYER;
+	packet.id = OtherId;
+	packet.animation = AnimationType;
+	Send_Packet(playerId, &packet);
+}
+
+void CPacketMgr::Send_Wakeup_Npc_Packet(unsigned int playerId, unsigned int NpcId)
+{
+	sc_wake_up_packet packet;
+	packet.size = sizeof(sc_wake_up_packet);
+	packet.type = SC_WAKE_UP_NPC;
+	packet.id = NpcId;
+	Send_Packet(playerId, &packet);
 }
 
 void CPacketMgr::Send_Put_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
@@ -126,7 +145,7 @@ void CPacketMgr::Send_Put_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
 	packet.vPos = pos;
 	packet.vRot = rot;
 
-	CPacketMgr::Send_Packet(PlayerID, &packet);
+	Send_Packet(PlayerID, &packet);
 
 	CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->InsertList(NpcID + MAX_USER);
 }
@@ -158,4 +177,14 @@ void CPacketMgr::Send_Remove_Npc_Packet(unsigned int PlayerID, unsigned int NpcI
 	Send_Packet(PlayerID, &packet);
 
 	CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->DeleteList(NpcID + MAX_USER);
+}
+
+void CPacketMgr::Send_Animation_Npc_Packet(unsigned int playerId, unsigned int NpcId, char AnimationType)
+{
+	sc_animation_player_packet packet;
+	packet.size = sizeof(sc_animation_npc_packet);
+	packet.type = SC_ANIMATION_NPC;
+	packet.animation = AnimationType;
+	packet.id = NpcId;
+	Send_Packet(playerId, &packet);
 }

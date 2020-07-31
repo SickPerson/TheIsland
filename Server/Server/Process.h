@@ -22,7 +22,7 @@ public:
 public:
 	static CPlayerpool*	m_pPlayerPool;
 	static CMonsterpool* m_pMonsterPool;
-	//static concurrent_unordered_map<unsigned int, wstring> m_cumLoginList; // 로그인 리스트
+
 	static concurrent_unordered_set<unsigned int>	m_cusLoginList; // 로그인 리스트
 	static concurrent_priority_queue<Update_Event>	m_cpqEventQueue; // 이벤트 큐(Timer 이벤트)
 
@@ -82,7 +82,7 @@ public:
 	{
 		if (m_cpqEventQueue.try_pop(_ev))
 		{
-			if (_ev.wakeup_time > std::chrono::high_resolution_clock::now())
+			if (_ev.wakeup_time < std::chrono::high_resolution_clock::now())
 			{
 				PushEventQueue(_ev);
 				return false;

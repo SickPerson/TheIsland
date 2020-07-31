@@ -89,20 +89,15 @@ void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
 
 		if (true == ObjectRangeCheck(player_pos, monster_pos, PLAYER_BETWEEN_RANGE))
 		{
-			//if (false == au.second->GetWakeUp()) // 몬스터가 깨어나지 않았을때
-			//{
-			//	Update_Event ev;
-			//	ev.m_Do_Object = au.first;
-			//	ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
-			//	ev.m_From_Object = playerId;
-			//	ev.m_ObjState = OBJ_STATE_IDLE;
-			//	ev.wakeup_time = high_resolution_clock::now();
-			//	PushEventQueue(ev);
-			//}
-			//else // 몬스터가 깨어나 있는 상황일때
-			//{
-			//	
-			//}
+			if (false == au.second->GetWakeUp())
+			{
+				Update_Event ev;
+				ev.m_Do_Object = au.first;
+				ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
+				ev.m_From_Object = NO_TARGET;
+				ev.m_ObjState = OBJ_STATE_IDLE;
+				PushEventQueue(ev);
+			}
 			CPacketMgr::Send_Put_Npc_Packet(playerId, au.first);
 		}
 	}
@@ -129,12 +124,13 @@ void CPlayerProcess::PlayerMove(unsigned int playerId, char * packet)
 	UpdateViewList(playerId);
 }
 
-void CPlayerProcess::PlayerDinconnect(unsigned int playerId)
+void CPlayerProcess::PlayerLogout(unsigned int playerId)
 {
 	// 이미 Disconnect인 상태일 경우
-	if (!CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetConnect()) return;
+	if (!m_pPlayerPool->m_cumPlayerPool[playerId]->GetConnect()) 
+		return;
 	// 아직 Diconnect인 상태가 아닐 경우
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(false);
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(false);
 
 	if (ExistLoginList(playerId))
 		DeleteLoginList(playerId);

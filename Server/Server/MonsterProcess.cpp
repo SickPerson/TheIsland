@@ -90,44 +90,81 @@ void CMonsterProcess::FollowEvent(unsigned int uiID, unsigned int uiTarget)
 {
 }
 
-void CMonsterProcess::IdleEvent(unsigned int uiID)
+void CMonsterProcess::EvastionEvent(unsigned int uiMonster, unsigned int uiTarget)
+{
+}
+
+void CMonsterProcess::IdleEvent(unsigned int monsterId)
 {
 	concurrent_unordered_set<unsigned int> login_list;
 	concurrent_unordered_set<unsigned int> range_list;
 
 	CopyBeforeLoginList(login_list);
-	InRangePlayer(login_list, range_list, uiID);
+	InRangePlayer(login_list, range_list, monsterId);
 
-	if (range_list.empty()) {
-		CProcess::m_pMonsterPool->m_cumMonsterPool[uiID]->ResPawn();
+	/*if (range_list.empty()) {
+		CProcess::m_pMonsterPool->m_cumMonsterPool[monsterId]->ResPawn();
 		return;
-	}
+	}*/
 
-	Vec3 monster_pos = CProcess::m_pMonsterPool->m_cumMonsterPool[uiID]->GetPos();
+	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[monsterId]->GetPos();
+	BEHAVIOR_TYPE animal_type = m_pMonsterPool->m_cumMonsterPool[monsterId]->GetType();
 
-	unsigned int target_id = CProcess::m_pMonsterPool->m_cumMonsterPool[uiID]->GetTarget();
+	unsigned int target_id = m_pMonsterPool->m_cumMonsterPool[monsterId]->GetTarget();
+	
 	for (auto& au : range_list) {
-		bool isConnect = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
+		bool isConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!isConnect)continue;
 		//CPacketMgr::Send_Packet(au, &) // IDLE Animation 패킷 보내기
-		Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetPos();
-		if (ObjectRangeCheck(player_pos, monster_pos, 1000.f) && target_id == NO_TARGET)
+		Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[au]->GetPos();
+		if (ObjectRangeCheck(player_pos, monster_pos, MONSTER_BETWEEN_RANGE) && target_id == NO_TARGET)
 		{
-			CProcess::m_pMonsterPool->m_cumMonsterPool[uiID]->SetTarget(au);
+			m_pMonsterPool->m_cumMonsterPool[monsterId]->SetTarget(au);
 			target_id = au;
 		}
 	}
 
-	if (target_id != NO_TARGET) {
-		CProcess::m_pMonsterPool->m_cumMonsterPool[uiID]->SetState(OBJ_STATE_FOLLOW);
+	// Animal의 Target이 없을 경우
+	if (NO_TARGET == target_id)
+	{
+		m_pMonsterPool->m_cumMonsterPool[monsterId]->SetState(OBJ_STATE_IDLE);
 		Update_Event ev;
-		// TARGET이 있을 경우 설정 필요
-		CProcess::PushEventQueue(ev);
+		ev.m_Do_Object = monsterId;
+		ev.m_EventType = EV_MONSTER_UPDATE;
+		ev.m_ObjState = OBJ_STATE_IDLE;
+		ev.m_From_Object = NO_TARGET;
+		ev.wakeup_time = high_resolution_clock::now() + 10s;
+		PushEventQueue(ev);
 	}
-	else {
+	else if(target_id < MAX_USER)
+	{
 		Update_Event ev;
-		// NO TARGET일 경우 설정 필요
-		CProcess::PushEventQueue(ev);
+		ev.m_Do_Object = monsterId;
+		ev.m_EventType = EV_MONSTER_UPDATE;
+		if (B_WARLIKE == animal_type) // 선공
+		{
+			m_pMonsterPool->m_cumMonsterPool[monsterId]->SetState(OBJ_STATE_FOLLOW);
+	
+			ev.m_ObjState = OBJ_STATE_FOLLOW;
+			ev.m_From_Object = target_id;
+			ev.wakeup_time = high_resolution_clock::now() + 1s;
+		}
+		else if (B_PASSIVE == animal_type) // 비선공
+		{
+			m_pMonsterPool->m_cumMonsterPool[monsterId]->SetState(OBJ_STATE_IDLE);
+			
+			ev.m_ObjState = OBJ_STATE_IDLE;
+			ev.m_From_Object = NO_TARGET;
+			ev.wakeup_time = high_resolution_clock::now() + 10s;
+		}
+		else if (B_EVASION == animal_type) // 회피(도망)
+		{
+			m_pMonsterPool->m_cumMonsterPool[monsterId]->SetState(OBJ_STATE_EVASION);
+			ev.m_ObjState = OBJ_STATE_EVASION;
+			ev.m_From_Object = target_id;
+			ev.wakeup_time = high_resolution_clock::now() + 10s;
+		}
+		PushEventQueue(ev);
 	}
 }
 
@@ -174,7 +211,7 @@ void CMonsterProcess::InRangePlayer(concurrent_unordered_set<unsigned int>& cusL
 		bool isConnect = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!isConnect) continue;
 		Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetPos();
-		if(ObjectRangeCheck(player_pos, monster_pos, 1000.f))
+		if(ObjectRangeCheck(player_pos, monster_pos, MONSTER_BETWEEN_RANGE))
 			cusList.insert(au);
 	}
 		

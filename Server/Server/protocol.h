@@ -28,27 +28,32 @@ constexpr	int		CS_END =	4;
 // Server -> Client Packet Protocol
 constexpr	char	SC_LOGIN_OK = 0;
 constexpr	char	SC_LOGIN_FAIL = 1;
-constexpr	char	SC_PUT_PLAYER = 2;
-constexpr	char	SC_REMOVE_PLAYER = 3;
-constexpr	char	SC_POS = 4;
-constexpr	char	SC_ROT = 5;
-constexpr	char	SC_CHAT = 6;
+constexpr	char	SC_STATUS_PLAYER = 2;
+constexpr	char	SC_PUT_PLAYER = 3;
+constexpr	char	SC_REMOVE_PLAYER = 4;
+constexpr	char	SC_POS = 5;
+constexpr	char	SC_ROT = 6;
+constexpr	char	SC_CHAT = 7;
+constexpr	char	SC_ANIMATION_PLAYER = 8;
 // Monster, NPC ฐüทร
-constexpr	char	SC_LOGIN_NPC = 7;
-constexpr	char	SC_PUT_NPC = 8;
-constexpr	char	SC_POS_NPC = 9;
-constexpr	char	SC_REMOVE_NPC = 10;
+constexpr	char	SC_WAKE_UP_NPC = 9;
+constexpr	char	SC_PUT_NPC = 10;
+constexpr	char	SC_POS_NPC = 11;
+constexpr	char	SC_REMOVE_NPC = 12;
+constexpr	char	SC_STATUS_NPC = 13;
+constexpr	char	SC_ANIMATION_NPC = 14;
 
-constexpr	char	SC_END = 11;
+constexpr	char	SC_END = 15;
 
 // About Player
-constexpr float PLAYER_BETWEEN_RANGE = 1000.f;
-constexpr float MONSTER_BETWEEN_RANGE = 500.f;
+constexpr float PLAYER_BETWEEN_RANGE = 3000.f;
+constexpr float MONSTER_BETWEEN_RANGE = 1000.f;
 
 #pragma	pack(push, 1)
 // ___________________________________________________________________
 //						[ Sever -> Client ]
 // ___________________________________________________________________
+// Player
 struct sc_login_ok_packet {
 	char			size;
 	char			type;
@@ -66,14 +71,14 @@ struct sc_logout_packet{
 	unsigned int id;
 };
 
-struct sc_stat_change_packet {
+struct sc_satus_packet{
 	char size;
 	char type;
 	unsigned int id;
 
 	float fHP;
-	float Stamina;
-	float Hungry;
+	float fStamina;
+	float fHungry;
 };
 
 struct sc_put_player_packet {
@@ -85,27 +90,7 @@ struct sc_put_player_packet {
 	Vec3	vRot;
 };
 
-struct sc_put_npc_packet {
-	char size;
-	char type;
-	unsigned int id;
-
-	Vec3	vPos;
-	Vec3	vRot;
-};
-
-struct sc_pos_player_packet 
-{
-	char size;
-	char type;
-	unsigned int id;
-	Vec3 vPos;
-	Vec3 vRot;
-	unsigned move_time;
-};
-
-struct sc_pos_npc_packet
-{
+struct sc_pos_player_packet{
 	char size;
 	char type;
 	unsigned int id;
@@ -134,10 +119,50 @@ struct sc_remove_player_packet {
 	unsigned int id;
 };
 
+struct sc_animation_player_packet
+{
+	char size;
+	char type;
+	char animation;
+	unsigned int id;
+};
+
+// NPC
+struct sc_wake_up_packet{
+	char size;
+	char type;
+	unsigned int id;
+};
+struct sc_put_npc_packet {
+	char size;
+	char type;
+	unsigned int id;
+
+	Vec3	vPos;
+	Vec3	vRot;
+};
+
+struct sc_pos_npc_packet{
+	char size;
+	char type;
+	unsigned int id;
+	Vec3 vPos;
+	Vec3 vRot;
+	unsigned move_time;
+};
+
 struct sc_remove_npc_packet
 {
 	char size;
 	char type;
+	unsigned int id;
+};
+
+struct sc_animation_npc_packet
+{
+	char size;
+	char type;
+	char animation;
 	unsigned int id;
 };
 

@@ -17,9 +17,13 @@ public: // Player 관련 패킷
 	static void Send_Pos_Player_Packet(unsigned int playerId, unsigned int OtherId);
 	static void Send_Remove_Player_Packet(unsigned int playerId, unsigned int OtherId);
 	static void Send_Chat_Packet(unsigned int playerId, unsigned int OtherId, char message[]);
+	static void Send_Animation_Player_Packet(unsigned int playerId, unsigned int OtherId, char AnimationType);
 
 public:
+	static void Send_Wakeup_Npc_Packet(unsigned int playerId, unsigned int NpcId);
 	static void Send_Put_Npc_Packet(unsigned int playerId, unsigned int NpcId);
 	static void Send_Pos_Npc_Packet(unsigned int playerId, unsigned int NpcId);
 	static void Send_Remove_Npc_Packet(unsigned int playerId, unsigned int NpcId);
+	static void Send_Animation_Npc_Packet(unsigned int playerId, unsigned int NpcId, char AnimationType);
+
 };
