@@ -2,10 +2,11 @@
 #include "BuildScript.h"
 #include "HousingMgr.h"
 
-CBuildScript::CBuildScript(HOUSING_TYPE eType) :
+CBuildScript::CBuildScript(HOUSING_TYPE eType, UINT iGrade) :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
 	m_bBuild(false),
-	m_eType(eType)
+	m_eType(eType),
+	m_iGrade(iGrade)
 {
 	switch (eType)
 	{
@@ -373,6 +374,63 @@ bool CBuildScript::Build()
 		}
 		GetObj()->AddChild(pFloor);
 	}
+
+	return true;
+}
+
+bool CBuildScript::Upgrade()
+{
+	if(m_iGrade >= MAX_GRADE - 1)
+		return false;
+
+	m_iGrade++;
+
+	CGameObject* pObject = NULL;
+	pObject = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)m_eType, m_iGrade)->Instantiate();
+	pObject->AddComponent(new CBuildScript((HOUSING_TYPE)m_eType, m_iGrade));
+
+	pObject->AddComponent(new CCollider2D);
+	pObject->Collider2D()->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
+
+	if (m_eType >= HOUSING_WALL && m_eType < HOUSING_FLOOR)
+		pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
+
+	pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+
+	pObject->SetName(L"House");
+
+	Vec3 vPos = Transform()->GetLocalPos();
+	Vec3 vRot = Transform()->GetLocalRot();
+	Vec3 vScale = Transform()->GetLocalScale();
+	pObject->Transform()->SetLocalPos(vPos);
+	pObject->Transform()->SetLocalRot(vRot);
+	pObject->Transform()->SetLocalScale(vScale);
+
+	for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
+	{
+		pObject->MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
+		//SetData(SHADER_PARAM::INT_3, &test);
+	}
+
+	if (m_eType == HOUSING_FOUNDATION)
+	{
+		CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData(HOUSING_FLOOR, m_iGrade)->Instantiate();
+		pFloor->SetName(L"Foundation_Floor");
+		pFloor->Transform()->SetLocalPos(Vec3(0.f, 0.f, -14.f));
+		pFloor->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+		for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
+		{
+			pFloor->MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
+			//SetData(SHADER_PARAM::INT_3, &test);
+		}
+		pObject->AddChild(pFloor);
+	}
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->AddGameObject(pObject);
+
+	tEvent tEv;
+	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+	tEv.wParam = (DWORD_PTR)GetObj();
+	CEventMgr::GetInst()->AddEvent(tEv);
 
 	return true;
 }

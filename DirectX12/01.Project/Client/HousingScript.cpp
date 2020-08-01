@@ -81,6 +81,12 @@ void CHousingScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	std::cout << "Housing Item Left Use" << std::endl;
+	int idx = pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->CheckItem(ITEM_TYPE::ITEM_WOOD, 3);
+	if (idx == -1)
+	{
+		return;
+	}
+
 	if (m_pObj[m_eType]->GetScript<CBuildScript>()->Build())
 	{
 		m_pObj[m_eType]->MeshRender()->SetDynamicShadow(true);
@@ -117,6 +123,8 @@ void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 
 		m_pObj[m_eType]->GetScript<CBuildScript>()->Init();
 		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Build")->AddGameObject(m_pObj[m_eType]);
+
+		pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->DecreaseItem(idx, 3);
 	}
 }
 

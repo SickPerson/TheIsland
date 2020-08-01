@@ -369,6 +369,36 @@ void CInventoryScript::OnAddable(int index)
 	m_bAddable = true;
 }
 
+int CInventoryScript::CheckItem(UINT eType, int iCount)
+{
+	int idx = -1;
+	for (int i = 0; i < m_vecItemSlot.size(); ++i)
+	{
+		if (m_vecItem[i] == NULL)
+			continue;
+		if (m_vecItem[i]->GetItemType() == eType)
+		{
+			if (m_vecItem[i]->GetItemCount() >= iCount)
+			{
+				idx = i;
+				break;
+			}
+		}
+	}
+	return idx;
+}
+
+bool CInventoryScript::DecreaseItem(int idx, int iCount)
+{
+	m_pItemLootScript->GetItemNotify(m_vecItem[idx]->GetItemIcon(), m_vecItem[idx]->GetName(), -iCount);
+	if (!m_vecItem[idx]->SetItemIncrease(-iCount))
+	{
+		OnAddable(idx);
+		return true;
+	}
+	return false;
+}
+
 void CInventoryScript::Use_Left(CGameObject * pHost, CGameObject * pObj, int index)
 {
 	if (index == -1 || m_vecItem[index] == NULL)

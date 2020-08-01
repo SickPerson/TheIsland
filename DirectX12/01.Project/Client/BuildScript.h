@@ -8,9 +8,10 @@ class CBuildScript :
 	bool m_bBuild;
 	bool m_bCollision;
 
-	HOUSING_TYPE m_eType;
+	HOUSING_TYPE	m_eType;
+	UINT			m_iGrade;
 public:
-	CBuildScript(HOUSING_TYPE eType);
+	CBuildScript(HOUSING_TYPE eType, UINT iGrade = 0);
 	virtual ~CBuildScript();
 
 public:
@@ -24,6 +25,8 @@ public:
 public:
 	void Init();
 	bool Build();
+
+	bool Upgrade();
 
 	HOUSING_TYPE GetHousingType();
 	Vec3 GetOffsetScale();

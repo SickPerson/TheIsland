@@ -43,6 +43,9 @@ public:
 	void Show();
 	void OnAddable(int index);
 
+	int CheckItem(UINT eType, int iCount = 1);
+	bool DecreaseItem(int idx, int iCount = 1);
+
 	void Use_Left(CGameObject* pHost, CGameObject* pObj, int index);
 	void Use_Right(CGameObject* pHost, CGameObject* pObj, int index);
 	void Use_Highlight(CGameObject* pHost, CGameObject* pObj, int index);

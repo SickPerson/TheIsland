@@ -1336,6 +1336,7 @@ void CIngameScene::CreateItemUI()
 	pObject->Transform()->SetLocalPos(Vec3(490.f, -210.f, 300.f));
 	pObject->Transform()->SetLocalScale(Vec3(250.f, 40.f, 1.f));
 
+	pLootObject->GetScript<CItemLootScript>()->SetBackgroundObject(pObject);
 	pLootObject->AddChild(pObject);
 	m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
 

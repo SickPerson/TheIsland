@@ -2,7 +2,7 @@
 #include "Housing.h"
 #include <Engine/Ptr.h>
 
-#define MAX_GRADE 3
+#define MAX_GRADE 2
 
 class CMeshData;
 

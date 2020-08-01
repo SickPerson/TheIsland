@@ -127,7 +127,6 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	{
 	case ITEM_PICKAXE:
 	case ITEM_AXE:
-	case ITEM_HAMMER:
 	case ITEM_MACHETTE:
 	case ITEM_WOODCLUB:
 		if (pObj == NULL)
@@ -188,6 +187,26 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				}
 			}
 		}
+		break;
+	case ITEM_HAMMER:
+	{
+		if (pObj == NULL)
+			return;
+
+		if (pObj->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx())
+		{
+			int idx = pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->CheckItem(ITEM_TYPE::ITEM_STONE, 3);
+			if (idx == -1)
+			{
+				return;
+			}
+
+			if (pObj->GetScript<CBuildScript>()->Upgrade())
+			{
+				pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->DecreaseItem(idx, 3);
+			}
+		}
+	}
 		break;
 	case ITEM_BOW:
 		break;
