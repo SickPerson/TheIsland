@@ -98,12 +98,14 @@ public:
 	void Recv_Remove_Player_Packet(char* packet);
 	void Recv_Pos_Player_Packet(char* packet);
 	void Recv_Chat_Packet(char* packet);
+	void Recv_Animation_Player_Packet(char* packet);
 
 public:
 	void Recv_WakeUp_Npc_Packet(char* packet);
 	void Recv_Put_Npc_Packet(char* packet);
 	void Recv_Remove_Npc_Packet(char* packet);
 	void Recv_Pos_Npc_Packet(char* packet);
+	void Recv_Animation_Npc_Packet(char* packet);
 public:
 	void SetChatObj(CGameObject* pObj) { m_pChat = pObj; }
 	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }

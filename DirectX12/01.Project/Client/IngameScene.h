@@ -1,6 +1,9 @@
 #pragma once
 #include <Engine/SceneScript.h>
 
+#include <concurrent_unordered_map.h>
+using namespace concurrency;
+
 class CGameObject;
 
 class CIngameScene :
@@ -13,6 +16,10 @@ class CIngameScene :
 
 	int m_iSelect = -1;
 	bool m_bShowCursor = false;
+
+public:
+	concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
+	concurrent_unordered_map<unsigned int, CGameObject*> m_cumAnimal;
 
 public:
 	CIngameScene();

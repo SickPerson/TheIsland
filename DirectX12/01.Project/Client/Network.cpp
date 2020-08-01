@@ -337,6 +337,7 @@ void CNetwork::Recv_Login_OK_Packet(char * packet)
 	pScene = CSceneMgr::GetInst()->GetCurScene();
 	sc_login_ok_packet* login_packet = reinterpret_cast<sc_login_ok_packet*>(packet);
 	m_usID = login_packet->id;
+	//pScene->FindLayer(L"Player")->AddGameObject(m_pPlayer);
 }
 
 void CNetwork::Recv_Login_Fail_Packet(char * packet)
@@ -388,7 +389,7 @@ void CNetwork::Recv_Pos_Player_Packet(char * packet)
 	Vec3 vRot = pos_packet->vRot;
 	if (m_usID == player_id) {
 		m_pPlayer->Transform()->SetLocalPos(vPos);
-		m_pPlayer->Transform()->SetLocalRot(vRot);
+		//m_pPlayer->Transform()->SetLocalRot(vRot);
 	}
 	else {
 		m_cumPlayer[player_id]->Transform()->SetLocalPos(vPos);
@@ -410,8 +411,29 @@ void CNetwork::Recv_Chat_Packet(char * packet)
 	m_pChat->GetScript<CInputScript>()->Clear();
 }
 
+void CNetwork::Recv_Animation_Player_Packet(char * packet)
+{
+	sc_animation_player_packet* animation_player_packet = reinterpret_cast<sc_animation_player_packet*>(packet);
+	unsigned int player_id = animation_player_packet->id;
+	char player_animation = animation_player_packet->animation;
+
+	if (m_usID == player_id)
+	{
+		// 자기 자신 애니메이션 키값 변환
+	}
+	else
+	{
+		// 타 플레이어 애니메이션 키값 변환
+	}
+}
+
 void CNetwork::Recv_WakeUp_Npc_Packet(char * packet)
 {
+	sc_wake_up_packet* wakeup_npc_packet = reinterpret_cast<sc_wake_up_packet*>(packet);
+
+	unsigned int monster_id = wakeup_npc_packet->id;
+
+	m_cumAnimal[monster_id]->GetScript<CAnimalScript>()->SetWakeUp(true);
 }
 
 void CNetwork::Recv_Put_Npc_Packet(char * packet)
@@ -425,8 +447,7 @@ void CNetwork::Recv_Put_Npc_Packet(char * packet)
 	m_cumAnimal[monster_id]->Transform()->SetLocalPos(vPos);
 	m_cumAnimal[monster_id]->Transform()->SetLocalRot(vRot);
 
-	wstring layerName = m_cumAnimal[monster_id]->GetName();
-	pScene->FindLayer(layerName)->AddGameObject(CNetwork::m_cumAnimal[monster_id]);
+	pScene->FindLayer(L"Animal")->AddGameObject(CNetwork::m_cumAnimal[monster_id]);
 }
 
 void CNetwork::Recv_Remove_Npc_Packet(char * packet)
@@ -450,4 +471,13 @@ void CNetwork::Recv_Pos_Npc_Packet(char * packet)
 
 	m_cumAnimal[monster_id]->Transform()->SetLocalPos(pos);
 	m_cumAnimal[monster_id]->Transform()->SetLocalRot(rot);
+}
+
+void CNetwork::Recv_Animation_Npc_Packet(char * packet)
+{
+	sc_animation_npc_packet* animation_npc_packet = reinterpret_cast<sc_animation_npc_packet*>(packet);
+	unsigned int monster_id = animation_npc_packet->id;
+	char		monster_animation = animation_npc_packet->animation;
+
+	// 몬스터 애니메이션 키값 바꾸기
 }
