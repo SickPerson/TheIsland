@@ -178,7 +178,7 @@ void CNetwork::WorkerThread()
 			int err_no = WSAGetLastError();
 			if (err_no != WSA_IO_PENDING){
 				std::cout << "[ Player: " << id << " ] Disconnect" << std::endl;
-				m_pPlayerProcess->PlayerDinconnect(id);
+				m_pPlayerProcess->PlayerLogout(id);
 			}
 			continue;
 		}
@@ -186,7 +186,7 @@ void CNetwork::WorkerThread()
 		if (num_byte == 0)
 		{
 			std::cout << "[ Player: " << id << " ] Disconnect" << std::endl;
-			m_pPlayerProcess->PlayerDinconnect(id);
+			m_pPlayerProcess->PlayerLogout(id);
 			continue;
 		}
 		switch (lpover_ex->m_Event)
@@ -203,7 +203,7 @@ void CNetwork::WorkerThread()
 			if (num_byte != lpover_ex->m_DataBuffer.len) {
 				int err_no = WSAGetLastError();
 				Err_display("[Worker Thread]Send Error: ",err_no);
-				m_pPlayerProcess->PlayerDinconnect(id);
+				m_pPlayerProcess->PlayerLogout(id);
 			}
 			delete lpover_ex;
 			break;
@@ -268,11 +268,11 @@ void CNetwork::UpdateThread()
 {
 	// 일정 시간이 지날때마다 업데이트를 해주라는 함수 부분
 	if (CTimerMgr::GetInst()) {
-
 		CTimerMgr::GetInst()->Start();
 	}
 	while (m_bRunningServer)
 	{
+		CTimerMgr::GetInst()->Tick();
 		while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
 		}

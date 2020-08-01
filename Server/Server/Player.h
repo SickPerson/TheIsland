@@ -44,12 +44,12 @@ public:
 	char* RecvEvent(DWORD dataSize, char * packet);
 
 public:
-	void SetPlayerStatus(const tPlayerStatus& status);
-	void SetHP(const float& fHP);
-	void SetHungry(const float& fHungry);
-	void SetStamina(const float& fStamina);
-	void SetThirst(const float& fThirst);
-	void SetNumID(const unsigned int& numID);
+	void SetPlayerStatus( tPlayerStatus& status);
+	void SetHP( float& fHP);
+	void SetHungry( float& fHungry);
+	void SetStamina( float& fStamina);
+	void SetThirst( float& fThirst);
+	void SetNumID( unsigned int& numID);
 	void SetWcID(wchar_t* wcID);
 	void SetConnect(bool bConnect);
 	void SetSocket(const SOCKET& socket);

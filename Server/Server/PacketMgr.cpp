@@ -86,7 +86,7 @@ void CPacketMgr::Send_Pos_Player_Packet(unsigned int playerId, unsigned int Othe
 	packet.vPos = pos;
 	packet.vRot = rot;
 
-	if (0 != CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->ExistList(OtherId))
+	if (0 != CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->ExistList(OtherId) && playerId != OtherId)
 		Send_Packet(playerId, &packet);
 	else
 		Send_Put_Player_Packet(playerId, OtherId);
@@ -100,7 +100,8 @@ void CPacketMgr::Send_Remove_Player_Packet(unsigned int playerId, unsigned int O
 	packet.id = OtherId;
 	Send_Packet(playerId, &packet);
 
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->DeleteList(OtherId);
+	if(CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->ExistList(OtherId))
+		CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->DeleteList(OtherId);
 }
 
 void CPacketMgr::Send_Chat_Packet(unsigned int playerId, unsigned int OtherId, char message[])
@@ -147,7 +148,8 @@ void CPacketMgr::Send_Put_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
 
 	Send_Packet(PlayerID, &packet);
 
-	CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->InsertList(NpcID + MAX_USER);
+	if(CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + MAX_USER))
+		CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->InsertList(NpcID + MAX_USER);
 }
 
 void CPacketMgr::Send_Pos_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
@@ -176,7 +178,8 @@ void CPacketMgr::Send_Remove_Npc_Packet(unsigned int PlayerID, unsigned int NpcI
 	packet.id = NpcID;
 	Send_Packet(PlayerID, &packet);
 
-	CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->DeleteList(NpcID + MAX_USER);
+	if (CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + MAX_USER))
+		CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->DeleteList(NpcID + MAX_USER);
 }
 
 void CPacketMgr::Send_Animation_Npc_Packet(unsigned int playerId, unsigned int NpcId, char AnimationType)

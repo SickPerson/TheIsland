@@ -11,7 +11,7 @@ CMonster::~CMonster()
 {
 }
 
-void CMonster::SetAnimalStatus(const tAnimalStatus & animalStatus)
+void CMonster::SetAnimalStatus( tAnimalStatus & animalStatus)
 {
 	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[ANIMAL_LOCK_STATUS]);
 	m_tStatus.eKind = animalStatus.eKind;
@@ -23,25 +23,25 @@ void CMonster::SetAnimalStatus(const tAnimalStatus & animalStatus)
 	m_tStatus.fStamina = animalStatus.fStamina;
 }
 
-void CMonster::SetHP(const float & fHP)
+void CMonster::SetHP( float & fHP)
 {
 	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[ANIMAL_LOCK_HP]);
 	m_tStatus.fHP = fHP;
 }
 
-void CMonster::SetSpeed(const float & fSpeed)
+void CMonster::SetSpeed( float & fSpeed)
 {
 	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[ANIMAL_LOCK_SPEED]);
 	m_tStatus.fSpeed = fSpeed;
 }
 
-void CMonster::SetDamage(const float & fDamage)
+void CMonster::SetDamage( float & fDamage)
 {
 	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[ANIMAL_LOCK_DAMAGE]);
 	m_tStatus.fDamage = fDamage;
 }
 
-void CMonster::SetBehaviorTime(const float & fTime)
+void CMonster::SetBehaviorTime( float & fTime)
 {
 	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[ANIMAL_LOCK_SPEED]);
 	m_tStatus.fBehaviorTime = fTime;
@@ -59,7 +59,7 @@ void CMonster::SetKind(ANIMAL_TYPE & eKind)
 	m_tStatus.eKind = eKind;
 }
 
-void CMonster::SetTarget(const unsigned int & playerId)
+void CMonster::SetTarget( unsigned int playerId)
 {
 	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[ANIMAL_LOCK_TARGET]);
 	m_uiTarget = playerId;
@@ -127,7 +127,6 @@ bool & CMonster::GetWakeUp()
 
 void CMonster::Move(const float& fTimeDistance)
 {
-	//SetPos()
 }
 
 void CMonster::ResPawn()

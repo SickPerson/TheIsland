@@ -158,6 +158,17 @@ struct sc_remove_npc_packet
 	unsigned int id;
 };
 
+struct sc_status_npc_packet
+{
+	char size;
+	char type;
+	unsigned int id;
+
+	float fHP;
+	float fStamina;
+	float fDamage;
+
+};
 struct sc_animation_npc_packet
 {
 	char size;

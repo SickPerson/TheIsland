@@ -1,5 +1,5 @@
 #include "Monsterpool.h"
-
+#include <random>
 concurrent_unordered_map<unsigned int, CMonster*> CMonsterpool::m_cumMonsterPool;
 
 CMonsterpool::CMonsterpool()
@@ -66,6 +66,12 @@ CMonsterpool::CMonsterpool()
 
 			Animal->SetAnimalStatus(tStatus);
 		}
+		random_device rd;
+		default_random_engine dre(rd());
+		uniform_real_distribution<float> urd{ -2000.f, 2000.f };
+		
+		Animal->SetPos(Vec3(urd(dre), 20.f, urd(dre)));
+		Animal->SetRot(Vec3(0.f, 0.f, 0.f));
 		m_cumMonsterPool.insert(make_pair(i, Animal));
 	}
 }

@@ -61,7 +61,7 @@ void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
 	tStatus.fStamina = 100.f;
 	tStatus.fThirst = 100.f;
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetPos(Vec3(0.f, rand() % 1000, 0.f));
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetPos(Vec3(0.f, 20.f, 0.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetRot(Vec3(0.f, 180.f, 0.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(true);
 
@@ -72,6 +72,7 @@ void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
 
 	// [ Add Player List ]
 	for (auto& au : list) {
+		if (playerId == au) continue;
 		if (false == CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetConnect()) continue;
 		Vec3 other_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetPos();
 
@@ -91,11 +92,14 @@ void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
 		{
 			if (false == au.second->GetWakeUp())
 			{
+				CPacketMgr::Send_Wakeup_Npc_Packet(playerId, au.first);
+
 				Update_Event ev;
 				ev.m_Do_Object = au.first;
 				ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
 				ev.m_From_Object = NO_TARGET;
 				ev.m_ObjState = OBJ_STATE_IDLE;
+				ev.wakeup_time = high_resolution_clock::now() + 1s;
 				PushEventQueue(ev);
 			}
 			CPacketMgr::Send_Put_Npc_Packet(playerId, au.first);
@@ -115,13 +119,14 @@ void CPlayerProcess::PlayerMove(unsigned int playerId, char * packet)
 	//cout << "전)좌표: " << pos.x << ", " << pos.y << ", " << pos.z << endl;
 	/*CTimerMgr::GetInst()->Tick();
 	cout << CTimerMgr::GetInst()->GetDeltaTime() << endl;*/
-	pos += dir * speed * 0.02f;//CTimerMgr::GetInst()->GetDeltaTime();
-	pos.y = 0.f;
+	pos += dir * speed * CTimerMgr::GetInst()->GetDeltaTime();//CTimerMgr::GetInst()->GetDeltaTime();
+	pos.y = 20.f;
 	//cout << "후)좌표: " << pos.x << ", " << pos.y << ", " << pos.z << endl;
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetPos(pos);
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetRot(rot);
 
-	UpdateViewList(playerId);
+	CPacketMgr::GetInst()->Send_Pos_Player_Packet(playerId, playerId);
+	//UpdateViewList(playerId);
 }
 
 void CPlayerProcess::PlayerLogout(unsigned int playerId)
@@ -165,7 +170,7 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 	// 현재 플레이어의 시야처리 내의 리스트를 받아옵니다.
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(beforeList);
 	// 현재 플레이어 위치를 받아옵니다.
-	Vec3 pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetPos();
+	Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetPos();
 
 	// After List에 시야처리 리스트 추가 작업 [ Player ] 
 	for (auto& au : loginList) 
@@ -173,8 +178,9 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 		if (au == playerId) continue;
 		if (false == CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetConnect()) continue;
 		Vec3 other_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetPos();
-		if (ObjectRangeCheck(pos, other_pos, PLAYER_BETWEEN_RANGE)) {
+		if (ObjectRangeCheck(player_pos, other_pos, PLAYER_BETWEEN_RANGE)) {
 			afterList.insert(au);
+			continue;
 		}
 	}
 
@@ -185,7 +191,7 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 		
 		Vec3 monster_pos = au.second->GetPos();
 		// 만약 몬스터가 플레이어의 범위 내에 들어와 있다면 시야처리에 넣어준다.
-		if (ObjectRangeCheck(pos, monster_pos, PLAYER_BETWEEN_RANGE)) {
+		if (ObjectRangeCheck(player_pos, monster_pos, PLAYER_BETWEEN_RANGE)) {
 			afterList.insert(au.first + MAX_USER);
 			continue;
 		}
@@ -193,16 +199,54 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 
 	CPacketMgr::Send_Pos_Player_Packet(playerId, playerId);
 
-	for (auto& au : beforeList) {
-		if (0 != afterList.count(au)) // ViewList 업데이트 후에도 존재할 경우,
+	for (auto& au : afterList) {
+		if (0 == beforeList.count(au)) // ViewList 업데이트 전에 존재하지 않았던 경우
 		{
-			if(au < MAX_USER)
-				CPacketMgr::Send_Pos_Player_Packet(au, playerId);
-			else
+			if (au < MAX_USER) // Player
 			{
+				CPacketMgr::GetInst()->Send_Put_Player_Packet(playerId, au);
+				CPacketMgr::GetInst()->Send_Put_Player_Packet(au, playerId);
+			}
+			else // Animal
+			{
+				unsigned int monster_id = au - MAX_USER;
+				if (false == m_pMonsterPool->m_cumMonsterPool[monster_id]->GetWakeUp())
+				{
+					Update_Event ev;
+					ev.m_Do_Object = monster_id;
+					ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
+					ev.m_From_Object = NO_TARGET;
+					ev.m_ObjState = OBJ_STATE_IDLE;
+					ev.wakeup_time = high_resolution_clock::now() + 1s;
+					PushEventQueue(ev);
+				}
+				else {
+					char monster_type = m_pMonsterPool->m_cumMonsterPool[monster_id]->GetType();
+					Update_Event ev;
+					ev.m_Do_Object = monster_id;
+					ev.m_EventType = EV_MONSTER_UPDATE;
+					ev.m_From_Object = playerId;
+					if (B_WARLIKE == monster_type)
+						ev.m_ObjState = OBJ_STATE_FOLLOW;
+					else if (B_PASSIVE == monster_type)
+						ev.m_ObjState = OBJ_STATE_IDLE;
+					else if (B_EVASION == monster_type)
+						ev.m_ObjState = OBJ_STATE_EVASION;
+					ev.wakeup_time = high_resolution_clock::now() + 1s;
+					PushEventQueue(ev);
+				}
+				CPacketMgr::GetInst()->Send_Put_Npc_Packet(playerId, au - MAX_USER);
 			}
 		}
-		else // ViewList 업데이트 후에 존재하지 않을 경우
+		else // VIewList 업데이트 전에 존재했을 경우
+		{
+			CPacketMgr::GetInst()->Send_Pos_Player_Packet(playerId, au);
+			CPacketMgr::GetInst()->Send_Pos_Player_Packet(au, playerId);
+		}
+	}
+
+	for (auto& au : beforeList) {
+		if (0 == afterList.count(au)) // ViewList 업데이트 후에도 존재할 경우,
 		{
 			if (au < MAX_USER)
 			{
@@ -212,50 +256,6 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 			else
 			{
 				CPacketMgr::Send_Remove_Npc_Packet(playerId, au - MAX_USER);
-			}
-		}
-	}
-
-	for (auto& au : afterList) {
-		if (0 == beforeList.count(au)) // ViewList 업데이트 전에 존재하지 않았던 경우
-		{
-			if (au > MAX_USER)
-			{
-				m_pPlayerPool->m_cumPlayerPool[playerId]->InsertList(au);
-				unsigned int monster_id = au - MAX_USER;
-				if (!m_pMonsterPool->m_cumMonsterPool[monster_id]->GetWakeUp())
-				{
-					m_pMonsterPool->m_cumMonsterPool[monster_id]->SetWakeUp(true);
-
-					char type = m_pMonsterPool->m_cumMonsterPool[monster_id]->GetAnimalStatus().eType;
-					if (type == B_EVASION) // 회픠형 동물
-					{
-						Update_Event ev;
-						ev.m_Do_Object = monster_id;
-						ev.m_From_Object = NO_TARGET;
-						ev.m_EventType = EV_MONSTER_UPDATE;
-						ev.m_ObjState = OBJ_STATE_IDLE;
-
-						CProcess::PushEventQueue(ev);
-					}
-					else if (type == B_PASSIVE) // 비선공
-					{
-
-					}
-					else if (type == B_WARLIKE) // 선공몹
-					{
-
-					}
-				}
-			}
-			else
-			{
-				if (au > MAX_USER)
-				{
-
-				}
-				CPacketMgr::Send_Put_Player_Packet(playerId, au);
-				CPacketMgr::Send_Put_Player_Packet(au, playerId);
 			}
 		}
 	}

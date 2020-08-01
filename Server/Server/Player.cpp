@@ -76,7 +76,7 @@ char* CPlayer::RecvEvent(DWORD dataSize, char * packet)
 	return nullptr;
 }
 
-void CPlayer::SetPlayerStatus(const tPlayerStatus & status)
+void CPlayer::SetPlayerStatus( tPlayerStatus & status)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_STATUS]);
 	m_tPlayerStatus.fHP = status.fHP;
@@ -85,31 +85,31 @@ void CPlayer::SetPlayerStatus(const tPlayerStatus & status)
 	m_tPlayerStatus.fThirst = status.fThirst;
 }
 
-void CPlayer::SetHP(const float & fHP)
+void CPlayer::SetHP( float & fHP)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_HP]);
 	m_tPlayerStatus.fHP = fHP;
 }
 
-void CPlayer::SetHungry(const float & fHungry)
+void CPlayer::SetHungry( float & fHungry)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_HUNGRY]);
 	m_tPlayerStatus.fHungry = fHungry;
 }
 
-void CPlayer::SetStamina(const float & fStamina)
+void CPlayer::SetStamina( float & fStamina)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_STAMINA]);
 	m_tPlayerStatus.fStamina = fStamina;
 }
 
-void CPlayer::SetThirst(const float & fThirst)
+void CPlayer::SetThirst( float & fThirst)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_THIRST]);
 	m_tPlayerStatus.fThirst = fThirst;
 }
 
-void CPlayer::SetNumID(const unsigned int & numID)
+void CPlayer::SetNumID( unsigned int & numID)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_NUMID]);
 	m_uiID = numID;

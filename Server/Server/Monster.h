@@ -60,14 +60,14 @@ public:
 //BEHAVIOR_TYPE eType;
 //ANIMAL_TYPE eKind;
 public:
-	void SetAnimalStatus(const tAnimalStatus& animalStatus);
-	void SetHP(const float& fHP);
-	void SetSpeed(const float& fSpeed);
-	void SetDamage(const float& fDamage);
-	void SetBehaviorTime(const float& fTime);
+	void SetAnimalStatus( tAnimalStatus& animalStatus);
+	void SetHP( float& fHP);
+	void SetSpeed( float& fSpeed);
+	void SetDamage( float& fDamage);
+	void SetBehaviorTime( float& fTime);
 	void SetType(BEHAVIOR_TYPE& eType);
 	void SetKind(ANIMAL_TYPE& eKind);
-	void SetTarget(const unsigned int& playerId);
+	void SetTarget( unsigned int playerId);
 	void SetWakeUp(bool bWakeUp);
 
 public:
