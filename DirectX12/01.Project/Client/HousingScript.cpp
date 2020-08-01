@@ -4,6 +4,8 @@
 #include "PlayerScript.h"
 #include "InventoryScript.h"
 
+#include "HousingMgr.h"
+
 #include <iostream>
 
 CHousingScript::CHousingScript(ITEM_TYPE eType, int iCount)
@@ -17,18 +19,7 @@ CHousingScript::CHousingScript(ITEM_TYPE eType, int iCount)
 
 	for (int i = HOUSING_FOUNDATION; i < HOUSING_END; ++i)
 	{		
-		if(i == HOUSING_FOUNDATION)
-			m_pTex[i] = CResMgr::GetInst()->Load<CMeshData>(L"housing_foundation.mdat", L"MeshData\\housing_foundation.mdat");
-		else if (i == HOUSING_WALL)
-			m_pTex[i] = CResMgr::GetInst()->Load<CMeshData>(L"housing_wall.mdat", L"MeshData\\housing_wall.mdat");
-		else if (i == HOUSING_DOOR)
-			m_pTex[i] = CResMgr::GetInst()->Load<CMeshData>(L"housing_door.mdat", L"MeshData\\housing_door.mdat");
-		else if (i == HOUSING_WINDOW)
-			m_pTex[i] = CResMgr::GetInst()->Load<CMeshData>(L"housing_window.mdat", L"MeshData\\housing_window.mdat");
-		else if (i == HOUSING_FLOOR)
-			m_pTex[i] = CResMgr::GetInst()->Load<CMeshData>(L"housing_floor.mdat", L"MeshData\\housing_floor.mdat");
-
-		m_pObj[i] = m_pTex[i]->Instantiate();
+		m_pObj[i] = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)i)->Instantiate();
 		m_pObj[i]->AddComponent(new CBuildScript((HOUSING_TYPE)i));
 
 		m_pObj[i]->AddComponent(new CCollider2D);
@@ -39,10 +30,11 @@ CHousingScript::CHousingScript(ITEM_TYPE eType, int iCount)
 
 		m_pObj[i]->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
-		m_pObj[i]->SetName(L"Foundation");
+		m_pObj[i]->SetName(L"House");
 		m_pObj[i]->Transform()->SetLocalPos(Vec3(0.f, 20.f, 0.f));
 		m_pObj[i]->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 		m_pObj[i]->Transform()->SetLocalScale(Vec3(0.6f, 0.6f, 0.6f));
+
 		m_pObj[i]->GetScript<CBuildScript>()->Init();
 		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pObj[i]);
 	}
@@ -103,7 +95,7 @@ void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 
 
 		// Regen
-		m_pObj[m_eType] = m_pTex[m_eType]->Instantiate();
+		m_pObj[m_eType] = CHousingMgr::GetInst()->GetHousingMeshData(m_eType)->Instantiate();
 		m_pObj[m_eType]->AddComponent(new CBuildScript(m_eType));
 
 		m_pObj[m_eType]->AddComponent(new CCollider2D);
@@ -118,10 +110,11 @@ void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		vPos += -vDir * 400.f;
 		vPos.y = 20;
 
-		m_pObj[m_eType]->SetName(L"Foundation");
+		m_pObj[m_eType]->SetName(L"House");
 		m_pObj[m_eType]->Transform()->SetLocalPos(vPos);
 		m_pObj[m_eType]->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 		m_pObj[m_eType]->Transform()->SetLocalScale(Vec3(0.6f, 0.6f, 0.6f));
+
 		m_pObj[m_eType]->GetScript<CBuildScript>()->Init();
 		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Build")->AddGameObject(m_pObj[m_eType]);
 	}

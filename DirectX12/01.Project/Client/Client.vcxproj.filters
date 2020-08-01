@@ -162,6 +162,12 @@
     <ClInclude Include="NaturalScript.h">
       <Filter>ComponentScript\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="HousingMgr.h">
+      <Filter>ComponentScript\Housing</Filter>
+    </ClInclude>
+    <ClInclude Include="Housing.h">
+      <Filter>ComponentScript\Housing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -247,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="NaturalScript.cpp">
       <Filter>ComponentScript\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="HousingMgr.cpp">
+      <Filter>ComponentScript\Housing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

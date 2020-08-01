@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BuildScript.h"
+#include "HousingMgr.h"
 
 CBuildScript::CBuildScript(HOUSING_TYPE eType) :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
@@ -358,6 +359,21 @@ bool CBuildScript::Build()
 		MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
 		//SetData(SHADER_PARAM::INT_3, &test);
 	}
+
+	if (m_eType == HOUSING_FOUNDATION)
+	{
+		CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData(HOUSING_FLOOR)->Instantiate();
+		pFloor->SetName(L"Foundation_Floor");
+		pFloor->Transform()->SetLocalPos(Vec3(0.f, 0.f, -14.f));
+		pFloor->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+		for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
+		{
+			pFloor->MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
+			//SetData(SHADER_PARAM::INT_3, &test);
+		}
+		GetObj()->AddChild(pFloor);
+	}
+
 	return true;
 }
 

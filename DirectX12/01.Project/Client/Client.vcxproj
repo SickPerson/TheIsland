@@ -169,6 +169,8 @@
     <ClInclude Include="FPSCamScript.h" />
     <ClInclude Include="GameOverScript.h" />
     <ClInclude Include="header.h" />
+    <ClInclude Include="Housing.h" />
+    <ClInclude Include="HousingMgr.h" />
     <ClInclude Include="HousingScript.h" />
     <ClInclude Include="IngameScene.h" />
     <ClInclude Include="InputScript.h" />
@@ -201,6 +203,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="FPSCamScript.cpp" />
     <ClCompile Include="GameOverScript.cpp" />
+    <ClCompile Include="HousingMgr.cpp" />
     <ClCompile Include="HousingScript.cpp" />
     <ClCompile Include="IngameScene.cpp" />
     <ClCompile Include="InputScript.cpp" />

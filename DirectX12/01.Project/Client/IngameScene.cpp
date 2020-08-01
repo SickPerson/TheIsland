@@ -66,8 +66,8 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\housing_foundation.fbx", 1);
-	pTestMeshData->Save(pTestMeshData->GetPath());
+	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\housing_foundation.fbx", 1);
+	//pTestMeshData->Save(pTestMeshData->GetPath());
 	//Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
 	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
 	//pTestMeshData->Save( pTestMeshData->GetPath() );

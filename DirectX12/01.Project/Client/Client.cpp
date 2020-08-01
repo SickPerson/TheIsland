@@ -14,6 +14,8 @@
 #include "ChatScript.h"
 #include "IngameScene.h"
 
+#include "HousingMgr.h"
+
 #include "Network.h"
 
 #define MAX_LOADSTRING 100
@@ -56,6 +58,8 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	{
 		return 0;
 	}
+
+	CHousingMgr::GetInst()->Init();
 
 	// Network Init
 	//CNetwork::GetInst();

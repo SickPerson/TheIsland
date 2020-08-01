@@ -1,5 +1,6 @@
 #pragma once
 #include "ItemScript.h"
+#include "Housing.h"
 #include "BuildScript.h"
 
 #define HOUSING_MAX_COUNT 1
@@ -10,7 +11,6 @@ class CHousingScript :
 	CGameObject*	m_pObj[HOUSING_TYPE::HOUSING_END];
 
 	HOUSING_TYPE	m_eType;
-	Ptr<CMeshData>	m_pTex[HOUSING_END];
 public:
 	CHousingScript(ITEM_TYPE eType, int iCount = 1);
 	virtual ~CHousingScript();
