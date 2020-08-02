@@ -13,10 +13,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <cstdlib>
+#include <string>
+#include <wchar.h>
 #include <ctime>
 #include <math.h>
 
 #include <iostream>
+#include <random>
 #include <thread>
 #include <mutex>
 #include <shared_mutex>
@@ -43,6 +46,7 @@
 
 #include <sdkddkver.h>
 #include <DirectXMath.h>
+#include "SimpleMath.h"
 
 using namespace std;
 using namespace chrono;
@@ -59,6 +63,3 @@ using namespace concurrency;
 
 // struct 구조체 문
 #include "struct.h"
-
-// boost asio 서버관련 라이브러리 (iocp와 boost 중 하나만 쓰면 된다.)
-// #include "boost_asio.h"

@@ -34,9 +34,6 @@
     <Filter Include="03. Process\02. Player">
       <UniqueIdentifier>{04ced422-0a38-4cdc-a826-c2b1d14be0e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Process\02. Animal">
-      <UniqueIdentifier>{c655b8ec-3b79-4cc6-af96-3cfbe3d2a890}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Object\01. Dynamic">
       <UniqueIdentifier>{784145b7-bc7b-4d3e-95f1-91e9a62ba34a}</UniqueIdentifier>
     </Filter>
@@ -57,6 +54,18 @@
     </Filter>
     <Filter Include="04. Object\01. Dynamic\01. Player\Playerpool">
       <UniqueIdentifier>{f968f2b4-682d-4c2c-81ef-dcb2d2a1148a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Process\03. Monster">
+      <UniqueIdentifier>{c655b8ec-3b79-4cc6-af96-3cfbe3d2a890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Object\01. Dynamic\02. Monster">
+      <UniqueIdentifier>{b23bdb45-f408-4089-b1b3-904cff59e302}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Object\01. Dynamic\02. Monster\Monsterpool">
+      <UniqueIdentifier>{38299764-3817-47fb-a90f-3684ef639d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.default\02. SimpleMath">
+      <UniqueIdentifier>{3e3b0019-08db-45bd-b2d5-946e95f1434e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +101,18 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>01. Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>04. Object\01. Dynamic\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Monsterpool.cpp">
+      <Filter>04. Object\01. Dynamic\02. Monster\Monsterpool</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMath.cpp">
+      <Filter>99.default\02. SimpleMath</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterProcess.cpp">
+      <Filter>03. Process\03. Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -138,11 +159,25 @@
     <ClInclude Include="Object.h">
       <Filter>04. Object</Filter>
     </ClInclude>
-    <ClInclude Include="directXmath.h">
-      <Filter>99.default\01.header</Filter>
+    <ClInclude Include="Monster.h">
+      <Filter>04. Object\01. Dynamic\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Monsterpool.h">
+      <Filter>04. Object\01. Dynamic\02. Monster\Monsterpool</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMath.h">
+      <Filter>99.default\02. SimpleMath</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterProcess.h">
+      <Filter>03. Process\03. Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Server.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SimpleMath.inl">
+      <Filter>99.default\02. SimpleMath</Filter>
+    </None>
   </ItemGroup>
 </Project>

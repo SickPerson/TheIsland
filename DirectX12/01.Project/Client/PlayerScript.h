@@ -30,6 +30,8 @@ private:
 	bool		m_bEnable;
 
 	bool		m_bInvincible;
+
+	Vec3		m_vPrevPos;
 	
 public:
 	virtual void Awake();	
@@ -49,7 +51,8 @@ public:
 public:
 	bool CollisionSphere(CCollider2D* _pOther, Vec3 vOffsetScale, float fOffset = 1.f);
 	bool CollisionRay(Vec3 vPosRay, Vec3 vDirRay, CCollider2D* _pOther);
-	bool CollisionBox(CCollider2D* _pOther, Vec3 vOffsetScale, float fOffset);
+	bool CollisionHouse(CCollider2D* _pOther, Vec3 vOffsetScale, UINT iType);
+	bool CollisionHouse_Door(CCollider2D* _pOther, Vec3 vOffsetScale, Vec3 vOffsetPos);
 
 	void SetChatObject(CGameObject* pObj);
 	void SetInventoryObject(CGameObject* pObj);

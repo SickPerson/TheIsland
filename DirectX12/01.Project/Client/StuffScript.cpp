@@ -24,12 +24,14 @@ void CStuffScript::Update()
 
 void CStuffScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Stuff Item Right Use" << std::endl;
+	
+
 }
 
 void CStuffScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Stuff Item Left Use" << std::endl;
+	
+
 }
 
 void CStuffScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)

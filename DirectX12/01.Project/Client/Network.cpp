@@ -13,9 +13,6 @@
 #include <Engine/CollisionMgr.h>
 #include <Engine/FontMgr.h>
 
-#include <Engine/Layer.h>
-#include <Engine/Scene.h>
-
 #include <Engine/GameObject.h>
 #include <Engine/MeshRender.h>
 #include <Engine/Transform.h>
@@ -33,17 +30,18 @@
 
 #include "PlayerCamScript.h"
 #include "InventoryScript.h"
+#include "ChatScript.h"
 #include <Engine/TestScript.h>
+#include "InputScript.h"
+#include "AnimalScript.h"
 
-unsigned short CNetwork::m_usID = 0;
-
+unsigned int CNetwork::m_usID = 0;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumPlayer;
-concurrent_unordered_set<unsigned int> CNetwork::m_cusViewList;
+concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumAnimal;
 
 CNetwork::CNetwork()
 {
 	Init();
-	//ConnectServer();
 }
 
 CNetwork::~CNetwork()
@@ -87,15 +85,6 @@ void CNetwork::Init()
 
 	m_in_packet_size = 0;
 	m_saved_packet_size = 0;
-
-
-	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\barghest.mdat", L"MeshData\\barghest.mdat");
-
-	for (int i = 0; i < MAX_USER; ++i) {
-		m_cumPlayer.insert(make_pair(i, pMeshData->Instantiate()));
-	}
-
-	m_cusViewList.clear();
 }
 
 bool CNetwork::ConnectServer(string ipAddr)
@@ -142,13 +131,11 @@ bool CNetwork::CreateEventSelect()
 	m_hEvent = WSACreateEvent();
 
 	int retval = WSAEventSelect(m_sock, m_hEvent, FD_READ || FD_CLOSE);
-	if (retval != SOCKET_ERROR)
-	{
+	if (retval != SOCKET_ERROR) {
 		cout << "CreateSelectEvent Success" << endl;
 		return true;
 	}
-	else
-	{
+	else {
 		int err_no = WSAGetLastError();
 		Err_display("CreateSelectEvent err", err_no);
 		return false;
@@ -165,37 +152,32 @@ void CNetwork::DisConnect()
 
 void CNetwork::RecvPacket()
 {
+	cout << "Network Run" << endl;
 	while (!m_bClientClose)
 	{
-		cout << "Network Run" << endl;
 		m_iIndex = WSAWaitForMultipleEvents(1, &m_hEvent, FALSE, WSA_INFINITE, FALSE);
 
-		if ((m_iIndex == WSA_WAIT_FAILED) || (m_iIndex == WSA_WAIT_TIMEOUT))
-		{
+		if ((m_iIndex == WSA_WAIT_FAILED) || (m_iIndex == WSA_WAIT_TIMEOUT)) {
 			int err_no = WSAGetLastError();
 			Err_display("WSAWaitForMultipleEvents Err", err_no);
 			break;
 		}
 		int retval = WSAEnumNetworkEvents(m_sock, m_hEvent, &m_weEvent);
-		if (retval == SOCKET_ERROR)
-		{
+		if (retval == SOCKET_ERROR) {
 			int err_no = WSAGetLastError();
 			Err_display("WSAEnumNetworkEvents Err", err_no);
 			break;
 		}
 
-		if (m_weEvent.lNetworkEvents & FD_READ)
-		{
-			if (m_weEvent.iErrorCode[FD_READ_BIT] != 0)
-			{
+		if (m_weEvent.lNetworkEvents & FD_READ) {
+			if (m_weEvent.iErrorCode[FD_READ_BIT] != 0) {
 				int err_no = GetLastError();
 				Err_display("m_weEvent.iErrorCode Err", err_no);
 				break;
 			}
 			DWORD	size, flag = 0;
 			int ret = WSARecv(m_sock, &m_RecvWsaBuf, 1, &size, &flag, NULL, NULL);
-			if (ret == SOCKET_ERROR)
-			{
+			if (ret == SOCKET_ERROR) {
 				int err_no = GetLastError();
 				Err_display("WSARecv SOCKET_ERROR", err_no);
 				break;
@@ -203,13 +185,9 @@ void CNetwork::RecvPacket()
 
 			BYTE* packet = reinterpret_cast<BYTE*>(m_cRecvbuf);
 
-			cout << "SIZE:" << size << endl;
-			cout << "packet size: " << (int)packet[0] << endl;
-			while (size != 0)
-			{
+			while (size != 0) {
 				if (0 == m_in_packet_size) m_in_packet_size = packet[0];
-				if (size + m_saved_packet_size >= m_in_packet_size)
-				{
+				if (size + m_saved_packet_size >= m_in_packet_size) {
 					memcpy(m_cPacketBuf + m_saved_packet_size, packet, m_in_packet_size - m_saved_packet_size);
 					ProcessPacket(m_cPacketBuf);
 					packet += m_in_packet_size - m_saved_packet_size;
@@ -217,8 +195,7 @@ void CNetwork::RecvPacket()
 					m_in_packet_size = 0;
 					m_saved_packet_size = 0;
 				}
-				else
-				{
+				else {
 					memcpy(m_cPacketBuf + m_saved_packet_size, packet, size);
 					m_saved_packet_size += size;
 					size = 0;
@@ -235,99 +212,93 @@ void CNetwork::RecvPacket()
 	//cout << "Network Close" << endl;
 }
 
-void CNetwork::ProcessPacket(char* _packet)
+void CNetwork::ProcessPacket(char* packet)
 {
-	switch (_packet[1])
+	switch (packet[1])
 	{
-	case SC_LOGIN_OK: // 로그인이 성공한다면 서버에 연결을 시도합니다.
+	case SC_LOGIN_OK: 
 	{
-		//cout << "ID 일치" << endl;
 		SetLogin(true);
+		Recv_Login_OK_Packet(packet);
 		break;
 	}
-	case SC_LOGIN_FAIL: // 로그인이 실패한다면 서버에 연결이 되지 않습니다.
-		//cout << "ID 불일치" << endl;
-		SetLogin(false);
-		break;
-	case SC_LOGIN:
+	case SC_LOGIN_FAIL:
 	{
-		pScene = CSceneMgr::GetInst()->GetCurScene();
-		RecvLoginPacket(_packet);
+
+	}
+	case SC_PUT_PLAYER: {
 		SetLoopStart(true);
+		Recv_Put_Player_Packet(packet);
 		break;
 	}
-	case SC_CONNECT:
-	{
-		RecvConnectPacket(_packet);
+	case SC_REMOVE_PLAYER: {
+		Recv_Remove_Player_Packet(packet);
 		break;
 	}
-	case SC_POS:
-	{
-		RecvPosPacket(_packet);
+	case SC_POS: {
+		Recv_Pos_Player_Packet(packet);
 		break;
 	}
-	case SC_DISCONNECT:
+	case SC_ROT: {
+		break;
+	}
+	case SC_CHAT: {
+		Recv_Chat_Packet(packet);
+		break;
+	}
+				  // NPC, MONSTER 관련
+	case SC_PUT_NPC: {
+		Recv_Put_Npc_Packet(packet);
+		break;
+	}
+	case SC_POS_NPC:
 	{
-		sc_disconnect_packet* packet = reinterpret_cast<sc_disconnect_packet*>(_packet);
-		DeleteList(packet->id);
-		pScene->FindLayer(L"Other")->RemoveParentObj(m_cumPlayer[packet->id]);
+		Recv_Pos_Npc_Packet(packet);
+		break;
+	}
+	case SC_REMOVE_NPC:
+	{
+		Recv_Remove_Npc_Packet(packet);
 		break;
 	}
 	}
 }
 
-void CNetwork::SetID(unsigned short _id)
+void CNetwork::Send_Login_Packet(wstring playerID)
 {
-	m_usID = _id;
-}
+	DWORD size{ 0 }, flag{ 0 };
 
-unsigned short CNetwork::GetID()
-{
-	return m_usID;
-}
+	cs_login_packet*	login_packet = reinterpret_cast<cs_login_packet*>(m_cSendBuf);
 
-// 로그인 패킷을 서버로 보냅니다. string에서 char*으로 바꿀예정입니다.
-void CNetwork::SendLoginPacket(string _sPlayerID)
-{
-	DWORD size, flag = 0;
-
-	cs_login_packet* packet = reinterpret_cast<cs_login_packet*>(m_cSendBuf);
-
-	packet->size = sizeof(cs_login_packet);
-	packet->type = CS_LOGIN;
-	packet->id = m_usID;
-	//strcpy(packet->player_id, _sPlayerID.c_str());
+	login_packet->size = sizeof(cs_login_packet);
+	login_packet->type = CS_LOGIN;
+	wcscpy_s(login_packet->player_id, playerID.c_str());
 
 	m_SendWsaBuf.len = sizeof(cs_login_packet);
 
-	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+	int ret = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 
-	if (retval != 0)
-	{
+	if (ret != 0) {
 		int err_no = WSAGetLastError();
 		Err_display("Err while sending packet - ", err_no);
 	}
 }
 
-void CNetwork::SendPosPacket()
+void CNetwork::Send_Move_Packet(float fSpeed, Vec3 Dir, Vec3 Rot)
 {
 	DWORD size, flag = 0;
 
-	Vec3 pos = m_cumPlayer[m_usID]->Transform()->GetLocalPos();
-	Vec3 dir = m_cumPlayer[m_usID]->Transform()->GetLocalRot();
+	cs_move_packet* packet = reinterpret_cast<cs_move_packet*>(m_cSendBuf);
 
-	cs_pos_packet* packet = reinterpret_cast<cs_pos_packet*>(m_cSendBuf);
+	//Vec3 vRot = m_pPlayer->Transform()->GetLocalRot();
+	packet->size = sizeof(cs_move_packet);
+	packet->type = CS_MOVE;
+	packet->id = m_usID;
+	packet->fSpeed = fSpeed;
+	packet->vDir = Dir;
+	packet->vRot = Rot;
 
-	packet->size = sizeof(cs_pos_packet);
-	packet->type = CS_POS;
-	packet->fposX = pos.x;
-	packet->fposY = pos.y;
-	packet->fposZ = pos.z;
-	packet->fDirX = dir.x;
-	packet->fDirY = dir.y;
-	packet->fDirZ = dir.z;
-
-	m_SendWsaBuf.len = sizeof(cs_pos_packet);
+	m_SendWsaBuf.len = sizeof(cs_move_packet);
 
 	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 
@@ -338,20 +309,18 @@ void CNetwork::SendPosPacket()
 	}
 }
 
-void CNetwork::SendDirPacket()
-{
-}
-
-void CNetwork::SendChatPacket(string _message)
+void CNetwork::Send_Chat_Packet(string message)
 {
 	DWORD size, flag = 0;
 
-	cs_chat_packet packet;
-	packet.size = sizeof(packet);
-	packet.type = CS_CHAT;
-	//strcpy(packet.meesage, _message.c_str());
+	cs_chat_packet* chat_packet = reinterpret_cast<cs_chat_packet*>(m_cSendBuf);
 
-	m_SendWsaBuf.len = sizeof(cs_pos_packet);
+	chat_packet->size = sizeof(cs_chat_packet);
+	chat_packet->type = CS_CHAT;
+	chat_packet->id = m_usID;
+	strcpy_s(chat_packet->meesage, message.c_str());
+
+	m_SendWsaBuf.len = sizeof(cs_chat_packet);
 
 	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 
@@ -362,56 +331,153 @@ void CNetwork::SendChatPacket(string _message)
 	}
 }
 
-void CNetwork::RecvLoginPacket(char * _packet)
+// ============================== RECV ============================
+void CNetwork::Recv_Login_OK_Packet(char * packet)
 {
-	sc_first_status_packet* packet = reinterpret_cast<sc_first_status_packet*>(_packet);
-	m_usID = packet->id;
-	InsertList(m_usID);
-
-	m_cumPlayer[m_usID]->SetName(L"Player Object");
-	m_cumPlayer[m_usID]->AddComponent(new CPlayerScript);
-	m_cumPlayer[m_usID]->AddComponent(new CCollider2D);
-	m_cumPlayer[m_usID]->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
-
-	m_cumPlayer[m_usID]->FrustumCheck(false);
-	m_cumPlayer[m_usID]->Transform()->SetLocalPos(Vec3(packet->fPosX, packet->fPosY, packet->fPosZ));
-	m_cumPlayer[m_usID]->Transform()->SetLocalScale(Vec3(2.f, 2.f, 1.f));
-	m_cumPlayer[m_usID]->Transform()->SetLocalRot(Vec3(packet->fDirX, packet->fDirY, packet->fDirZ));
-
-	pScene->FindLayer(L"Player")->AddGameObject(m_cumPlayer[m_usID]);
+	pScene = CSceneMgr::GetInst()->GetCurScene();
+	sc_login_ok_packet* login_packet = reinterpret_cast<sc_login_ok_packet*>(packet);
+	m_usID = login_packet->id;
+	//pScene->FindLayer(L"Player")->AddGameObject(m_pPlayer);
 }
 
-void CNetwork::RecvConnectPacket(char * _packet)
+void CNetwork::Recv_Login_Fail_Packet(char * packet)
 {
-	sc_accept_packet* packet = reinterpret_cast<sc_accept_packet*>(_packet);
+	SetLogin(false);
+}
 
-	if (!CheckList(packet->id)) {
-		InsertList(packet->id);
+void CNetwork::Recv_Put_Player_Packet(char * packet)
+{
+	sc_put_player_packet* put_player_packet = reinterpret_cast<sc_put_player_packet*>(packet);
+	unsigned int player_id = put_player_packet->id;
+
+	Vec3 vPos = put_player_packet->vPos;
+	Vec3 vRot = put_player_packet->vRot;
+
+	if (m_usID == player_id) {
+		m_pPlayer->Transform()->SetLocalPos(vPos);
 	}
-
-	m_cumPlayer[packet->id]->SetName(L"Player Object");
-	m_cumPlayer[packet->id]->AddComponent(new CPlayerScript);
-	m_cumPlayer[packet->id]->AddComponent(new CCollider2D);
-	m_cumPlayer[packet->id]->Collider2D()->SetOffsetScale(Vec3(20.f, 40.f, 20.f));
-
-	m_cumPlayer[packet->id]->FrustumCheck(false);
-	m_cumPlayer[packet->id]->Transform()->SetLocalPos(Vec3(packet->fPosX, packet->fPosY, packet->fPosZ));
-	m_cumPlayer[packet->id]->Transform()->SetLocalScale(Vec3(2.f, 2.f, 1.f));
-	m_cumPlayer[packet->id]->Transform()->SetLocalRot(Vec3(packet->fDirX, packet->fDirY, packet->fDirZ));
-
-	pScene->FindLayer(L"Other")->AddGameObject(m_cumPlayer[packet->id]);
+	else {
+		m_cumPlayer[player_id]->Transform()->SetLocalPos(vPos);
+		m_cumPlayer[player_id]->Transform()->SetLocalRot(vRot);
+		pScene->FindLayer(L"Human")->AddGameObject(CNetwork::m_cumPlayer[player_id]);
+	}
 }
 
-void CNetwork::RecvPosPacket(char * _packet)
+void CNetwork::Recv_Remove_Player_Packet(char * packet)
 {
-	sc_pos_packet* packet = reinterpret_cast<sc_pos_packet*>(_packet);
+	sc_remove_player_packet* remove_player_packet = reinterpret_cast<sc_remove_player_packet*>(packet);
+	unsigned int player_id = remove_player_packet->id;
 
-	m_cumPlayer[packet->id]->Transform()->SetLocalPos(Vec3(packet->fPosX, packet->fPosY, packet->fPosZ));
-	m_cumPlayer[packet->id]->Transform()->SetLocalRot(Vec3(packet->fDirX, packet->fDirY, packet->fDirZ));
+	tEvent tEv;
+	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+
+	if (m_usID == player_id) {
+		tEv.wParam = (DWORD_PTR)m_pPlayer;
+		CEventMgr::GetInst()->AddEvent(tEv);
+	}
+	else {
+		tEv.wParam = (DWORD_PTR)m_cumPlayer[player_id];
+		CEventMgr::GetInst()->AddEvent(tEv);
+	}
 }
 
-void CNetwork::RecvChatPacket(char* _packet)
+void CNetwork::Recv_Pos_Player_Packet(char * packet)
 {
-	sc_chat_packet* packet = reinterpret_cast<sc_chat_packet*>(_packet);
+	sc_pos_player_packet*	pos_packet = reinterpret_cast<sc_pos_player_packet*>(packet);
+	unsigned int player_id = pos_packet->id;
+	Vec3 vPos = pos_packet->vPos;
+	Vec3 vRot = pos_packet->vRot;
+	if (m_usID == player_id) {
+		m_pPlayer->Transform()->SetLocalPos(vPos);
+		//m_pPlayer->Transform()->SetLocalRot(vRot);
+	}
+	else {
+		m_cumPlayer[player_id]->Transform()->SetLocalPos(vPos);
+		m_cumPlayer[player_id]->Transform()->SetLocalRot(vRot);
+	}
+}
 
+void CNetwork::Recv_Chat_Packet(char * packet)
+{
+	sc_chat_packet* chat_packet = reinterpret_cast<sc_chat_packet*>(packet);
+
+	wstring wname = chat_packet->wcid;
+	string name;
+	name.assign(wname.begin(), wname.end());
+	string Msg(chat_packet->meesage);
+	cout << "[" << name << "]" << Msg << endl;
+	m_pChat->GetScript<CChatScript>()->AddChat(name, Msg);
+	m_pChat->GetScript<CInputScript>()->SetEnable(false);
+	m_pChat->GetScript<CInputScript>()->Clear();
+}
+
+void CNetwork::Recv_Animation_Player_Packet(char * packet)
+{
+	sc_animation_player_packet* animation_player_packet = reinterpret_cast<sc_animation_player_packet*>(packet);
+	unsigned int player_id = animation_player_packet->id;
+	char player_animation = animation_player_packet->animation;
+
+	if (m_usID == player_id)
+	{
+		// 자기 자신 애니메이션 키값 변환
+	}
+	else
+	{
+		// 타 플레이어 애니메이션 키값 변환
+	}
+}
+
+void CNetwork::Recv_WakeUp_Npc_Packet(char * packet)
+{
+	sc_wake_up_packet* wakeup_npc_packet = reinterpret_cast<sc_wake_up_packet*>(packet);
+
+	unsigned int monster_id = wakeup_npc_packet->id;
+
+	m_cumAnimal[monster_id]->GetScript<CAnimalScript>()->SetWakeUp(true);
+}
+
+void CNetwork::Recv_Put_Npc_Packet(char * packet)
+{
+	sc_put_npc_packet* put_npc_packet = reinterpret_cast<sc_put_npc_packet*>(packet);
+	unsigned int monster_id = put_npc_packet->id;
+
+	Vec3 vPos = put_npc_packet->vPos;
+	Vec3 vRot = put_npc_packet->vRot;
+
+	m_cumAnimal[monster_id]->Transform()->SetLocalPos(vPos);
+	m_cumAnimal[monster_id]->Transform()->SetLocalRot(vRot);
+
+	pScene->FindLayer(L"Animal")->AddGameObject(CNetwork::m_cumAnimal[monster_id]);
+}
+
+void CNetwork::Recv_Remove_Npc_Packet(char * packet)
+{
+	sc_remove_npc_packet* remove_npc_packet = reinterpret_cast<sc_remove_npc_packet*>(packet);
+	unsigned int monster_id = remove_npc_packet->id;
+
+	tEvent tEv;
+	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+
+	tEv.wParam = (DWORD_PTR)m_cumAnimal[monster_id];
+	CEventMgr::GetInst()->AddEvent(tEv);
+}
+
+void CNetwork::Recv_Pos_Npc_Packet(char * packet)
+{
+	sc_pos_npc_packet* pos_npc_packet = reinterpret_cast<sc_pos_npc_packet*>(packet);
+	unsigned int monster_id = pos_npc_packet->id;
+	Vec3 pos = pos_npc_packet->vPos;
+	Vec3 rot = pos_npc_packet->vRot;
+
+	m_cumAnimal[monster_id]->Transform()->SetLocalPos(pos);
+	m_cumAnimal[monster_id]->Transform()->SetLocalRot(rot);
+}
+
+void CNetwork::Recv_Animation_Npc_Packet(char * packet)
+{
+	sc_animation_npc_packet* animation_npc_packet = reinterpret_cast<sc_animation_npc_packet*>(packet);
+	unsigned int monster_id = animation_npc_packet->id;
+	char		monster_animation = animation_npc_packet->animation;
+
+	// 몬스터 애니메이션 키값 바꾸기
 }

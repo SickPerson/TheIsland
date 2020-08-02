@@ -55,6 +55,8 @@ class CAnimalScript :
 
 	CGameObject*	m_pParticleObj;
 	float			m_fParticleTime;
+
+	bool			m_bWakeUp;
 public:
 	CAnimalScript();
 	virtual ~CAnimalScript();
@@ -66,6 +68,10 @@ public:
 	virtual void OnCollision(CCollider2D* _pOther) override;
 	virtual void OnCollisionEnter(CCollider2D* _pOther) override;
 	virtual void OnCollisionExit(CCollider2D* _pOther) override;
+
+public:
+	void SetWakeUp(bool bWakeUp) { m_bWakeUp = bWakeUp; }
+	bool GetWakeUp() { return m_bWakeUp; }
 
 public:
 	bool CollisionSphere(Vec3 vOffsetScale, CCollider2D* _pOther, float fOffset = 1.f);

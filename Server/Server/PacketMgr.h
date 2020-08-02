@@ -6,20 +6,24 @@ class CPacketMgr
 	SINGLE(CPacketMgr)
 
 public:
-	static void Send_Packet(unsigned int _usID, void* _packet);
+	static void Send_Packet(unsigned int playerId, void* packet);
+
+public: // 로그인 관련 패킷
+	static void Send_Login_OK_Packet(unsigned int playerId);
+	static void Send_Login_Fail_Packet(unsigned int playerId);
+
+public: // Player 관련 패킷
+	static void Send_Put_Player_Packet(unsigned int playerId, unsigned int OtherId);
+	static void Send_Pos_Player_Packet(unsigned int playerId, unsigned int OtherId);
+	static void Send_Remove_Player_Packet(unsigned int playerId, unsigned int OtherId);
+	static void Send_Chat_Packet(unsigned int playerId, unsigned int OtherId, char message[]);
+	static void Send_Animation_Player_Packet(unsigned int playerId, unsigned int OtherId, char AnimationType);
 
 public:
-	static void Send_Login_OK_Packet(unsigned int _usID);
-	static void Send_Login_Fail_Packet(unsigned int _usID);
-	static void Send_Message_Packet(unsigned int _usID, char* _message);
+	static void Send_Wakeup_Npc_Packet(unsigned int playerId, unsigned int NpcId);
+	static void Send_Put_Npc_Packet(unsigned int playerId, unsigned int NpcId);
+	static void Send_Pos_Npc_Packet(unsigned int playerId, unsigned int NpcId);
+	static void Send_Remove_Npc_Packet(unsigned int playerId, unsigned int NpcId);
+	static void Send_Animation_Npc_Packet(unsigned int playerId, unsigned int NpcId, char AnimationType);
 
-	static void Send_First_Status_Packet(unsigned int _usID);
-
-	static void Send_Accept_Packet(unsigned int _usID, concurrent_unordered_set<unsigned int>& _ViewList);
-	static void Send_Status_Packet(unsigned int _usID, unsigned int _usOther);
-	static void Send_Pos_Packet(unsigned int _usID, unsigned int _usOther);
-	static void Send_Look_Packet(unsigned int _usID);
-	static void Send_Remove_Packet(unsigned int _usID, unsigned int _usOther);
-	static void Send_Disconnect_Packet(unsigned int _usID);
-	static void Send_Chat_Packet(unsigned int _usID, unsigned int _usOther, char message[]);
 };

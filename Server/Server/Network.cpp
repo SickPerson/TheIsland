@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Network.h"
 #include "PlayerProcess.h"
+#include "MonsterProcess.h"
+
 #include "PacketMgr.h"
 #include "TimerMgr.h"
 #include "DataBase.h"
@@ -11,7 +13,8 @@ CNetwork::CNetwork()
 	m_ListenSock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	m_bRunningServer = true;
 	m_pPlayerProcess = nullptr;
-	m_usUserID = 0;
+	m_pMonsterProcess = nullptr;
+	m_UserID = 0;
 	//------------------------------
 	//Initialize();
 	CheckThisCputCount();
@@ -19,6 +22,7 @@ CNetwork::CNetwork()
 
 CNetwork::~CNetwork()
 {
+	CloseServer();
 }
 
 void CNetwork::GetServerIpAddress()
@@ -37,11 +41,17 @@ void CNetwork::GetServerIpAddress()
 	cout << "Server IP Address: " << ipaddr << endl;
 }
 
+HANDLE CNetwork::GetIocp()
+{
+	return m_hIocp;
+}
+
 void CNetwork::Initialize()
 {
-	CProcess::InitializeBeforeStart();
+	CProcess::InitBeforeStart();
 
 	m_pPlayerProcess = new CPlayerProcess();
+	m_pMonsterProcess = new CMonsterProcess();
 
 	CTimerMgr::GetInst()->Reset();
 
@@ -93,33 +103,42 @@ void CNetwork::StartServer()
 {
 	for (int i = 0; i < m_iNumWorkerThread; ++i) {
 		m_vWorkerThread.push_back(std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } }));
-		//m_vWorkerThread.emplace_back(thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } });
 	}
-	std::cout << "WorkerThread Create" << std::endl;
+	cout << "WorkerThread Create" << endl;
 
 	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
-	//m_tAcceptThread = thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } };
-	std::cout << "AcceptThread Create" << std::endl;
+	cout << "AcceptThread Create" << endl;
 
 	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
-	//std::cout << "UpdateThread Create" << std::endl;
+	cout << "UpdateThread Create" << endl;
 
-	std::cout << "Server Start" << std::endl;
+	m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
+	cout << "DatabaseThread Create" << endl;
+
+	cout << "==============================" << endl;
+	cout << "∥       Server Start         ∥" << endl;
+	cout << "==============================" << endl;
 }
 
 void CNetwork::CloseServer()
 {
+	m_pDatabaseThread->join();
+	cout << "DatabaseThread Close" << endl;
 	m_pUpdateThread->join();
-	cout << "나와도 돼" << endl;
+	cout << "UpdateThread Close" << std::endl;
 	m_pAcceptThread->join();
-	//m_tAcceptThread.join();
-	cout << "나오면 안돼" << endl;
+	cout << "AcceptThread Close" << std::endl;
 
 	for (auto& thread : m_vWorkerThread)
 		thread->join();
+	cout << "WorkerThread Close" << std::endl;
 
 	EndServer();
 	Disconnect();
+
+	cout << "==============================" << endl;
+	cout << "∥       Server Exit          ∥" << endl;
+	cout << "==============================" << endl;
 }
 
 void CNetwork::Disconnect()
@@ -127,7 +146,6 @@ void CNetwork::Disconnect()
 	closesocket(m_ListenSock);
 	CloseHandle(m_hIocp);
 	WSACleanup();
-	m_ListenSock = INVALID_SOCKET;
 }
 
 void CNetwork::CheckThisCputCount()
@@ -142,7 +160,6 @@ void CNetwork::CheckThisCputCount()
 
 void CNetwork::WorkerThread()
 {
-	cout << "워커 스레드 들어와" << endl;
 	DWORD		num_byte;
 	ULONGLONG	key64;
 	PULONG_PTR	p_key = &key64;
@@ -161,7 +178,7 @@ void CNetwork::WorkerThread()
 			int err_no = WSAGetLastError();
 			if (err_no != WSA_IO_PENDING){
 				std::cout << "[ Player: " << id << " ] Disconnect" << std::endl;
-				m_pPlayerProcess->PlayerDinconnect(id);
+				m_pPlayerProcess->PlayerLogout(id);
 			}
 			continue;
 		}
@@ -169,36 +186,51 @@ void CNetwork::WorkerThread()
 		if (num_byte == 0)
 		{
 			std::cout << "[ Player: " << id << " ] Disconnect" << std::endl;
-			m_pPlayerProcess->PlayerDinconnect(id);
+			m_pPlayerProcess->PlayerLogout(id);
 			continue;
 		}
 		switch (lpover_ex->m_Event)
 		{
 		case EV_RECV:
 		{
-			cout << "받자받자" << endl;
 			m_pPlayerProcess->RecvPacket(id, lpover_ex->m_MessageBuffer, num_byte);
-			//m_pPlayerProcess->RecvPacket(id, num_byte, lpover_ex.m_MessageBuffer);
 			break;
 		}
 
 		case EV_SEND:
 		{
+			// Send 오류가 발생하면 플레이어를 종료시킨다.
+			if (num_byte != lpover_ex->m_DataBuffer.len) {
+				int err_no = WSAGetLastError();
+				Err_display("[Worker Thread]Send Error: ",err_no);
+				m_pPlayerProcess->PlayerLogout(id);
+			}
 			delete lpover_ex;
 			break;
 		}
-		case EV_UPDATE:
+		case EV_MONSTER_UPDATE:
 		{
-			delete lpover_ex;
-			break;
-		}
-		case EV_PLAYER_UPDATE:
-		{
+			m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_uiOtherID);
 			delete lpover_ex;
 			break;
 		}
 		case EV_DB:
 		{
+			//DB_Event db_event;
+			//if (CDataBase::GetInst()->PopFromStateQueue(db_event)) {
+			//	switch (db_event.state) {
+			//	case DATABASE_SAVE_TYPE::DBS_LOGIN_SUCCESS:
+			//	{
+			//		m_pPlayerProcess->PlayerLogin(db_event);
+			//		break;
+			//	}
+			//	case DATABASE_SAVE_TYPE::DBS_LOGIN_FAIL:
+			//	{
+			//		//m_pPlayerProcess->PlayerLoginFail(db_event.client_num);
+			//		break;
+			//	}
+			//	}
+			//}
 			delete lpover_ex;
 			break;
 		}
@@ -209,7 +241,6 @@ void CNetwork::WorkerThread()
 		}
 		}
 	}
-	cout << "워커 나오면 안돼" << endl;
 }
 
 void CNetwork::AcceptThread()
@@ -222,41 +253,42 @@ void CNetwork::AcceptThread()
 			Err_display("ACCEPT INVALID_SOCKET!", err_no);
 			break;
 		}
-		//m_usUserID = CProcess::GetNewID();
-		CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_sock), m_hIocp, m_usUserID, 0);
 
-		cout << "접속 : " << inet_ntoa(m_clientAddr.sin_addr) << '\t' << ntohs(m_clientAddr.sin_port) << endl;
-		m_pPlayerProcess->AcceptClient(client_sock, m_usUserID);
-		cout << "UserNum : " << m_usUserID << endl;
-		++m_usUserID;
+		CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_sock), m_hIocp, m_UserID, 0);
+
+
+		//cout << "현재 인원: " << m_usUserID + 1 << endl;
+		//cout << "접속 : " << inet_ntoa(m_clientAddr.sin_addr) << '\t' << ntohs(m_clientAddr.sin_port) << endl;
+		m_pPlayerProcess->AcceptClient(client_sock, m_UserID);
+		++m_UserID;
 	}
-	cout << "어셉 스레드 나오면 안돼" << endl;
 }
 
 void CNetwork::UpdateThread()
 {
 	// 일정 시간이 지날때마다 업데이트를 해주라는 함수 부분
-	if (CTimerMgr::GetInst())
+	if (CTimerMgr::GetInst()) {
 		CTimerMgr::GetInst()->Start();
+	}
 	while (m_bRunningServer)
 	{
-		this_thread::sleep_for(1ms);
-		while (!CProcess::StateEventQueue())
-		{
-			Object_Event	object_event;
-			if (CProcess::CheckEventStart(object_event))
-			{
-				OVER_EX*	over_ex = new OVER_EX;
-
-				ZeroMemory(&over_ex->m_Overlapped, sizeof(WSAOVERLAPPED));
-				over_ex->m_Event = object_event.m_EventType;
-				PostQueuedCompletionStatus(m_hIocp, 10, object_event.m_usID, &over_ex->m_Overlapped);
-			}
-			else
-				break;
+		CTimerMgr::GetInst()->Tick();
+		while (CProcess::EmptyEventQueue()) {
+			this_thread::sleep_for(10ms);
 		}
+		Update_Event ev;
+		if (CProcess::CheckEventStart(ev))
+		{
+			OVER_EX*	pOver_ex = new OVER_EX;
+			ZeroMemory(&pOver_ex->m_Overlapped, sizeof(WSAOVERLAPPED));
+			pOver_ex->m_Event = ev.m_EventType;
+			pOver_ex->m_Status = ev.m_ObjState;
+
+			PostQueuedCompletionStatus(m_hIocp, 1, ev.m_Do_Object, &pOver_ex->m_Overlapped);
+		}
+		else
+			break;
 	}
-	cout << "업데이트 나오면 안돼" << endl;
 }
 
 void CNetwork::DataBaseThread()
@@ -264,11 +296,11 @@ void CNetwork::DataBaseThread()
 	while (m_bRunningServer)
 	{
 		this_thread::sleep_for(10ms);
-		while (!CDataBase::GetInst()->DataBaseQueueIsEmpty())
+		while (!CDataBase::GetInst()->IsEmptyDBQueue())
 		{
-			DataBase_Event	dbEvent;
-			if (CDataBase::GetInst()->PopFromDataBaseQueue(dbEvent))
-				CDataBase::GetInst()->RunDataBase(dbEvent);
+			DB_Event db_ev;
+			if (CDataBase::GetInst()->TryPopDBQueue(db_ev))
+				CDataBase::GetInst()->RunDataBase(db_ev);
 			else
 				break;
 		}
@@ -292,6 +324,6 @@ void CNetwork::Err_display(const char* msg, int err_no)
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, NULL);
 	cout << "[ " << msg << " ]";
 	wcout << L"에러 " << lpMsgBuf << endl;
-	while (true);
 	LocalFree(lpMsgBuf);
+	while (true);
 }

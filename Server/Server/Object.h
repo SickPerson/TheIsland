@@ -1,50 +1,36 @@
 #pragma once
 #include "stdafx.h"
 
+enum OBJ_LOCK_TYPE {
+	OBJ_LOCK_POS,
+	OBJ_LOCK_ROT,
+	OBJ_LOCK_STATE,
+	OBJ_LOCK_END
+};
+
 class CObject
 {
 private:
-	int m_iHp;
-	int m_iStamina;
-	int m_iHunger;
-	int m_iThirst;
+	char m_cState;
 
-	float m_fPosX;
-	float m_fPosY;
-	float m_fPosZ;
+	Vec3	m_vPos;
+	Vec3	m_vRot;
 
-	float m_fDirX;
-	float m_fDirY;
-	float m_fDirZ;
-
-	shared_mutex m_ObjMutex[OBJ_END];
+	shared_mutex m_ObjMutex[OBJ_LOCK_END];
 
 public:
 	CObject();
 	~CObject();
 
-protected:
-	void Init();
+public:
+	void SetPos( float& fPosX,  float& fPosY,  float& fPosZ);
+	void SetPos( Vec3 vPos);
+	void SetRot( float& fRotX,  float& fRotY,  float& fRotZ);
+	void SetRot( Vec3 vRot);
+	void SetState( char cState);
 
 public:
-	void SetHP(int iHP);
-	void SetStamina(int iStamina);
-	void SetHunger(int iHunger);
-	void SetThirst(int iThirst);
-
-	void SetPos(float _px, float _py, float _pz);
-	void SetPos(const DirectX::XMFLOAT3& _pos);
-	void SetDir(float _dx, float _dy, float _dz);
-	void SetDir(const DirectX::XMFLOAT3& _dir);
-	void SetAniTime();
-
-public:
-	const int GetHP();
-	const int GetStamina();
-	const int GetHunger();
-	const int GetThirst();
-	const DirectX::XMFLOAT3&	GetPos();
-	const DirectX::XMFLOAT3&	GetDir();
-
+	const Vec3	GetPos();
+	const Vec3	GetRot();
+	const  char GetState();
 };
-
