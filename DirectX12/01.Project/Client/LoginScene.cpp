@@ -118,60 +118,7 @@ void CLoginScene::Init()
 
 	CreateInputID();
 	CreateInputIP();
-	CSceneMgr::GetInst()->CreateMRTUI();
-
-	Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\monster.mdat", L"MeshData\\monster.mdat");
-	pObject = pMeshData->Instantiate();
-	pObject->SetName(L"House");
-	pObject->FrustumCheck(false);
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 100.f, 0.f));
-	pObject->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
-	pObject->MeshRender()->SetDynamicShadow(true);
-	/*pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"DistortionMtrl"), 0);
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"DistortionMtrl"), 1);
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"DistortionMtrl"), 2);
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"DistortionMtrl"), 3);*/
-	m_pScene->AddGameObject(L"Default", pObject, false);
-
-	// ===================
-	// Player 오브젝트 생성
-	// ===================
-	pObject = new CGameObject;
-	pObject->SetName(L"Player Object");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
-
-	// Transform 설정
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 100.f, 0.f));
-	pObject->Transform()->SetLocalScale(Vec3(1000.f, 1000.f, 1.f));
-	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
-
-	// MeshRender 설정
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
-	Ptr<CTexture> pColor = CResMgr::GetInst()->Load<CTexture>(L"Tile", L"Texture\\Tile\\TILE_03.tga");
-	Ptr<CTexture> pNormal = CResMgr::GetInst()->Load<CTexture>(L"Tile_n", L"Texture\\Tile\\TILE_03_N.tga");
-	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
-	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
-	pObject->MeshRender()->SetDynamicShadow(true);
-
-	// AddGameObject
-	m_pScene->FindLayer(L"Player")->AddGameObject(pObject);
-	Ptr<CMeshData> pTreeATex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
-	pObject = pTreeATex->Instantiate();
-	//pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
-	pObject->SetName(L"Tree");
-	pObject->Transform()->SetLocalPos(Vec3(-300.f, 100.f, -300.f));
-	pObject->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
-	float fScale = 2.f;
-	pObject->Transform()->SetLocalScale(Vec3(fScale, fScale, fScale));
-	pObject->FrustumCheck(false);
-	pObject->MeshRender()->SetDynamicShadow(true);
-
-	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
-
-
-
+	//CSceneMgr::GetInst()->CreateMRTUI();
 
 	Ptr<CTexture> pTitle = CResMgr::GetInst()->Load<CTexture>(L"Title", L"Texture\\Title1.png");
 	pObject = new CGameObject;
@@ -190,17 +137,17 @@ void CLoginScene::Init()
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 
-	pObject = new CGameObject;
-	pObject->SetName(L"Help Message");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CConstStringScript);
+	//pObject = new CGameObject;
+	//pObject->SetName(L"Help Message");
+	//pObject->AddComponent(new CTransform);
+	//pObject->AddComponent(new CConstStringScript);
 
-	pObject->Transform()->SetLocalPos(Vec3(280.f, 220.f, 1.f));
-	pObject->Transform()->SetLocalScale(Vec3(25.f, 40, 1.f));
+	//pObject->Transform()->SetLocalPos(Vec3(280.f, 220.f, 1.f));
+	//pObject->Transform()->SetLocalScale(Vec3(25.f, 40, 1.f));
 
-	pObject->GetScript<CConstStringScript>()->Init("DEMO", m_vFontColor, m_vFontBackColor);
+	//pObject->GetScript<CConstStringScript>()->Init("DEMO", m_vFontColor, m_vFontBackColor);
 
-	m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
+	//m_pScene->FindLayer(L"UI")->AddGameObject(pObject);
 }
 
 void CLoginScene::Update()
