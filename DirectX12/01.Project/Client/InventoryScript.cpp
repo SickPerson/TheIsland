@@ -42,9 +42,6 @@ CInventoryScript::~CInventoryScript()
 	m_vecItemSlot.clear();
 	m_vecItem.clear();
 	m_vecRecipe.clear();
-	SAFE_DELETE(m_pNextPage);
-	SAFE_DELETE(m_pPrevPage);
-	SAFE_DELETE(m_pClickObj);
 }
 
 void CInventoryScript::Update()
