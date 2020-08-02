@@ -50,9 +50,6 @@ void CMonsterProcess::AttackEvent(unsigned int uiMonster, unsigned int uiTarget)
 		CProcess::PushEventQueue(ev);
 		return;
 	}
-
-	if (range_list.empty())
-		m_pMonsterPool->m_cumMonsterPool[uiMonster]->ResPawn();
 	else
 	{
 		float monster_Damage = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetDamage();
@@ -100,8 +97,6 @@ void CMonsterProcess::FollowEvent(unsigned int uiID, unsigned int uiTarget)
 	
 	CopyBeforeLoginList(before_loginList);
 	InRangePlayer(before_loginList, before_rangeList, uiID);
-
-	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[uiID]->GetPos();
 	
 	if (uiTarget == NO_TARGET || (uiTarget != NO_TARGET && m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetState() == OBJ_STATE_DIE))
 	{
@@ -200,6 +195,24 @@ void CMonsterProcess::FollowEvent(unsigned int uiID, unsigned int uiTarget)
 
 void CMonsterProcess::EvastionEvent(unsigned int uiMonster, unsigned int uiTarget)
 {
+	concurrent_unordered_set<unsigned int> login_list;
+	concurrent_unordered_set<unsigned int> range_list;
+
+	CopyBeforeLoginList(login_list);
+	InRangePlayer(login_list, range_list, uiMonster);
+
+	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetPos();
+	Vec3 monster_dir = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetDir();
+	float monster_speed = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetSpeed();
+	monster_pos += monster_dir * monster_speed * CTimerMgr::GetInst()->GetDeltaTime();
+	m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetPos(monster_pos);
+
+	for (auto& au : range_list)
+	{
+		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
+		if (!bConnect) continue;
+		CPacketMgr::GetInst()->Send_Pos_Npc_Packet(au, uiMonster);
+	}
 }
 
 void CMonsterProcess::IdleEvent(unsigned int monsterId)
@@ -211,7 +224,7 @@ void CMonsterProcess::IdleEvent(unsigned int monsterId)
 	InRangePlayer(login_list, range_list, monsterId);
 
 	if (range_list.empty()) {
-		CProcess::m_pMonsterPool->m_cumMonsterPool[monsterId]->ResPawn();
+		//CProcess::m_pMonsterPool->m_cumMonsterPool[monsterId]->ResPawn();
 		return;
 	}
 
@@ -305,7 +318,7 @@ void CMonsterProcess::RespawnEvent(unsigned int uiMonster)
 	concurrent_unordered_set<unsigned int> login_list;
 	concurrent_unordered_set<unsigned int> range_list;
 
-	CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->ResPawn();
+	//CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->ResPawn();
 
 	CopyBeforeLoginList(login_list);
 	InRangePlayer(login_list, range_list, uiMonster);
@@ -362,7 +375,10 @@ void CMonsterProcess::HealEvent(unsigned int uiMonster)
 
 	// 몬스터 관련 넘겨줘야합니당
 	if (range_list.empty())
-		m_pMonsterPool->m_cumMonsterPool[uiMonster]->ResPawn();
+	{
+		return;
+	}
+		//m_pMonsterPool->m_cumMonsterPool[uiMonster]->ResPawn();
 	else
 	{
 		if (monster_hp != limit_hp)

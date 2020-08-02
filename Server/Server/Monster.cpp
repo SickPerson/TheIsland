@@ -71,6 +71,12 @@ void CMonster::SetWakeUp(bool bWakeUp)
 	m_bWakeUp = bWakeUp;
 }
 
+void CMonster::SetDir(Vec3 & vDir)
+{
+	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[ANIMAL_LOCK_DIR]);
+	m_vMoveDir = vDir;
+}
+
 tAnimalStatus & CMonster::GetAnimalStatus()
 {
 	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[ANIMAL_LOCK_STATUS]);
@@ -125,10 +131,8 @@ bool & CMonster::GetWakeUp()
 	return m_bWakeUp;
 }
 
-void CMonster::Move(const float& fTimeDistance)
+Vec3 & CMonster::GetDir()
 {
-}
-
-void CMonster::ResPawn()
-{
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[ANIMAL_LOCK_DIR]);
+	return m_vMoveDir;
 }

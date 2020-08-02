@@ -14,6 +14,7 @@ enum ANIMAL_LOCK_TYPE {
 	ANIMAL_LOCK_WAKEUP,
 	ANIMAL_LOCK_TARGET,
 	LAST_CHANGE_DIR_LOCK,
+	ANIMAL_LOCK_DIR,
 	RANDOM_POS_LOCK,
 	STATUS_LOCK,
 	MONSTER_LOCK_END
@@ -47,19 +48,6 @@ private:
 	Vec3 vRandomPos;
 
 public:
-	void Move(const float& fTimeDistance);
-	void ResPawn();
-
-	//float fHP;
-//float fStamina;
-//float fSpeed;
-//float fDamage;
-//
-//float fBehaviorTime;
-//
-//BEHAVIOR_TYPE eType;
-//ANIMAL_TYPE eKind;
-public:
 	void SetAnimalStatus( tAnimalStatus& animalStatus);
 	void SetHP( float& fHP);
 	void SetSpeed( float& fSpeed);
@@ -69,6 +57,7 @@ public:
 	void SetKind(ANIMAL_TYPE& eKind);
 	void SetTarget( unsigned int playerId);
 	void SetWakeUp(bool bWakeUp);
+	void SetDir(Vec3& vDir);
 
 public:
 	tAnimalStatus& GetAnimalStatus();
@@ -80,6 +69,7 @@ public:
 	ANIMAL_TYPE&	GetKind();
 	unsigned int& GetTarget();
 	bool& GetWakeUp();
+	Vec3&	GetDir();
 public:
 	//const unsigned int GetFollow() { unique_lock<shared_mutex>lock(m_smAnimalSharedMutex[FOLLOW_LOCK]); return m_iTarget; };
 	//bool GetWakeUp() { std::shared_lock<std::shared_mutex>lock(m_smAnimalSharedMutex[ANIMAL_LOCK_WAKEUP]); return m_bWakeUp; };
