@@ -68,3 +68,4 @@ Ptr<CTexture> GetItemIconByType(ITEM_TYPE eType);
 vector<tItemRecipe> GetItemRecipe(ITEM_TYPE eType);
 
 string GetItemNameByType(ITEM_TYPE eType);
+string GetItemInfoByType(ITEM_TYPE eType);

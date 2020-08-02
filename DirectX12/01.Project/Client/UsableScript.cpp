@@ -60,7 +60,7 @@ void CUsableScript::Update()
 
 void CUsableScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Usable Item Right Use" << std::endl;
+	
 	if (pObj == NULL)
 		return;
 
@@ -78,7 +78,7 @@ void CUsableScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 
 void CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Usable Item Left Use" << std::endl;
+	
 	if (m_eItemType > ITEM_FOOD && m_eItemType < ITEM_FOOD_END)
 	{
 		if (m_eItemType == ITEM_MEAT)

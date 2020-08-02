@@ -54,8 +54,16 @@ void CItemLootScript::GetItemNotify(Ptr<CTexture> pTex, wstring strItemName, int
 		iCount += m_iPrevCount;
 		m_iPrevCount = iCount;
 
-		m_pFont->SetString(strName.c_str() + string("  +") + std::to_string(iCount));
-		m_pIcon->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		if (iCount < 0)
+		{
+			m_pFont->SetString(strName.c_str() + string("  ") + std::to_string(iCount));
+			m_pIcon->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		}
+		else
+		{
+			m_pFont->SetString(strName.c_str() + string("  +") + std::to_string(iCount));
+			m_pIcon->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		}
 		m_fActiveTime = MAX_ACTIVE_TIME;
 	}
 	else
@@ -63,8 +71,23 @@ void CItemLootScript::GetItemNotify(Ptr<CTexture> pTex, wstring strItemName, int
 		string strName;
 		strName.assign(strItemName.begin(), strItemName.end());
 
-		m_pFont->SetString(strName.c_str() + string("  +") + std::to_string(iCount));
-		m_pIcon->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		if (iCount < 0)
+		{
+			m_pFont->SetString(strName.c_str() + string("  ") + std::to_string(iCount));
+			m_pIcon->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+
+			Vec4 vColor = Vec4(0.8f, 0.4f, 0.4f, 0.8f);
+			pBackground->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
+		}
+		else
+		{
+			m_pFont->SetString(strName.c_str() + string("  +") + std::to_string(iCount));
+			m_pIcon->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+
+			Vec4 vColor = Vec4(0.4f, 0.8f, 0.4f, 0.8f);
+			pBackground->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
+		}
+
 		m_fActiveTime = MAX_ACTIVE_TIME;
 		TransferLayer(30, true);
 		m_bEnable = true;
@@ -72,4 +95,9 @@ void CItemLootScript::GetItemNotify(Ptr<CTexture> pTex, wstring strItemName, int
 		m_strPrevItemName = strItemName;
 		m_iPrevCount = iCount;
 	}
+}
+
+void CItemLootScript::SetBackgroundObject(CGameObject * pObject)
+{
+	pBackground = pObject;
 }

@@ -108,6 +108,7 @@ void CPlayerScript::Update()
 	}
 
 	Vec3 vPos = Transform()->GetLocalPos();
+	m_vPrevPos = vPos;
 	float fSpeed = m_fSpeed;
 
 	if(m_fAttackCoolTime > -1.f)
@@ -252,36 +253,26 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 	// 플레이어와 충돌한게 동물아 아닌 종류들 - 
 	if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->GetLayerIdx() != _pOther->GetObj()->GetLayerIdx())
 	{
-		// 건물과 부딪힌건지 건물은 OBB로 충돌체크 수행
+		// 건물과 부딪힌건지 건물은 AABB로 충돌체크 수행
 		if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
 		{
-			if (_pOther->GetObj()->GetScript<CBuildScript>()->GetHousingType() == HOUSING_TYPE::HOUSING_FOUNDATION)
+			HOUSING_TYPE eType = _pOther->GetObj()->GetScript<CBuildScript>()->GetHousingType();
+			if (eType >= HOUSING_TYPE::HOUSING_FOUNDATION && eType < HOUSING_TYPE::HOUSING_END)
 			{
-				if (CollisionBox(_pOther, Vec3(200.f, 200.f, 200.f), 0.2f))
+				if (CollisionHouse(_pOther, _pOther->GetObj()->GetScript<CBuildScript>()->GetOffsetScale(), eType))
 				{
 					Vec3 vPos = Transform()->GetLocalPos();
 					Vec3 vBuildPos = _pOther->Transform()->GetLocalPos();
 
 					float fDiff = vBuildPos.y - vPos.y;
-					if (fDiff < 30.f)
+					if (fDiff < 30.f && (eType == HOUSING_FOUNDATION || eType == HOUSING_FLOOR))
 					{
 						vPos.y = vBuildPos.y;
 						Transform()->SetLocalPos(vPos);
 					}
 					else
 					{
-						Vec3 vDir = XMVector3Normalize(vPos - vBuildPos);
-						vDir.y = 0.f;
-						if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
-						{
-							vPos += vDir * m_fSpeed * DT * 5.f;
-						}
-						else
-						{
-							vPos += vDir * m_fSpeed * DT;
-						}
-						Vec3 vRot = _pOther->Transform()->GetLocalRot();
-						Transform()->SetLocalPos(vPos);
+						Transform()->SetLocalPos(m_vPrevPos);
 					}
 				}
 			}
@@ -469,7 +460,7 @@ bool CPlayerScript::CollisionRay(Vec3 vPosRay, Vec3 vDirRay, CCollider2D * _pOth
 	return false;
 }
 
-bool CPlayerScript::CollisionBox(CCollider2D* _pOther, Vec3 vOffsetScale, float fOffset)
+bool CPlayerScript::CollisionHouse(CCollider2D* _pOther, Vec3 vOffsetScale, UINT iType)
 {
 	const Matrix& matCol1 = Collider2D()->GetColliderWorldMat();
 	const Matrix& matCol2 = _pOther->GetColliderWorldMat();
@@ -481,7 +472,62 @@ bool CPlayerScript::CollisionBox(CCollider2D* _pOther, Vec3 vOffsetScale, float 
 	Vec3 vScale2 = _pOther->Transform()->GetLocalScale();
 
 	Vec3 vColScale1 = Vec3(20.f, 60.f, 20.f);
-	Vec3 vColScale2 = vOffsetScale;
+	Vec3 vColScale2 = Vec3(1.f, 1.f, 1.f);
+
+	HOUSING_TYPE eType = (HOUSING_TYPE)iType;
+
+	switch (eType)
+	{
+	case HOUSING_FOUNDATION:
+		vColScale2 = vOffsetScale;
+		break;
+	case HOUSING_WALL:
+	case HOUSING_WINDOW:
+	{
+		Vec3 vRot = _pOther->Transform()->GetLocalRot();
+		if (vRot.y != 0.f)
+		{
+			vColScale2 = Vec3(vOffsetScale.z, vOffsetScale.y, vOffsetScale.x);
+			//std::cout << "Turn" << vOffsetScale.x << std::endl;
+		}
+		else
+		{
+			vColScale2 = Vec3(vOffsetScale.x, vOffsetScale.y, vOffsetScale.z);
+		}
+	}
+		break;
+	case HOUSING_DOOR:
+	{
+		Vec3 vRot = _pOther->Transform()->GetLocalRot();
+		Vec3 vOffsetPos = Vec3(0.f, 0.f, 0.f);
+		if (vRot.y != 0.f)
+		{
+			vColScale2 = Vec3(vOffsetScale.z / 3.5f, vOffsetScale.y / 3.5f, vOffsetScale.x);
+			vOffsetPos = Vec3(80.f, 0.f, 0.f);
+		}
+		else
+		{
+			// vOffsetScale.x = 20.f;
+			vColScale2 = Vec3(vOffsetScale.x, vOffsetScale.y / 3.5f, vOffsetScale.z / 3.5f);
+			vOffsetPos = Vec3(0.f, 0.f, 80.f);
+		}
+		if (CollisionHouse_Door(_pOther, vColScale2, vOffsetPos))
+			return true;
+		if (CollisionHouse_Door(_pOther, vColScale2, -vOffsetPos))
+			return true;
+
+		return false;
+	}
+		break;
+	case HOUSING_FLOOR:
+	{
+		vColScale2 = vOffsetScale;
+	}
+		break;
+	default:
+		vColScale2 = vOffsetScale;
+		break;
+	}
 
 	vScale1 *= vColScale1;
 	vScale2 *= vColScale2;
@@ -495,7 +541,46 @@ bool CPlayerScript::CollisionBox(CCollider2D* _pOther, Vec3 vOffsetScale, float 
 	vMax = vPos + vScale1;
 	vMin = vPos - vScale1;
 	vOtherMax = vCol2 + vScale2;
-	vOtherMin = vCol2 + -vScale2;
+	vOtherMin = vCol2 - vScale2;
+
+	//std::cout << "Player : " << vPos.x << " || " << vPos.y << " || " << vPos.z << " || " << std::endl;
+	//std::cout << "House : " << vCol2.x << " || " << vCol2.y << " || " << vCol2.z << " || " << std::endl;
+
+	if (vMax.x < vOtherMin.x || vMin.x > vOtherMax.x) return false;
+	if (vMax.y < vOtherMin.y || vMin.y > vOtherMax.y) return false;
+	if (vMax.z < vOtherMin.z || vMin.z > vOtherMax.z) return false;
+
+	return true;
+}
+
+bool CPlayerScript::CollisionHouse_Door(CCollider2D * _pOther, Vec3 vOffsetScale, Vec3 vOffsetPos)
+{
+	const Matrix& matCol1 = Collider2D()->GetColliderWorldMat();
+	const Matrix& matCol2 = _pOther->GetColliderWorldMat();
+
+	Vec3 vCol1 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol1);
+	Vec3 vCol2 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol2);
+
+	Vec3 vScale1 = Transform()->GetLocalScale();
+	Vec3 vScale2 = _pOther->Transform()->GetLocalScale();
+
+	Vec3 vColScale1 = Vec3(20.f, 60.f, 20.f);
+
+	vScale1 *= vColScale1;
+	vScale2 *= vOffsetScale;
+
+	Vec3 vMax, vOtherMax;
+	Vec3 vMin, vOtherMin;
+
+	Vec3 vPos = Transform()->GetLocalPos();
+	vPos.y += 50.f;
+
+	vCol2 += vOffsetPos;
+
+	vMax = vPos + vScale1;
+	vMin = vPos - vScale1;
+	vOtherMax = vCol2 + vScale2;
+	vOtherMin = vCol2 - vScale2;
 
 	if (vMax.x < vOtherMin.x || vMin.x > vOtherMax.x) return false;
 	if (vMax.y < vOtherMin.y || vMin.y > vOtherMax.y) return false;
