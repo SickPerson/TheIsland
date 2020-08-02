@@ -122,10 +122,10 @@ void CNetwork::StartServer()
 
 void CNetwork::CloseServer()
 {
-	m_pDatabaseThread->join();
+	/*m_pDatabaseThread->join();
 	cout << "DatabaseThread Close" << endl;
 	m_pUpdateThread->join();
-	cout << "UpdateThread Close" << std::endl;
+	cout << "UpdateThread Close" << std::endl;*/
 	m_pAcceptThread->join();
 	cout << "AcceptThread Close" << std::endl;
 

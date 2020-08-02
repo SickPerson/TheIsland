@@ -15,6 +15,7 @@ private:
 
 	Vec3	m_vPos;
 	Vec3	m_vRot;
+	Transform trans;
 
 	shared_mutex m_ObjMutex[OBJ_LOCK_END];
 
