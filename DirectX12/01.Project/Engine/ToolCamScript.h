@@ -8,14 +8,21 @@ private:
 	float		m_fSpeed;
 	float		m_fScaleSpeed;
 
-public:	
+	bool		m_bTool;
+	float		m_fMaxY;
+
+public:
 	virtual void Update();
 
 public:
-	CLONE(CToolCamScript);
+	CLONE( CToolCamScript );
 
 public:
 	CToolCamScript();
 	virtual ~CToolCamScript();
+
+public:
+	void SetTool( bool bTool );
+	void SetMaxY( float fMaxY );
 };
 

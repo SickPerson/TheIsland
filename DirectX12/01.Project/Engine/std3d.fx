@@ -244,4 +244,50 @@ float4 PS_Skybox(VS_SKY_OUT _in) : SV_Target
 
     return vOutColor * g_float_0;
 }
+
+struct VS_LANDSCAPE_IN
+{
+	float3 vPos			: POSTION;
+	float3 vNormal		: NORMAL;
+	float2 vUV			: TEXCOORD;
+	float3 vTangent		: TANGENT;
+	float3 vBinormal	: BINORMAL;
+};
+
+struct VS_LANDSCAPE_OUT
+{
+	float4	vPos		: SV_POSITION;
+	float3	vNormal		: NORMAL;
+	float2	vUV			: TEXCOORD;
+	float3	vTangent	: TANGENT;
+	float3	vBinormal	: BINORMAL;
+	float3	vViewPos	: POSITION;
+	float4	vProjPos	: POSITION1;
+};
+
+struct PS_LANDSCAPE_OUT
+{
+	float4	vColor	: SV_Target;
+	float4	vColor1	: SV_Target1;
+	float4	vColor2	: SV_Target2;
+	float4	vColor3	: SV_Target3;
+	float4	vColor4	: SV_Target4;
+	float4	vColor5	: SV_Target5;
+};
+
+VS_STD3D_OUTPUT LandScapeVS( VS_STD3D_INPUT input )
+{
+	VS_STD3D_OUTPUT	output = ( VS_STD3D_OUTPUT )0;
+
+	float3	vPos = input.vPos;
+
+	output.vPosition = mul( float4( vPos, 1.f ), g_matWVP );
+	output.vViewPos = mul( float4( vPos, 1.f ), g_matWV ).xyz;
+	output.vViewNormal = normalize( mul( float4( input.vNormal, 0.f ), g_matWV ).xyz );
+	output.vViewTangent = normalize( mul( float4( input.vTangent, 0.f ), g_matWV ).xyz );
+	output.vViewBinormal = normalize( mul( float4( input.vBinormal, 0.f ), g_matWV ).xyz );
+	output.vUV = input.vUV;
+
+	return output;
+}
 #endif
