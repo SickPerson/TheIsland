@@ -190,13 +190,111 @@ string GetItemNameByType(ITEM_TYPE eType)
 		strName = "Jacket";
 		break;
 	case ITEM_BLUEPRINT:
-		strName = "House Blueprint";
+		strName = "Blueprint";
 		break;
 	default:
 		strName = "NoneItem";
 		break;
 	}
 	return strName;
+}
+
+string GetItemInfoByType(ITEM_TYPE eType)
+{
+	string strInfo;
+	switch (eType) {
+	case ITEM_STONE:
+		strInfo = "Used to make items";
+		break;
+	case ITEM_WOOD:
+		strInfo = "This is the most basic item";
+		break;
+	case ITEM_WOODSTICK:
+		strInfo = "Used to make items";
+		break;
+	case ITEM_LEATHER:
+		strInfo = "It is animal skin";
+		break;
+	case ITEM_CLOTH:
+		strInfo = "Used to make items";
+		break;
+	case ITEM_HAMMER:
+		strInfo = "Destroy or upgrade buildings";
+		break;
+	case ITEM_PICKAXE:
+		strInfo = "Collects stones effectively";
+		break;
+	case ITEM_AXE:
+		strInfo = "Collects woods effectively";
+		break;
+	case ITEM_BONE:
+		strInfo = "Used to make items";
+		break;
+	case ITEM_MACHETTE:
+		strInfo = "Effectively hunt animals";
+		break;
+	case ITEM_WOODCLUB:
+		strInfo = "It is a basic tool item";
+		break;
+	case ITEM_BOW:
+		strInfo = "Ranged attacks are possible";
+		break;
+	case ITEM_CAMPFIRE:
+		strInfo = "You can cook meat";
+		break;
+	case ITEM_MAP:
+		strInfo = "Check the location of the island";
+		break;
+	case ITEM_ARROW:
+		strInfo = "Ranged attacks are possible";
+		break;
+	case ITEM_MEAT:
+		strInfo = "Eat only in emergencies";
+		break;
+	case ITEM_COOKMEAT:
+		strInfo = "Rich in protein";
+		break;
+	case ITEM_CHOCOLATEBAR:
+		strInfo = "This is the basic item";
+		break;
+	case ITEM_APPLE:
+		strInfo = "Resolve some hunger";
+		break;
+	case ITEM_CAN:
+		strInfo = "This is the basic item";
+		break;
+	case ITEM_EMPTY_BOTTLE:
+		strInfo = "It is an empty water bottle";
+		break;
+	case ITEM_WATER_BOTTLE:
+		strInfo = "Can solve thirst";
+		break;
+	case ITEM_SODA:
+		strInfo = "This is the basic item";
+		break;
+	case ITEM_MEDICKIT:
+		strInfo = "Recovers maximum health";
+		break;
+	case ITEM_BANDAGE:
+		strInfo = "Recovers some health";
+		break;
+	case ITEM_TSHIRT:
+		strInfo = "Provides extra HP";
+		break;
+	case ITEM_SHIRT:
+		strInfo = "Provides extra HP";
+		break;
+	case ITEM_JACKET:
+		strInfo = "Provides extra a lot HP";
+		break;
+	case ITEM_BLUEPRINT:
+		strInfo = "You can build your own house";
+		break;
+	default:
+		strInfo = "This item does not exist";
+		break;
+	}
+	return strInfo;
 }
 
 vector<tItemRecipe> GetItemRecipe(ITEM_TYPE eType)

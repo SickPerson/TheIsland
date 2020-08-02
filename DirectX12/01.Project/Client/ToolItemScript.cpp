@@ -82,7 +82,7 @@ void CToolItemScript::Update()
 
 void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Tool Item Right Use" << std::endl;
+	
 	switch (m_eItemType)
 	{
 	case ITEM_PICKAXE:
@@ -120,7 +120,7 @@ void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 
 void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Tool Item Left Use" << std::endl;
+	
 	CGameObject* pObject = nullptr;
 
 	switch (m_eItemType)

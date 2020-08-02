@@ -15,6 +15,8 @@ class CInventoryScript :
 	CGameObject*			m_pNextPage;
 	CGameObject*			m_pPrevPage;
 
+	CGameObject*			m_pItemInfo;
+
 	bool					m_bActive;
 	bool					m_bAddable;
 

@@ -54,8 +54,16 @@ void CItemLootScript::GetItemNotify(Ptr<CTexture> pTex, wstring strItemName, int
 		iCount += m_iPrevCount;
 		m_iPrevCount = iCount;
 
-		m_pFont->SetString(strName.c_str() + string("  +") + std::to_string(iCount));
-		m_pIcon->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		if (iCount < 0)
+		{
+			m_pFont->SetString(strName.c_str() + string("  ") + std::to_string(iCount));
+			m_pIcon->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		}
+		else
+		{
+			m_pFont->SetString(strName.c_str() + string("  +") + std::to_string(iCount));
+			m_pIcon->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		}
 		m_fActiveTime = MAX_ACTIVE_TIME;
 	}
 	else

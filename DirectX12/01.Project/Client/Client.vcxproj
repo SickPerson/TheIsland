@@ -176,6 +176,7 @@
     <ClInclude Include="InputScript.h" />
     <ClInclude Include="InventoryScript.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemInfoScript.h" />
     <ClInclude Include="ItemLootScript.h" />
     <ClInclude Include="ItemScript.h" />
     <ClInclude Include="LoginScene.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="InputScript.cpp" />
     <ClCompile Include="InventoryScript.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="ItemInfoScript.cpp" />
     <ClCompile Include="ItemLootScript.cpp" />
     <ClCompile Include="ItemScript.cpp" />
     <ClCompile Include="LoginScene.cpp" />

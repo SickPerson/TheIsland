@@ -52,8 +52,6 @@ void CHousingScript::Update()
 
 void CHousingScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Housing Item Right Use" << std::endl;
-
 	{
 		tEvent evt = {};
 		evt.eType = EVENT_TYPE::TRANSFER_LAYER;
@@ -80,7 +78,6 @@ void CHousingScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 
 void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Housing Item Left Use" << std::endl;
 	int idx = pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->CheckItem(ITEM_TYPE::ITEM_WOOD, 3);
 	if (idx == -1)
 	{
