@@ -17,13 +17,13 @@
 
 // CMainFrame
 
-IMPLEMENT_DYNCREATE(CMainFrame, CFrameWnd)
+IMPLEMENT_DYNCREATE( CMainFrame, CFrameWnd )
 
 const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
-BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
+BEGIN_MESSAGE_MAP( CMainFrame, CFrameWnd )
 	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
@@ -46,9 +46,9 @@ CMainFrame::~CMainFrame()
 {
 }
 
-int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 {
-	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
+	if ( CFrameWnd::OnCreate( lpCreateStruct ) == -1 )
 		return -1;
 
 	//if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
@@ -74,15 +74,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
+BOOL CMainFrame::PreCreateWindow( CREATESTRUCT& cs )
 {
-	if( !CFrameWnd::PreCreateWindow(cs) )
+	if ( !CFrameWnd::PreCreateWindow( cs ) )
 		return FALSE;
 	// TODO: CREATESTRUCT cs를 수정하여 여기에서
 	//  Window 클래스 또는 스타일을 수정합니다.
 
 	cs.cx = 1580;
-	cs.cy = 720;
+	cs.cy = 1000;
 
 	return TRUE;
 }
@@ -95,9 +95,9 @@ void CMainFrame::AssertValid() const
 	CFrameWnd::AssertValid();
 }
 
-void CMainFrame::Dump(CDumpContext& dc) const
+void CMainFrame::Dump( CDumpContext& dc ) const
 {
-	CFrameWnd::Dump(dc);
+	CFrameWnd::Dump( dc );
 }
 #endif //_DEBUG
 
@@ -106,14 +106,18 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 
 
-BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
+BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 {
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 
-	m_MainSplitter.CreateStatic(this, 1, 2);
-	
-	m_MainSplitter.CreateView(0, 1, RUNTIME_CLASS(CMyForm), CSize(300, 720 ), pContext);
-	m_MainSplitter.CreateView(0, 0, RUNTIME_CLASS(CToolView), CSize(1280, 720), pContext);
+	m_MainSplitter.CreateStatic( this, 1, 2 );
+
+	m_MainSplitter.CreateView( 0, 1, RUNTIME_CLASS( CMyForm ), CSize( 300, 1000 ), pContext );
+	m_MainSplitter.CreateView( 0, 0, RUNTIME_CLASS( CToolView ), CSize( 1280, 1000 ), pContext );
+
+	m_pView = ( CToolView* )m_MainSplitter.GetPane( 0, 0 );
+	m_pForm = ( CMyForm* )m_MainSplitter.GetPane( 0, 1 );
+	m_pView->SetForm( m_pForm );
 
 	return TRUE; /* CFrameWnd::OnCreateClient(lpcs, pContext);*/
 }

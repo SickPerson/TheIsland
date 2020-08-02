@@ -166,6 +166,16 @@ struct tLandScape
 	Vec2 vPadding;
 };
 
+struct tLandScapeInfo
+{
+	Vec3 vMin;
+	Vec3 vMax;
+	int iNumX;
+	int iNumZ;
+	vector<Vec3>* pvecPos;
+	class CTransform* pTransform;
+};
+
 struct tGlobalValue
 {
 	tResolution vResolution;

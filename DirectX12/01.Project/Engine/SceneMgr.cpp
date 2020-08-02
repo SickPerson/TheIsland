@@ -17,6 +17,7 @@
 #include "Light2D.h"
 #include "Light3D.h"
 #include "LandScape.h"
+#include "Mouse.h"
 
 #include "TimeMgr.h"
 #include "KeyMgr.h"
@@ -68,6 +69,13 @@ void CSceneMgr::Init()
 	m_pCurScene->GetLayer( 29 )->SetName( L"Invisible" );
 	m_pCurScene->GetLayer( 30 )->SetName( L"UI" );
 	m_pCurScene->GetLayer( 31 )->SetName( L"Tool" );
+
+	m_pMouse = new CGameObject;
+	m_pMouse->AddComponent( new CTransform );
+	m_pMouse->AddComponent( new CMouse );
+
+	m_pCurScene->GetLayer( 0 )->AddGameObject( m_pMouse );
+
 }
 
 void CSceneMgr::Update()
@@ -114,6 +122,11 @@ CScene * CSceneMgr::CreateScene( const wstring & _strTag )
 	pScene->Start();
 
 	return pScene;
+}
+
+CGameObject * CSceneMgr::Mouse()
+{
+	return m_pMouse;
 }
 
 void CSceneMgr::CreateMRTUI()

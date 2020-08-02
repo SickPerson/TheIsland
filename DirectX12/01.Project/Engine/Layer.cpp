@@ -98,6 +98,23 @@ void CLayer::RemoveAll()
 	m_vecParentObj.clear();
 }
 
+CGameObject * CLayer::GetMainCamera()
+{
+	if ( m_iLayerIdx != 0 )
+		return nullptr;
+
+	vector<CGameObject*>::iterator iter = m_vecParentObj.begin();
+	for ( ; iter != m_vecParentObj.end(); ++iter )
+	{
+		if ( ( *iter )->GetName() == L"MainCam" )
+		{
+			return *iter;
+		}
+	}
+
+	return nullptr;
+}
+
 void CLayer::Awake()
 {
 	for (UINT i = 0; i < m_vecParentObj.size(); ++i)
