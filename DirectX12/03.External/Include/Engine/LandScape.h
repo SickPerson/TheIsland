@@ -25,6 +25,11 @@ public:
 	CLONE( CLandScape );
 
 public:
+	UINT GetNumX() const;
+	UINT GetNumZ() const;
+	vector<Vec3>* GetVecPos();
+
+public:
 	void CreateLandScape( const wstring& strPath, UINT iNumX, UINT iNumZ );
 
 private:

@@ -66,8 +66,8 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\housing_foundation.fbx", 1);
-	pTestMeshData->Save(pTestMeshData->GetPath());
+	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\housing_door_basic.fbx", 1);
+	//pTestMeshData->Save(pTestMeshData->GetPath());
 	//Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
 	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
 	//pTestMeshData->Save( pTestMeshData->GetPath() );
@@ -461,154 +461,6 @@ void CIngameScene::Init()
 	pTestObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
 
 	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
-
-	//// Network
-	//// Animal Bear Init
-	//for (int i = 0; i < ANIMAL_BEAR; ++i)
-	//{
-	//	pTestObject = pBearTex->Instantiate();
-	//	pTestObject->AddComponent(new CCollider2D);
-	//	pTestObject->AddComponent(new CAnimalScript);
-
-	//	{
-	//		tAnimalStatus tStatus;
-	//		tStatus.fHp = 200.f;
-	//		tStatus.fStamina = 100.f;
-	//		tStatus.fDamage = 20.f;
-	//		tStatus.fSpeed = 150.f;
-	//		tStatus.fBehaviorTime = 4.f;
-	//		tStatus.eType = BEHAVIOR_TYPE::B_WARLIKE;
-	//		tStatus.eKind = ANIMAL_TYPE::A_BEAR;
-
-	//		Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
-
-	//		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
-	//		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-	//	}
-
-	//	pTestObject->SetName(L"Bear");
-
-	//	pTestObject->MeshRender()->SetDynamicShadow(true);
-
-	//	pTestObject->Transform()->SetLocalPos(Vec3(1500.f, 20.f, 2000.f));
-	//	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	//	pTestObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
-
-	//	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-	//	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	//	pTestObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-
-	//	m_cumAnimal.insert(make_pair(i, pTestObject));
-	//}
-	//// Animal - Boar Init
-	//for (int i = ANIMAL_BEAR; i < ANIMAL_BOAR; ++i)
-	//{
-	//	pTestObject = pBoarTex->Instantiate();
-	//	pTestObject->AddComponent(new CCollider2D);
-	//	pTestObject->AddComponent(new CAnimalScript);
-
-	//	{
-	//		tAnimalStatus tStatus;
-	//		tStatus.fHp = 200.f;
-	//		tStatus.fStamina = 100.f;
-	//		tStatus.fDamage = 20.f;
-	//		tStatus.fSpeed = 150.f;
-	//		tStatus.fBehaviorTime = 4.f;
-	//		tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
-	//		tStatus.eKind = ANIMAL_TYPE::A_BOAR;
-
-	//		Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
-
-	//		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
-	//		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-	//	}
-
-	//	pTestObject->SetName(L"Boar");
-
-	//	pTestObject->MeshRender()->SetDynamicShadow(true);
-
-	//	pTestObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
-	//	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	//	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-
-	//	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-	//	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	//	pTestObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
-	//	m_cumAnimal.insert(make_pair(i, pTestObject));
-	//}
-	//// Animal - Deer Init
-	//for (int i = ANIMAL_BOAR; i < ANIMAL_DEER; ++i)
-	//{
-	//	pTestObject = pDeerTex->Instantiate();
-	//	pTestObject->AddComponent(new CCollider2D);
-	//	pTestObject->AddComponent(new CAnimalScript);
-
-	//	{
-	//		tAnimalStatus tStatus;
-	//		tStatus.fHp = 100.f;
-	//		tStatus.fStamina = 100.f;
-	//		tStatus.fDamage = 0.f;
-	//		tStatus.fSpeed = 250.f;
-	//		tStatus.fBehaviorTime = 4.f;
-	//		tStatus.eType = BEHAVIOR_TYPE::B_EVASION;
-	//		tStatus.eKind = ANIMAL_TYPE::A_DEER;
-
-	//		Vec3 vOffsetScale = Vec3(30.f, 30.f, 30.f);
-
-	//		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
-	//		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-	//	}
-
-	//	pTestObject->SetName(L"Deer");
-
-	//	pTestObject->MeshRender()->SetDynamicShadow(true);
-
-	//	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 20.f, 2000.f));
-	//	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	//	pTestObject->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
-
-	//	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-	//	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	//	pTestObject->Collider2D()->SetOffsetScale(Vec3(300.f, 300.f, 300.f));
-	//	m_cumAnimal.insert(make_pair(i, pTestObject));
-	//}
-
-	//// Animal - Wolf Init
-	//for (int i = ANIMAL_DEER; i < ANIMAL_WOLF; ++i) {
-	//	pTestObject = pWolfTex->Instantiate();
-	//	pTestObject->AddComponent(new CCollider2D);
-	//	pTestObject->AddComponent(new CAnimalScript);
-
-	//	{
-	//		tAnimalStatus tStatus;
-	//		tStatus.fHp = 200.f;
-	//		tStatus.fStamina = 100.f;
-	//		tStatus.fDamage = 20.f;
-	//		tStatus.fSpeed = 200.f;
-	//		tStatus.fBehaviorTime = 4.f;
-	//		tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
-	//		tStatus.eKind = ANIMAL_TYPE::A_WOLF;
-
-	//		Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
-
-	//		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
-	//		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-	//	}
-
-	//	pTestObject->SetName(L"Wolf");
-
-	//	pTestObject->MeshRender()->SetDynamicShadow(true);
-
-	//	pTestObject->Transform()->SetLocalPos(Vec3(-0.f, 20.f, 4000.f));
-	//	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//	pTestObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
-
-	//	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-	//	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	//	pTestObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-	//	m_cumAnimal.insert(make_pair(i, pTestObject));
-	//}
 	// ====================================================================
 
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>( L"TestTex", L"Texture\\Health.png" );
@@ -661,64 +513,21 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
 
-	//// ===================================================================================
-	//// Network
-	//// Player Init
-	//Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\islandplayer.mdat", L"MeshData\\islandplayer.mdat");
+	pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\housing_wall.mdat", L"MeshData\\housing_wall.mdat");
 
-	//CGameObject* pPlayer = pMeshData->Instantiate();
-	//// Script 설정
-	//pPlayer->AddComponent(new CPlayerScript);
-	//pPlayer->AddComponent(new CCollider2D);
 
-	//pPlayer->MeshRender()->SetDynamicShadow(true);
-
-	//pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
-	//pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-
-	//pPlayer->SetName(L"Player Object");
-	//pPlayer->FrustumCheck(false);
-	//pPlayer->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	//pPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
-	//m_pPlayer = pPlayer;
-
-	//// Other Player Init
-	//for (int i = 0; i < MAX_USER; ++i)
-	//{
-	//	pPlayer = pMeshData->Instantiate();
-	//	pPlayer->AddComponent(new CPlayerScript);
-	//	pPlayer->AddComponent(new CCollider2D);
-
-	//	pPlayer->MeshRender()->SetDynamicShadow(true);
-
-	//	pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
-	//	pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-
-	//	pPlayer->SetName(L"Other Object");
-	//	pPlayer->FrustumCheck(false);
-	//	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	//	pPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
-
-	//	m_cumPlayer.insert(make_pair(i, pPlayer));
-	//}
-	//// ===================================================================================
 	//CGameObject* pTest = pMeshData->Instantiate();
 	//// Script 설정
 	//pTest->AddComponent(new CCollider2D);
-
-	//pTest->MeshRender()->SetDynamicShadow(true);
-
-	////pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
-	////pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-
-	//pTest->Collider2D()->SetOffsetScale(Vec3(20.f, 60.f, 20.f));
-	//pTest->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+	//pTest->Collider2D()->SetOffsetScale(Vec3(40.f, 400.f, 400.f));
+	//pTest->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
 	//pTest->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
 
 	//pTest->SetName(L"Player Object");
 	//pTest->FrustumCheck(false);
-	//pTest->Transform()->SetLocalPos(Vec3(0.f, 30.f, 200.f));
-	//pTest->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
+	//pTest->Transform()->SetLocalPos(Vec3(0.f, 20.f, 200.f));
+	//pTest->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+	//pTest->Transform()->SetLocalScale(Vec3(0.6f, 0.6f, 0.6f));
 	////pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	//m_pScene->FindLayer(L"Player")->AddGameObject(pTest);
 
@@ -1527,6 +1336,7 @@ void CIngameScene::CreateItemUI()
 	pObject->Transform()->SetLocalPos(Vec3(490.f, -210.f, 300.f));
 	pObject->Transform()->SetLocalScale(Vec3(250.f, 40.f, 1.f));
 
+	pLootObject->GetScript<CItemLootScript>()->SetBackgroundObject(pObject);
 	pLootObject->AddChild(pObject);
 	m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
 

@@ -15,6 +15,8 @@ class CInventoryScript :
 	CGameObject*			m_pNextPage;
 	CGameObject*			m_pPrevPage;
 
+	CGameObject*			m_pItemInfo;
+
 	bool					m_bActive;
 	bool					m_bAddable;
 
@@ -42,6 +44,9 @@ public:
 	void SetItemLootScript(CItemLootScript* pScript);
 	void Show();
 	void OnAddable(int index);
+
+	int CheckItem(UINT eType, int iCount = 1);
+	bool DecreaseItem(int idx, int iCount = 1);
 
 	void Use_Left(CGameObject* pHost, CGameObject* pObj, int index);
 	void Use_Right(CGameObject* pHost, CGameObject* pObj, int index);

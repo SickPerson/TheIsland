@@ -14,6 +14,8 @@ class CItemLootScript :
 
 	wstring				m_strPrevItemName;
 	int					m_iPrevCount;
+
+	CGameObject*		pBackground;
 public:
 	CItemLootScript();
 	virtual ~CItemLootScript();
@@ -27,5 +29,6 @@ public:
 	void SetItemLootIcon(Ptr<CMaterial> pMaterial);
 
 	void GetItemNotify(Ptr<CTexture> pTex, wstring strItemName, int iCount);
+	void SetBackgroundObject(CGameObject* pObject);
 };
 

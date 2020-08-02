@@ -26,6 +26,21 @@ void CLandScape::LoadFromScene( FILE * _pFile )
 {
 }
 
+UINT CLandScape::GetNumX() const
+{
+	return m_iNumX;
+}
+
+UINT CLandScape::GetNumZ() const
+{
+	return m_iNumZ;
+}
+
+vector<Vec3>* CLandScape::GetVecPos()
+{
+	return &m_vecPos;
+}
+
 void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNumZ )
 {
 	wstring wstrFullPath = CPathMgr::GetResPath();

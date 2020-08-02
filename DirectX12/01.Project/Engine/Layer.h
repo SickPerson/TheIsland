@@ -22,6 +22,8 @@ public:
 	void RemoveParentObj(CGameObject* _pObject);
 	void RemoveAll();
 
+	CGameObject* GetMainCamera();
+
 public:
 	void Awake();
 	void Start();

@@ -11,6 +11,8 @@ class CSceneMgr
 private:
 	CScene*		m_pCurScene;	
 
+	CGameObject*	m_pMouse;
+
 public:
 	void Init();
 
@@ -25,6 +27,7 @@ public:
 
 public:
 	CScene* CreateScene( const wstring& _strTag );
+	CGameObject* Mouse();
 
 public:
 	void CreateMRTUI();

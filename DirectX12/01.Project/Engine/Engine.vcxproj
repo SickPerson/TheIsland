@@ -200,7 +200,9 @@ call EngineCopy.bat</Command>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="MonsterScript.h" />
+    <ClInclude Include="Mouse.h" />
     <ClInclude Include="MRT.h" />
+    <ClInclude Include="NaviMgr.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PathMgr.h" />
     <ClInclude Include="Ptr.h" />
@@ -258,7 +260,9 @@ call EngineCopy.bat</Command>
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="MonsterScript.cpp" />
+    <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="MRT.cpp" />
+    <ClCompile Include="NaviMgr.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PathMgr.cpp" />
     <ClCompile Include="RenderMgr.cpp" />

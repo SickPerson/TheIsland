@@ -82,19 +82,51 @@ void CToolItemScript::Update()
 
 void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Tool Item Right Use" << std::endl;
+	
+	switch (m_eItemType)
+	{
+	case ITEM_PICKAXE:
+		break;
+	case ITEM_AXE:
+		break;
+	case ITEM_HAMMER:
+	{
+		if (pObj == NULL)
+			return;
+
+		if (pObj->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx())
+		{
+			tEvent tEv;
+			tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+			tEv.wParam = (DWORD_PTR)pObj;
+			CEventMgr::GetInst()->AddEvent(tEv);
+		}
+	}
+		break;
+	case ITEM_MACHETTE:
+		break;
+	case ITEM_WOODCLUB:
+		break;
+	case ITEM_BOW:
+		break;
+	case ITEM_CAMPFIRE:
+		break;
+	case ITEM_MAP:
+		break;
+	default:
+		break;
+	}
 }
 
 void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Tool Item Left Use" << std::endl;
+	
 	CGameObject* pObject = nullptr;
 
 	switch (m_eItemType)
 	{
 	case ITEM_PICKAXE:
 	case ITEM_AXE:
-	case ITEM_HAMMER:
 	case ITEM_MACHETTE:
 	case ITEM_WOODCLUB:
 		if (pObj == NULL)
@@ -156,6 +188,26 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 			}
 		}
 		break;
+	case ITEM_HAMMER:
+	{
+		if (pObj == NULL)
+			return;
+
+		if (pObj->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx())
+		{
+			int idx = pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->CheckItem(ITEM_TYPE::ITEM_STONE, 3);
+			if (idx == -1)
+			{
+				return;
+			}
+
+			if (pObj->GetScript<CBuildScript>()->Upgrade())
+			{
+				pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->DecreaseItem(idx, 3);
+			}
+		}
+	}
+		break;
 	case ITEM_BOW:
 		break;
 	case ITEM_CAMPFIRE:
@@ -186,14 +238,14 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 			pObject->AddComponent(new CLight3D);
 			pObject->SetName(L"FireLight");
 
-			pObject->Light3D()->SetLightPos(Vec3(0.f, 0.f, 40.f));
+			pObject->Light3D()->SetLightPos(Vec3(0.f, 40.f, 0.f));
 			pObject->Light3D()->SetLightType(LIGHT_TYPE::POINT);
 			pObject->Light3D()->SetDiffuseColor(Vec3(1.f, 1.f, 1.f));
 			pObject->Light3D()->SetSpecular(Vec3(0.3f, 0.3f, 0.3f));
 			pObject->Light3D()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
 			pObject->Light3D()->SetLightRange(1000.f);
 
-			pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 40.f));
+			pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 			m_pObj->AddChild(pObject);
 

@@ -24,12 +24,12 @@ void CArmorScript::Update()
 
 void CArmorScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Armor Item Right Use" << std::endl;
+	
 }
 
 void CArmorScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	std::cout << "Armor Item Left Use" << std::endl;
+	
 }
 
 void CArmorScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)

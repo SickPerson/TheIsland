@@ -3,6 +3,7 @@
 
 #include "ItemScript.h"
 #include "ItemLootScript.h"
+#include "ItemInfoScript.h"
 #include "RecipeScript.h"
 
 #include "StuffScript.h"
@@ -208,6 +209,64 @@ void CInventoryScript::Update()
 			m_pClickObj->Transform()->SetLocalPos(Vec3(vMousePos.x, vMousePos.y, 10.f));
 			m_pClickObj->Transform()->SetLocalScale(vScale);
 		}
+		else
+		{
+			POINT vPoint = CKeyMgr::GetInst()->GetMousePos();
+			tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+			Vec2 vMousePos = Vec2((float)vPoint.x - vResolution.fWidth / 2.f, vResolution.fHeight / 2.f - (float)vPoint.y);
+			bool bCollision = false;
+
+			for (int i = 0; i < m_vecItemSlot.size(); ++i)
+			{
+				if(m_vecItem[i] == NULL)
+					continue;
+
+				Vec3 vPos = m_vecItemSlot[i]->Transform()->GetLocalPos();
+				Vec3 vScale = m_vecItemSlot[i]->Transform()->GetLocalScale();
+
+				if (vMousePos.x > vPos.x - vScale.x / 2.f && vMousePos.x < vPos.x + vScale.x / 2.f)
+				{
+					if (vMousePos.y > vPos.y - vScale.y / 2.f && vMousePos.y < vPos.y + vScale.y / 2.f)
+					{
+						if (m_pItemInfo->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->GetLayerIdx())
+						{
+							tEvent evt = {};
+
+							evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+							evt.wParam = (DWORD_PTR)m_pItemInfo;
+							evt.lParam = ((DWORD_PTR)30 << 16 | (DWORD_PTR)true);
+
+							CEventMgr::GetInst()->AddEvent(evt);
+						}
+						vMousePos.x += 100.f;
+
+						if(vMousePos.y < -200.f)
+							vMousePos.y += 45.f;
+						else
+							vMousePos.y -= 45.f;
+
+						vPos.z -= 100.f;
+						m_pItemInfo->Transform()->SetLocalPos(Vec3(vMousePos.x, vMousePos.y, vPos.z));
+						m_pItemInfo->GetScript<CItemInfoScript>()->SetItem((UINT)m_vecItem[i]->GetItemType());
+						bCollision = true;
+						break;
+					}
+				}
+			}
+			if (!bCollision)
+			{
+				if (m_pItemInfo->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"UI")->GetLayerIdx())
+				{
+					tEvent evt = {};
+
+					evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+					evt.wParam = (DWORD_PTR)m_pItemInfo;
+					evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
+
+					CEventMgr::GetInst()->AddEvent(evt);
+				}
+			}
+		}
 
 		if (KEY_AWAY(KEY_TYPE::KEY_LBTN) && m_bClick)
 		{
@@ -369,6 +428,36 @@ void CInventoryScript::OnAddable(int index)
 	m_bAddable = true;
 }
 
+int CInventoryScript::CheckItem(UINT eType, int iCount)
+{
+	int idx = -1;
+	for (int i = 0; i < m_vecItemSlot.size(); ++i)
+	{
+		if (m_vecItem[i] == NULL)
+			continue;
+		if (m_vecItem[i]->GetItemType() == eType)
+		{
+			if (m_vecItem[i]->GetItemCount() >= iCount)
+			{
+				idx = i;
+				break;
+			}
+		}
+	}
+	return idx;
+}
+
+bool CInventoryScript::DecreaseItem(int idx, int iCount)
+{
+	m_pItemLootScript->GetItemNotify(m_vecItem[idx]->GetItemIcon(), m_vecItem[idx]->GetName(), -iCount);
+	if (!m_vecItem[idx]->SetItemIncrease(-iCount))
+	{
+		OnAddable(idx);
+		return true;
+	}
+	return false;
+}
+
 void CInventoryScript::Use_Left(CGameObject * pHost, CGameObject * pObj, int index)
 {
 	if (index == -1 || m_vecItem[index] == NULL)
@@ -463,7 +552,7 @@ void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 		vPos = Vec3(0.f, 0.f, 0.f);
 		vScale = Vec3(1.f, 1.f, 1.f);
 
-		m_vecItem[iIdx]->Transform()->SetLocalPos(Vec3(vPos.x, vPos.y, -10.f));
+		m_vecItem[iIdx]->Transform()->SetLocalPos(Vec3(vPos.x, vPos.y, -2.f));
 		m_vecItem[iIdx]->Transform()->SetLocalScale(vScale);
 
 		m_vecItemSlot[iIdx]->AddChild(pObj);
@@ -576,6 +665,55 @@ void CInventoryScript::Init()
 	m_pPrevPage->Transform()->SetLocalScale(Vec3(60.f, 20.f, 1.f));
 	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pPrevPage);
 	GetObj()->AddChild(m_pPrevPage);
+
+	m_pItemInfo = new CGameObject;
+	m_pItemInfo->AddComponent(new CTransform);
+	m_pItemInfo->AddComponent(new CItemInfoScript);
+	m_pItemInfo->Transform()->SetLocalPos(Vec3(0.f, 0.f, 3.f));
+	m_pItemInfo->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	m_pItemInfo->SetName(L"Item Info");
+	{
+		CGameObject* pBackground = new CGameObject;
+		pBackground->AddComponent(new CTransform);
+		pBackground->AddComponent(new CMeshRender);
+
+		pBackground->Transform()->SetLocalPos(Vec3(0.f, 0.f, -1.f));
+		pBackground->Transform()->SetLocalScale(Vec3(200.f, 90.f, 1.f));
+
+		pBackground->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pBackground->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl")->Clone());
+
+		Vec4 vColor = Vec4(0.2f, 0.2f, 0.2f, 1.f);
+		pBackground->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
+		m_pItemInfo->AddChild(pBackground);
+
+		// ===========================================================================================
+		CGameObject* pItemName = new CGameObject;
+		pItemName->AddComponent(new CTransform);
+		pItemName->AddComponent(new CFont);
+
+		pItemName->Transform()->SetLocalPos(Vec3(-50.f, 20.f, -2.f));
+		pItemName->Transform()->SetLocalScale(Vec3(100.f, 40.f, 1.f));
+
+		pItemName->Font()->SetString("Item Name");
+		pItemName->Font()->SetFontColor(Vec4(1.f, 0.5f, 0.f, 1.f));
+		m_pItemInfo->AddChild(pItemName);
+
+		// ===========================================================================================
+		CGameObject* pItemInfo = new CGameObject;
+		pItemInfo->AddComponent(new CTransform);
+		pItemInfo->AddComponent(new CFont);
+
+		pItemInfo->Transform()->SetLocalPos(Vec3(0.f, -20.f, -2.f));
+		pItemInfo->Transform()->SetLocalScale(Vec3(200.f, 40.f, 1.f));
+
+		pItemInfo->Font()->SetString("Item Info Test Test Test Test");
+		m_pItemInfo->AddChild(pItemInfo);
+
+		// ===========================================================================================
+		m_pItemInfo->GetScript<CItemInfoScript>()->SetObject(pBackground, pItemName, pItemInfo);
+	}
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pItemInfo);
 }
 
 
