@@ -251,7 +251,7 @@ void CLoginScene::CreateLoginWorld()
 
 	// Material °ª ¼ÂÆÃ
 	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"AdvancedWaterMtrl");
-
+	
 	float tessellation = 128.f;
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -260,6 +260,9 @@ void CLoginScene::CreateLoginWorld()
 
 	float fHeight = 50.f;
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_1, &fHeight);
+
+	float fCull = 0.8f;
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_2, &fCull);
 
 	pObject->Transform()->SetLocalPos(Vec3(0.f, -200.f, 0.f));
 	pObject->Transform()->SetLocalScale(Vec3(20000.f, 20000.f, 1.f));

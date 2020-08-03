@@ -6,6 +6,8 @@
 
 #include "HousingMgr.h"
 
+#include <Engine/NaviMgr.h>
+
 #include <iostream>
 
 CHousingScript::CHousingScript(ITEM_TYPE eType, int iCount)
@@ -111,7 +113,8 @@ void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		Vec3 vPos = pHost->Transform()->GetLocalPos();
 
 		vPos += -vDir * 400.f;
-		vPos.y = 20;
+		vPos.y = CNaviMgr::GetInst()->GetY(vPos);
+		vPos.y += 20;
 
 		m_pObj[m_eType]->SetName(L"House");
 		m_pObj[m_eType]->Transform()->SetLocalPos(vPos);
@@ -133,7 +136,8 @@ void CHousingScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int nu
 		Vec3 vPos = pHost->Transform()->GetLocalPos();
 
 		vPos += -vDir * 400.f;
-		vPos.y = 20;
+		vPos.y = CNaviMgr::GetInst()->GetY(vPos);
+		vPos.y += 20;
 		m_pObj[m_eType]->Transform()->SetLocalPos(vPos);
 	}
 }

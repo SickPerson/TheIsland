@@ -109,6 +109,7 @@ void CPlayerScript::Update()
 	}
 
 	Vec3 vPos = Transform()->GetLocalPos();
+	Vec3 vOriginPos = Transform()->GetLocalPos();
 	m_vPrevPos = vPos;
 	float fSpeed = m_fSpeed;
 
@@ -139,28 +140,24 @@ void CPlayerScript::Update()
 			{
 				Vec3 vFront = -Transform()->GetWorldDir(DIR_TYPE::FRONT);
 				vPos += vFront * fSpeed * DT;
-				vPos.y = 0.f;
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_S))
 			{
 				Vec3 vBack = Transform()->GetWorldDir(DIR_TYPE::FRONT);
 				vPos += vBack * fSpeed * DT;
-				vPos.y = 0.f;
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_A))
 			{
 				Vec3 vLeft = Transform()->GetWorldDir(DIR_TYPE::RIGHT);
 				vPos += vLeft * fSpeed * DT;
-				vPos.y = 0.f;
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_D))
 			{
 				Vec3 vRight = -Transform()->GetWorldDir(DIR_TYPE::RIGHT);
 				vPos += vRight * fSpeed * DT;
-				vPos.y = 0.f;
 			}
 
 			POINT vMousePos = CKeyMgr::GetInst()->GetMousePos();
@@ -188,12 +185,21 @@ void CPlayerScript::Update()
 
 			Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 
-			vPos.y = CNaviMgr::GetInst()->GetY( Transform()->GetWorldPos() );
+			float fHeight = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+			float fMaxHeight = max(m_fHouseHeight, fHeight);
+			if (vOriginPos.y > fMaxHeight + 5.f)
+			{
+				vOriginPos.y -= m_fSpeed * DT * 5.f;
+			}
+			else
+			{
+				vOriginPos.y = fMaxHeight;
+			}
 
-			Transform()->SetLocalPos( vPos );
+			Transform()->SetLocalPos( Vec3(vPos.x, vOriginPos.y, vPos.z) );
 
 			SetCursorPos(vCenter.x, vCenter.y);
-
+			m_fHouseHeight = 0.f;
 			m_bEnable = true;
 		}
 		else
@@ -210,28 +216,24 @@ void CPlayerScript::Update()
 		{
 			Vec3 vFront = Transform()->GetWorldDir(DIR_TYPE::FRONT);
 			vPos += vFront * fSpeed * DT;
-			vPos.y = 0.f;
 		}
 
 		if (KEY_HOLD(KEY_TYPE::KEY_S))
 		{
 			Vec3 vBack = -Transform()->GetWorldDir(DIR_TYPE::FRONT);
 			vPos += vBack * fSpeed * DT;
-			vPos.y = 0.f;
 		}
 
 		if (KEY_HOLD(KEY_TYPE::KEY_A))
 		{
 			Vec3 vLeft = -Transform()->GetWorldDir(DIR_TYPE::RIGHT);
 			vPos += vLeft * fSpeed * DT;
-			vPos.y = 0.f;
 		}
 
 		if (KEY_HOLD(KEY_TYPE::KEY_D))
 		{
 			Vec3 vRight = Transform()->GetWorldDir(DIR_TYPE::RIGHT);
 			vPos += vRight * fSpeed * DT;
-			vPos.y = 0.f;
 		}
 
 		Vec2 vDrag = CKeyMgr::GetInst()->GetDragDir();
@@ -244,7 +246,10 @@ void CPlayerScript::Update()
 
 		Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 
-		vPos.y = CNaviMgr::GetInst()->GetY( Transform()->GetWorldPos() );
+		float fHeight = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+		if (fHeight > m_fHeight)
+			m_fHeight = fHeight;
+		vPos.y = m_fHeight;
 
 		Transform()->SetLocalPos( vPos );
 
@@ -265,16 +270,18 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 			HOUSING_TYPE eType = _pOther->GetObj()->GetScript<CBuildScript>()->GetHousingType();
 			if (eType >= HOUSING_TYPE::HOUSING_FOUNDATION && eType < HOUSING_TYPE::HOUSING_END)
 			{
-				if (CollisionHouse(_pOther, _pOther->GetObj()->GetScript<CBuildScript>()->GetOffsetScale(), eType))
+				bool bCollision = false;
+				bCollision = CollisionHouse(_pOther, _pOther->GetObj()->GetScript<CBuildScript>()->GetOffsetScale(), eType);
+				if (bCollision)
 				{
-					Vec3 vPos = Transform()->GetLocalPos();
+					Vec3 vPos = Transform()->GetWorldPos();
 					Vec3 vBuildPos = _pOther->Transform()->GetLocalPos();
 
 					float fDiff = vBuildPos.y - vPos.y;
 					if (fDiff < 30.f && (eType == HOUSING_FOUNDATION || eType == HOUSING_FLOOR))
 					{
-						vPos.y = vBuildPos.y;
-						Transform()->SetLocalPos(vPos);
+						if (m_fHouseHeight < vBuildPos.y)
+							m_fHouseHeight = vBuildPos.y;
 					}
 					else
 					{
@@ -346,6 +353,13 @@ void CPlayerScript::OnCollisionEnter(CCollider2D * _pOther)
 
 void CPlayerScript::OnCollisionExit(CCollider2D * _pOther)
 {
+	//if (_pOther->GetObj()->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx())
+	//{
+	//	if (_pOther->GetObj()->GetScript<CBuildScript>()->GetHousingType() == HOUSING_FOUNDATION)
+	//	{
+	//		m_bOnHouse = false;
+	//	}
+	//}
 	// 나가면 벡터에서 해제
 	auto p = find(m_vCollisionObj.begin(), m_vCollisionObj.end(), _pOther->GetObj());
 	if (p == m_vCollisionObj.end())

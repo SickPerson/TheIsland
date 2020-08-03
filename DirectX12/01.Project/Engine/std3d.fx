@@ -247,22 +247,25 @@ float4 PS_Skybox(VS_SKY_OUT _in) : SV_Target
 
 struct VS_LANDSCAPE_IN
 {
-	float3 vPos			: POSTION;
-	float3 vNormal		: NORMAL;
-	float2 vUV			: TEXCOORD;
-	float3 vTangent		: TANGENT;
-	float3 vBinormal	: BINORMAL;
+	float3 vPos         : POSTION;
+	float3 vNormal      : NORMAL;
+	float2 vUV         : TEXCOORD;
+	float3 vTangent      : TANGENT;
+	float3 vBinormal   : BINORMAL;
 };
 
 struct VS_LANDSCAPE_OUT
 {
-	float4	vPos		: SV_POSITION;
-	float3	vNormal		: NORMAL;
-	float2	vUV			: TEXCOORD;
-	float3	vTangent	: TANGENT;
-	float3	vBinormal	: BINORMAL;
-	float3	vViewPos	: POSITION;
-	float4	vProjPos	: POSITION1;
+	float4 vPosition : SV_Position;
+
+	float3 vViewPos : POSITION;
+	float3 vRealPos : POSITION1;
+
+	float3 vViewTangent : TANGENT;
+	float3 vViewNormal : NORMAL;
+	float3 vViewBinormal : BINORMAL;
+
+	float2 vUV : TEXCOORD;
 };
 
 struct PS_LANDSCAPE_OUT
@@ -275,18 +278,52 @@ struct PS_LANDSCAPE_OUT
 	float4	vColor5	: SV_Target5;
 };
 
-VS_STD3D_OUTPUT LandScapeVS( VS_STD3D_INPUT input )
+VS_LANDSCAPE_OUT LandScapeVS(VS_STD3D_INPUT input)
 {
-	VS_STD3D_OUTPUT	output = ( VS_STD3D_OUTPUT )0;
+	VS_LANDSCAPE_OUT   output = (VS_LANDSCAPE_OUT)0;
 
-	float3	vPos = input.vPos;
+	float3   vPos = input.vPos;
 
-	output.vPosition = mul( float4( vPos, 1.f ), g_matWVP );
-	output.vViewPos = mul( float4( vPos, 1.f ), g_matWV ).xyz;
-	output.vViewNormal = normalize( mul( float4( input.vNormal, 0.f ), g_matWV ).xyz );
-	output.vViewTangent = normalize( mul( float4( input.vTangent, 0.f ), g_matWV ).xyz );
-	output.vViewBinormal = normalize( mul( float4( input.vBinormal, 0.f ), g_matWV ).xyz );
+	output.vPosition = mul(float4(vPos, 1.f), g_matWVP);
+	output.vViewPos = mul(float4(vPos, 1.f), g_matWV).xyz;
+	output.vRealPos = vPos;
+	output.vViewNormal = normalize(mul(float4(input.vNormal, 0.f), g_matWV).xyz);
+	output.vViewTangent = normalize(mul(float4(input.vTangent, 0.f), g_matWV).xyz);
+	output.vViewBinormal = normalize(mul(float4(input.vBinormal, 0.f), g_matWV).xyz);
 	output.vUV = input.vUV;
+
+	return output;
+}
+
+PS_STD3D_OUTPUT LandScapePS(VS_LANDSCAPE_OUT _in)
+{
+	PS_STD3D_OUTPUT output = (PS_STD3D_OUTPUT) 0.f;
+
+	if (tex_0)
+		output.vTarget0 = g_tex_0.Sample(g_sam_0, _in.vUV);
+	else
+		output.vTarget0 = float4(1.f, 0.f, 1.f, 1.f);
+
+	float3 vViewNormal = _in.vViewNormal;
+
+	if (_in.vRealPos.y == 0.f)
+		clip(-1);
+
+	// 노말맵이 있는경우
+	if (tex_1)
+	{
+		float2 vUV;
+		vUV.x = _in.vRealPos.x / 110.f;
+		vUV.y = _in.vRealPos.z / 110.f;
+
+		float3 vTSNormal = g_tex_1.Sample(g_sam_0, vUV).xyz;
+		vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
+		float3x3 matTBN = { _in.vViewTangent, _in.vViewBinormal, _in.vViewNormal };
+		vViewNormal = normalize(mul(vTSNormal, matTBN));
+	}
+
+	output.vTarget1.xyz = vViewNormal;
+	output.vTarget2.xyz = _in.vViewPos;
 
 	return output;
 }

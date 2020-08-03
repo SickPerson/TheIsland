@@ -25,6 +25,7 @@ CNaturalScript::CNaturalScript(NATURAL_TYPE eType) :
 		m_fHealth = 150.f;
 		break;
 	case NATURAL_BUSH:
+	case NATURAL_NONE:
 		m_vOrginRot = Vec3(-XM_PI / 2.f, 0.f, 0.f);
 		m_fHealth = 1.f;
 		break;
@@ -100,6 +101,8 @@ void CNaturalScript::Update()
 			}
 		}
 		break;
+	case NATURAL_NONE:
+		break;
 	default:
 		break;
 	}
@@ -125,28 +128,13 @@ void CNaturalScript::SaveToScene( FILE * _pFile )
 void CNaturalScript::LoadFromScene( FILE * _pFile )
 {
 	fread( &m_eType, sizeof( NATURAL_TYPE ), 1, _pFile );
-
-	switch ( m_eType )
-	{
-	case NATURAL_TREE:
-		m_vOrginRot = Vec3( -XM_PI / 2.f, 0.f, 0.f );
-		m_fHealth = 150.f;
-		break;
-	case NATURAL_STONE:
-		m_vOrginRot = Vec3( -XM_PI / 2.f, 0.f, 0.f );
-		m_fHealth = 150.f;
-		break;
-	case NATURAL_BUSH:
-		m_vOrginRot = Vec3( -XM_PI / 2.f, 0.f, 0.f );
-		m_fHealth = 1.f;
-		break;
-	default:
-		break;
-	}
 }
 
 bool CNaturalScript::Damage(CGameObject* pObj, float fDamage)
 {
+	if (m_eType == NATURAL_NONE)
+		return false;
+
 	m_fHealth -= fDamage;
 
 	if (m_fHealth <= 0.f)
@@ -226,6 +214,7 @@ void CNaturalScript::Respawn()
 		m_fHealth = 150.f;
 		break;
 	case NATURAL_BUSH:
+	case NATURAL_NONE:
 		m_fHealth = 1.f;
 		break;
 	default:

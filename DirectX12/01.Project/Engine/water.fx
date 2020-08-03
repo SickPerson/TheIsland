@@ -184,6 +184,7 @@ PS_ADV_WATER_INPUT DS_AdvancedWater(CONSTANT_OUTPUT input, float3 uvwCoord : SV_
 	output.vOutUV = patch[0].vUV * uvwCoord.x + patch[1].vUV * uvwCoord.y + patch[2].vUV * uvwCoord.z;
 
 	float height = cos(g_fAccTime * 1.f + output.vOutUV.x * 10.f) * g_float_1;
+	height = sin((abs(output.vOutUV.x * 2 - 1) * g_float_1) + sin(g_fAccTime * 1)) * (g_float_1 - 10.f);
 
 	vertexPos.z += height;
 
@@ -209,7 +210,7 @@ float4 PS_AdvancedWater(PS_ADV_WATER_INPUT _input) : SV_Target
 	float fRatio = (fDist / 0.5f);
 	fRatio = fRatio * (0.2f + (fRatio) * 0.4f);
 
-	vScreenUV += vDir * sin(abs((fRatio - g_fAccTime * 0.06f) * 80.f)) * 0.03f;
+	vScreenUV += vDir * sin(abs((fRatio - g_fAccTime * 0.03f) * 80.f)) * 0.03f;
 
 	PS_STD3D_OUT output = (PS_STD3D_OUT) 0.f;
 
@@ -217,33 +218,53 @@ float4 PS_AdvancedWater(PS_ADV_WATER_INPUT _input) : SV_Target
 
 	output.vDiffuse = color;
 
+	float2 vUV = _input.vOutUV;
+	float fDivide = 5.f;
+	for (int i = 0; i <= (int)fDivide; ++i)
+	{
+		if (vUV.x <= 1.f / fDivide * i && vUV.y <= 1.f / fDivide * i)
+		{
+			vUV.x = (vUV.x - (1.f / fDivide * i)) * fDivide;
+			vUV.y = (vUV.y - (1.f / fDivide * i)) * fDivide;
+			break;
+		}
+	}
+	//for (int i = 0; i <= 5; ++i)
+	//{
+	//	if (vUV.x <= 0.2f * i && vUV.y <= 0.2f * i)
+	//	{
+	//		vUV.x = (vUV.x - (0.2f * i)) * 5.f;
+	//		vUV.y = (vUV.y - (0.2f * i)) * 5.f;
+	//		break;
+	//	}
+	//}
 
-	//float4 water = g_tex_1.Sample(g_sam_0, _input.vOutUV);
-	float4 water = g_tex_1.Sample(g_sam_0, vScreenUV);
+	vUV.y += g_fAccTime * 0.01f;
+	if (vUV.y > 1.f)
+		vUV.y -= 1.f;
 
-	float4 water_detail = g_tex_3.Sample(g_sam_0, vScreenUV);
+	float4 water = g_tex_1.Sample(g_sam_0, vUV);
 
 	float4 pos = g_tex_2.Sample(g_sam_0, vScreenUV);
 	float dist = pos.z;
 
 	if (dist == 0.f)
 	{
-		return color * water;
+		//return water;
+		float4 skybox = g_tex_3.Sample(g_sam_0, vUV);
+		return skybox * water;
 	}
 	else
 	{
-		//float a = 20000.f;
-		//return float4(dist / a, dist / a, dist / a, dist);
-		dist = dist / 15000.f;
-		if (dist > 0.8f)
+		dist = dist * 1000.f;
+		if (dist < g_float_2)
 		{
-			return water;
+			//return water;
+			float4 skybox = g_tex_3.Sample(g_sam_0, vUV);
+			return skybox * water;
 		}
-		water *= ((1 - dist) + 0.2f);
 	}
-
-	//color *= 0.5f;
-	//color.b += 0.25f;
+	//return gaussian5x5Sample(vUV, g_tex_0) * gaussian5x5Sample(vUV, g_tex_1);
 
 	return color * water;
 }
