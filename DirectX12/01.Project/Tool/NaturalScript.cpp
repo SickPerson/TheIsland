@@ -125,6 +125,24 @@ void CNaturalScript::SaveToScene( FILE * _pFile )
 void CNaturalScript::LoadFromScene( FILE * _pFile )
 {
 	fread( &m_eType, sizeof( NATURAL_TYPE ), 1, _pFile );
+
+	switch ( m_eType )
+	{
+	case NATURAL_TREE:
+		m_vOrginRot = Vec3( -XM_PI / 2.f, 0.f, 0.f );
+		m_fHealth = 150.f;
+		break;
+	case NATURAL_STONE:
+		m_vOrginRot = Vec3( -XM_PI / 2.f, 0.f, 0.f );
+		m_fHealth = 150.f;
+		break;
+	case NATURAL_BUSH:
+		m_vOrginRot = Vec3( -XM_PI / 2.f, 0.f, 0.f );
+		m_fHealth = 1.f;
+		break;
+	default:
+		break;
+	}
 }
 
 bool CNaturalScript::Damage(CGameObject* pObj, float fDamage)

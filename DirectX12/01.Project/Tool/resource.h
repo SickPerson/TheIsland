@@ -24,7 +24,6 @@
 #define IDC_COMBO_OBJECTKIND            1014
 #define IDC_BUTTON_SAVE                 1014
 #define IDC_COMBO_OBJECTS               1015
-#define IDC_BUTTON_ADDOBJECT4           1015
 #define IDC_BUTTON_LOAD                 1015
 #define IDC_EDIT_MOUSEPOSX              1016
 #define IDC_EDIT_MOUSEPOSY              1017
@@ -35,6 +34,7 @@
 #define IDC_LIST_MESH                   1022
 #define IDC_LIST_SCRIPT                 1023
 #define IDC_LIST_OBJECT                 1024
+#define IDC_BUTTON_SCRIPTLOAD           1025
 
 // Next default values for new objects
 // 

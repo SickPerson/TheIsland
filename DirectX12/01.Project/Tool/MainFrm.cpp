@@ -81,7 +81,7 @@ BOOL CMainFrame::PreCreateWindow( CREATESTRUCT& cs )
 	// TODO: CREATESTRUCT cs를 수정하여 여기에서
 	//  Window 클래스 또는 스타일을 수정합니다.
 
-	cs.cx = 1580;
+	cs.cx = 1600;
 	cs.cy = 1000;
 
 	return TRUE;
@@ -112,7 +112,7 @@ BOOL CMainFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* pContext )
 
 	m_MainSplitter.CreateStatic( this, 1, 2 );
 
-	m_MainSplitter.CreateView( 0, 1, RUNTIME_CLASS( CMyForm ), CSize( 300, 1000 ), pContext );
+	m_MainSplitter.CreateView( 0, 1, RUNTIME_CLASS( CMyForm ), CSize( 320, 1000 ), pContext );
 	m_MainSplitter.CreateView( 0, 0, RUNTIME_CLASS( CToolView ), CSize( 1280, 1000 ), pContext );
 
 	m_pView = ( CToolView* )m_MainSplitter.GetPane( 0, 0 );

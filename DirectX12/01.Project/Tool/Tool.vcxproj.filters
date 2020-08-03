@@ -28,6 +28,9 @@
     <Filter Include="05. SceneScript">
       <UniqueIdentifier>{962d4a28-9cfc-4ae6-8cee-d22ec7de20fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Script">
+      <UniqueIdentifier>{161e7358-a530-4e66-8bf6-c23221c4bfa4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -60,6 +63,9 @@
     <ClInclude Include="MapToolScene.h">
       <Filter>05. SceneScript</Filter>
     </ClInclude>
+    <ClInclude Include="NaturalScript.h">
+      <Filter>06. Script</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tool.cpp">
@@ -85,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="MapToolScene.cpp">
       <Filter>05. SceneScript</Filter>
+    </ClCompile>
+    <ClCompile Include="NaturalScript.cpp">
+      <Filter>06. Script</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

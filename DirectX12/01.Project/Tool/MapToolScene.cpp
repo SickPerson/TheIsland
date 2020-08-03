@@ -94,7 +94,7 @@ void CMapToolScene::Init()
 	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" ) );
 	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pLandScape.GetPointer() );
 	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
-	pObject->Transform()->SetLocalScale( Vec3( 50.f, 100.f, 50.f ) );
+	pObject->Transform()->SetLocalScale( Vec3( 200.f, 400.f, 200.f ) );
 	pObject->FrustumCheck( false );
 	CNaviMgr::GetInst()->SetLandScape( pObject->LandScape() );
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );

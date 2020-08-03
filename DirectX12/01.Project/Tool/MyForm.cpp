@@ -24,6 +24,9 @@
 #include <Engine/EventMgr.h>
 #include <Engine/RenderMgr.h>
 #include <Engine/NaviMgr.h>
+#include <Engine/PathMgr.h>
+
+#include "NaturalScript.h"
 
 // CMyForm
 
@@ -43,6 +46,7 @@ CMyForm::CMyForm()
 	, m_fScaleZ( 0 )
 	, m_iSelectObject( -1 )
 	, m_bLoad( false )
+	, m_iSelectScript( -1 )
 {
 }
 
@@ -117,6 +121,7 @@ BEGIN_MESSAGE_MAP( CMyForm, CFormView )
 	ON_LBN_SELCHANGE( IDC_LIST_MESH, &CMyForm::OnLbnSelchangeListMesh )
 	ON_LBN_SELCHANGE( IDC_LIST_SCRIPT, &CMyForm::OnLbnSelchangeListScript )
 	ON_LBN_SELCHANGE( IDC_LIST_OBJECT, &CMyForm::OnLbnSelchangeListObject )
+	ON_BN_CLICKED( IDC_BUTTON_SCRIPTLOAD, &CMyForm::OnBnClickedButtonScriptload )
 END_MESSAGE_MAP()
 
 
@@ -143,13 +148,30 @@ void CMyForm::OnBnClickedButtonAddobject()
 	if ( m_strObjectName.IsEmpty() )
 		return;
 
+	if ( m_iSelectScript < 0 )
+		return;
+
 	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+
 	wstring strFBXName = L"MeshData\\" + m_strFBXName + L".mdat";
+	m_vecPath.push_back( strFBXName );
 
 	Ptr<CMeshData> pMeshData = FindMeshData( strFBXName );
 
 	CGameObject* pObject = pMeshData->Instantiate();
 	pObject->SetName( m_strObjectName.GetString() );
+	pObject->AddComponent( new CNaturalScript( ( NATURAL_TYPE )m_iSelectScript ) );
+	
+	switch ( m_iSelectScript )
+	{
+	case 0:
+		pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
+		pObject->Transform()->SetLocalScale( Vec3( 20.f, 20.f, 20.f) );
+		break;
+	default:
+		break;
+	}
+
 	m_vecGameObjet.push_back( pObject );
 
 	pScene->AddGameObject( L"Environment", pObject, false );
@@ -406,76 +428,13 @@ void CMyForm::OnEnChangeEditRotz()
 	m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalRot( Vec3( m_fRotX, m_fRotY, m_fRotZ ) );
 }
 
-//
-//void CMyForm::OnCbnSelchangeComboObjectkind()
-//{
-//	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-//
-//	int  iSel = m_MeshList.GetCurSel();
-//
-//	//CString strScriptName;
-//	//m_MeshList.GetLBText( iSel, strScriptName);
-//}
-//
-//
-//void CMyForm::OnCbnSelchangeComboObjects()
-//{
-//	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-//
-//	m_iSelectObject = m_ObjectList.GetCurSel();
-//
-//	if ( m_iSelectObject >= m_vecGameObjet.size() || m_iSelectObject < 0 )
-//	{
-//		m_bChoiceObject = false;
-//		return;
-//	}
-//
-//	Vec3 vPos = m_vecGameObjet[m_iSelectObject]->Transform()->GetLocalPos();
-//	Vec3 vScale = m_vecGameObjet[m_iSelectObject]->Transform()->GetLocalScale();
-//	Vec3 vRot = m_vecGameObjet[m_iSelectObject]->Transform()->GetLocalRot();
-//
-//	CString PosX, PosY, PosZ;
-//	CString RotX, RotY, RotZ;
-//	CString ScaleX, ScaleY, ScaleZ;
-//
-//	PosX.Format( L"%f", vPos.x );
-//	PosY.Format( L"%f", vPos.y );
-//	PosZ.Format( L"%f", vPos.z );
-//	RotX.Format( L"%f", vRot.x );
-//	RotY.Format( L"%f", vRot.y );
-//	RotZ.Format( L"%f", vRot.z );
-//	ScaleX.Format( L"%f", vScale.x );
-//	ScaleY.Format( L"%f", vScale.y );
-//	ScaleZ.Format( L"%f", vScale.z );
-//
-//	m_EditPosX.SetWindowTextW( PosX );
-//	m_EditPosY.SetWindowTextW( PosY );
-//	m_EditPosZ.SetWindowTextW( PosZ );
-//	m_EditRotX.SetWindowTextW( RotX );
-//	m_EditRotY.SetWindowTextW( RotY );
-//	m_EditRotZ.SetWindowTextW( RotZ );
-//	m_EditScaleX.SetWindowTextW( ScaleX );
-//	m_EditScaleY.SetWindowTextW( ScaleY );
-//	m_EditScaleZ.SetWindowTextW( ScaleZ );
-//
-//	m_bChoiceObject = true;
-//}
-
-
-//void CMyForm::OnCbnSelchangeComboFbx()
-//{
-//	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-//
-//	// m_ComboFBX에서 선택된 셀의 값을 가져온다.
-//	//m_MeshList.GetLBText( m_MeshList.GetCurSel(), m_strFBXName );
-//	m_MeshList.GetText( m_MeshList.GetCurSel(), m_strFBXName );
-//	m_EditObjectName.SetWindowTextW( m_strFBXName );
-//}
-
 Ptr<CMeshData> CMyForm::FindMeshData( const wstring & strFBXName )
 {
 	for ( auto iter = m_vecFBX.begin(); iter != m_vecFBX.end(); ++iter )
 	{
+		if ( ( *iter ) == NULL )
+			continue;
+
 		if ( ( *iter )->GetName() == strFBXName )
 			return *iter;
 	}
@@ -533,12 +492,103 @@ void CMyForm::OnBnClickedButtonFbxload()
 void CMyForm::OnBnClickedButtonSave()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if ( m_vecGameObjet.empty() )
+		return;
+
+	FILE* pFile = NULL;
+	
+	wstring ResPath = CPathMgr::GetResPath();
+	ResPath += L"Data\\Map.dat";
+	string FullPath{ ResPath.begin(), ResPath.end() };
+	
+	fopen_s( &pFile, FullPath.c_str(), "w" );
+
+	int iSize = m_vecGameObjet.size();
+
+	fwrite( &iSize, sizeof( int ), 1, pFile );
+
+	for ( int i = 0; i < iSize; ++i )
+	{
+		wstring strName = m_vecGameObjet[i]->GetName();
+		size_t iLength = strName.size();
+		fwrite( &iLength, sizeof( size_t ), 1, pFile );
+		fwrite( strName.c_str(), sizeof( wchar_t ), iLength, pFile );
+
+		bool bNaturalScript = m_vecGameObjet[i]->GetScript<CNaturalScript>() == NULL ? false : true;
+		fwrite( &bNaturalScript, sizeof( bool ), 1, pFile );
+
+		if ( bNaturalScript )
+		{
+			wstring strPath = m_vecPath[i];
+			iLength = strPath.size();
+			fwrite( &iLength, sizeof( size_t ), 1, pFile );
+			fwrite( strPath.c_str(), sizeof( wchar_t ), iLength, pFile );
+			m_vecGameObjet[i]->GetScript<CNaturalScript>()->SaveToScene( pFile );
+		}
+
+		m_vecGameObjet[i]->Transform()->SaveToScene( pFile );		
+	}
+
+	fclose( pFile );
 }
 
 
 void CMyForm::OnBnClickedButtonLoad()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	FILE* pFile = NULL;
+
+	wstring ResPath = CPathMgr::GetResPath();
+	ResPath += L"Data\\Map.dat";
+	string FullPath{ ResPath.begin(), ResPath.end() };
+
+	fopen_s( &pFile, FullPath.c_str(), "r" );
+
+	int iSize = 0;
+	fread( &iSize, sizeof( int ), 1, pFile );
+		
+	for ( int i = 0; i < iSize; ++i )
+	{
+		CGameObject* pObject = nullptr;
+
+		wchar_t strName[MAX_PATH]{};
+		size_t iLength = 0;
+		fread( &iLength, sizeof( size_t ), 1, pFile );
+		fread( strName, sizeof( wchar_t ), iLength, pFile );
+
+		bool bNaturalScript;
+		fread( &bNaturalScript, sizeof( bool ), 1, pFile );
+
+		if ( bNaturalScript )
+		{
+			wchar_t strPath[MAX_PATH]{};
+			fread( &iLength, sizeof( size_t ), 1, pFile );
+			fread( strPath, sizeof( wchar_t ), iLength, pFile );
+
+			Ptr<CMeshData> pMeshData = FindMeshData( strPath );
+
+			if ( pMeshData == nullptr )
+			{
+				pMeshData = CResMgr::GetInst()->Load<CMeshData>( strPath, strPath );
+				m_vecFBX.push_back( pMeshData );
+			}
+
+			pObject = pMeshData->Instantiate();
+			pObject->AddComponent( new CNaturalScript( NATURAL_TREE ) );
+			pObject->GetScript<CNaturalScript>()->LoadFromScene( pFile );
+
+			m_vecPath.push_back( strPath );
+		}
+
+		pObject->Transform()->LoadFromScene( pFile );
+
+		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+		m_vecGameObjet.push_back( pObject );
+		pScene->AddGameObject( L"Environment", pObject, false );
+		m_ObjectList.AddString( strName );
+	}
+	
+	fclose( pFile );
 }
 
 void CMyForm::OnLButtonDown( UINT nFlags, CPoint point )
@@ -653,6 +703,9 @@ void CMyForm::OnLbnSelchangeListMesh()
 void CMyForm::OnLbnSelchangeListScript()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	m_iSelectScript = m_ScriptList.GetCurSel();
+
 }
 
 
@@ -666,6 +719,7 @@ void CMyForm::OnLbnSelchangeListObject()
 		m_bChoiceObject = false;
 		return;
 	}
+
 
 	Vec3 vPos = m_vecGameObjet[m_iSelectObject]->Transform()->GetLocalPos();
 	Vec3 vScale = m_vecGameObjet[m_iSelectObject]->Transform()->GetLocalScale();
@@ -696,4 +750,13 @@ void CMyForm::OnLbnSelchangeListObject()
 	m_EditScaleZ.SetWindowTextW( ScaleZ );
 
 	m_bChoiceObject = true;
+}
+
+
+void CMyForm::OnBnClickedButtonScriptload()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_ScriptList.AddString( L"Tree" );
+	m_ScriptList.AddString( L"Stone" );
+	m_ScriptList.AddString( L"Bush" );	
 }
