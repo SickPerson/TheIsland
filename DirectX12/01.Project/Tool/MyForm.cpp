@@ -566,6 +566,8 @@ void CMyForm::OnBnClickedButtonLoad()
 			fread( strPath, sizeof( wchar_t ), iLength, pFile );
 
 			Ptr<CMeshData> pMeshData = FindMeshData( strPath );
+			if ( iLength == 0 )
+				continue;
 
 			if ( pMeshData == nullptr )
 			{

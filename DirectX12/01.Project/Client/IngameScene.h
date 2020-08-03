@@ -36,5 +36,7 @@ public:
 	void CreateInventoryUI();
 	void CreateItemUI();
 	void CreateChatUI();
+
+	void CreateNatural();
 };
 

@@ -51,6 +51,8 @@
 
 #include <Engine/ParticleSystem.h>
 
+#include <Engine/NaviMgr.h>
+
 #include "Network.h"
 
 CIngameScene::CIngameScene() 
@@ -82,244 +84,7 @@ void CIngameScene::Init()
 	Ptr<CMeshData> pTreeCTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucec.mdat", L"MeshData\\sprucec.mdat");
 
 	CGameObject * pTestObject = nullptr;
-
-
-	for (int i = 0; i < 70; ++i)
-	{
-		int type = rand() % 3;
-		if (type == 0)
-		{
-			pTestObject = pTreeATex->Instantiate();
-			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
-		}
-		else if (type == 1)
-		{
-			pTestObject = pTreeBTex->Instantiate();
-			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 1);
-		}
-		else
-		{
-			pTestObject = pTreeCTex->Instantiate();
-			pTestObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
-		}
-		pTestObject->AddComponent(new CCollider2D);
-
-		float fScale = (float)(rand() % 10 + 30);
-		pTestObject->SetName(L"Tree");
-		pTestObject->AddComponent(new CNaturalScript(NATURAL_TYPE::NATURAL_TREE));
-		//pTestObject->FrustumCheck(false);
-
-		pTestObject->MeshRender()->SetDynamicShadow(true);
-
-		pTestObject->Transform()->SetLocalPos(Vec3((float)(rand()%10000 - 5000), 20.f, (float)(rand() % 8000)));
-		pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-		pTestObject->Transform()->SetLocalScale(Vec3(fScale, fScale, fScale));
-
-		pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-		pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
-		pTestObject->Collider2D()->SetOffsetScale(Vec3(1.7f, 1.7f, 1.7f));
-
-		m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	}
-
-	Ptr<CMeshData> pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\genericcliffb.mdat", L"MeshData\\genericcliffb.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(-5000.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(12.f, 12.f, 12.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\genericcliffa.mdat", L"MeshData\\genericcliffa.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(-4000.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(12.f, 12.f, 12.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\lowrockmedium.mdat", L"MeshData\\lowrockmedium.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(-3500.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(12.f, 12.f, 12.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01.mdat", L"MeshData\\MountainsRocks01.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(-2500.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01_A.mdat", L"MeshData\\MountainsRocks01_A.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(-1500.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01_B.mdat", L"MeshData\\MountainsRocks01_B.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(-1000.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01_C.mdat", L"MeshData\\MountainsRocks01_C.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(-500.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks01_D.mdat", L"MeshData\\MountainsRocks01_D.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks02.mdat", L"MeshData\\MountainsRocks02.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(500.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks02_A.mdat", L"MeshData\\MountainsRocks02_A.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(1000.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks02_B.mdat", L"MeshData\\MountainsRocks02_B.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(1500.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\MountainsRocks03.mdat", L"MeshData\\MountainsRocks03.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(2000.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockDetailsA.mdat", L"MeshData\\RockDetailsA.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(2500.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockDetailsB.mdat", L"MeshData\\RockDetailsB.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(3000.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockMediumA.mdat", L"MeshData\\RockMediumA.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(3500.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(10.f, 10.f, 10.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockMediumB.mdat", L"MeshData\\RockMediumB.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(4000.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(10.f, 10.f, 10.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\RockMediumC.mdat", L"MeshData\\RockMediumC.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(4500.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(10.f, 10.f, 10.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
-	pRockTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\Stone_01_Base.mdat", L"MeshData\\Stone_01_Base.mdat");
-	// ====================================================================
-	pTestObject = pRockTex->Instantiate();
-	pTestObject->SetName(L"Rock");
-	pTestObject->Transform()->SetLocalPos(Vec3(5000.f, 100.f, 1000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(10.f, 10.f, 10.f));
-	m_pScene->FindLayer(L"Environment")->AddGameObject(pTestObject);
-	// ====================================================================
-
+	   
 
 	// ====================================================================
 	pTestObject = pDeerTex->Instantiate();
@@ -635,21 +400,26 @@ void CIngameScene::Init()
 	// =======================
 	// LandScape 오브젝트 생성
 	// =======================
-	/*pObject = new CGameObject;
-	pObject->SetName(L"LandScape Object");
-	pObject->AddComponent(new CTransform);
-	pObject->AddComponent(new CMeshRender);
-	pObject->AddComponent(new CLandScape);
-	pObject->LandScape()->CreateLandScape(L"Texture/TestLandScape.bmp", 219, 219);
-	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"LandScapeMesh"));
-	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"LandScapeMtrl"));
-	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pSky01.GetPointer());
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
-	pObject->Transform()->SetLocalScale(Vec3(15.f, 15.f, 15.f));
-	pObject->FrustumCheck(false);
+	Ptr<CTexture> pLandScape = CResMgr::GetInst()->Load<CTexture>( L"Grass", L"Texture\\LandScape\\SAND_01.bmp" );
 
-	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);*/
+	pObject = new CGameObject;
+	pObject->SetName( L"LandScape Object" );
+	pObject->AddComponent( new CTransform );
+	pObject->AddComponent( new CMeshRender );
+	pObject->AddComponent( new CLandScape );
+	pObject->LandScape()->CreateLandScape( L"Texture/ISLAND_110.bmp", 110, 110 );
+	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"LandScapeMesh" ) );
+	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" ) );
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pLandScape.GetPointer() );
+	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
+	pObject->Transform()->SetLocalScale( Vec3( 200.f, 400.f, 200.f ) );
+	pObject->FrustumCheck( false );
+	CNaviMgr::GetInst()->SetLandScape( pObject->LandScape() );
+	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
+
+	// 
+	CreateNatural();
 
 	// ====================
 	// Grid 오브젝트 생성
@@ -675,42 +445,6 @@ void CIngameScene::Init()
 
 	// AddGameObject
 	m_pScene->FindLayer( L"Tool" )->AddGameObject( pObject );
-
-	// ===================
-	// Test 오브젝트 생성
-	// ===================
-	for (int i = 0; i < 11; ++i)
-	{
-		for (int j = 0; j < 11; ++j)
-		{
-			pObject = new CGameObject;
-			pObject->SetName(L"Test Object");
-			pObject->AddComponent(new CTransform);
-			pObject->AddComponent(new CMeshRender);
-
-
-			// Transform 설정
-			if(i > 9)
-				pObject->Transform()->SetLocalPos(Vec3(-5000.f + (j * 1000.f), -60.f, 9000.f - (i * 1000.f) + 20.f));
-			else
-				pObject->Transform()->SetLocalPos(Vec3(-5000.f + (j * 1000.f), 10.f, 9000.f - (i * 1000.f)));
-			pObject->Transform()->SetLocalScale(Vec3(1000.f, 1000.f, 1.f));
-			if(i > 9)
-				pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.2f, 0.f, 0.f));
-			else
-				pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
-
-			// MeshRender 설정
-			pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"Std3DMtrl"));
-			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pColor.GetPointer());
-			pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pNormal.GetPointer());
-			pObject->MeshRender()->SetDynamicShadow(true);
-
-			// AddGameObject
-			m_pScene->FindLayer(L"Environment")->AddGameObject(pObject);
-		}
-	}
 
 	// ==========================
 	// Distortion Object 만들기
@@ -1406,4 +1140,55 @@ void CIngameScene::CreateChatUI()
 		m_pChat->GetScript<CChatScript>()->AddChatObject(pObject, i);
 	}
 	m_pPlayer->GetScript<CPlayerScript>()->SetChatObject(m_pChat);
+}
+
+void CIngameScene::CreateNatural()
+{
+	FILE* pFile = NULL;
+
+	wstring ResPath = CPathMgr::GetResPath();
+	ResPath += L"Data\\Map.dat";
+	string FullPath{ ResPath.begin(), ResPath.end() };
+
+	fopen_s( &pFile, FullPath.c_str(), "r" );
+
+	int iSize = 0;
+	fread( &iSize, sizeof( int ), 1, pFile );
+
+	for ( int i = 0; i < iSize; ++i )
+	{
+		CGameObject* pObject = nullptr;
+
+		wchar_t strName[MAX_PATH]{};
+		size_t iLength = 0;
+		fread( &iLength, sizeof( size_t ), 1, pFile );
+		fread( strName, sizeof( wchar_t ), iLength, pFile );
+
+		bool bNaturalScript;
+		fread( &bNaturalScript, sizeof( bool ), 1, pFile );
+
+		if ( bNaturalScript )
+		{
+			wchar_t strPath[MAX_PATH]{};
+			fread( &iLength, sizeof( size_t ), 1, pFile );
+			fread( strPath, sizeof( wchar_t ), iLength, pFile );
+
+			if ( iLength == 0 )
+				continue;
+
+			Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>( strPath, strPath );
+
+			pObject = pMeshData->Instantiate();
+			pObject->AddComponent( new CNaturalScript( NATURAL_TREE ) );
+			pObject->GetScript<CNaturalScript>()->LoadFromScene( pFile );
+
+		}
+
+		pObject->Transform()->LoadFromScene( pFile );
+
+		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+		pScene->AddGameObject( L"Environment", pObject, false );
+	}
+
+	fclose( pFile );
 }

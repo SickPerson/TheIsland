@@ -82,7 +82,7 @@ void CMapToolScene::Init()
 	// =======================
 	// LandScape 오브젝트 생성
 	// =======================
-	Ptr<CTexture> pLandScape = CResMgr::GetInst()->Load<CTexture>( L"Grass", L"Texture\\LandScape\\SAND_01.bmp" );
+	Ptr<CTexture> pLandScape = CResMgr::GetInst()->Load<CTexture>( L"Grass", L"Texture\\LandScape\\GRASS_00+SAND.bmp" );
 
 	pObject = new CGameObject;
 	pObject->SetName( L"LandScape Object" );

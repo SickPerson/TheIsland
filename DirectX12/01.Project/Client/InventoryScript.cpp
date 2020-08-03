@@ -176,7 +176,7 @@ void CInventoryScript::Update()
 								// 재료 아이템 제거
 								for (int i = 0; i < vecIndex.size(); ++i)
 								{
-									if (!m_vecItem[vecIndex[i]]->SetItemIncrease(-vecRecipe[i].iCount))
+									if (!m_vecItem[vecIndex[i]]->SetItemIncrease(vecRecipe[i].iCount * -1))
 									{
 										m_vecItem[vecIndex[i]] = NULL;
 										m_bAddable = true;
