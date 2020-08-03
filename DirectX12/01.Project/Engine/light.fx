@@ -228,10 +228,9 @@ VS_ShadowOut VS_ShadowMap(VS_ShadowIn _in)
 
 float4 PS_ShadowMap(VS_ShadowOut _input) : SV_Target
 {
-	float4 vColor = g_tex_0.Sample(g_sam_0, _input.vUV);
-	if (vColor.w < 0.5f)
-		clip(-1);
-	
+	//float4 vColor = g_tex_0.Sample(g_sam_0, _input.vUV);
+	//if (vColor.w < 0.5f)
+	//	clip(-1);
 
 	return float4(_input.vProj.z / _input.vProj.w, 0.f, 0.f, 0.f);
 }

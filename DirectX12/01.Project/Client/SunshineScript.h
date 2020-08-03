@@ -11,7 +11,9 @@ class CSunshineScript :
 	float m_fDarkness;
 
 	CGameObject* m_pSkybox;
-
+	CGameObject* m_pPlayer;
+	CGameObject* m_pClock;
+	CGameObject* m_pDay;
 public:
 	CSunshineScript();
 	virtual ~CSunshineScript();
@@ -22,9 +24,12 @@ public:
 	virtual void Update() override;
 
 public:
+	void Init();
+
 	float GetTime();
 	void SetTime(float fTime);
 
 	void SetSkybox(CGameObject* pObject);
+	void SetPlayer(CGameObject* pObject);
 };
 

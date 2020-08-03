@@ -87,7 +87,7 @@ void CMeshRender::Render_Shadowmap()
 {
 	int a = 1;
 	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ShadowMapMtrl");
-	pMtrl->SetData(SHADER_PARAM::TEX_0, m_vecMtrl[0]->GetTexture().GetPointer());
+	// pMtrl->SetData(SHADER_PARAM::TEX_0, m_vecMtrl[0]->GetTexture().GetPointer());
 
 	for (UINT i = 0; i < m_pMesh->GetSubsetCount(); ++i)
 	{
