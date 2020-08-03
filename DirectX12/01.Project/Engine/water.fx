@@ -266,7 +266,7 @@ float4 PS_AdvancedWater(PS_ADV_WATER_INPUT _input) : SV_Target
 	}
 	//return gaussian5x5Sample(vUV, g_tex_0) * gaussian5x5Sample(vUV, g_tex_1);
 
-	return color * water;
+	return (color * water);
 }
 
 #endif
