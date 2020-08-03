@@ -11,6 +11,7 @@
 
 #include <Engine/ParticleSystem.h>
 #include <Engine/Light3D.h>
+#include <Engine/NaviMgr.h>
 
 #include <iostream>
 
@@ -335,7 +336,9 @@ void CToolItemScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int n
 			Vec3 vPos = pHost->Transform()->GetLocalPos();
 
 			vPos += -vDir * 300.f;
-			vPos.y = 10;
+			vPos.y = CNaviMgr::GetInst()->GetY(vPos);
+			vPos.y += 20;
+
 			m_pObj->Transform()->SetLocalPos(vPos);
 		}
 		break;

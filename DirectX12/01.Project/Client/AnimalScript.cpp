@@ -3,6 +3,7 @@
 #include "PlayerScript.h"
 
 #include <Engine/ParticleSystem.h>
+#include <Engine/NaviMgr.h>
 
 #include <iostream>
 
@@ -86,7 +87,10 @@ void CAnimalScript::Update()
 				Transform()->SetLocalRot(Vec3(0.f, atan2(m_vMoveDir.x, m_vMoveDir.z) + 3.141592f, 0.f));
 		}
 
+		vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+
 		Transform()->SetLocalPos(vPos);
+
 		return;
 	}
 
@@ -127,6 +131,8 @@ void CAnimalScript::Update()
 
 		vPos += m_vMoveDir * m_tStatus.fSpeed * DT;
 
+		vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+
 		Transform()->SetLocalPos(vPos);
 	}
 	else if (BEHAVIOR_TYPE::B_PASSIVE == m_tStatus.eType)
@@ -148,6 +154,9 @@ void CAnimalScript::Update()
 			Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
 		else
 			Transform()->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z), 0.f));
+
+		vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+
 		Transform()->SetLocalPos(vPos);
 	}
 	else if (BEHAVIOR_TYPE::B_WARLIKE == m_tStatus.eType)
@@ -167,6 +176,9 @@ void CAnimalScript::Update()
 		Vec3 vRot = m_pTarget->Transform()->GetLocalRot();
 
 		Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+
+		vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+
 		Transform()->SetLocalPos(vPos);
 	}
 }
@@ -193,6 +205,8 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 			Vec3 vRot = _pOther->Transform()->GetLocalRot();
 
 			//Transform()->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+
 			Transform()->SetLocalPos(vPos);
 		}
 
@@ -216,6 +230,8 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		Vec3 vRot = _pOther->Transform()->GetLocalRot();
 
 		Transform()->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+		vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+
 		Transform()->SetLocalPos(vPos);
 	}
 	else if (BEHAVIOR_TYPE::B_PASSIVE == m_tStatus.eType)
@@ -237,6 +253,8 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 			vPos += vDir * m_tStatus.fSpeed * DT;
 
 			Vec3 vRot = _pOther->Transform()->GetLocalRot();
+
+			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
 
 			Transform()->SetLocalPos(vPos);
 
@@ -267,6 +285,9 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		Vec3 vRot = _pOther->Transform()->GetLocalRot();
 
 		Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+
+		vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+
 		Transform()->SetLocalPos(vPos);
 
 		if (CollisionSphere(m_vOffsetScale, _pOther, 0.2f))

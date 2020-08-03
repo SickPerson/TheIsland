@@ -111,7 +111,7 @@ void CCamera::SortGameObject()
 					vOffsetScale = vecObj[i]->Collider2D()->GetOffsetScale();
 
 				if (!vecObj[i]->GetFrustumCheck()
-					|| m_frustum.CheckFrustumSphere(vecObj[i]->Transform()->GetWorldPos(), 100.f /*vecObj[i]->Transform()->GetMaxScale() * vOffsetScale.y*/))
+					|| m_frustum.CheckFrustumSphere(vecObj[i]->Transform()->GetWorldPos(), 300.f /*vecObj[i]->Transform()->GetMaxScale() * vOffsetScale.y*/))
 				{
 					if (vecObj[i]->MeshRender() && vecObj[i]->MeshRender()->GetMesh() != nullptr)
 					{
@@ -237,7 +237,7 @@ void CCamera::SortShadowObject()
 				vOffsetScale = vecObj[j]->Collider2D()->GetOffsetScale();
 
 			if (!vecObj[j]->GetFrustumCheck()
-				|| m_frustum.CheckFrustumSphere(vecObj[j]->Transform()->GetWorldPos(), 100.f/*vecObj[j]->Transform()->GetMaxScale() * vOffsetScale.y*/))
+				|| m_frustum.CheckFrustumSphere(vecObj[j]->Transform()->GetWorldPos(), 300.f/*vecObj[j]->Transform()->GetMaxScale() * vOffsetScale.y*/))
 			{
 				if (vecObj[j]->MeshRender()
 					&& vecObj[j]->MeshRender()->GetMesh() != nullptr

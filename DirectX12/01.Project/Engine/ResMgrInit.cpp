@@ -294,7 +294,7 @@ void CResMgr::CreateDefaultShader()
 	
 	pShader->SetRasterizerType( RS_TYPE::CULL_NONE );
 	pShader->AddShaderParam( tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 } );
-	pShader->Create( SHADER_POV::FORWARD );
+	pShader->Create( SHADER_POV::DEFERRED );
 	AddRes( L"LandScapeShader", pShader );
 
 	// ===============
@@ -659,18 +659,18 @@ void CResMgr::CreateDefaultMaterial()
 
 	{
 		// Material °ª ¼ÂÆÃ
-		pMtrl = new CMaterial;
-		pMtrl->DisableFileSave();
-		pMtrl->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"WaterShader"));
-		Ptr<CTexture> pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PosteffectTargetTex");
-		pMtrl->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Base_Tex", L"Texture\\Water_Base_Texture_0.dds");
-		pMtrl->SetData(SHADER_PARAM::TEX_1, pTex.GetPointer());
-		pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PositionTargetTex");
-		pMtrl->SetData(SHADER_PARAM::TEX_2, pTex.GetPointer());
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Detail_Tex", L"Texture\\Water_Detail_Texture_0.dds");
-		pMtrl->SetData(SHADER_PARAM::TEX_3, pTex.GetPointer());
-		AddRes(L"WaterMtrl", pMtrl);
+		//pMtrl = new CMaterial;
+		//pMtrl->DisableFileSave();
+		//pMtrl->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"WaterShader"));
+		//Ptr<CTexture> pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PosteffectTargetTex");
+		//pMtrl->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
+		//pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Base_Tex", L"Texture\\Water_Base_Texture_0.dds");
+		//pMtrl->SetData(SHADER_PARAM::TEX_1, pTex.GetPointer());
+		//pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PositionTargetTex");
+		//pMtrl->SetData(SHADER_PARAM::TEX_2, pTex.GetPointer());
+		//pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Detail_Tex", L"Texture\\Water_Detail_Texture_0.dds");
+		//pMtrl->SetData(SHADER_PARAM::TEX_3, pTex.GetPointer());
+		//AddRes(L"WaterMtrl", pMtrl);
 	}
 
 	{
@@ -680,11 +680,12 @@ void CResMgr::CreateDefaultMaterial()
 		pMtrl->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"AdvancedWaterShader"));
 		Ptr<CTexture> pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PosteffectTargetTex");
 		pMtrl->SetData(SHADER_PARAM::TEX_0, pTex.GetPointer());
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Base_Tex", L"Texture\\Water_Base_Texture_0.dds");
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Base_Tex", L"Texture\\water5.jpg");
 		pMtrl->SetData(SHADER_PARAM::TEX_1, pTex.GetPointer());
 		pTex = CResMgr::GetInst()->FindRes<CTexture>(L"PositionTargetTex");
 		pMtrl->SetData(SHADER_PARAM::TEX_2, pTex.GetPointer());
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Detail_Tex", L"Texture\\Water_Detail_Texture_0.dds");
+		//pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Detail_Tex", L"Texture\\Detail.png");
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Water_Detail_Tex", L"Texture\\Skybox\\Sky01.png");
 		pMtrl->SetData(SHADER_PARAM::TEX_3, pTex.GetPointer());
 		AddRes(L"AdvancedWaterMtrl", pMtrl);
 	}

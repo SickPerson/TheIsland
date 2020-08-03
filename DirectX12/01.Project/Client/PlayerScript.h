@@ -30,6 +30,8 @@ private:
 	bool		m_bEnable;
 
 	bool		m_bInvincible;
+	float		m_fHouseHeight;
+	float		m_fHeight;
 
 	Vec3		m_vPrevPos;
 	

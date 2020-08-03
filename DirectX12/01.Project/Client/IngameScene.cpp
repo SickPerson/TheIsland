@@ -232,7 +232,6 @@ void CIngameScene::Init()
 	Ptr<CTexture> pExplosionTex = CResMgr::GetInst()->Load<CTexture>( L"Explosion", L"Texture\\Explosion\\Explosion80.png" );
 	Ptr<CTexture> pBlackTex = CResMgr::GetInst()->Load<CTexture>( L"Black", L"Texture\\asd.png" );
 	Ptr<CTexture> pSky01 = CResMgr::GetInst()->Load<CTexture>( L"Sky01", L"Texture\\Skybox\\Sky01.png" );
-	Ptr<CTexture> pSky02 = CResMgr::GetInst()->Load<CTexture>( L"Sky02", L"Texture\\Skybox\\Sky02.jpg" );
 
 	Ptr<CTexture> pColor = CResMgr::GetInst()->Load<CTexture>( L"Tile", L"Texture\\Tile\\TILE_03.tga" );
 	Ptr<CTexture> pNormal = CResMgr::GetInst()->Load<CTexture>( L"Tile_n", L"Texture\\Tile\\TILE_03_N.tga" );
@@ -401,6 +400,7 @@ void CIngameScene::Init()
 	// LandScape 오브젝트 생성
 	// =======================
 	Ptr<CTexture> pLandScape = CResMgr::GetInst()->Load<CTexture>( L"Grass", L"Texture\\LandScape\\SAND_01.bmp" );
+	Ptr<CTexture> pLandScapeNormal = CResMgr::GetInst()->Load<CTexture>(L"LandScapeNormal", L"Texture\\ISLAND_NORMAL.png");
 
 	pObject = new CGameObject;
 	pObject->SetName( L"LandScape Object" );
@@ -411,6 +411,7 @@ void CIngameScene::Init()
 	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"LandScapeMesh" ) );
 	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" ) );
 	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pLandScape.GetPointer() );
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_1, pLandScapeNormal.GetPointer() );
 	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
 	pObject->Transform()->SetLocalScale( Vec3( 200.f, 400.f, 200.f ) );
 	pObject->FrustumCheck( false );
@@ -421,36 +422,37 @@ void CIngameScene::Init()
 	// 
 	CreateNatural();
 
-	// ====================
-	// Grid 오브젝트 생성
-	// ====================
-	pObject = new CGameObject;
-	pObject->SetName( L"Grid" );
-	pObject->FrustumCheck( false );
-	pObject->AddComponent( new CTransform );
-	pObject->AddComponent( new CMeshRender );
-	pObject->AddComponent( new CGridScript );
+	//// ====================
+	//// Grid 오브젝트 생성
+	//// ====================
+	//pObject = new CGameObject;
+	//pObject->SetName( L"Grid" );
+	//pObject->FrustumCheck( false );
+	//pObject->AddComponent( new CTransform );
+	//pObject->AddComponent( new CMeshRender );
+	//pObject->AddComponent( new CGridScript );
 
-	// Transform 설정
-	pObject->Transform()->SetLocalScale( Vec3( 100000.f, 100000.f, 1.f ) );
-	pObject->Transform()->SetLocalRot( Vec3( XM_PI / 2.f, 0.f, 0.f ) );
+	//// Transform 설정
+	//pObject->Transform()->SetLocalScale( Vec3( 100000.f, 100000.f, 1.f ) );
+	//pObject->Transform()->SetLocalRot( Vec3( XM_PI / 2.f, 0.f, 0.f ) );
 
-	// MeshRender 설정
-	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
-	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"GridMtrl" ) );
+	//// MeshRender 설정
+	//pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
+	//pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"GridMtrl" ) );
 
-	// Script 설정	
-	pObject->GetScript<CGridScript>()->SetToolCamera( pMainCam );
-	pObject->GetScript<CGridScript>()->SetGridColor( Vec3( 0.8f, 0.2f, 0.2f ) );
+	//// Script 설정	
+	//pObject->GetScript<CGridScript>()->SetToolCamera( pMainCam );
+	//pObject->GetScript<CGridScript>()->SetGridColor( Vec3( 0.8f, 0.2f, 0.2f ) );
 
-	// AddGameObject
-	m_pScene->FindLayer( L"Tool" )->AddGameObject( pObject );
+	//// AddGameObject
+	//m_pScene->FindLayer( L"Tool" )->AddGameObject( pObject );
 
 	// ==========================
 	// Distortion Object 만들기
 	// ==========================
 	pObject = new CGameObject;
-	pObject->SetName(L"Water");
+	pObject->SetName(L"Sea");
+	pObject->FrustumCheck(false);
 
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
@@ -458,17 +460,19 @@ void CIngameScene::Init()
 	// Material 값 셋팅
 	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"AdvancedWaterMtrl");
 
-	float tessellation = 12.f;
+	float tessellation = 1024.f;
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 	pObject->MeshRender()->SetMaterial(pMtrl);
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &tessellation);
 
-	float fHeight = 30.f;
+	float fHeight = 80.f;
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_1, &fHeight);
+	float fCull = 0.2f;
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_2, &fCull);
 
-	pObject->Transform()->SetLocalPos(Vec3(0.f, -50.f, -2000.f));
-	pObject->Transform()->SetLocalScale(Vec3(10000.f, 10000.f, 1.f));
+	pObject->Transform()->SetLocalPos(Vec3(10000.f, 60.f, 10000.f));
+	pObject->Transform()->SetLocalScale(Vec3(50000.f, 50000.f, 1.f));
 	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
 
 	m_pScene->FindLayer(L"Environment")->AddGameObject(pObject);
