@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-#define DAYCYCLE 1000.f // 배속
+#define DAYCYCLE 10.f // 배속
 // 아무리 빨라도 1프레임당 1초가 최대
 
 CSunshineScript::CSunshineScript() :
@@ -87,9 +87,9 @@ void CSunshineScript::Update()
 		//	fTime -= 21.f;
 
 		fTime += ((float)(m_iMinute) / 60.f * 100.f) / 100.f;
-		vDir.y += cosf((fTime * 15.f) * XM_PI / 180.f);
-		vDir.x += sinf((fTime * 15.f) * XM_PI / 180.f);
-		vDir.Normalize(vDir);
+		vDir.y = cosf((fTime * 15.f) * XM_PI / 180.f);
+		vDir.x = sinf((fTime * 15.f) * XM_PI / 180.f);
+		vDir.Normalize(-vDir);
 		float fLight = 0.f;
 		if (m_iHour < 12)
 		{
