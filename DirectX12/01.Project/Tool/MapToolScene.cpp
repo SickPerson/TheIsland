@@ -33,8 +33,9 @@ void CMapToolScene::Init()
 	pMainCam->AddComponent( new CToolCamScript );
 	CToolCamScript* pScript = pMainCam->GetScript<CToolCamScript>();
 	pScript->SetTool( true );
+	pScript->SetMaxY( 1000.f );
 
-	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 100.f, 0.f ) );
+	pMainCam->Transform()->SetLocalPos( Vec3( 0.f, 1000.f, 0.f ) );
 	pMainCam->Transform()->SetLocalRot( Vec3( XM_PI / 2, 0.f, 0.f ) );
 
 	pMainCam->Camera()->SetProjType( PROJ_TYPE::PERSPECTIVE );
@@ -98,4 +99,31 @@ void CMapToolScene::Init()
 	pObject->FrustumCheck( false );
 	CNaviMgr::GetInst()->SetLandScape( pObject->LandScape() );
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+
+	pObject = new CGameObject;
+	pObject->SetName( L"Sea" );
+	pObject->FrustumCheck( false );
+
+	pObject->AddComponent( new CTransform );
+	pObject->AddComponent( new CMeshRender );
+
+	// Material °ª ¼ÂÆÃ
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"AdvancedWaterMtrl" );
+
+	float tessellation = 1024.f;
+
+	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
+	pObject->MeshRender()->SetMaterial( pMtrl );
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::FLOAT_0, &tessellation );
+
+	float fHeight = 80.f;
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::FLOAT_1, &fHeight );
+	float fCull = 0.2f;
+	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::FLOAT_2, &fCull );
+
+	pObject->Transform()->SetLocalPos( Vec3( 10000.f, 60.f, 10000.f ) );
+	pObject->Transform()->SetLocalScale( Vec3( 50000.f, 50000.f, 1.f ) );
+	pObject->Transform()->SetLocalRot( Vec3( XM_PI / 2.f, 0.f, 0.f ) );
+
+	m_pScene->FindLayer( L"Environment" )->AddGameObject( pObject );
 }
