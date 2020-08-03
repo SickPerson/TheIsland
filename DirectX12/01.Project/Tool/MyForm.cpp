@@ -565,13 +565,15 @@ void CMyForm::OnBnClickedButtonLoad()
 			fread( &iLength, sizeof( size_t ), 1, pFile );
 			fread( strPath, sizeof( wchar_t ), iLength, pFile );
 
-			Ptr<CMeshData> pMeshData = FindMeshData( strPath );
 			if ( iLength == 0 )
 				continue;
 
+			Ptr<CMeshData> pMeshData = FindMeshData( strPath );
+			
 			if ( pMeshData == nullptr )
 			{
 				pMeshData = CResMgr::GetInst()->Load<CMeshData>( strPath, strPath );
+				m_MeshList.AddString( strName );
 				m_vecFBX.push_back( pMeshData );
 			}
 
@@ -583,11 +585,12 @@ void CMyForm::OnBnClickedButtonLoad()
 		}
 
 		pObject->Transform()->LoadFromScene( pFile );
+		pObject->SetName( strName );
 
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		m_vecGameObjet.push_back( pObject );
-		pScene->AddGameObject( L"Environment", pObject, false );
 		m_ObjectList.AddString( strName );
+		pScene->AddGameObject( L"Environment", pObject, false );
 	}
 	
 	fclose( pFile );
