@@ -38,6 +38,10 @@ public:
 	virtual void OnCollision(CCollider2D* _pOther) override;
 	virtual void OnCollisionEnter(CCollider2D* _pOther) override;
 	virtual void OnCollisionExit(CCollider2D* _pOther) override;
+
+	virtual void SaveToScene( FILE* _pFile );
+	virtual void LoadFromScene( FILE* _pFile );
+
 public:
 	bool Damage(CGameObject* pObj, float fDamage);
 	bool GetDestroy();

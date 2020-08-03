@@ -159,9 +159,6 @@
     <ClInclude Include="GameOverScript.h">
       <Filter>ComponentScript\UI</Filter>
     </ClInclude>
-    <ClInclude Include="NaturalScript.h">
-      <Filter>ComponentScript\Environment</Filter>
-    </ClInclude>
     <ClInclude Include="HousingMgr.h">
       <Filter>ComponentScript\Housing</Filter>
     </ClInclude>
@@ -170,6 +167,9 @@
     </ClInclude>
     <ClInclude Include="ItemInfoScript.h">
       <Filter>ComponentScript\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="NaturalScript.h">
+      <Filter>ComponentScript\Environment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -254,14 +254,14 @@
     <ClCompile Include="GameOverScript.cpp">
       <Filter>ComponentScript\UI</Filter>
     </ClCompile>
-    <ClCompile Include="NaturalScript.cpp">
-      <Filter>ComponentScript\Environment</Filter>
-    </ClCompile>
     <ClCompile Include="HousingMgr.cpp">
       <Filter>ComponentScript\Housing</Filter>
     </ClCompile>
     <ClCompile Include="ItemInfoScript.cpp">
       <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="NaturalScript.cpp">
+      <Filter>ComponentScript\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

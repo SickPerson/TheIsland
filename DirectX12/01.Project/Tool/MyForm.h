@@ -65,8 +65,10 @@ public:
 private:
 	vector<Ptr<CMeshData>>	m_vecFBX;
 	vector<CGameObject*>	m_vecGameObjet;
-
+	vector<wstring>			m_vecPath;
+	
 	bool m_bLoad;
+	UINT m_iSelectScript;
 
 private:
 	Ptr<CMeshData> FindMeshData( const wstring& strFBXName );
@@ -114,6 +116,8 @@ public:
 	afx_msg void OnLbnSelchangeListScript();
 	CListBox m_ObjectList;
 	afx_msg void OnLbnSelchangeListObject();
+	CButton m_btnScriptLoad;
+	afx_msg void OnBnClickedButtonScriptload();
 };
 
 

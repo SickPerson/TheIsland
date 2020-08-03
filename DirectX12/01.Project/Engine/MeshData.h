@@ -20,6 +20,7 @@ private:
 	Ptr<CMesh>				m_pMesh;
 	vector<Ptr<CMaterial>>	m_vecMtrl;
 
+
 public:
 	static CMeshData* LoadFromFBX( const wstring& strPath, int iShaderType = 0 );
 
@@ -27,5 +28,6 @@ public:
 	virtual void Save( const wstring& strPath );
 
 	CGameObject* Instantiate();
+
 };
 

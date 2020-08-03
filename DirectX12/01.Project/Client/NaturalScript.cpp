@@ -92,6 +92,13 @@ void CNaturalScript::Update()
 		break;
 	case NATURAL_STONE:
 	case NATURAL_BUSH:
+		{
+			m_fTime -= DT;
+			if (m_fTime <= 0.f)
+			{
+				Respawn();
+			}
+		}
 		break;
 	default:
 		break;
@@ -110,6 +117,16 @@ void CNaturalScript::OnCollisionExit(CCollider2D * _pOther)
 {
 }
 
+void CNaturalScript::SaveToScene( FILE * _pFile )
+{
+	fwrite( &m_eType, sizeof( NATURAL_TYPE ), 1, _pFile );
+}
+
+void CNaturalScript::LoadFromScene( FILE * _pFile )
+{
+	fread( &m_eType, sizeof( NATURAL_TYPE ), 1, _pFile );
+}
+
 bool CNaturalScript::Damage(CGameObject* pObj, float fDamage)
 {
 	m_fHealth -= fDamage;
@@ -120,6 +137,15 @@ bool CNaturalScript::Damage(CGameObject* pObj, float fDamage)
 		m_fTime = NATURAL_RESPAWN_TIME;
 		m_fAngle = 0.f;
 		m_vTargetRot = pObj->Transform()->GetLocalRot();
+
+		if (m_eType != NATURAL_TREE)
+		{
+			tEvent evt = {};
+			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt.wParam = (DWORD_PTR)GetObj();
+			evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
+			CEventMgr::GetInst()->AddEvent(evt);
+		}
 	}
 
 	if (m_pParticleObj == NULL)

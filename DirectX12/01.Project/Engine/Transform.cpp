@@ -137,9 +137,6 @@ void CTransform::LookAt(const Vec3 & _vLook)
 
 void CTransform::SaveToScene( FILE * _pFile )
 {
-	UINT iType = ( UINT )GetComponentType();
-	fwrite( &iType, sizeof( UINT ), 1, _pFile );
-
 	fwrite( &m_vLocalPos, sizeof( Vec3 ), 1, _pFile );
 	fwrite( &m_vLocalScale, sizeof( Vec3 ), 1, _pFile );
 	fwrite( &m_vLocalRot, sizeof( Vec3 ), 1, _pFile );
