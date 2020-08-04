@@ -1236,8 +1236,12 @@ void CIngameScene::CreateNatural()
 		else if (str1 == "plainsgrass")
 		{
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
+			pObject->FrustumCheck(false);
 		}
-		pObject->FrustumCheck(false);
+		else
+		{
+			pObject->FrustumCheck(false);
+		}
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		pScene->AddGameObject( L"Environment", pObject, false );
 	}
