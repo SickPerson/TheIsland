@@ -17,3 +17,10 @@ CProcess::~CProcess()
 	m_cusLoginList.clear();
 	m_cpqEventQueue.clear();
 }
+
+bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
+{
+	if (fDistance > sqrtf(pow(vSecond.x - vFirst.x, 2) + pow(vSecond.y - vFirst.y, 2) + pow(vSecond.z - vFirst.z, 2)))
+		return true;
+	return false;
+}

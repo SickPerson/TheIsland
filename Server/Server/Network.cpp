@@ -112,8 +112,8 @@ void CNetwork::StartServer()
 	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
 	cout << "UpdateThread Create" << endl;
 
-	m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
-	cout << "DatabaseThread Create" << endl;
+	/*m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
+	cout << "DatabaseThread Create" << endl;*/
 
 	cout << "==============================" << endl;
 	cout << "бл       Server Start         бл" << endl;

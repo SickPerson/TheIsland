@@ -27,7 +27,7 @@ public:
 	static concurrent_priority_queue<Update_Event>	m_cpqEventQueue; // 이벤트 큐(Timer 이벤트)
 
 public:
-	bool ObjectRangeCheck(Vec3& vFirstPos, Vec3& vSecondPos, float fDistance);
+	bool ObjectRangeCheck(Vec3& vFirst, Vec3& vSecond, float fDistance);
 
 public:
 	concurrent_unordered_set<unsigned int>& GetLoginList()
