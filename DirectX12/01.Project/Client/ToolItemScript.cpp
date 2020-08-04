@@ -161,9 +161,15 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		{
 			if (!pObj->GetScript<CNaturalScript>()->GetDestroy())
 			{
+				NATURAL_TYPE eType = pObj->GetScript<CNaturalScript>()->GetNaturalType();
+
+				if (eType == NATURAL_NONE)
+				{
+					return;
+				}
+
 				pObj->GetScript<CNaturalScript>()->Damage(pHost, m_fDamage);
 
-				NATURAL_TYPE eType = pObj->GetScript<CNaturalScript>()->GetNaturalType();
 				if (eType == NATURAL_TREE)
 				{
 					int iAmount = 1;

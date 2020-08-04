@@ -158,7 +158,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Server\Server\protocol.h" />
+    <ClInclude Include="Animal.h" />
     <ClInclude Include="AnimalScript.h" />
+    <ClInclude Include="AnimalSpawner.h" />
     <ClInclude Include="ArmorScript.h" />
     <ClInclude Include="BuildScript.h" />
     <ClInclude Include="ConstStringScript.h" />
@@ -197,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimalScript.cpp" />
+    <ClCompile Include="AnimalSpawner.cpp" />
     <ClCompile Include="ArmorScript.cpp" />
     <ClCompile Include="BuildScript.cpp" />
     <ClCompile Include="ConstStringScript.cpp" />

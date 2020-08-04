@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "BuildScript.h"
 #include "HousingMgr.h"
+#include "NaturalScript.h"
 
 CBuildScript::CBuildScript(HOUSING_TYPE eType, UINT iGrade) :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
@@ -40,6 +41,15 @@ void CBuildScript::OnCollision(CCollider2D * _pOther)
 {
 	if (_pOther->GetObj()->GetLayerIdx() != CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx())
 		return;
+
+	// ÀÜµð´Â Ãæµ¹ x
+	if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Environment")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
+	{
+		if (_pOther->GetObj()->GetScript<CNaturalScript>()->GetNaturalType() == NATURAL_BUSH)
+		{
+			return;
+		}
+	}
 
 	HOUSING_TYPE eType = _pOther->GetObj()->GetScript<CBuildScript>()->GetHousingType();
 	switch (m_eType)
@@ -238,6 +248,15 @@ void CBuildScript::OnCollision(CCollider2D * _pOther)
 
 void CBuildScript::OnCollisionEnter(CCollider2D * _pOther)
 {
+	// ÀÜµð´Â Ãæµ¹ x
+	if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Environment")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
+	{
+		if (_pOther->GetObj()->GetScript<CNaturalScript>()->GetNaturalType() == NATURAL_BUSH)
+		{
+			return;
+		}
+	}
+
 	switch (m_eType)
 	{
 	case HOUSING_FOUNDATION:
@@ -275,6 +294,15 @@ void CBuildScript::OnCollisionEnter(CCollider2D * _pOther)
 
 void CBuildScript::OnCollisionExit(CCollider2D * _pOther)
 {
+	// ÀÜµð´Â Ãæµ¹ x
+	if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Environment")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
+	{
+		if (_pOther->GetObj()->GetScript<CNaturalScript>()->GetNaturalType() == NATURAL_BUSH)
+		{
+			return;
+		}
+	}
+
 	switch (m_eType)
 	{
 	case HOUSING_FOUNDATION:

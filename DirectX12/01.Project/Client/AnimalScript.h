@@ -1,36 +1,8 @@
 #pragma once
 #include <Engine/Script.h>
+#include "Animal.h"
 
-enum ANIMAL_TYPE
-{
-	A_BEAR,
-	A_BOAR,
-	A_DEER,
-	A_WOLF,
-	A_END
-};
-
-enum BEHAVIOR_TYPE
-{
-	B_WARLIKE,
-	B_PASSIVE,
-	B_EVASION,
-	B_END
-};
-
-struct tAnimalStatus
-{
-	float fHp;
-	float fStamina;
-
-	float fSpeed;
-	float fDamage;
-
-	float fBehaviorTime;
-
-	BEHAVIOR_TYPE eType;
-	ANIMAL_TYPE eKind;
-};
+class CAnimalSpawner;
 
 class CAnimalScript :
 	public CScript
@@ -57,6 +29,9 @@ class CAnimalScript :
 	float			m_fParticleTime;
 
 	bool			m_bWakeUp;
+
+	CAnimalSpawner*	m_pSpawner;
+
 public:
 	CAnimalScript();
 	virtual ~CAnimalScript();
@@ -89,5 +64,7 @@ public:
 
 	void Damage(CGameObject* _pOther, float fDamage);
 	bool GetAnimalDead();
+
+	void SetAnimalSpawner(CAnimalSpawner* pSpawner);
 };
 

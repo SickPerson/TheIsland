@@ -2,6 +2,9 @@
 #include "AnimalScript.h"
 #include "PlayerScript.h"
 
+#include "NaturalScript.h"
+#include "AnimalSpawner.h"
+
 #include <Engine/ParticleSystem.h>
 #include <Engine/NaviMgr.h>
 
@@ -29,6 +32,7 @@ CAnimalScript::CAnimalScript()
 	, m_fAttackTime(0.f)
 	, m_bIdleBehavior(false)
 	, m_fIdleBehaviorTime(3.f)
+	, m_pSpawner(NULL)
 {
 
 }
@@ -53,6 +57,7 @@ void CAnimalScript::Update()
 	}
 	if (m_bAnimalDead)
 	{
+		// 사망
 		m_fLivingTime -= DT;
 		if (m_fLivingTime < 0.f)
 		{
@@ -60,6 +65,12 @@ void CAnimalScript::Update()
 			tEv.eType = EVENT_TYPE::DELETE_OBJECT;
 			tEv.wParam = (DWORD_PTR)GetObj();
 			CEventMgr::GetInst()->AddEvent(tEv);
+
+			// 스포너에게 정보 알림
+			if (m_pSpawner)
+			{
+				m_pSpawner->DeadAnimal();
+			}
 		}
 		return;
 	}
@@ -191,6 +202,15 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 	// 플레이어가 아닌 다른 물체 ( 환경요소 )
 	if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Player")->GetLayerIdx() != _pOther->GetObj()->GetLayerIdx())
 	{
+		// 잔디는 충돌 x
+		if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Environment")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
+		{
+			if (_pOther->GetObj()->GetScript<CNaturalScript>()->GetNaturalType() == NATURAL_BUSH)
+			{
+				return;
+			}
+		}
+
 		if (CollisionSphere(m_vOffsetScale, _pOther)) // 환경요소랑은 자기 몸통만큼 추가 충돌체크를 진행하고 막히면 반대로 튕겨나오도록
 		{
 			Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
@@ -465,7 +485,7 @@ void CAnimalScript::Damage(CGameObject* _pOther, float fDamage)
 			m_fCurrentTime = m_tStatus.fBehaviorTime;
 		}
 	}
-	else
+	else // 사망 But 소멸 x
 	{
 		m_bAnimalDead = true;
 		m_fLivingTime = 3.f;
@@ -475,4 +495,9 @@ void CAnimalScript::Damage(CGameObject* _pOther, float fDamage)
 bool CAnimalScript::GetAnimalDead()
 {
 	return m_bAnimalDead;
+}
+
+void CAnimalScript::SetAnimalSpawner(CAnimalSpawner* pSpawner)
+{
+	m_pSpawner = pSpawner;
 }

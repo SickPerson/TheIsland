@@ -13,6 +13,7 @@
 #include "StuffScript.h"
 
 #include "BuildScript.h"
+#include "NaturalScript.h"
 
 #include <Engine/Camera.h>
 #include <Engine/RenderMgr.h>
@@ -291,6 +292,15 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 				}
 			}
 			return;
+		}
+
+		// 잔디는 충돌 x
+		if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Environment")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
+		{
+			if (_pOther->GetObj()->GetScript<CNaturalScript>()->GetNaturalType() == NATURAL_BUSH)
+			{
+				return;
+			}
 		}
 
 		// 실제의 충돌크기의 오브젝트와 부딪힌건지

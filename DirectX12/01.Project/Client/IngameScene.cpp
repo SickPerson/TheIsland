@@ -1244,6 +1244,7 @@ void CIngameScene::CreateNatural()
 		{
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
 			pObject->FrustumCheck(false);
+			pObject->MeshRender()->SetDynamicShadow(false);
 		}
 		else
 		{
