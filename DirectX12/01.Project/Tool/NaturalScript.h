@@ -49,5 +49,8 @@ public:
 	NATURAL_TYPE GetNaturalType();
 
 	void Respawn();
+
+	void SetType( int iType );
+	void SetType( NATURAL_TYPE eType );
 };
 

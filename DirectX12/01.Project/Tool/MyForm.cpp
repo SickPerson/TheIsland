@@ -166,7 +166,7 @@ void CMyForm::OnBnClickedButtonAddobject()
 	{
 	case 0:
 		pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
-		pObject->Transform()->SetLocalScale( Vec3( 20.f, 20.f, 20.f) );
+		pObject->Transform()->SetLocalScale( Vec3( 30.f, 30.f, 30.f) );
 		break;
 	default:
 		break;
@@ -184,27 +184,31 @@ void CMyForm::OnBnClickedButtonDelobject()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
-	//CString strCombo;
-	//m_ObjectList.GetLBText( m_ObjectList.GetCurSel(), strCombo );
+	auto iter = m_vecGameObjet.begin();
+	auto iterEnd = m_vecGameObjet.end();
 
-	//for ( auto iter = m_vecGameObjet.begin(); iter != m_vecGameObjet.end();)
-	//{
-	//	if ( ( *iter )->GetName() == strCombo.GetString())
-	//	{
-	//		tEvent tEv;
-	//		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-	//		tEv.wParam = ( DWORD_PTR )( *iter );
-	//		CEventMgr::GetInst()->AddEvent( tEv );
-	//		
-	//		iter = m_vecGameObjet.erase( iter );
-	//	}
+	for ( iter; iter != m_vecGameObjet.end();)
+	{
+		if ( *iter == m_vecGameObjet[m_iSelectObject] )
+		{
+			tEvent tEv;
+			tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+			tEv.wParam = ( DWORD_PTR )( *iter );
+			CEventMgr::GetInst()->AddEvent( tEv );
 
-	//	else
-	//		++iter;
+			iter = m_vecGameObjet.erase( iter );
 
-	//}
+			m_iSelectObject -= 1;
+		}
 
-	//m_ObjectList.DeleteString( m_ObjectList.GetCurSel() );
+		else
+		{
+			++iter;
+		}
+	}
+
+
+	m_ObjectList.DeleteString( m_iSelectObject );
 }
 
 
@@ -711,6 +715,23 @@ void CMyForm::OnLbnSelchangeListScript()
 
 	m_iSelectScript = m_ScriptList.GetCurSel();
 
+	if ( m_iSelectObject > 0 && m_iSelectObject < m_vecGameObjet.size() )
+	{
+		CNaturalScript* pScript = m_vecGameObjet[m_iSelectObject]->GetScript<CNaturalScript>();
+		pScript->SetType( m_iSelectScript );
+
+
+		switch ( m_iSelectScript )
+		{
+		case 0:
+			m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
+			m_vecGameObjet[m_iSelectObject]->Transform()->SetLocalScale( Vec3( 30.f, 30.f, 30.f ) );
+			break;
+		default:
+			break;
+		}
+	}
+
 }
 
 
@@ -760,8 +781,13 @@ void CMyForm::OnLbnSelchangeListObject()
 
 void CMyForm::OnBnClickedButtonScriptload()
 {
+	if ( m_bLoad )
+		return;
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_ScriptList.AddString( L"Tree" );
 	m_ScriptList.AddString( L"Stone" );
 	m_ScriptList.AddString( L"Bush" );	
+	m_ScriptList.AddString( L"None" );
+
+	m_bLoad = true;
 }
