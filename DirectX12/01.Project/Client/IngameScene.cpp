@@ -1186,8 +1186,6 @@ void CIngameScene::CreateNatural()
 			pObject->AddComponent( new CNaturalScript( NATURAL_TREE ) );
 			pObject->GetScript<CNaturalScript>()->LoadFromScene( pFile );
 
-			pObject->SetName(L"Tree");
-
 			pObject->AddComponent(new CCollider2D);
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));

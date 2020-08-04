@@ -104,23 +104,19 @@ void CCamera::SortGameObject()
 		{
 			const vector<CGameObject*>& vecObj = pCurScene->GetLayer(i)->GetObjects();
 
-			for (UINT i = 0; i < vecObj.size(); ++i)
+			for (UINT j = 0; j < vecObj.size(); ++j)
 			{
-				Vec3 vOffsetScale = Vec3(1.f, 1.f, 1.f);
-				if (vecObj[i]->Collider2D() != NULL)
-					vOffsetScale = vecObj[i]->Collider2D()->GetOffsetScale();
-
-				if (!vecObj[i]->GetFrustumCheck()
-					|| m_frustum.CheckFrustumSphere(vecObj[i]->Transform()->GetWorldPos(), 1000.f /*vecObj[i]->Transform()->GetMaxScale() * vOffsetScale.y*/))
+				if (!vecObj[j]->GetFrustumCheck()
+					|| m_frustum.CheckFrustumSphere(vecObj[j]->Transform()->GetLocalPos(), 1000.f /*vecObj[i]->Transform()->GetMaxScale() * vOffsetScale.y*/))
 				{
-					if (vecObj[i]->MeshRender() && vecObj[i]->MeshRender()->GetMesh() != nullptr)
+					if (vecObj[j]->MeshRender() && vecObj[j]->MeshRender()->GetMesh() != nullptr)
 					{
-						UINT iMtrlCount = vecObj[i]->MeshRender()->GetMaterialCount();
+						UINT iMtrlCount = vecObj[j]->MeshRender()->GetMaterialCount();
 
 						for (UINT iMtrl = 0; iMtrl < iMtrlCount; ++iMtrl)
 						{
-							if (vecObj[i]->MeshRender()->GetSharedMaterial(iMtrl) == nullptr
-								|| vecObj[i]->MeshRender()->GetSharedMaterial(iMtrl)->GetShader() == nullptr)
+							if (vecObj[j]->MeshRender()->GetSharedMaterial(iMtrl) == nullptr
+								|| vecObj[j]->MeshRender()->GetSharedMaterial(iMtrl)->GetShader() == nullptr)
 							{
 								//if (vecObj[i]->ParticleSystem())
 								//{
@@ -133,7 +129,7 @@ void CCamera::SortGameObject()
 								continue;
 							}
 
-							Ptr<CMaterial> pMtrl = vecObj[i]->MeshRender()->GetSharedMaterial(iMtrl);
+							Ptr<CMaterial> pMtrl = vecObj[j]->MeshRender()->GetSharedMaterial(iMtrl);
 
 							// Material 을 참조하고 있지 않거나, Material 에 아직 Shader 를 연결하지 않은 상태라면 Continue
 							if (nullptr == pMtrl || pMtrl->GetShader() == nullptr)
@@ -152,25 +148,25 @@ void CCamera::SortGameObject()
 								continue;
 
 							uInstID uID = {};
-							uID.llID = vecObj[i]->MeshRender()->GetInstID(iMtrl);
+							uID.llID = vecObj[j]->MeshRender()->GetInstID(iMtrl);
 							map<ULONG64, vector<tInstObj>>::iterator iter = pMap->find(uID.llID);
 							if (iter == pMap->end())
 							{
-								pMap->insert(make_pair(uID.llID, vector<tInstObj>{tInstObj{ vecObj[i], iMtrl }}));
+								pMap->insert(make_pair(uID.llID, vector<tInstObj>{tInstObj{ vecObj[j], iMtrl }}));
 							}
 							else
 							{
-								iter->second.push_back(tInstObj{ vecObj[i], iMtrl });
+								iter->second.push_back(tInstObj{ vecObj[j], iMtrl });
 							}
 						}
 					}
-					else if (vecObj[i]->ParticleSystem())
+					else if (vecObj[j]->ParticleSystem())
 					{
-						m_vecParticle.push_back(vecObj[i]);
+						m_vecParticle.push_back(vecObj[j]);
 					}
-					else if (vecObj[i]->Font())
+					else if (vecObj[j]->Font())
 					{
-						m_vecFont.push_back(vecObj[i]);
+						m_vecFont.push_back(vecObj[j]);
 					}
 				}
 			}
@@ -232,10 +228,6 @@ void CCamera::SortShadowObject()
 
 		for (size_t j = 0; j < vecObj.size(); ++j)
 		{
-			Vec3 vOffsetScale = Vec3(1.f, 1.f, 1.f);
-			if (vecObj[j]->Collider2D() != NULL)
-				vOffsetScale = vecObj[j]->Collider2D()->GetOffsetScale();
-
 			if (!vecObj[j]->GetFrustumCheck()
 				|| m_frustum.CheckFrustumSphere(vecObj[j]->Transform()->GetWorldPos(), 1000.f/*vecObj[j]->Transform()->GetMaxScale() * vOffsetScale.y*/))
 			{
