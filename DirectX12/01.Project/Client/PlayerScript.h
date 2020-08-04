@@ -31,7 +31,7 @@ private:
 
 	bool		m_bInvincible;
 	float		m_fHouseHeight;
-	float		m_fHeight;
+	float		m_fDownSpeed;
 
 	Vec3		m_vPrevPos;
 	

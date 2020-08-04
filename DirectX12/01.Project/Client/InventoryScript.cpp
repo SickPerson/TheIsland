@@ -409,6 +409,14 @@ void CInventoryScript::Show()
 		TransferLayer(29, true);
 		m_bActive = false;
 		HideRecipe();
+
+		tEvent evt = {};
+
+		evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+		evt.wParam = (DWORD_PTR)m_pItemInfo;
+		evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
+
+		CEventMgr::GetInst()->AddEvent(evt);
 	}
 	else
 	{

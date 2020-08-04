@@ -86,6 +86,8 @@ void CIngameScene::Init()
 	CGameObject * pTestObject = nullptr;
 	   
 
+	// Animal //
+	/*
 	// ====================================================================
 	pTestObject = pDeerTex->Instantiate();
 	pTestObject->AddComponent(new CCollider2D);
@@ -226,6 +228,7 @@ void CIngameScene::Init()
 	pTestObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
 
 	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
+	*/
 	// ====================================================================
 
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>( L"TestTex", L"Texture\\Health.png" );
@@ -271,7 +274,7 @@ void CIngameScene::Init()
 
 	pPlayer->SetName(L"Player Object");
 	pPlayer->FrustumCheck(false);
-	pPlayer->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pPlayer->Transform()->SetLocalPos(Vec3(10000.f, 200.f, 10000.f));
 	pPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 	//pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
@@ -373,6 +376,9 @@ void CIngameScene::Init()
 	pObject->Light3D()->SetLightRange(1000.f);
 
 	pObject->Transform()->SetLocalPos(Vec3(-1000.f, 1000.f, 1000.f));
+
+	pObject->GetScript<CSunshineScript>()->SetPlayer(m_pPlayer);
+	pObject->GetScript<CSunshineScript>()->Init();
 
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
@@ -1218,6 +1224,7 @@ void CIngameScene::CreateNatural()
 		}
 
 		pObject->Transform()->LoadFromScene( pFile );
+		pObject->MeshRender()->SetDynamicShadow(true);
 
 		string str1;
 		wstring str2 = strName;

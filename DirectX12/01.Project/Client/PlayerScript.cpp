@@ -32,6 +32,7 @@ CPlayerScript::CPlayerScript()
 	, m_bInvincible(false)
 	, m_pMainCamera(NULL)
 	, m_fAttackCoolTime(PLAYER_ATTACK_COOLTIME)
+	, m_fDownSpeed(0.f)
 {
 	m_vCollisionObj.reserve(5);
 }
@@ -189,11 +190,13 @@ void CPlayerScript::Update()
 			float fMaxHeight = max(m_fHouseHeight, fHeight);
 			if (vOriginPos.y > fMaxHeight + 5.f)
 			{
-				vOriginPos.y -= m_fSpeed * DT * 5.f;
+				vOriginPos.y -= m_fDownSpeed * DT;
+				m_fDownSpeed += m_fSpeed;
 			}
 			else
 			{
 				vOriginPos.y = fMaxHeight;
+				m_fDownSpeed = 0.f;
 			}
 
 			Transform()->SetLocalPos( Vec3(vPos.x, vOriginPos.y, vPos.z) );
@@ -247,9 +250,7 @@ void CPlayerScript::Update()
 		Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 
 		float fHeight = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
-		if (fHeight > m_fHeight)
-			m_fHeight = fHeight;
-		vPos.y = m_fHeight;
+		vPos.y = fHeight;
 
 		Transform()->SetLocalPos( vPos );
 
