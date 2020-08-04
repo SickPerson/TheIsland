@@ -36,9 +36,9 @@ void CMonsterProcess::AttackEvent(unsigned int uiMonster, unsigned int uiTarget)
 	InRangePlayer(login_list, range_list, uiMonster);
 
 	float player_HP = CProcess::m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetPlayerStatus().fHP;
-	Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetPos();
+	Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetLocalPos();
 
-	Vec3 monster_pos = CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetPos();
+	Vec3 monster_pos = CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetLocalPos();
 
 	if (uiTarget == NO_TARGET) {
 		CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetState(OBJ_STATE_IDLE);
@@ -111,9 +111,9 @@ void CMonsterProcess::FollowEvent(unsigned int uiID, unsigned int uiTarget)
 	}
 	
 	// Monster Follow 계산
-	Vec3 target_pos = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetPos();
+	Vec3 target_pos = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetLocalPos();
 
-	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[uiID]->GetPos();
+	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[uiID]->GetLocalPos();
 	float monster_speed = m_pMonsterPool->m_cumMonsterPool[uiID]->GetSpeed();
 
 	Vec3 vDir = XMVector3Normalize(target_pos - monster_pos);
@@ -121,10 +121,10 @@ void CMonsterProcess::FollowEvent(unsigned int uiID, unsigned int uiTarget)
 
 	monster_pos = vDir * monster_speed * CTimerMgr::GetInst()->GetDeltaTime();
 
-	Vec3 vRot = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetRot();
+	Vec3 vRot = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetLocalRot();
 
-	m_pMonsterPool->m_cumMonsterPool[uiID]->SetRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
-	m_pMonsterPool->m_cumMonsterPool[uiID]->SetPos(monster_pos);
+	m_pMonsterPool->m_cumMonsterPool[uiID]->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+	m_pMonsterPool->m_cumMonsterPool[uiID]->SetLocalPos(monster_pos);
 
 	for (auto& au : before_rangeList)
 	{
@@ -201,11 +201,11 @@ void CMonsterProcess::EvastionEvent(unsigned int uiMonster, unsigned int uiTarge
 	CopyBeforeLoginList(login_list);
 	InRangePlayer(login_list, range_list, uiMonster);
 
-	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetPos();
+	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetLocalPos();
 	Vec3 monster_dir = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetDir();
 	float monster_speed = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetSpeed();
 	monster_pos += monster_dir * monster_speed * CTimerMgr::GetInst()->GetDeltaTime();
-	m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetPos(monster_pos);
+	m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetLocalPos(monster_pos);
 
 	for (auto& au : range_list)
 	{
@@ -228,7 +228,7 @@ void CMonsterProcess::IdleEvent(unsigned int monsterId)
 		return;
 	}
 
-	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[monsterId]->GetPos();
+	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[monsterId]->GetLocalPos();
 	BEHAVIOR_TYPE animal_type = m_pMonsterPool->m_cumMonsterPool[monsterId]->GetType();
 
 	unsigned int target_id = m_pMonsterPool->m_cumMonsterPool[monsterId]->GetTarget();
@@ -237,7 +237,7 @@ void CMonsterProcess::IdleEvent(unsigned int monsterId)
 		bool isConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!isConnect)continue;
 		//CPacketMgr::Send_Packet(au, &) // IDLE Animation 패킷 보내기
-		Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[au]->GetPos();
+		Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[au]->GetLocalPos();
 		if (ObjectRangeCheck(player_pos, monster_pos, MONSTER_BETWEEN_RANGE) && target_id == NO_TARGET)
 		{
 			m_pMonsterPool->m_cumMonsterPool[monsterId]->SetTarget(au);
@@ -329,7 +329,7 @@ void CMonsterProcess::RespawnEvent(unsigned int uiMonster)
 	CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetWakeUp(true);
 	unsigned int monster_id = MAX_USER + uiMonster;
 
-	Vec3 monster_pos = CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetPos();
+	Vec3 monster_pos = CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetLocalPos();
 
 	Update_Event ev;
 	ev.m_Do_Object = uiMonster;
@@ -402,11 +402,11 @@ void CMonsterProcess::HealEvent(unsigned int uiMonster)
 
 void CMonsterProcess::InRangePlayer(concurrent_unordered_set<unsigned int>& cusLogin, concurrent_unordered_set<unsigned int>& cusList, unsigned int uiMonster)
 {
-	Vec3 monster_pos = CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetPos();
+	Vec3 monster_pos = CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetLocalPos();
 	for (auto& au : cusLogin) {
 		bool isConnect = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!isConnect) continue;
-		Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetPos();
+		Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetLocalPos();
 		if(ObjectRangeCheck(player_pos, monster_pos, MONSTER_BETWEEN_RANGE))
 			cusList.insert(au);
 	}

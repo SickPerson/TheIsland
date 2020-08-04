@@ -54,3 +54,11 @@ enum OBJ_STATE_TYPE {
 	OBJ_STATE_HEAL,
 	OBJ_STATE_END
 };
+
+enum class DIR_TYPE
+{
+	RIGHT,
+	UP,
+	FRONT,
+	END
+};

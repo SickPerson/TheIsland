@@ -1,37 +1,42 @@
 #pragma once
 #include "stdafx.h"
 
-enum OBJ_LOCK_TYPE {
-	OBJ_LOCK_POS,
-	OBJ_LOCK_ROT,
-	OBJ_LOCK_STATE,
-	OBJ_LOCK_END
+enum class OBJ_LOCK_TYPE {
+	LOCAL_POS,
+	LOCAL_SCALE,
+	LOCAL_ROT,
+	SOCAL_DIR,
+	STATE,
+	END
 };
 
 class CObject
 {
 private:
-	char m_cState;
+	char	m_cState;
+	Vec3	m_vLocalPos;
+	Vec3	m_vLocalScale;
+	Vec3	m_vLocalRot;
+	Vec3	m_vLocalDir[(UINT)DIR_TYPE::END];
 
-	Vec3	m_vPos;
-	Vec3	m_vRot;
-	Transform trans;
-
-	shared_mutex m_ObjMutex[OBJ_LOCK_END];
+	shared_mutex m_ObjMutex[(UINT)OBJ_LOCK_TYPE::END];
 
 public:
 	CObject();
 	~CObject();
 
 public:
-	void SetPos( float& fPosX,  float& fPosY,  float& fPosZ);
-	void SetPos( Vec3 vPos);
-	void SetRot( float& fRotX,  float& fRotY,  float& fRotZ);
-	void SetRot( Vec3 vRot);
-	void SetState( char cState);
+	void SetLocalPos(float& fPosX, float& fPosY, float& fPosZ);
+	void SetLocalPos(Vec3 vPos);
+	void SetLocalRot(float& fRotX, float& fRotY, float& fRotZ);
+	void SetLocalRot(Vec3 vRot);
+	void SetLocalScale(float& fScaleX, float& fScaleY, float& fScaleZ);
+	void SetLocalScale(Vec3 vScale);
+	void SetState(char cState);
 
 public:
-	const Vec3	GetPos();
-	const Vec3	GetRot();
+	const Vec3	GetLocalPos();
+	const Vec3	GetLocalScale();
+	const Vec3	GetLocalRot();
 	const  char GetState();
 };
