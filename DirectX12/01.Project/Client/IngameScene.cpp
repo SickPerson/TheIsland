@@ -354,7 +354,7 @@ void CIngameScene::Init()
 	CreateInventoryUI();
 	CreateChatUI();
 	CreateItemUI();
-	CSceneMgr::GetInst()->CreateMRTUI();
+	m_pMRT = CSceneMgr::GetInst()->CreateMRTUI();
 
 	// ====================
 	// 3D Light Object Ãß°¡
@@ -667,6 +667,30 @@ void CIngameScene::Update()
 		}
 	}
 
+	if (KEY_TAB(KEY_TYPE::KEY_P))
+	{
+		if (m_bShowMRT)
+		{
+			tEvent evt = {};
+
+			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt.wParam = (DWORD_PTR)m_pMRT;
+			evt.lParam = ((DWORD_PTR)30 << 16 | (DWORD_PTR)true);
+
+			CEventMgr::GetInst()->AddEvent(evt);
+		}
+		else
+		{
+			tEvent evt = {};
+
+			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt.wParam = (DWORD_PTR)m_pMRT;
+			evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
+
+			CEventMgr::GetInst()->AddEvent(evt);
+		}
+		m_bShowMRT = !m_bShowMRT;
+	}
 }
 
 void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
@@ -1209,7 +1233,11 @@ void CIngameScene::CreateNatural()
 		{
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 1);
 		}
-
+		else if (str1 == "plainsgrass")
+		{
+			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
+		}
+		pObject->FrustumCheck(false);
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		pScene->AddGameObject( L"Environment", pObject, false );
 	}

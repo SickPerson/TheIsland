@@ -129,7 +129,7 @@ CGameObject * CSceneMgr::Mouse()
 	return m_pMouse;
 }
 
-void CSceneMgr::CreateMRTUI()
+CGameObject* CSceneMgr::CreateMRTUI()
 {
 	Vec3 vScale( 150.f, 150.f, 1.f );
 
@@ -138,6 +138,16 @@ void CSceneMgr::CreateMRTUI()
 		, CResMgr::GetInst()->FindRes<CTexture>( L"PositionTargetTex" )
 		, CResMgr::GetInst()->FindRes<CTexture>( L"DiffuseLightTargetTex" )
 		, CResMgr::GetInst()->FindRes<CTexture>( L"SpecularLightTargetTex" ) };
+
+	CGameObject* pMRTUI = new CGameObject;
+	pMRTUI->SetName(L"UI Object");
+	pMRTUI->FrustumCheck(false);	// 절두체 컬링 사용하지 않음
+	pMRTUI->AddComponent(new CTransform);
+
+	pMRTUI->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pMRTUI->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+	// AddGameObject
+	m_pCurScene->FindLayer(L"UI")->AddGameObject(pMRTUI);
 
 	for ( UINT i = 0; i < 5; ++i )
 	{
@@ -161,10 +171,11 @@ void CSceneMgr::CreateMRTUI()
 		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"TexMtrl" );
 		pObject->MeshRender()->SetMaterial( pMtrl->Clone() );
 		pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, arrTex[i].GetPointer() );
-
+		pMRTUI->AddChild(pObject);
 		// AddGameObject
-		m_pCurScene->FindLayer( L"UI" )->AddGameObject( pObject );
+		//m_pCurScene->FindLayer( L"UI" )->AddGameObject( pObject );
 	}
+	return pMRTUI;
 }
 
 bool Compare(CGameObject* _pLeft, CGameObject* _pRight)

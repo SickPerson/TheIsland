@@ -185,7 +185,7 @@ void CPlayerScript::Update()
 
 			Transform()->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 
-			float fHeight = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+			float fHeight = CNaviMgr::GetInst()->GetY(Transform()->GetLocalPos());
 			float fMaxHeight = max(m_fHouseHeight, fHeight);
 			if (vOriginPos.y > fMaxHeight + 5.f)
 			{
