@@ -55,8 +55,8 @@ void CPacketMgr::Send_Login_Fail_Packet(unsigned int playerId)
 
 void CPacketMgr::Send_Put_Player_Packet(unsigned int playerId, unsigned int OtherId)
 {
-	Vec3 vPos = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetPos();
-	Vec3 vRot = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetRot();
+	Vec3 vPos = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalPos();
+	Vec3 vRot = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalRot();
 
 	sc_put_player_packet	packet;
 	packet.id = OtherId;
@@ -76,8 +76,8 @@ void CPacketMgr::Send_Put_Player_Packet(unsigned int playerId, unsigned int Othe
 
 void CPacketMgr::Send_Pos_Player_Packet(unsigned int playerId, unsigned int OtherId)
 {
-	Vec3 pos = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetPos();
-	Vec3 rot = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetRot();
+	Vec3 pos = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalPos();
+	Vec3 rot = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalRot();
 
 	sc_pos_player_packet packet;
 	packet.size = sizeof(sc_pos_player_packet);
@@ -135,8 +135,8 @@ void CPacketMgr::Send_Wakeup_Npc_Packet(unsigned int playerId, unsigned int NpcI
 
 void CPacketMgr::Send_Put_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
 {
-	Vec3 pos = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetPos();
-	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetRot();
+	Vec3 pos = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalPos();
+	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
 
 	sc_put_player_packet	packet;
 	packet.id = NpcID;
@@ -154,8 +154,8 @@ void CPacketMgr::Send_Put_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
 
 void CPacketMgr::Send_Pos_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
 {
-	Vec3 pos = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetPos();
-	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetRot();
+	Vec3 pos = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalPos();
+	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
 
 	sc_pos_npc_packet packet;
 	packet.size = sizeof(sc_pos_npc_packet);

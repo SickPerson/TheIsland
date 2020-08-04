@@ -20,7 +20,7 @@ enum ANIMAL_LOCK_TYPE {
 	MONSTER_LOCK_END
 };
 
-class CMonster:
+class CMonster :
 	public CObject
 {
 public:
@@ -48,14 +48,14 @@ private:
 	Vec3 vRandomPos;
 
 public:
-	void SetAnimalStatus( tAnimalStatus& animalStatus);
-	void SetHP( float& fHP);
-	void SetSpeed( float& fSpeed);
-	void SetDamage( float& fDamage);
-	void SetBehaviorTime( float& fTime);
+	void SetAnimalStatus(tAnimalStatus& animalStatus);
+	void SetHP(float& fHP);
+	void SetSpeed(float& fSpeed);
+	void SetDamage(float& fDamage);
+	void SetBehaviorTime(float& fTime);
 	void SetType(BEHAVIOR_TYPE& eType);
 	void SetKind(ANIMAL_TYPE& eKind);
-	void SetTarget( unsigned int playerId);
+	void SetTarget(unsigned int playerId);
 	void SetWakeUp(bool bWakeUp);
 	void SetDir(Vec3& vDir);
 

@@ -61,11 +61,11 @@ void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
 	tStatus.fStamina = 100.f;
 	tStatus.fThirst = 100.f;
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetPos(Vec3(0.f, 20.f, 0.f));
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetRot(Vec3(0.f, 180.f, 0.f));
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(0.f, 20.f, 0.f));
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 180.f, 0.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(true);
 
-	Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetPos();
+	Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 
 	concurrent_unordered_set<unsigned int> list;
 	CopyBeforeLoginList(list);
@@ -74,7 +74,7 @@ void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
 	for (auto& au : list) {
 		if (playerId == au) continue;
 		if (false == CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetConnect()) continue;
-		Vec3 other_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetPos();
+		Vec3 other_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 
 		if (true == ObjectRangeCheck(player_pos, other_pos, PLAYER_BETWEEN_RANGE)) {
 			CPacketMgr::Send_Put_Player_Packet(au, playerId);
@@ -86,7 +86,7 @@ void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
 	// [ Add Monster List ]
 	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
 		if (au.second->GetState() == OBJ_STATE_DIE) continue;
-		Vec3 monster_pos = au.second->GetPos();
+		Vec3 monster_pos = au.second->GetLocalPos();
 
 		if (true == ObjectRangeCheck(player_pos, monster_pos, PLAYER_BETWEEN_RANGE))
 		{
@@ -112,7 +112,7 @@ void CPlayerProcess::PlayerMove(unsigned int playerId, char * packet)
 	cs_move_packet* move_packet = reinterpret_cast<cs_move_packet*>(packet);
 	
 	Vec3 dir = move_packet->vDir;
-	Vec3 pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetPos();
+	Vec3 pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 	Vec3 rot = move_packet->vRot;
 	float speed = move_packet->fSpeed;
 
@@ -122,8 +122,8 @@ void CPlayerProcess::PlayerMove(unsigned int playerId, char * packet)
 	pos += dir * speed * CTimerMgr::GetInst()->GetDeltaTime();//CTimerMgr::GetInst()->GetDeltaTime();
 	pos.y = 20.f;
 	//cout << "후)좌표: " << pos.x << ", " << pos.y << ", " << pos.z << endl;
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetPos(pos);
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetRot(rot);
+	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(pos);
+	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(rot);
 
 	CPacketMgr::GetInst()->Send_Pos_Player_Packet(playerId, playerId);
 	//UpdateViewList(playerId);
@@ -170,14 +170,14 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 	// 현재 플레이어의 시야처리 내의 리스트를 받아옵니다.
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(beforeList);
 	// 현재 플레이어 위치를 받아옵니다.
-	Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetPos();
+	Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 
 	// After List에 시야처리 리스트 추가 작업 [ Player ] 
 	for (auto& au : loginList) 
 	{
 		if (au == playerId) continue;
 		if (false == CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetConnect()) continue;
-		Vec3 other_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetPos();
+		Vec3 other_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetLocalPos();
 		if (ObjectRangeCheck(player_pos, other_pos, PLAYER_BETWEEN_RANGE)) {
 			afterList.insert(au);
 			continue;
@@ -189,7 +189,7 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 		// 만약 몬스터가 죽어있으면 continue;
 		if (au.second->GetState() == OBJ_STATE_DIE) continue;
 		
-		Vec3 monster_pos = au.second->GetPos();
+		Vec3 monster_pos = au.second->GetLocalPos();
 		// 만약 몬스터가 플레이어의 범위 내에 들어와 있다면 시야처리에 넣어준다.
 		if (ObjectRangeCheck(player_pos, monster_pos, PLAYER_BETWEEN_RANGE)) {
 			afterList.insert(au.first + MAX_USER);
@@ -275,7 +275,7 @@ bool CPlayerProcess::ObjectRangeCheck(Vec3& player, Vec3& other, float fDistance
 //	Vec3 pos = Vec3(pos_packet->vDir);
 //	
 //	//cout << packet->fPosX << ", " << packet->fPosY << ", " << packet->fPosZ << endl;
-//	CProcess::m_pPlayerPool->m_cumPlayerPool[_usID]->SetPos(pos);
+//	CProcess::m_pPlayerPool->m_cumPlayerPool[_usID]->SetLocalPos(pos);
 //
 //	UpdateViewList(_usID);
 //}
@@ -293,7 +293,7 @@ bool CPlayerProcess::ObjectRangeCheck(Vec3& player, Vec3& other, float fDistance
 //	if (vRot.y > 360.f)
 //		vRot.y -= 360.f;
 //
-//	CProcess::m_pPlayerPool->m_cumPlayerPool[rot_packet->id]->SetRot(Vec3(0.f, vRot.y, 0.f));
+//	CProcess::m_pPlayerPool->m_cumPlayerPool[rot_packet->id]->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
 //
 //	//cout << rot_packet->id  << ": " << rot_packet->fRotX << ", " << rot_packet->fRotY << ", " << rot_packet->fRotZ << endl;
 //
