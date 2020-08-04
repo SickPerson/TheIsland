@@ -1194,7 +1194,21 @@ void CIngameScene::CreateNatural()
 		}
 
 		pObject->Transform()->LoadFromScene( pFile );
-		pObject->SetName( strName );
+
+		string str1;
+		wstring str2 = strName;
+		str1.assign(str2.begin(), str2.end());
+		std::cout << str1 << std::endl;
+
+		pObject->SetName( str2 );
+		if (str1 == "sprucea" || str1 == "sprucec")
+		{
+			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
+		}
+		else if (str1 == "spruceb")
+		{
+			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 1);
+		}
 
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		pScene->AddGameObject( L"Environment", pObject, false );
