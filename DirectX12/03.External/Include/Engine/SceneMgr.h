@@ -30,6 +30,6 @@ public:
 	CGameObject* Mouse();
 
 public:
-	void CreateMRTUI();
+	CGameObject* CreateMRTUI();
 };
 

@@ -562,6 +562,15 @@ void CResMgr::CreateDefaultMaterial()
 
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();
+	pMtrl->SetShader(FindRes<CShader>(L"TreeShader"));
+	Ptr<CTexture> pBushTex = CResMgr::GetInst()->Load<CTexture>(L"BushDiffuse", L"FBX\\Plains_Grass.fbm\\T_Plains_Fern01_D.tga");
+	Ptr<CTexture> pBushNormalTex = CResMgr::GetInst()->Load<CTexture>(L"BushNormal", L"FBX\\Plains_Grass.fbm\\T_Plains_Fern01_N.tga");
+	pMtrl->SetData(SHADER_PARAM::TEX_0, pBushTex.GetPointer());
+	pMtrl->SetData(SHADER_PARAM::TEX_1, pBushNormalTex.GetPointer());
+	AddRes(L"BushMtrl", pMtrl);
+
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"Std3DShader"));
 	AddRes(L"Std3DMtrl", pMtrl);
 
