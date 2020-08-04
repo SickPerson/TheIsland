@@ -1196,6 +1196,7 @@ void CIngameScene::CreateNatural()
 		}
 
 		pObject->Transform()->LoadFromScene( pFile );
+		pObject->SetName( strName );
 
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		pScene->AddGameObject( L"Environment", pObject, false );
