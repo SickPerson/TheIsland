@@ -12,7 +12,7 @@ CPacketMgr::~CPacketMgr()
 {
 }
 
-void CPacketMgr::Send_Packet(unsigned int playerId, void* packet)
+void CPacketMgr::Send_Packet(unsigned short playerId, void* packet)
 {
 	DWORD flags{ 0 };
 	char* cPacket = reinterpret_cast<char*>(packet);
@@ -36,7 +36,7 @@ void CPacketMgr::Send_Packet(unsigned int playerId, void* packet)
 	}
 }
 
-void CPacketMgr::Send_Login_OK_Packet(unsigned int playerId)
+void CPacketMgr::Send_Login_OK_Packet(unsigned short playerId)
 {
 	sc_login_ok_packet packet;
 	packet.size = sizeof(packet);
@@ -45,7 +45,7 @@ void CPacketMgr::Send_Login_OK_Packet(unsigned int playerId)
 	Send_Packet(playerId, &packet);
 }
 
-void CPacketMgr::Send_Login_Fail_Packet(unsigned int playerId)
+void CPacketMgr::Send_Login_Fail_Packet(unsigned short playerId)
 {
 	sc_login_fail_packet packet;
 	packet.size = sizeof(packet);
@@ -53,7 +53,11 @@ void CPacketMgr::Send_Login_Fail_Packet(unsigned int playerId)
 	Send_Packet(playerId, &packet);
 }
 
-void CPacketMgr::Send_Put_Player_Packet(unsigned int playerId, unsigned int OtherId)
+void CPacketMgr::Send_Login_Status_Packet(unsigned short playerId)
+{
+}
+
+void CPacketMgr::Send_Put_Player_Packet(unsigned short playerId, unsigned short OtherId)
 {
 	Vec3 vPos = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalPos();
 	Vec3 vRot = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalRot();
@@ -74,7 +78,7 @@ void CPacketMgr::Send_Put_Player_Packet(unsigned int playerId, unsigned int Othe
 		CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->InsertList(OtherId);
 }
 
-void CPacketMgr::Send_Pos_Player_Packet(unsigned int playerId, unsigned int OtherId)
+void CPacketMgr::Send_Pos_Player_Packet(unsigned short playerId, unsigned short OtherId)
 {
 	Vec3 pos = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalPos();
 	Vec3 rot = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalRot();
@@ -92,7 +96,18 @@ void CPacketMgr::Send_Pos_Player_Packet(unsigned int playerId, unsigned int Othe
 		Send_Put_Player_Packet(playerId, OtherId);
 }
 
-void CPacketMgr::Send_Remove_Player_Packet(unsigned int playerId, unsigned int OtherId)
+void CPacketMgr::Send_Rot_Player_Packet(unsigned short playerId, unsigned short OtherId)
+{
+	sc_rot_player_packet packet;
+	packet.size = sizeof(sc_rot_player_packet);
+	packet.type = SC_ROT;
+	packet.id = OtherId;
+	packet.vRot = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalRot();
+	if(playerId != OtherId)
+		Send_Packet(playerId, &packet);
+}
+
+void CPacketMgr::Send_Remove_Player_Packet(unsigned short playerId, unsigned short OtherId)
 {
 	sc_remove_player_packet packet;
 	packet.size = sizeof(packet);
@@ -104,7 +119,7 @@ void CPacketMgr::Send_Remove_Player_Packet(unsigned int playerId, unsigned int O
 		CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->DeleteList(OtherId);
 }
 
-void CPacketMgr::Send_Chat_Packet(unsigned int playerId, unsigned int OtherId, char message[])
+void CPacketMgr::Send_Chat_Packet(unsigned short playerId, unsigned short OtherId, char message[])
 {
 	sc_chat_packet packet;
 	packet.size = sizeof(sc_chat_packet);
@@ -114,7 +129,11 @@ void CPacketMgr::Send_Chat_Packet(unsigned int playerId, unsigned int OtherId, c
 	Send_Packet(OtherId, &packet);
 }
 
-void CPacketMgr::Send_Animation_Player_Packet(unsigned int playerId, unsigned int OtherId, char AnimationType)
+void CPacketMgr::Send_Death_Player_Packet(unsigned short playerId)
+{
+}
+
+void CPacketMgr::Send_Animation_Player_Packet(unsigned short playerId, unsigned short OtherId, char AnimationType)
 {
 	sc_animation_player_packet packet;
 	packet.size = sizeof(sc_animation_npc_packet);
@@ -124,7 +143,7 @@ void CPacketMgr::Send_Animation_Player_Packet(unsigned int playerId, unsigned in
 	Send_Packet(playerId, &packet);
 }
 
-void CPacketMgr::Send_Wakeup_Npc_Packet(unsigned int playerId, unsigned int NpcId)
+void CPacketMgr::Send_Wakeup_Npc_Packet(unsigned short playerId, unsigned short NpcId)
 {
 	sc_wake_up_packet packet;
 	packet.size = sizeof(sc_wake_up_packet);
@@ -133,7 +152,7 @@ void CPacketMgr::Send_Wakeup_Npc_Packet(unsigned int playerId, unsigned int NpcI
 	Send_Packet(playerId, &packet);
 }
 
-void CPacketMgr::Send_Put_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
+void CPacketMgr::Send_Put_Npc_Packet(unsigned short PlayerID, unsigned short NpcID)
 {
 	Vec3 pos = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalPos();
 	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
@@ -152,7 +171,7 @@ void CPacketMgr::Send_Put_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
 		CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->InsertList(NpcID + MAX_USER);
 }
 
-void CPacketMgr::Send_Pos_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
+void CPacketMgr::Send_Pos_Npc_Packet(unsigned short PlayerID, unsigned short NpcID)
 {
 	Vec3 pos = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalPos();
 	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
@@ -170,7 +189,7 @@ void CPacketMgr::Send_Pos_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
 		CPacketMgr::Send_Put_Npc_Packet(PlayerID, NpcID);
 }
 
-void CPacketMgr::Send_Remove_Npc_Packet(unsigned int PlayerID, unsigned int NpcID)
+void CPacketMgr::Send_Remove_Npc_Packet(unsigned short PlayerID, unsigned short NpcID)
 {
 	sc_remove_player_packet packet;
 	packet.size = sizeof(packet);
@@ -182,7 +201,7 @@ void CPacketMgr::Send_Remove_Npc_Packet(unsigned int PlayerID, unsigned int NpcI
 		CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->DeleteList(NpcID + MAX_USER);
 }
 
-void CPacketMgr::Send_Animation_Npc_Packet(unsigned int playerId, unsigned int NpcId, char AnimationType)
+void CPacketMgr::Send_Animation_Npc_Packet(unsigned short playerId, unsigned short NpcId, char AnimationType)
 {
 	sc_animation_player_packet packet;
 	packet.size = sizeof(sc_animation_npc_packet);

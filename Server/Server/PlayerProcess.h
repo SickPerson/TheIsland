@@ -7,7 +7,7 @@ class CPlayerProcess:
 {
 private:
 	recursive_mutex						m_rmPlayerProcessLock;
-	function<void(unsigned int, char*)> m_fpPacketProcess[CS_END];
+	function<void(unsigned short, char*)> m_fpPacketProcess[CS_END];
 public:
 	explicit CPlayerProcess();
 	virtual ~CPlayerProcess();
@@ -15,29 +15,37 @@ public:
 public:
 	void BindPacketProcess()
 	{
-		m_fpPacketProcess[CS_LOGIN] = [&](unsigned int playerId, char* packet){
+		m_fpPacketProcess[CS_LOGIN] = [&](unsigned short playerId, char* packet){
 			PlayerLogin(playerId, packet);
 		};
-		m_fpPacketProcess[CS_MOVE] = [&](unsigned int playerId, char* packet) {
+		m_fpPacketProcess[CS_MOVE] = [&](unsigned short playerId, char* packet) {
 			PlayerMove(playerId, packet);
 		};
-		m_fpPacketProcess[CS_CHAT] = [&](unsigned int playerId, char* packet){
+		m_fpPacketProcess[CS_CHAT] = [&](unsigned short playerId, char* packet){
 			PlayerChat(playerId, packet);
 		};
-		m_fpPacketProcess[CS_LOGOUT] = [&](unsigned int playerId, char* packet) {
+		m_fpPacketProcess[CS_LOGOUT] = [&](unsigned short playerId, char* packet) {
 			PlayerLogout(playerId);
+		};
+		m_fpPacketProcess[CS_ROT] = [&](unsigned short playerId, char* packet) {
+			PlayerRot(playerId, packet);
+		};
+		m_fpPacketProcess[CS_ANIMAL_COLLISION] = [&](unsigned short playerId, char* packet) {
+			PlayerCollisionAnimal(playerId, packet);
 		};
 	}
 
-	void AcceptClient(const SOCKET& sSocket, unsigned int playerId);
-	void RecvPacket(unsigned int playerId, char* packet, DWORD bytesize);
+	void AcceptClient(const SOCKET& sSocket, unsigned short playerId);
+	void RecvPacket(unsigned short playerId, char* packet, DWORD bytesize);
 
-	void PlayerLogin(unsigned int playerId, char* packet); // No DB
-	void PlayerMove(unsigned int playerId, char* packet);
-	void PlayerChat(unsigned int playerId, char* _packet);
-	void PlayerLogout(unsigned int playerId);
+	void PlayerLogin(unsigned short playerId, char* packet); // No DB
+	void PlayerMove(unsigned short playerId, char* packet);
+	void PlayerChat(unsigned short playerId, char* _packet);
+	void PlayerLogout(unsigned short playerId);
+	void PlayerRot(unsigned short playerId, char* packet);
+	void PlayerCollisionAnimal(unsigned short playerId, char* packet);
+	void PlayerCollisionNatural(unsigned short playerId, char* packet);
 
 public:
-	void UpdateViewList(unsigned int playerId);
-	bool ObjectRangeCheck(Vec3& player, Vec3& other, float fDistance);
+	void UpdateViewList(unsigned short playerId);
 };

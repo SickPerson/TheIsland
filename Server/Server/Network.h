@@ -28,7 +28,7 @@ private:
 	CMonsterProcess*	m_pMonsterProcess;
 
 private:
-	volatile unsigned int m_UserID;
+	volatile unsigned short m_UserID;
 
 public:
 	void Initialize();

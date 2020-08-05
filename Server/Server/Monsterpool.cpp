@@ -1,6 +1,6 @@
 #include "Monsterpool.h"
 #include <random>
-concurrent_unordered_map<unsigned int, CMonster*> CMonsterpool::m_cumMonsterPool;
+concurrent_unordered_map<unsigned short, CMonster*> CMonsterpool::m_cumMonsterPool;
 
 CMonsterpool::CMonsterpool()
 {
@@ -21,11 +21,13 @@ CMonsterpool::CMonsterpool()
 			tStatus.fStamina = 100.f;
 			tStatus.fDamage = 20.f;
 			tStatus.fSpeed = 150.f;
-			tStatus.fBehaviorTime = 4.f;
 			tStatus.eType = BEHAVIOR_TYPE::B_WARLIKE;
 			tStatus.eKind = ANIMAL_TYPE::A_BEAR;
 
 			Animal->SetAnimalStatus(tStatus);
+
+			Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
+			Animal->SetOffsetScale(vOffsetScale);
 		}
 		else if (i < ANIMAL_BOAR)
 		{
@@ -34,11 +36,13 @@ CMonsterpool::CMonsterpool()
 			tStatus.fStamina = 100.f;
 			tStatus.fDamage = 20.f;
 			tStatus.fSpeed = 150.f;
-			tStatus.fBehaviorTime = 4.f;
 			tStatus.eType = BEHAVIOR_TYPE::B_WARLIKE;
 			tStatus.eKind = ANIMAL_TYPE::A_BOAR;
 
 			Animal->SetAnimalStatus(tStatus);
+
+			Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
+			Animal->SetOffsetScale(vOffsetScale);
 		}
 		else if (i < ANIMAL_DEER)
 		{
@@ -47,11 +51,13 @@ CMonsterpool::CMonsterpool()
 			tStatus.fStamina = 100.f;
 			tStatus.fDamage = 0.f;
 			tStatus.fSpeed = 250.f;
-			tStatus.fBehaviorTime = 4.f;
 			tStatus.eType = BEHAVIOR_TYPE::B_EVASION;
 			tStatus.eKind = ANIMAL_TYPE::A_DEER;
 
 			Animal->SetAnimalStatus(tStatus);
+
+			Vec3 vOffsetScale = Vec3(30.f, 30.f, 30.f);
+			Animal->SetOffsetScale(vOffsetScale);
 		}
 		else if (i < ANIMAL_WOLF)
 		{
@@ -60,15 +66,17 @@ CMonsterpool::CMonsterpool()
 			tStatus.fStamina = 100.f;
 			tStatus.fDamage = 20.f;
 			tStatus.fSpeed = 200.f;
-			tStatus.fBehaviorTime = 4.f;
 			tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
 			tStatus.eKind = ANIMAL_TYPE::A_WOLF;
 
 			Animal->SetAnimalStatus(tStatus);
+
+			Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
+			Animal->SetOffsetScale(vOffsetScale);
 		}
 		random_device rd;
 		default_random_engine dre(rd());
-		uniform_real_distribution<float> urd{ -2000.f, 2000.f };
+		uniform_real_distribution<float> urd{ 0.f, 30000.f };
 		
 		Animal->SetLocalPos(Vec3(urd(dre), 20.f, urd(dre)));
 		Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
@@ -79,5 +87,12 @@ CMonsterpool::CMonsterpool()
 
 CMonsterpool::~CMonsterpool()
 {
+	for (auto& au : m_cumMonsterPool)
+	{
+		if (au.second) {
+			delete au.second;
+			au.second = nullptr;
+		}
+	}
 	m_cumMonsterPool.clear();
 }

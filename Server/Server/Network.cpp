@@ -109,8 +109,8 @@ void CNetwork::StartServer()
 	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
 	cout << "AcceptThread Create" << endl;
 
-	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
-	cout << "UpdateThread Create" << endl;
+	/*m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
+	cout << "UpdateThread Create" << endl;*/
 
 	/*m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
 	cout << "DatabaseThread Create" << endl;*/
@@ -169,7 +169,7 @@ void CNetwork::WorkerThread()
 		BOOL	is_error = GetQueuedCompletionStatus(m_hIocp, &num_byte, p_key,
 			reinterpret_cast<LPWSAOVERLAPPED *>(&lpover_ex), INFINITE);
 
-		unsigned int id = static_cast<unsigned>(key64);
+		unsigned short id = static_cast<unsigned>(key64);
 
 		// 비정상 종료 : FALSE, 수신 바이트 크기 = 0
 		// 정상 종료 : TRUE, 수신 바이트 크기 = 0
@@ -210,7 +210,7 @@ void CNetwork::WorkerThread()
 		}
 		case EV_MONSTER_UPDATE:
 		{
-			m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_uiOtherID);
+			//m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_uiOtherID);
 			delete lpover_ex;
 			break;
 		}
@@ -273,9 +273,9 @@ void CNetwork::UpdateThread()
 	while (m_bRunningServer)
 	{
 		CTimerMgr::GetInst()->Tick();
-		while (CProcess::EmptyEventQueue()) {
+		/*while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
-		}
+		}*/
 		Update_Event ev;
 		if (CProcess::CheckEventStart(ev))
 		{

@@ -17,6 +17,7 @@
 #include <wchar.h>
 #include <ctime>
 #include <math.h>
+#include <algorithm>
 
 #include <iostream>
 #include <random>
@@ -43,6 +44,7 @@
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <DirectXCollision.h>
+#include <DirectXMathVector.inl>
 
 #include <sdkddkver.h>
 #include <DirectXMath.h>

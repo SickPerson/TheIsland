@@ -1,21 +1,19 @@
 #pragma once
 #include "Object.h"
 
-//float fHP;
-//float fHungry;
-//float fStamina;
-//float fThirst;
-enum PLAYER_LOCK_TYPE {
-	PLAYER_LOCK_STATUS,
-	PLAYER_LOCK_HP,
-	PLAYER_LOCK_HUNGRY,
-	PLAYER_LOCK_STAMINA,
-	PLAYER_LOCK_THIRST,
-	PLAYER_LOCK_SOCKET,
-	PLAYER_LOCK_CONNECT,
-	PLAYER_LOCK_NUMID,
-	PLAYER_LOCK_WCID,
-	PLAYER_LOCK_END
+enum class PLAYER_LOCK_TYPE
+{
+	STATUS,
+	HP,
+	HUNGRY,
+	STAMINA,
+	THIRST,
+	SPEED,
+	SOCKET,
+	CONNECT,
+	NUMID,
+	WCID,
+	END
 };
 
 class CPlayer : public CObject
@@ -25,7 +23,7 @@ public:
 	virtual ~CPlayer();
 
 private:
-	unsigned int	m_uiID;
+	unsigned short	m_uiID;
 	wchar_t			m_wcID[MAX_STR_LEN];
 	tPlayerStatus	m_tPlayerStatus;
 	volatile bool	m_bConnect;
@@ -35,8 +33,8 @@ private:
 	int				m_iCursize;
 
 private:
-	concurrent_unordered_set<unsigned int> m_cusViewList;
-	shared_mutex m_smPlayerStatusMutex[PLAYER_LOCK_END];
+	concurrent_unordered_set<unsigned short> m_cusViewList;
+	shared_mutex m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::END];
 	recursive_mutex	m_rmPlayerListMutex;
 
 public:
@@ -44,12 +42,14 @@ public:
 	char* RecvEvent(DWORD dataSize, char * packet);
 
 public:
-	void SetPlayerStatus( tPlayerStatus& status);
-	void SetHP( float& fHP);
-	void SetHungry( float& fHungry);
-	void SetStamina( float& fStamina);
-	void SetThirst( float& fThirst);
-	void SetNumID( unsigned int& numID);
+	void SetPlayerStatus(tPlayerStatus& status);
+	void SetHP(float& fHP);
+	void SetHungry(float& fHungry);
+	void SetStamina(float& fStamina);
+	void SetThirst(float& fThirst);
+	void SetSpeed(float& fSpeed);
+
+	void SetNumID(unsigned short& numID);
 	void SetWcID(wchar_t* wcID);
 	void SetConnect(bool bConnect);
 	void SetSocket(const SOCKET& socket);
@@ -60,18 +60,20 @@ public:
 	float&	GetHungry();
 	float&	GetStamina();
 	float&	GetThirst();
-	unsigned int&	GetNumID();
+	float&	GetSpeed();
+
+	unsigned short&	GetNumID();
 	wchar_t*	GetWcID();
 	bool	GetConnect();
 	SOCKET&	GetSocket();
 
 public:
-	void CopyBefore(concurrency::concurrent_unordered_set<unsigned int>& _usCopyList)
+	void CopyBefore(concurrency::concurrent_unordered_set<unsigned short>& _usCopyList)
 	{
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		_usCopyList = m_cusViewList;
 	}
-	void CopyPlayerList(concurrency::concurrent_unordered_set<unsigned int>& _usCopyList) {
+	void CopyPlayerList(concurrency::concurrent_unordered_set<unsigned short>& _usCopyList) {
 		unique_lock<recursive_mutex>lock(m_rmPlayerListMutex);
 		_usCopyList = m_cusViewList;
 		lock.unlock();
@@ -84,9 +86,9 @@ public:
 				++au;
 		}
 	}
-	void DeleteList(unsigned int _usID)
+	void DeleteList(unsigned short _usID)
 	{
-		concurrency::concurrent_unordered_set<unsigned int> list;
+		concurrency::concurrent_unordered_set<unsigned short> list;
 		CopyBefore(list);
 		for (auto au = list.begin(); au != list.end();)
 		{
@@ -101,12 +103,12 @@ public:
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		m_cusViewList = list;
 	}
-	void InsertList(unsigned int _usID)
+	void InsertList(unsigned short _usID)
 	{
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		m_cusViewList.insert(_usID);
 	}
-	bool ExistList(unsigned int _usID)
+	bool ExistList(unsigned short _usID)
 	{
 		if (m_cusViewList.count(_usID) != 0)
 			return true;

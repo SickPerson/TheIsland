@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Playerpool.h"
 
-concurrent_unordered_map<unsigned int, CPlayer*>CPlayerpool::m_cumPlayerPool;
+concurrent_unordered_map<unsigned short, CPlayer*>CPlayerpool::m_cumPlayerPool;
 
 CPlayerpool::CPlayerpool()
 {

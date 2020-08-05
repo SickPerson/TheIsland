@@ -23,26 +23,26 @@ public:
 	static CPlayerpool*	m_pPlayerPool;
 	static CMonsterpool* m_pMonsterPool;
 
-	static concurrent_unordered_set<unsigned int>	m_cusLoginList; // 로그인 리스트
+	static concurrent_unordered_set<unsigned short>	m_cusLoginList; // 로그인 리스트
 	static concurrent_priority_queue<Update_Event>	m_cpqEventQueue; // 이벤트 큐(Timer 이벤트)
 
 public:
 	bool ObjectRangeCheck(Vec3& vFirst, Vec3& vSecond, float fDistance);
 
 public:
-	concurrent_unordered_set<unsigned int>& GetLoginList()
+	concurrent_unordered_set<unsigned short>& GetLoginList()
 	{
 		lock_guard<recursive_mutex>lock(m_rmProcessMutex);
 		return m_cusLoginList;
 	}
-	void CopyBeforeLoginList(concurrent_unordered_set<unsigned int>& _cusList)
+	void CopyBeforeLoginList(concurrent_unordered_set<unsigned short>& _cusList)
 	{
 		lock_guard<recursive_mutex> lock(m_rmProcessMutex);
 		_cusList = m_cusLoginList;
 	}
-	void DeleteLoginList(unsigned int& login_Id)
+	void DeleteLoginList(unsigned short& login_Id)
 	{
-		concurrent_unordered_set<unsigned int> list;
+		concurrent_unordered_set<unsigned short> list;
 		CopyBeforeLoginList(list);
 		for (auto au = list.begin(); au != list.end();)
 		{
@@ -57,12 +57,12 @@ public:
 		lock_guard<recursive_mutex>	lock(m_rmProcessMutex);
 		m_cusLoginList = list;
 	}
-	void InsertLoginList(unsigned int& login_Id)
+	void InsertLoginList(unsigned short& login_Id)
 	{
 		lock_guard<recursive_mutex>	lock(m_rmProcessMutex);
 		m_cusLoginList.insert(login_Id);
 	}
-	bool ExistLoginList(unsigned int& login_Id)
+	bool ExistLoginList(unsigned short& login_Id)
 	{
 		if (m_cusLoginList.count(login_Id) != 0)
 			return true;

@@ -28,7 +28,7 @@ void CPlayer::SetRecvState()
 	ZeroMemory(&m_over.m_Overlapped, sizeof(WSAOVERLAPPED));
 
 	int retval = WSARecv(m_sSocket, &m_over.m_DataBuffer, 1, &size, &flag, &m_over.m_Overlapped, NULL);
-	
+
 	if (0 != retval)
 	{
 		int err_no = WSAGetLastError();
@@ -76,113 +76,125 @@ char* CPlayer::RecvEvent(DWORD dataSize, char * packet)
 	return nullptr;
 }
 
-void CPlayer::SetPlayerStatus( tPlayerStatus & status)
+void CPlayer::SetPlayerStatus(tPlayerStatus & status)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_STATUS]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HP]);
 	m_tPlayerStatus.fHP = status.fHP;
 	m_tPlayerStatus.fHungry = status.fHungry;
 	m_tPlayerStatus.fStamina = status.fStamina;
 	m_tPlayerStatus.fThirst = status.fThirst;
+	m_tPlayerStatus.fSpeed = status.fSpeed;
 }
 
-void CPlayer::SetHP( float & fHP)
+void CPlayer::SetHP(float & fHP)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_HP]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HP]);
 	m_tPlayerStatus.fHP = fHP;
 }
 
-void CPlayer::SetHungry( float & fHungry)
+void CPlayer::SetHungry(float & fHungry)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_HUNGRY]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HUNGRY]);
 	m_tPlayerStatus.fHungry = fHungry;
 }
 
-void CPlayer::SetStamina( float & fStamina)
+void CPlayer::SetStamina(float & fStamina)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_STAMINA]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::STAMINA]);
 	m_tPlayerStatus.fStamina = fStamina;
 }
 
-void CPlayer::SetThirst( float & fThirst)
+void CPlayer::SetThirst(float & fThirst)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_THIRST]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::THIRST]);
 	m_tPlayerStatus.fThirst = fThirst;
 }
 
-void CPlayer::SetNumID( unsigned int & numID)
+void CPlayer::SetSpeed(float & fSpeed)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_NUMID]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SPEED]);
+}
+
+void CPlayer::SetNumID(unsigned short & numID)
+{
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::NUMID]);
 	m_uiID = numID;
 }
 
 void CPlayer::SetWcID(wchar_t * wcID)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_WCID]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::WCID]);
 	wcscpy_s(m_wcID, wcID);
 }
 
 void CPlayer::SetConnect(bool bConnect)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_CONNECT]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::CONNECT]);
 	m_bConnect = bConnect;
 }
 
 void CPlayer::SetSocket(const SOCKET & socket)
 {
-	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex[PLAYER_LOCK_SOCKET]);
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SOCKET]);
 	m_sSocket = socket;
 }
 
 tPlayerStatus & CPlayer::GetPlayerStatus()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[PLAYER_LOCK_STATUS]);
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::STATUS]);
 	return m_tPlayerStatus;
 }
 
 float & CPlayer::GetHP()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_HP]);
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HP]);
 	return m_tPlayerStatus.fHP;
 }
 
 float & CPlayer::GetHungry()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_HUNGRY]);
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HUNGRY]);
 	return m_tPlayerStatus.fHungry;
 }
 
 float & CPlayer::GetStamina()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_STAMINA]);
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HUNGRY]);
 	return m_tPlayerStatus.fStamina;
 }
 
 float & CPlayer::GetThirst()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[PLAYER_LOCK_THIRST]);
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::THIRST]);
 	return m_tPlayerStatus.fThirst;
 }
 
-unsigned int & CPlayer::GetNumID()
+float & CPlayer::GetSpeed()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[PLAYER_LOCK_NUMID]);
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SPEED]);
+	return m_tPlayerStatus.fSpeed;
+}
+
+unsigned short & CPlayer::GetNumID()
+{
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::NUMID]);
 	return m_uiID;
 }
 
 wchar_t * CPlayer::GetWcID()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[PLAYER_LOCK_WCID]);
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::WCID]);
 	return m_wcID;
 }
 
 bool CPlayer::GetConnect()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[PLAYER_LOCK_CONNECT]);
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::CONNECT]);
 	return m_bConnect;
 }
 
 SOCKET & CPlayer::GetSocket()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[PLAYER_LOCK_SOCKET]);
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SOCKET]);
 	return m_sSocket;
 }

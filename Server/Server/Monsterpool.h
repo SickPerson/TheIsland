@@ -11,6 +11,6 @@ public:
 	virtual ~CMonsterpool();
 
 public:
-	static concurrent_unordered_map<unsigned int, CMonster*> m_cumMonsterPool;
+	static concurrent_unordered_map<unsigned short, CMonster*> m_cumMonsterPool;
 };
 

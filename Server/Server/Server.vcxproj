@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CNatural.h" />
     <ClInclude Include="MonsterProcess.h" />
     <ClInclude Include="DataBase.h" />
     <ClInclude Include="define.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CNatural.cpp" />
     <ClCompile Include="MonsterProcess.cpp" />
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="main.cpp" />

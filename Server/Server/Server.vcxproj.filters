@@ -67,6 +67,12 @@
     <Filter Include="99.default\02. SimpleMath">
       <UniqueIdentifier>{3e3b0019-08db-45bd-b2d5-946e95f1434e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Object\02. Static\01. Natural">
+      <UniqueIdentifier>{beb87371-670f-4983-9271-806f24fac733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Object\02. Static\01. Natural\Naturalpool">
+      <UniqueIdentifier>{8918414a-f5ea-4cf7-b911-d436db09ca91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -113,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="MonsterProcess.cpp">
       <Filter>03. Process\03. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="CNatural.cpp">
+      <Filter>04. Object\02. Static</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="MonsterProcess.h">
       <Filter>03. Process\03. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="CNatural.h">
+      <Filter>04. Object\02. Static</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

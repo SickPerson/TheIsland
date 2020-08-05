@@ -54,6 +54,18 @@ void CObject::SetState(char cState)
 	m_cState = cState;
 }
 
+void CObject::SetOffsetPos(Vec3 vPos)
+{
+	unique_lock<shared_mutex> lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::OFFSET_POS]);
+	m_vOffsetPos = vPos;
+}
+
+void CObject::SetOffsetScale(Vec3 vScale)
+{
+	unique_lock<shared_mutex> lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::OFFSET_SCALE]);
+	m_vOffsetScale = vScale;
+}
+
 const Vec3 CObject::GetLocalPos()
 {
 	shared_lock<shared_mutex>lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::LOCAL_POS]);
@@ -76,4 +88,16 @@ const char CObject::GetState()
 {
 	shared_lock<shared_mutex>lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::STATE]);
 	return m_cState;
+}
+
+const Vec3 CObject::GetOffsetPos()
+{
+	shared_lock<shared_mutex>lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::STATE]);
+	return m_vOffsetPos;
+}
+
+const Vec3 CObject::GetOffsetScale()
+{
+	shared_lock<shared_mutex>lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::STATE]);
+	return m_vOffsetScale;
 }

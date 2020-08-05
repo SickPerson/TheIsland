@@ -23,14 +23,14 @@ CPlayerProcess::~CPlayerProcess()
 	}
 }
 
-void CPlayerProcess::AcceptClient(const SOCKET& sSocket, unsigned int playerId)
+void CPlayerProcess::AcceptClient(const SOCKET& sSocket, unsigned short playerId)
 {
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetSocket(sSocket);
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetNumID(playerId);
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetRecvState();
 }
 
-void CPlayerProcess::RecvPacket(unsigned int playerId, char * packet, DWORD bytesize)
+void CPlayerProcess::RecvPacket(unsigned short playerId, char * packet, DWORD bytesize)
 {
 	char* cPacket = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->RecvEvent(bytesize, packet);
 
@@ -40,7 +40,7 @@ void CPlayerProcess::RecvPacket(unsigned int playerId, char * packet, DWORD byte
 	}
 }
 
-void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
+void CPlayerProcess::PlayerLogin(unsigned short playerId, char * packet)
 {
 	cs_login_packet*	login_packet = reinterpret_cast<cs_login_packet*>(packet);
 	
@@ -54,35 +54,61 @@ void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
 		return;
 	}
 
+	// Player Init
+	{
+		tPlayerStatus tStatus;
+		tStatus.fHP = 100.f;
+		tStatus.fHungry = 100.f;
+		tStatus.fStamina = 100.f;
+		tStatus.fThirst = 100.f;
+		tStatus.fSpeed = 200.f;
+
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
+	}
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetNumID(login_packet->id);
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetWcID(login_packet->player_id);
-	tPlayerStatus tStatus;
-	tStatus.fHP = 100.f;
-	tStatus.fHungry = 100.f;
-	tStatus.fStamina = 100.f;
-	tStatus.fThirst = 100.f;
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(0.f, 20.f, 0.f));
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 180.f, 0.f));
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(10000.f, 273.f, 10000.f));
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(true);
 
+	// Server -> Client에 초기 플레이어 값 패킷 전송
+	sc_status_player_packet status_packet;
+	status_packet.id = m_pPlayerPool->m_cumPlayerPool[playerId]->GetNumID();
+	status_packet.size = sizeof(sc_status_player_packet);
+	status_packet.type = SC_STATUS_PLAYER;
+	status_packet.fHP = m_pPlayerPool->m_cumPlayerPool[playerId]->GetHP();
+	status_packet.fHungry = m_pPlayerPool->m_cumPlayerPool[playerId]->GetHungry();
+	status_packet.fStamina = m_pPlayerPool->m_cumPlayerPool[playerId]->GetStamina();
+	status_packet.vLocalPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	//status_packet.vLocalRot = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalRot();
+
+	// Player ViewList Update
 	Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 
-	concurrent_unordered_set<unsigned int> list;
+	concurrent_unordered_set<unsigned short> list;
 	CopyBeforeLoginList(list);
 
 	// [ Add Player List ]
 	for (auto& au : list) {
-		if (playerId == au) continue;
-		if (false == CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetConnect()) continue;
-		Vec3 other_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+		if (playerId == au)
+			continue;
 
-		if (true == ObjectRangeCheck(player_pos, other_pos, PLAYER_BETWEEN_RANGE)) {
-			CPacketMgr::Send_Put_Player_Packet(au, playerId);
-			if (au != playerId)
+		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
+		if (false == bConnect)
+			continue;
+		else
+		{
+			Vec3 other_pos = m_pPlayerPool->m_cumPlayerPool[au]->GetLocalPos();
+
+			if (ObjectRangeCheck(player_pos, other_pos, PLAYER_BETWEEN_RANGE))
+			{
+				CPacketMgr::Send_Put_Player_Packet(au, playerId);
 				CPacketMgr::Send_Put_Player_Packet(playerId, au);
+			}
 		}
 	}
-	
+
 	// [ Add Monster List ]
 	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
 		if (au.second->GetState() == OBJ_STATE_DIE) continue;
@@ -107,29 +133,38 @@ void CPlayerProcess::PlayerLogin(unsigned int playerId, char * packet)
 	}
 }
 
-void CPlayerProcess::PlayerMove(unsigned int playerId, char * packet)
+void CPlayerProcess::PlayerMove(unsigned short playerId, char * packet)
 {
 	cs_move_packet* move_packet = reinterpret_cast<cs_move_packet*>(packet);
-	
-	Vec3 dir = move_packet->vDir;
-	Vec3 pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	Vec3 rot = move_packet->vRot;
-	float speed = move_packet->fSpeed;
 
-	//cout << "전)좌표: " << pos.x << ", " << pos.y << ", " << pos.z << endl;
-	/*CTimerMgr::GetInst()->Tick();
-	cout << CTimerMgr::GetInst()->GetDeltaTime() << endl;*/
-	pos += dir * speed * CTimerMgr::GetInst()->GetDeltaTime();//CTimerMgr::GetInst()->GetDeltaTime();
-	pos.y = 20.f;
-	//cout << "후)좌표: " << pos.x << ", " << pos.y << ", " << pos.z << endl;
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(pos);
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(rot);
+	bool bRun = move_packet->bRun;
+	Vec3 vWorldDir = move_packet->vWorldDir;
 
-	CPacketMgr::GetInst()->Send_Pos_Player_Packet(playerId, playerId);
-	//UpdateViewList(playerId);
+	Vec3 vPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	Vec3 vOriginPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	float fSpeed = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
+	float fHeight = move_packet->fHeight;
+	cout << fHeight << endl;
+	float fMaxHeight = max(0, fHeight);
+	// Walk or Run
+	if (bRun)
+	{
+		fSpeed *= 5.f;
+	}
+	vPos += vWorldDir * fSpeed * 0.2f;
+	// Height
+	/*if (vOriginPos.y > fMaxHeight + 5.f)
+	{
+		vOriginPos.y -= fSpeed * 0.2f * 5.f;
+	}*/
+	cout << "aft)Pos : " << vPos.x << ", " << vOriginPos.y << ", " << vPos.z << endl;
+	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
+
+	//CPacketMgr::GetInst()->Send_Pos_Player_Packet(playerId, playerId);
+	UpdateViewList(playerId);
 }
 
-void CPlayerProcess::PlayerLogout(unsigned int playerId)
+void CPlayerProcess::PlayerLogout(unsigned short playerId)
 {
 	// 이미 Disconnect인 상태일 경우
 	if (!m_pPlayerPool->m_cumPlayerPool[playerId]->GetConnect()) 
@@ -140,17 +175,89 @@ void CPlayerProcess::PlayerLogout(unsigned int playerId)
 	if (ExistLoginList(playerId))
 		DeleteLoginList(playerId);
 
-	concurrent_unordered_set<unsigned int>list;
+	concurrent_unordered_set<unsigned short>list;
 	CopyBeforeLoginList(list);
 	for(auto& au : list)
 		CPacketMgr::Send_Remove_Player_Packet(au, playerId);
 }
 
-void CPlayerProcess::PlayerChat(unsigned int _usID, char * _packet)
+void CPlayerProcess::PlayerRot(unsigned short playerId, char * packet)
+{
+	cs_rot_packet* rot_packet = reinterpret_cast<cs_rot_packet*>(packet);
+	unsigned short id = rot_packet->id;
+	Vec3 vRot = rot_packet->vRot;
+
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(vRot);
+
+	concurrent_unordered_set<unsigned short> viewList;
+
+	m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(viewList);
+
+	for (auto& au : viewList)
+	{
+		CPacketMgr::Send_Rot_Player_Packet(au, playerId);
+	}
+}
+
+void CPlayerProcess::PlayerCollisionAnimal(unsigned short playerId, char * packet)
+{
+	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
+
+	bool AnimalId = collision_packet->id;
+	bool bRun = collision_packet->bRun;
+
+	Vec3 vAnimalPos = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
+	Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	float fPlayerSpeed = m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
+	Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
+	vDir.y = 0.f;
+
+	if (bRun)
+	{
+		vPlayerPos += vDir * fPlayerSpeed * 0.02f * 5.f;
+	}
+	else
+	{
+		vPlayerPos += vDir * fPlayerSpeed * 0.2f;
+	}
+
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
+
+	UpdateViewList(playerId);
+}
+
+void CPlayerProcess::PlayerCollisionNatural(unsigned short playerId, char * packet)
+{
+	/*cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
+
+	bool AnimalId = collision_packet->id;
+	bool bRun = collision_packet->bRun;
+
+	Vec3 vNatural = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
+	Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	float fPlayerSpeed = m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
+	Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
+	vDir.y = 0.f;
+
+	if (bRun)
+	{
+		vPlayerPos += vDir * fPlayerSpeed * 0.2f * 5.f;
+	}
+	else
+	{
+		vPlayerPos += vDir * fPlayerSpeed * 0.2f;
+	}
+
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
+
+	UpdateViewList(playerId);*/
+}
+
+void CPlayerProcess::PlayerChat(unsigned short _usID, char * _packet)
 {
 	cs_chat_packet* chat_packet = reinterpret_cast<cs_chat_packet*>(_packet);
 
-	concurrent_unordered_set<unsigned int> loginList;
+	concurrent_unordered_set<unsigned short> loginList;
 
 	CopyBeforeLoginList(loginList);
 
@@ -159,11 +266,11 @@ void CPlayerProcess::PlayerChat(unsigned int _usID, char * _packet)
 	}
 }
 
-void CPlayerProcess::UpdateViewList(unsigned int playerId)
+void CPlayerProcess::UpdateViewList(unsigned short playerId)
 {
-	concurrent_unordered_set<unsigned int> loginList; // 현재 로그인 리스트
-	concurrent_unordered_set<unsigned int> beforeList; // 수정 전 리스트
-	concurrent_unordered_set<unsigned int> afterList; // 수정 후 리스트
+	concurrent_unordered_set<unsigned short> loginList; // 현재 로그인 리스트
+	concurrent_unordered_set<unsigned short> beforeList; // 수정 전 리스트
+	concurrent_unordered_set<unsigned short> afterList; // 수정 후 리스트
 
 	// 동접자 리스트를 받아옵니다.
 	CopyBeforeLoginList(loginList);
@@ -184,7 +291,7 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 		}
 	}
 
-	// After List에 시야처리 리스트 추가 작업 [ Monster ]
+	//After List에 시야처리 리스트 추가 작업 [ Monster ]
 	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
 		// 만약 몬스터가 죽어있으면 continue;
 		if (au.second->GetState() == OBJ_STATE_DIE) continue;
@@ -209,7 +316,7 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 			}
 			else // Animal
 			{
-				unsigned int monster_id = au - MAX_USER;
+				unsigned short monster_id = au - MAX_USER;
 				if (false == m_pMonsterPool->m_cumMonsterPool[monster_id]->GetWakeUp())
 				{
 					Update_Event ev;
@@ -260,51 +367,3 @@ void CPlayerProcess::UpdateViewList(unsigned int playerId)
 		}
 	}
 }
-
-bool CPlayerProcess::ObjectRangeCheck(Vec3& player, Vec3& other, float fDistance)
-{
-	if (fDistance < abs(player.x - other.x)) return false;
-	if (fDistance < abs(player.z - other.z)) return false;
-	return true;
-}
-
-//void CPlayerProcess::PlayerPos(unsigned int _usID, char * _Packet)
-//{
-//	cs_pos_packet* pos_packet = reinterpret_cast<cs_pos_packet*>(_Packet);
-//	
-//	Vec3 pos = Vec3(pos_packet->vDir);
-//	
-//	//cout << packet->fPosX << ", " << packet->fPosY << ", " << packet->fPosZ << endl;
-//	CProcess::m_pPlayerPool->m_cumPlayerPool[_usID]->SetLocalPos(pos);
-//
-//	UpdateViewList(_usID);
-//}
-//
-//void CPlayerProcess::PlayerRot(unsigned int _usID, char * packet)
-//{
-//	cs_rot_packet* rot_packet = reinterpret_cast<cs_rot_packet*>(packet);
-//
-//	Vec2 vDrag = rot_packet->vDrag;
-//	Vec3 vRot = rot_packet->vRot;
-//
-//	CTimerMgr::GetInst()->Tick();
-//	vRot.y += vDrag.x * CTimerMgr::GetInst()->GetDeltaTime() * 1.5f;
-//
-//	if (vRot.y > 360.f)
-//		vRot.y -= 360.f;
-//
-//	CProcess::m_pPlayerPool->m_cumPlayerPool[rot_packet->id]->SetLocalRot(Vec3(0.f, vRot.y, 0.f));
-//
-//	//cout << rot_packet->id  << ": " << rot_packet->fRotX << ", " << rot_packet->fRotY << ", " << rot_packet->fRotZ << endl;
-//
-//	UpdateViewList(_usID);
-//	//concurrent_unordered_set<unsigned int> loginList;
-//
-//	/*CopyBefore(loginList);
-//
-//	for (auto& player : loginList) {
-//		if (_usID == player) continue;
-//		else
-//			CPacketMgr::GetInst()->Send_Rot_Packet(_usID, player);
-//	}*/
-//}

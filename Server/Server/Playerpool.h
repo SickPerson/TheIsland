@@ -11,6 +11,6 @@ public:
 	virtual ~CPlayerpool();
 
 public:
-	static concurrent_unordered_map<unsigned int, CPlayer*> m_cumPlayerPool;
+	static concurrent_unordered_map<unsigned short, CPlayer*> m_cumPlayerPool;
 };
 

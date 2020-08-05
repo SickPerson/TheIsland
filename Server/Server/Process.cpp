@@ -3,7 +3,7 @@
 
 CPlayerpool* CProcess::m_pPlayerPool = nullptr;
 CMonsterpool*	CProcess::m_pMonsterPool = nullptr;
-concurrent_unordered_set<unsigned int> CProcess::m_cusLoginList;
+concurrent_unordered_set<unsigned short> CProcess::m_cusLoginList;
 concurrent_priority_queue<Update_Event>	CProcess::m_cpqEventQueue;
 
 CProcess::CProcess()
@@ -20,7 +20,7 @@ CProcess::~CProcess()
 
 bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
 {
-	if (fDistance > sqrtf(pow(vSecond.x - vFirst.x, 2) + pow(vSecond.y - vFirst.y, 2) + pow(vSecond.z - vFirst.z, 2)))
+	if (fDistance > sqrtf(pow(vSecond.x - vFirst.x, 2) + pow(vSecond.z - vFirst.z, 2)))
 		return true;
 	return false;
 }

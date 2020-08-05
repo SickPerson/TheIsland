@@ -10,15 +10,15 @@ typedef struct Over_ex
 	char			m_MessageBuffer[MAX_BUF];
 	EVENT_TYPE		m_Event;
 	char			m_Status;
-	unsigned int	m_uiOtherID;
+	unsigned short	m_uiOtherID;
 }OVER_EX, POVER_EX;
 
 struct User_info {
 	SOCKET				socket;
 	OVER_EX				over;
-	unsigned int		id;
+	unsigned short		id;
 	DirectX::XMFLOAT3	pos;
-	set<unsigned int>	near_id;
+	set<unsigned short>	near_id;
 	mutex				near_lock;
 };
 
@@ -29,8 +29,8 @@ struct Update_Event {
 	std::chrono::high_resolution_clock::time_point wakeup_time;
 	EVENT_TYPE		m_EventType;
 	OBJ_STATE_TYPE	m_ObjState;
-	unsigned int m_Do_Object;
-	unsigned int m_From_Object;
+	unsigned short m_Do_Object;
+	unsigned short m_From_Object;
 
 	constexpr bool operator <(const Update_Event& _left) const
 	{
@@ -115,10 +115,10 @@ struct UserData {
 
 struct User_Data {
 	std::string m_sID;
-	unsigned int m_uiID;
+	unsigned short m_uiID;
 	int m_iPlayerNum;
 
-	User_Data(std::string sID, unsigned int usNum, int iPlayerNum) {
+	User_Data(std::string sID, unsigned short usNum, int iPlayerNum) {
 		m_sID = sID;
 		m_uiID = usNum;
 		m_iPlayerNum = iPlayerNum;
@@ -131,6 +131,7 @@ struct tPlayerStatus
 	float fHungry;
 	float fStamina;
 	float fThirst;
+	float fSpeed;
 };
 
 struct tAnimalStatus
@@ -139,8 +140,6 @@ struct tAnimalStatus
 	float fStamina;
 	float fSpeed;
 	float fDamage;
-
-	float fBehaviorTime;
 
 	BEHAVIOR_TYPE eType;
 	ANIMAL_TYPE eKind;
