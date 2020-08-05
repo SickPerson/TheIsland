@@ -133,6 +133,11 @@ void CPlayerScript::Update()
 				PlayerPicking(RIGHT_CLICK);
 			}
 
+			if (KEY_TAB(KEY_TYPE::KEY_Z))
+			{
+				std::cout << vPos.x << " | " << vPos.y << " | " << vPos.z << std::endl;
+			}
+
 			if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
 			{
 				fSpeed *= 5.f;
@@ -141,25 +146,53 @@ void CPlayerScript::Update()
 			if (KEY_HOLD(KEY_TYPE::KEY_W))
 			{
 				Vec3 vFront = -Transform()->GetWorldDir(DIR_TYPE::FRONT);
+				Vec3 vPrev = vPos;
 				vPos += vFront * fSpeed * DT;
+
+				float fHeight = CNaviMgr::GetInst()->GetY(vPos);
+				if (fHeight <= 80.f)
+				{
+					vPos = vPrev;
+				}
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_S))
 			{
 				Vec3 vBack = Transform()->GetWorldDir(DIR_TYPE::FRONT);
+				Vec3 vPrev = vPos;
 				vPos += vBack * fSpeed * DT;
+
+				float fHeight = CNaviMgr::GetInst()->GetY(vPos);
+				if (fHeight <= 80.f)
+				{
+					vPos = vPrev;
+				}
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_A))
 			{
 				Vec3 vLeft = Transform()->GetWorldDir(DIR_TYPE::RIGHT);
+				Vec3 vPrev = vPos;
 				vPos += vLeft * fSpeed * DT;
+
+				float fHeight = CNaviMgr::GetInst()->GetY(vPos);
+				if (fHeight <= 80.f)
+				{
+					vPos = vPrev;
+				}
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_D))
 			{
 				Vec3 vRight = -Transform()->GetWorldDir(DIR_TYPE::RIGHT);
+				Vec3 vPrev = vPos;
 				vPos += vRight * fSpeed * DT;
+
+				float fHeight = CNaviMgr::GetInst()->GetY(vPos);
+				if (fHeight <= 80.f)
+				{
+					vPos = vPrev;
+				}
 			}
 
 			POINT vMousePos = CKeyMgr::GetInst()->GetMousePos();
@@ -192,7 +225,7 @@ void CPlayerScript::Update()
 			if (vOriginPos.y > fMaxHeight + 5.f)
 			{
 				vOriginPos.y -= m_fDownSpeed * DT;
-				m_fDownSpeed += m_fSpeed;
+				m_fDownSpeed += 40.f;
 			}
 			else
 			{
@@ -371,6 +404,8 @@ void CPlayerScript::OnCollisionExit(CCollider2D * _pOther)
 	//		m_bOnHouse = false;
 	//	}
 	//}
+
+
 	// 나가면 벡터에서 해제
 	auto p = find(m_vCollisionObj.begin(), m_vCollisionObj.end(), _pOther->GetObj());
 	if (p == m_vCollisionObj.end())

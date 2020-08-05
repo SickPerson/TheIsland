@@ -119,9 +119,9 @@ void CSunshineScript::Update()
 	Vec3 vPlayerRot = m_pPlayer->Transform()->GetLocalRot();
 	Vec3 vPlayerDir = m_pPlayer->Transform()->GetWorldDir(DIR_TYPE::FRONT) * -1.f;
 
-	Vec3 vShadowPos = vPlayerPos + (vPlayerDir * 1500.f);
+	Vec3 vShadowPos = vPlayerPos + (vPlayerDir * 500.f);
 	vShadowPos.y = CNaviMgr::GetInst()->GetY(vShadowPos);
-	vShadowPos += vDir * -1000.f;
+	vShadowPos += vDir * -3000.f;
 
 	//vPlayerPos += vPlayerDir * Vec3(-1000.f, 1000.f, -1000.f);
 	Transform()->SetLocalPos(vShadowPos);

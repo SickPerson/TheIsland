@@ -153,6 +153,7 @@ bool CNaturalScript::Damage( CGameObject* pObj, float fDamage )
 			evt.wParam = ( DWORD_PTR )GetObj();
 			evt.lParam = ( ( DWORD_PTR )29 << 16 | ( DWORD_PTR )true );
 			CEventMgr::GetInst()->AddEvent( evt );
+			MeshRender()->SetDynamicShadow(false);
 		}
 	}
 
@@ -228,6 +229,7 @@ void CNaturalScript::Respawn()
 	evt.wParam = ( DWORD_PTR )GetObj();
 	evt.lParam = ( ( DWORD_PTR )3 << 16 | ( DWORD_PTR )true );
 	CEventMgr::GetInst()->AddEvent( evt );
+	MeshRender()->SetDynamicShadow(true);
 }
 
 void CNaturalScript::SetType( int iType )

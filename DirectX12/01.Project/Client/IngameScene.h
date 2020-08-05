@@ -39,5 +39,6 @@ public:
 	void CreateChatUI();
 
 	void CreateNatural();
+	void CreateAnimalSpawner();
 };
 

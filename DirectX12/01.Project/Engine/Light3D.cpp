@@ -20,8 +20,8 @@ CLight3D::CLight3D()
 	// 광원이 관리하는 카메라는 렌더매니저에 등록되면 안된다.
 	m_pCamObj->Camera()->SetModule(true);
 	m_pCamObj->Camera()->SetLayerAllCheck(); // 모든 레이어를 찍는다(shadow map)
-	//m_pCamObj->Camera()->SetLayerCheck(29, false);
-	//m_pCamObj->Camera()->SetLayerCheck(30, false);
+	m_pCamObj->Camera()->SetLayerCheck(29, false);
+	m_pCamObj->Camera()->SetLayerCheck(30, false);
 }
 
 CLight3D::CLight3D(const CLight3D & _light)
@@ -52,8 +52,8 @@ void CLight3D::SetLightType(LIGHT_TYPE _eType)
 		m_pCamObj->Camera()->SetProjType(PROJ_TYPE::ORTHGRAPHIC);
 		m_pCamObj->Camera()->SetScale(1.f);
 		m_pCamObj->Camera()->SetFar(100000.f);
-		m_pCamObj->Camera()->SetWidth(512.f * 4.f);
-		m_pCamObj->Camera()->SetHeight(512.f * 4.f);
+		m_pCamObj->Camera()->SetWidth(512.f * 8.f);
+		m_pCamObj->Camera()->SetHeight(512.f * 8.f);
 	}
 	else if (LIGHT_TYPE::POINT == (LIGHT_TYPE)m_tLightInfo.iLightType)
 	{

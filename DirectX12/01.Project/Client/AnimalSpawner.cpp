@@ -5,6 +5,8 @@
 
 #include <Engine/NaviMgr.h>
 
+#include <iostream>
+
 CAnimalSpawner::CAnimalSpawner(BEHAVIOR_TYPE eType) :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
 	m_eSpawnType(eType),
@@ -53,6 +55,9 @@ void CAnimalSpawner::Update()
 
 void CAnimalSpawner::SpawnStartAnimal()
 {
+	Respawn();
+	Respawn();
+	Respawn();
 }
 
 void CAnimalSpawner::Respawn()
@@ -224,18 +229,27 @@ void CAnimalSpawner::Respawn()
 		}
 
 		Vec3 vPos = Transform()->GetLocalPos();
-		float fDistance = (float)(rand() % (int)m_fRadius + 1);
-		float fDegree = (float)(rand() % 360);
-		float fRadian = fDegree / 180.f * XM_PI;
+		while (1)
+		{
+			vPos = Transform()->GetLocalPos();
+			float fDistance = (float)(rand() % (int)m_fRadius + 1);
+			float fDegree = (float)(rand() % 360);
+			float fRadian = fDegree / 180.f * XM_PI;
 
-		vPos.x += cos(fRadian) * fDistance;
-		vPos.z += sin(fRadian) * fDistance;
+			vPos.x += cos(fRadian) * fDistance;
+			vPos.z += sin(fRadian) * fDistance;
 
-		vPos.y = CNaviMgr::GetInst()->GetY(vPos);
+			vPos.y = CNaviMgr::GetInst()->GetY(vPos);
 
+			if (vPos.y > 80.f)
+				break;
+		}
+		
 		pObject->Transform()->SetLocalPos(vPos);
 
 		pObject->GetScript<CAnimalScript>()->SetAnimalSpawner(this);
+		m_iCurrentCount++;
+		m_fCurrentTime = 0.f;
 	}
 }
 

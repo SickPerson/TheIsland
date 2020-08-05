@@ -40,6 +40,7 @@
 #include "ChatScript.h"
 
 #include "AnimalScript.h"
+#include "AnimalSpawner.h"
 #include "NaturalScript.h"
 
 #include "ItemScript.h"
@@ -267,8 +268,6 @@ void CIngameScene::Init()
 	pPlayer->AddComponent(new CPlayerScript);
 	pPlayer->AddComponent(new CCollider2D);
 
-	pPlayer->MeshRender()->SetDynamicShadow(true);
-
 	pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
 	pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
@@ -279,24 +278,7 @@ void CIngameScene::Init()
 	//pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
-
-	pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\housing_wall.mdat", L"MeshData\\housing_wall.mdat");
-
-
-	//CGameObject* pTest = pMeshData->Instantiate();
-	//// Script 설정
-	//pTest->AddComponent(new CCollider2D);
-	//pTest->Collider2D()->SetOffsetScale(Vec3(40.f, 400.f, 400.f));
-	//pTest->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
-	//pTest->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::CUBE);
-
-	//pTest->SetName(L"Player Object");
-	//pTest->FrustumCheck(false);
-	//pTest->Transform()->SetLocalPos(Vec3(0.f, 20.f, 200.f));
-	//pTest->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	//pTest->Transform()->SetLocalScale(Vec3(0.6f, 0.6f, 0.6f));
-	////pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//m_pScene->FindLayer(L"Player")->AddGameObject(pTest);
+	m_pPlayer->MeshRender()->SetDynamicShadow(true);
 
 	// ==================
 	// Camera Object 생성
@@ -427,6 +409,7 @@ void CIngameScene::Init()
 
 	// 
 	CreateNatural();
+	CreateAnimalSpawner();
 
 	//// ====================
 	//// Grid 오브젝트 생성
@@ -1255,4 +1238,35 @@ void CIngameScene::CreateNatural()
 	}
 
 	fclose( pFile );
+}
+
+void CIngameScene::CreateAnimalSpawner()
+{
+	CGameObject* pSpawner = new CGameObject;
+	pSpawner->AddComponent(new CTransform);
+	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_EVASION));
+
+	pSpawner->Transform()->SetLocalPos(Vec3(10000.f, 0.f, 10000.f));
+	pSpawner->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
+	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner);
+
+	// =========================================================================
+
+	pSpawner = new CGameObject;
+	pSpawner->AddComponent(new CTransform);
+	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_WARLIKE));
+
+	pSpawner->Transform()->SetLocalPos(Vec3(6100.f, 0.f, 18200.f));
+	pSpawner->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
+	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner);
+
+	// =========================================================================
+
+	pSpawner = new CGameObject;
+	pSpawner->AddComponent(new CTransform);
+	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_EVASION));
+
+	pSpawner->Transform()->SetLocalPos(Vec3(6900.f, 0.f, 5285.f));
+	pSpawner->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
+	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner);
 }

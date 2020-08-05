@@ -23,7 +23,7 @@ CHousingScript::CHousingScript(ITEM_TYPE eType, int iCount)
 	{		
 		m_pObj[i] = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)i)->Instantiate();
 		m_pObj[i]->AddComponent(new CBuildScript((HOUSING_TYPE)i));
-
+		
 		m_pObj[i]->AddComponent(new CCollider2D);
 		m_pObj[i]->Collider2D()->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
 
@@ -36,6 +36,8 @@ CHousingScript::CHousingScript(ITEM_TYPE eType, int iCount)
 		m_pObj[i]->Transform()->SetLocalPos(Vec3(0.f, 20.f, 0.f));
 		m_pObj[i]->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 		m_pObj[i]->Transform()->SetLocalScale(Vec3(0.6f, 0.6f, 0.6f));
+
+		m_pObj[i]->MeshRender()->SetDynamicShadow(true);
 
 		m_pObj[i]->GetScript<CBuildScript>()->Init();
 		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pObj[i]);
@@ -122,6 +124,7 @@ void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		m_pObj[m_eType]->Transform()->SetLocalScale(Vec3(0.6f, 0.6f, 0.6f));
 
 		m_pObj[m_eType]->GetScript<CBuildScript>()->Init();
+		m_pObj[m_eType]->MeshRender()->SetDynamicShadow(true);
 		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Build")->AddGameObject(m_pObj[m_eType]);
 
 		pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->DecreaseItem(idx, 3);

@@ -115,19 +115,11 @@ void CCamera::SortGameObject()
 
 						for (UINT iMtrl = 0; iMtrl < iMtrlCount; ++iMtrl)
 						{
-							if (vecObj[j]->MeshRender()->GetSharedMaterial(iMtrl) == nullptr
-								|| vecObj[j]->MeshRender()->GetSharedMaterial(iMtrl)->GetShader() == nullptr)
-							{
-								//if (vecObj[i]->ParticleSystem())
-								//{
-								//	m_vecParticle.push_back(vecObj[i]);
-								//}
-								//else if (vecObj[i]->Font())
-								//{
-								//	m_vecFont.push_back(vecObj[i]);
-								//}
-								continue;
-							}
+							//if (vecObj[j]->MeshRender()->GetSharedMaterial(iMtrl) == nullptr
+							//	|| vecObj[j]->MeshRender()->GetSharedMaterial(iMtrl)->GetShader() == nullptr)
+							//{
+							//	continue;
+							//}
 
 							Ptr<CMaterial> pMtrl = vecObj[j]->MeshRender()->GetSharedMaterial(iMtrl);
 
