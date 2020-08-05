@@ -299,8 +299,12 @@ PS_STD3D_OUTPUT LandScapePS(VS_LANDSCAPE_OUT _in)
 {
 	PS_STD3D_OUTPUT output = (PS_STD3D_OUTPUT) 0.f;
 
+	float2 vUV;
+	vUV.x = _in.vRealPos.x / 110.f;
+	vUV.y = _in.vRealPos.z / 110.f;
+
 	if (tex_0)
-		output.vTarget0 = g_tex_0.Sample(g_sam_0, _in.vUV);
+		output.vTarget0 = g_tex_0.Sample(g_sam_0, vUV);
 	else
 		output.vTarget0 = float4(1.f, 0.f, 1.f, 1.f);
 
@@ -312,9 +316,6 @@ PS_STD3D_OUTPUT LandScapePS(VS_LANDSCAPE_OUT _in)
 	// 노말맵이 있는경우
 	if (tex_1)
 	{
-		float2 vUV;
-		vUV.x = _in.vRealPos.x / 110.f;
-		vUV.y = _in.vRealPos.z / 110.f;
 
 		float3 vTSNormal = g_tex_1.Sample(g_sam_0, vUV).xyz;
 		vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
