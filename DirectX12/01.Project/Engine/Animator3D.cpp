@@ -88,6 +88,11 @@ void CAnimator3D::UpdateData_Inst(CStructuredBuffer * _pBoneBuffer, UINT _iRow)
 	}
 }
 
+void CAnimator3D::SetAnimClipInfo( wstring strAnimName, tMTAnimClip tClip )
+{
+	m_mapClip[strAnimName] = tClip;
+}
+
 void CAnimator3D::Check_Mesh( Ptr<CMesh> pMesh )
 {
 	UINT iBoneCount = pMesh->GetBoneCount();

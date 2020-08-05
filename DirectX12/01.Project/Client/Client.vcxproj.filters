@@ -171,6 +171,9 @@
     <ClInclude Include="NaturalScript.h">
       <Filter>ComponentScript\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>SceneScript</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -262,6 +265,9 @@
     </ClCompile>
     <ClCompile Include="NaturalScript.cpp">
       <Filter>ComponentScript\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>SceneScript</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

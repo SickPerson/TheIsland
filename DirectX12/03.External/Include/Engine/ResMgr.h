@@ -41,6 +41,9 @@ public:
 	Ptr<T> Load( const wstring& _strKey, const wstring& _strPath/*상대 경로*/ );
 
 	template<typename T>
+	Ptr<T> Load( const wstring& _strKey, const vector<wstring>& vecPath );
+
+	template<typename T>
 	bool DestroyResource(const wstring & _strKey);
 
 	Ptr<CTexture> CreateTexture( const wstring& _strName, UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
@@ -256,6 +259,38 @@ inline Ptr<T> CResMgr::Load( const wstring & _strKey, const wstring & _strPath )
 	m_mapRes[(UINT)eType].insert(make_pair(_strKey, *ppRes));
 	pRes->SetName(_strKey);
 	pRes->SetPath(_strPath);
+
+	return pRes;
+}
+
+template<typename T>
+inline Ptr<T> CResMgr::Load( const wstring & _strKey, const vector<wstring>& vecPath )
+{
+	Ptr<T> pRes = FindRes<T>( _strKey );
+
+	// 중복키 문제
+	if ( nullptr != pRes )
+		return pRes;
+
+	pRes = new T;
+
+	vector<wstring> vecFullPath;
+
+	for ( size_t i = 0; i < vecPath.size(); ++i )
+	{
+		wstring strFullPath = CPathMgr::GetResPath();
+		strFullPath += vecPath[i];
+		vecFullPath.push_back( strFullPath );
+	}
+	pRes->Load( vecFullPath );
+
+
+	RES_TYPE eType = GetType<T>();
+
+	CResource** ppRes = ( CResource** )&pRes;
+	m_mapRes[( UINT )eType].insert( make_pair( _strKey, *ppRes ) );
+	pRes->SetName( _strKey );
+	pRes->SetPath( vecPath[0] );
 
 	return pRes;
 }

@@ -114,7 +114,6 @@ struct tMtrlParam
 	int				m_iArrTex[(UINT)SHADER_PARAM::TEX_END - (UINT)SHADER_PARAM::TEX_0];
 };
 
-
 struct tAnim2D
 {
 	Vec2 vLT;			// UV аб╩С╢э

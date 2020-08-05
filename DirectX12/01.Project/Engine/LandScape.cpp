@@ -5,17 +5,25 @@
 #include "Ptr.h"
 #include "ResMgr.h"
 
+#include "ConstantBuffer.h"
+#include "Device.h"
+#include "Texture.h"
+#include "Transform.h"
+#include "Texture.h"
+
+
 CLandScape::CLandScape() : 
 	CComponent(COMPONENT_TYPE::LANDSCAPE),
-	m_tLandScape{},
 	m_iDetailLevel(37),
-	m_iSplatCount(0)
+	m_iSplatCount(0),
+	m_pBuffer(NULL)
 {
 }
 
 
 CLandScape::~CLandScape()
 {
+	SAFE_DELETE( m_pBuffer );
 }
 
 void CLandScape::SaveToScene( FILE * _pFile )
@@ -39,6 +47,13 @@ UINT CLandScape::GetNumZ() const
 vector<Vec3>* CLandScape::GetVecPos()
 {
 	return &m_vecPos;
+}
+
+void CLandScape::SetDetailLevel( int iDetailLevel )
+{
+	m_iDetailLevel = iDetailLevel;
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" );
+	pMtrl->SetData( SHADER_PARAM::INT_0, &m_iDetailLevel );
 }
 
 void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNumZ )
@@ -171,7 +186,41 @@ void CLandScape::CreateLandScape( const wstring & strPath, UINT iNumX, UINT iNum
 	
 	CResMgr::GetInst()->AddRes( L"LandScapeMesh", pMesh );
 
+
+
+	m_pBuffer = new CStructuredBuffer;
+
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" );
+	pMtrl->SetData( SHADER_PARAM::INT_0, &m_iDetailLevel );	
+}
+
+void CLandScape::SetDiffuseSplatting( const wstring & strKey, const vector<wstring>* pvecPath )
+{
+	Ptr<CTexture> pTexture = CResMgr::GetInst()->Load<CTexture>( strKey, *pvecPath );
+
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" );
+	pMtrl->SetData( SHADER_PARAM::TEX_0, pTexture.GetPointer() );
+
+	++m_iSplatCount;
+
+}
+
+void CLandScape::SetNormalSplatting( const wstring & strKey, const vector<wstring>* pvecPath )
+{
+	Ptr<CTexture> pTexture = CResMgr::GetInst()->Load<CTexture>( strKey, *pvecPath );
 	
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" );
+	pMtrl->SetData( SHADER_PARAM::TEX_1, pTexture.GetPointer() );
+
+	++m_iSplatCount;
+}
+
+void CLandScape::SetAlphaSplatting( const wstring & strKey, const vector<wstring>* pvecPath )
+{
+	Ptr<CTexture> pTexture = CResMgr::GetInst()->Load<CTexture>( strKey, *pvecPath );
+
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" );
+	pMtrl->SetData( SHADER_PARAM::TEX_2, pTexture.GetPointer() );
 }
 
 void CLandScape::ComputeNormal( vector<VTX>& vecVtx, const vector<UINT>& vecIdx )
@@ -236,3 +285,31 @@ void CLandScape::ComputeTangent( vector<VTX>& vecVtx, const vector<UINT>& vecIdx
 		vecVtx[idx2].vBinormal = vecVtx[idx2].vNormal.Cross( vTangent ).Normalize();
 	}
 }
+
+void CLandScape::Render()
+{
+	m_pBuffer->UpdateData( TEXTURE_REGISTER::t8 );
+	m_pBuffer->UpdateData( TEXTURE_REGISTER::t9 );
+	m_pBuffer->UpdateData( TEXTURE_REGISTER::t10 );
+
+
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" );
+	pMtrl->SetData( SHADER_PARAM::INT_1, &m_iSplatCount );
+
+	pMtrl->UpdateData();
+	
+	CResMgr::GetInst()->FindRes<CMesh>( L"LandScapeMesh" )->Render();
+}
+
+//void CLandScape::UpdateData()
+//{
+//	static CConstantBuffer* pCB = CDevice::GetInst()->GetCB( CONST_REGISTER::b6 );
+//
+//	tLandScape tBuffer{};
+//	tBuffer.iDetailLevel = m_iDetailLevel;
+//	tBuffer.iSplatCount = m_iSplatCount;
+//
+//	UINT iOffsetPos = pCB->AddData( &tBuffer );
+//	CDevice::GetInst()->SetConstBufferToRegister( pCB, iOffsetPos );
+//}
+//

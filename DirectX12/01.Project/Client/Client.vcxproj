@@ -192,6 +192,7 @@
     <ClInclude Include="StuffScript.h" />
     <ClInclude Include="SunshineScript.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TestScene.h" />
     <ClInclude Include="ToolItemScript.h" />
     <ClInclude Include="UsableScript.h" />
   </ItemGroup>
@@ -229,6 +230,7 @@
     </ClCompile>
     <ClCompile Include="StuffScript.cpp" />
     <ClCompile Include="SunshineScript.cpp" />
+    <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="ToolItemScript.cpp" />
     <ClCompile Include="UsableScript.cpp" />
   </ItemGroup>

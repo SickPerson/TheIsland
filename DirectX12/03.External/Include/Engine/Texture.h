@@ -29,6 +29,8 @@ private:
 
 	D3D12_RESOURCE_STATES		 m_eState;
 
+	vector<ScratchImage*>		 m_vecImage;
+
 public:
 	void Create(UINT _iWidth, UINT _iHeight, DXGI_FORMAT _eFormat
 		, const D3D12_HEAP_PROPERTIES& _HeapProperty, D3D12_HEAP_FLAGS _eHeapFlag
@@ -49,6 +51,7 @@ public:
 	float Height() { return (float)m_tDesc.Height; }
 
 	virtual void Load(const wstring& _strFullPath);
+	virtual void Load( const vector<wstring>& vecFullPath );
 	virtual void Save(const wstring& _strPath/*최종 경로*/);
 };
 

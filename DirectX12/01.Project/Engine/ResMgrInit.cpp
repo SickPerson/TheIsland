@@ -294,6 +294,8 @@ void CResMgr::CreateDefaultShader()
 	
 	pShader->SetRasterizerType( RS_TYPE::CULL_NONE );
 	pShader->AddShaderParam( tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 } );
+	pShader->AddShaderParam( tShaderParam{ L"DetailLevel", SHADER_PARAM::INT_0 } );
+	pShader->AddShaderParam( tShaderParam{ L"SplatCount", SHADER_PARAM::INT_1 } );
 	pShader->Create( SHADER_POV::DEFERRED );
 	AddRes( L"LandScapeShader", pShader );
 

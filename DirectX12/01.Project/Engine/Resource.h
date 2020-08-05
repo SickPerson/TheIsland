@@ -25,6 +25,7 @@ public:
 
 public:
 	virtual void Load(const wstring& _strPath/*최종 경로*/) {};
+	virtual void Load( const vector<wstring>& vecPath ) {};
 	virtual void Save(const wstring& _strPath/*최종 경로*/) {};
 
 public:

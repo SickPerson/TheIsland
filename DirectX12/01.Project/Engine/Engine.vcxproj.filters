@@ -289,7 +289,7 @@
       <Filter>03. Manager\Navigation</Filter>
     </ClInclude>
     <ClInclude Include="Mouse.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>06. GameObject\Component\Mouse</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -462,7 +462,7 @@
       <Filter>03. Manager\Navigation</Filter>
     </ClCompile>
     <ClCompile Include="Mouse.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>06. GameObject\Component\Mouse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

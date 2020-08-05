@@ -21,6 +21,8 @@ private:
 	const vector<tMTBone>*		m_pVecBones;
 	const vector<tMTAnimClip>*	m_pVecClip;
 
+	unordered_map<wstring, tMTAnimClip> m_mapClip;
+
 	vector<float>				m_vecClipUpdateTime;
 	vector<Matrix>				m_vecFinalBoneMat; // 텍스쳐에 전달할 최종 행렬정보
 	int							m_iFrameCount; // 30
@@ -38,6 +40,8 @@ public:
 	void UpdateData();
 	void UpdateData_Inst(CStructuredBuffer* _pBoneBuffer, UINT _iRow);
 	void SetClipTime(int _iClipIdx, float _fTime) { m_vecClipUpdateTime[_iClipIdx] = _fTime; }
+
+	void SetAnimClipInfo( wstring strAnimName, tMTAnimClip tClip );
 
 	CStructuredBuffer* GetFinalBoneMat() { return m_pBoneFinalMat; }
 	UINT GetBoneCount() { return (UINT)m_pVecBones->size(); }

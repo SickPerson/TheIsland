@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "ResMgr.h"
 #include "Animator3D.h"
+#include "LandScape.h"
 
 CMeshRender::CMeshRender()
 	: CComponent(COMPONENT_TYPE::MESHRender)
@@ -38,6 +39,7 @@ void CMeshRender::Render()
 		}
 
 		m_vecMtrl[i]->UpdateData();
+
 		m_pMesh->Render((UINT)i);
 
 		// 정리
@@ -73,6 +75,7 @@ void CMeshRender::Render(UINT _iMtrlIdx)
 	}
 
 	m_vecMtrl[_iMtrlIdx]->UpdateData();
+		
 	m_pMesh->Render((UINT)_iMtrlIdx);
 
 	// 정리
@@ -99,6 +102,7 @@ void CMeshRender::Render_Shadowmap()
 
 		Transform()->UpdateData();
 		pMtrl->UpdateData();
+
 		m_pMesh->Render(i);
 
 		// 정리

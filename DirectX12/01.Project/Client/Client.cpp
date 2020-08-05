@@ -13,6 +13,7 @@
 #include "IngameScene.h"
 #include "ChatScript.h"
 #include "IngameScene.h"
+#include "TestScene.h"
 
 #include "HousingMgr.h"
 
@@ -67,8 +68,10 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	//shared_ptr<thread>m_tNetworkThread = make_shared<thread>([]() {CNetwork::GetInst()->RecvPacket(); });
 
 	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
-	CLoginScene* pLoginScene = pScene->CreateSceneScript<CLoginScene>( L"LoginScene" );
-	//CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");
+	//CLoginScene* pLoginScene = pScene->CreateSceneScript<CLoginScene>( L"LoginScene" );
+	CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");
+	//CTestScene* pTestScene = pScene->CreateSceneScript<CTestScene>( L"TestScene" );
+
 
 	HACCEL hAccelTable = LoadAccelerators( hInstance, MAKEINTRESOURCE( IDC_CLIENT ) );
 	MSG msg;

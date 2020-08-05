@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "StructuredBuffer.h"
 
 class CLandScape :
 	public CComponent
@@ -16,7 +17,7 @@ private:
 	vector<Vec3>		m_vecPos;
 	vector<Vec3>		m_vecFaceNormal;
 
-	tLandScape			m_tLandScape;
+	CStructuredBuffer*	m_pBuffer;
 
 public:
 	// CComponent을(를) 통해 상속됨
@@ -29,11 +30,20 @@ public:
 	UINT GetNumZ() const;
 	vector<Vec3>* GetVecPos();
 
+	void SetDetailLevel( int iDetailLevel );
+
 public:
 	void CreateLandScape( const wstring& strPath, UINT iNumX, UINT iNumZ );
+
+	void SetDiffuseSplatting( const wstring& strKey, const vector<wstring>* pvecPath );
+	void SetNormalSplatting( const wstring& strKey, const vector<wstring>* pvecPath );
+	void SetAlphaSplatting( const wstring& strKey, const vector<wstring>* pvecPath );
 
 private:
 	void ComputeNormal( vector<VTX>& vecVtx, const vector<UINT>& vecIdx );
 	void ComputeTangent( vector<VTX>& vecVtx, const vector<UINT>& vecIdx );
+
+public:
+	void Render();
 };
 

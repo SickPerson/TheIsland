@@ -249,21 +249,21 @@ struct VS_LANDSCAPE_IN
 {
 	float3 vPos         : POSTION;
 	float3 vNormal      : NORMAL;
-	float2 vUV         : TEXCOORD;
-	float3 vTangent      : TANGENT;
-	float3 vBinormal   : BINORMAL;
+	float2 vUV			: TEXCOORD;
+	float3 vTangent     : TANGENT;
+	float3 vBinormal	: BINORMAL;
 };
 
 struct VS_LANDSCAPE_OUT
 {
-	float4 vPosition : SV_Position;
+	float4 vPosition		: SV_Position;
+		
+	float3 vViewPos			: POSITION;
+	float3 vRealPos			: POSITION1;
 
-	float3 vViewPos : POSITION;
-	float3 vRealPos : POSITION1;
-
-	float3 vViewTangent : TANGENT;
-	float3 vViewNormal : NORMAL;
-	float3 vViewBinormal : BINORMAL;
+	float3 vViewTangent		: TANGENT;
+	float3 vViewNormal		: NORMAL;
+	float3 vViewBinormal	: BINORMAL;
 
 	float2 vUV : TEXCOORD;
 };
@@ -299,8 +299,12 @@ PS_STD3D_OUTPUT LandScapePS(VS_LANDSCAPE_OUT _in)
 {
 	PS_STD3D_OUTPUT output = (PS_STD3D_OUTPUT) 0.f;
 
+	float2 vUV;
+	vUV.x = _in.vRealPos.x / 110.f;
+	vUV.y = _in.vRealPos.z / 110.f;
+
 	if (tex_0)
-		output.vTarget0 = g_tex_0.Sample(g_sam_0, _in.vUV);
+		output.vTarget0 = g_tex_0.Sample(g_sam_0, vUV );
 	else
 		output.vTarget0 = float4(1.f, 0.f, 1.f, 1.f);
 
@@ -312,10 +316,6 @@ PS_STD3D_OUTPUT LandScapePS(VS_LANDSCAPE_OUT _in)
 	// 노말맵이 있는경우
 	if (tex_1)
 	{
-		float2 vUV;
-		vUV.x = _in.vRealPos.x / 110.f;
-		vUV.y = _in.vRealPos.z / 110.f;
-
 		float3 vTSNormal = g_tex_1.Sample(g_sam_0, vUV).xyz;
 		vTSNormal.xyz = (vTSNormal.xyz - 0.5f) * 2.f;
 		float3x3 matTBN = { _in.vViewTangent, _in.vViewBinormal, _in.vViewNormal };
@@ -324,6 +324,67 @@ PS_STD3D_OUTPUT LandScapePS(VS_LANDSCAPE_OUT _in)
 
 	output.vTarget1.xyz = vViewNormal;
 	output.vTarget2.xyz = _in.vViewPos;
+
+	return output;
+}
+
+
+PS_LANDSCAPE_OUT LandScapeTest( VS_LANDSCAPE_OUT input )
+{
+	PS_LANDSCAPE_OUT output = ( PS_LANDSCAPE_OUT ) 0.f;
+
+	float2 vUV = input.vUV * g_int_0;
+
+	float4 vColor = g_tex_0.Sample( g_sam_0, input.vUV );
+
+	if ( vColor.a == 0.f )
+		clip( -1 );
+
+	float3x3 mat =
+	{
+		input.vViewTangent,
+		input.vViewBinormal,
+		input.vViewNormal
+	};
+
+	output.vColor4.xyz = input.vViewTangent * 0.5f + 0.5f;
+	output.vColor5.w = 1.f;
+
+	output.vColor5.xyz = input.vViewBinormal * 0.5f + 0.5f;
+	output.vColor5.w = 1.f;
+
+	float3 vBumpNormal = g_tex_1.Sample( g_sam_0, vUV ).xyz;
+	vBumpNormal = vBumpNormal * 2.f - 1.f;
+
+	for ( int i = 0; i < g_int_1; i++ )
+	{
+		float3 vSplatUV;
+		vSplatUV.xy = vUV;
+		vSplatUV.z = i;
+
+		float4 vSplatColor = g_arrtex_0.Sample( g_sam_0, vSplatUV );
+		float3 vSplatNormal = g_arrtex_1.Sample( g_sam_0, vSplatUV ).xyz;
+		vSplatNormal = vSplatNormal * 2.f - 1.f;
+		vBumpNormal += vSplatNormal;
+
+		vSplatUV.xy = input.vUV;
+
+		float4 vSplatAlpha = g_arrtex_3.Sample( g_sam_0, vSplatUV );
+
+		vColor = ( vColor * ( float4( 1.f, 1.f, 1.f, 1.f ) - vSplatAlpha ) + vSplatColor * vSplatAlpha );
+	}
+
+	vBumpNormal = normalize( vBumpNormal );
+	
+	float3 vViewNormal = normalize( mul( vBumpNormal, mat ) );
+
+	output.vColor = vColor;
+	output.vColor1.xyz = vViewNormal * 0.5f + 0.5f;
+	output.vColor1.w = 1.f;
+	output.vColor2.x = input.vPosition.z / input.vPosition.w;
+	output.vColor2.w = input.vPosition.w;
+	output.vColor2.y = g_vDiff.x;
+	
 
 	return output;
 }
