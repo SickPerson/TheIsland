@@ -1226,12 +1226,11 @@ void CIngameScene::CreateNatural()
 		else if (str1 == "plainsgrass")
 		{
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
-			pObject->FrustumCheck(false);
-			pObject->MeshRender()->SetDynamicShadow(false);
+			//pObject->FrustumCheck(false);
 		}
 		else
 		{
-			pObject->FrustumCheck(false);
+			//pObject->FrustumCheck(false);
 		}
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		pScene->AddGameObject( L"Environment", pObject, false );
@@ -1264,7 +1263,7 @@ void CIngameScene::CreateAnimalSpawner()
 
 	pSpawner = new CGameObject;
 	pSpawner->AddComponent(new CTransform);
-	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_EVASION));
+	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_PASSIVE));
 
 	pSpawner->Transform()->SetLocalPos(Vec3(6900.f, 0.f, 5285.f));
 	pSpawner->GetScript<CAnimalSpawner>()->SpawnStartAnimal();

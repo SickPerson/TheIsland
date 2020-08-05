@@ -87,7 +87,6 @@ void CMeshRender::Render_Shadowmap()
 {
 	int a = 1;
 	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ShadowMapMtrl");
-	// pMtrl->SetData(SHADER_PARAM::TEX_0, m_vecMtrl[0]->GetTexture().GetPointer());
 
 	for (UINT i = 0; i < m_pMesh->GetSubsetCount(); ++i)
 	{
@@ -96,6 +95,20 @@ void CMeshRender::Render_Shadowmap()
 			Animator3D()->UpdateData();
 			pMtrl->SetData(SHADER_PARAM::INT_0, &a); // Animation Mesh ¾Ë¸®±â
 		}
+
+		wstring strName = GetObj()->GetName();
+		if (strName == L"sprucea" || strName == L"spruceb" || strName == L"sprucec" || strName == L"plainsgrass")
+		{
+			int b = 3;
+			pMtrl->SetData(SHADER_PARAM::TEX_0, m_vecMtrl[i]->GetTexture().GetPointer());
+			pMtrl->SetData(SHADER_PARAM::INT_3, &b);
+		}
+		else
+		{
+			int b = 0;
+			pMtrl->SetData(SHADER_PARAM::INT_3, &b);
+		}
+		
 
 		Transform()->UpdateData();
 		pMtrl->UpdateData();
