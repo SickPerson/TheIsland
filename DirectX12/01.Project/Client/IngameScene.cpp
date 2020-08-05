@@ -387,7 +387,7 @@ void CIngameScene::Init()
 	// =======================
 	// LandScape 오브젝트 생성
 	// =======================
-	Ptr<CTexture> pLandScape = CResMgr::GetInst()->Load<CTexture>( L"Grass", L"Texture\\LandScape\\SAND_01.bmp" );
+	Ptr<CTexture> pLandScape = CResMgr::GetInst()->Load<CTexture>( L"Grass", L"Texture\\LandScape\\mapTexture.png" );
 	Ptr<CTexture> pLandScapeNormal = CResMgr::GetInst()->Load<CTexture>(L"LandScapeNormal", L"Texture\\ISLAND_NORMAL.png");
 
 	pObject = new CGameObject;
