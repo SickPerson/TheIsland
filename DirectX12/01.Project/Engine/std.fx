@@ -309,6 +309,9 @@ float4 PS_UI_Test( VS_OUTPUT _input ) : SV_Target
 	color[3] = color[3] * g_float_0;
 	color[3] = color[3] - 0.2f;
 
+	if (color.w < 0.1f)
+		clip(-1);
+
 	return color;
 }
 

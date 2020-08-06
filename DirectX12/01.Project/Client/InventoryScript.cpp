@@ -293,6 +293,8 @@ void CInventoryScript::Update()
 
 									m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
 									m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
+									m_vecItem[i]->Use_Left(GetObj(), NULL, ARMOR_SLOT);
 								}
 								// 방어구 아이템이 아닌데 슬릇에 가져다 놓을 경우
 								else
@@ -392,6 +394,8 @@ void CInventoryScript::Update()
 
 									m_vecItem[i]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
 									m_vecItem[i]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
+									m_vecItem[i]->Use_Left(GetObj(), NULL, ARMOR_SLOT);
 								}
 								else
 								{

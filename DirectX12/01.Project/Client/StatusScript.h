@@ -6,10 +6,13 @@ class CStatusScript :
 	public CScript
 {
 	float m_fHealth;
+	float m_fArmor;
 	float m_fHungry;
 	float m_fThirst;
 
 	bool m_bGameOver;
+
+	CGameObject* m_pArmor;
 public:
 	CStatusScript();
 	virtual ~CStatusScript();
@@ -28,5 +31,7 @@ public:
 	void SetIncreasefThirst(float fAmount);
 
 	bool GetGameOver();
+
+	void EquipArmor(float fArmor);
 };
 

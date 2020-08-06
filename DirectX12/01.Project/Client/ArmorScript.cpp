@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "ArmorScript.h"
 
+#include "PlayerScript.h"
+#include "StatusScript.h"
+
 #include <iostream>
 
 CArmorScript::CArmorScript(ITEM_TYPE eType, int iCount)
@@ -29,10 +32,14 @@ void CArmorScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 
 void CArmorScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	
+	pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->EquipArmor(m_fArmor);
 }
 
 void CArmorScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)
 {
 
+}
+
+void CArmorScript::EquipArmor(CGameObject * pHost)
+{
 }

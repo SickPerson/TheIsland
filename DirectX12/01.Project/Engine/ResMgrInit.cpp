@@ -112,7 +112,7 @@ void CResMgr::CreateDefaultShader()
 
 	// BlendState ¼³Á¤
 	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
-	pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE);
+	//pShader->SetDepthStencilType(DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE);
 	pShader->Create(SHADER_POV::FORWARD);
 
 	pShader->AddShaderParam(tShaderParam{ L"Test Value", SHADER_PARAM::INT_0 });
