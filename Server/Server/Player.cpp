@@ -78,30 +78,24 @@ char* CPlayer::RecvEvent(DWORD dataSize, char * packet)
 
 void CPlayer::SetPlayerStatus(tPlayerStatus & status)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HP]);
-	m_tPlayerStatus.fHP = status.fHP;
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::STATUS]);
+	m_tPlayerStatus.fHealth = status.fHealth;
 	m_tPlayerStatus.fHungry = status.fHungry;
-	m_tPlayerStatus.fStamina = status.fStamina;
 	m_tPlayerStatus.fThirst = status.fThirst;
 	m_tPlayerStatus.fSpeed = status.fSpeed;
+	m_tPlayerStatus.fDamage = status.fDamage;
 }
 
-void CPlayer::SetHP(float & fHP)
+void CPlayer::SetHealth(float & fHealth)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HP]);
-	m_tPlayerStatus.fHP = fHP;
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HEALTH]);
+	m_tPlayerStatus.fHealth = fHealth;
 }
 
 void CPlayer::SetHungry(float & fHungry)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HUNGRY]);
 	m_tPlayerStatus.fHungry = fHungry;
-}
-
-void CPlayer::SetStamina(float & fStamina)
-{
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::STAMINA]);
-	m_tPlayerStatus.fStamina = fStamina;
 }
 
 void CPlayer::SetThirst(float & fThirst)
@@ -113,6 +107,13 @@ void CPlayer::SetThirst(float & fThirst)
 void CPlayer::SetSpeed(float & fSpeed)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SPEED]);
+	m_tPlayerStatus.fSpeed = fSpeed;
+}
+
+void CPlayer::SetDamage(float & fDamage)
+{
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::DAMAGE]);
+	m_tPlayerStatus.fSpeed = fDamage;
 }
 
 void CPlayer::SetNumID(unsigned short & numID)
@@ -145,22 +146,16 @@ tPlayerStatus & CPlayer::GetPlayerStatus()
 	return m_tPlayerStatus;
 }
 
-float & CPlayer::GetHP()
+float & CPlayer::GetHealth()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HP]);
-	return m_tPlayerStatus.fHP;
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HEALTH]);
+	return m_tPlayerStatus.fHealth;
 }
 
 float & CPlayer::GetHungry()
 {
 	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HUNGRY]);
 	return m_tPlayerStatus.fHungry;
-}
-
-float & CPlayer::GetStamina()
-{
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HUNGRY]);
-	return m_tPlayerStatus.fStamina;
 }
 
 float & CPlayer::GetThirst()
@@ -173,6 +168,12 @@ float & CPlayer::GetSpeed()
 {
 	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SPEED]);
 	return m_tPlayerStatus.fSpeed;
+}
+
+float & CPlayer::GetDamage()
+{
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::DAMAGE]);
+	return m_tPlayerStatus.fDamage;
 }
 
 unsigned short & CPlayer::GetNumID()

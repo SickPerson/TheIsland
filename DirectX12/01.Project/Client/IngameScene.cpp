@@ -279,7 +279,18 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
 	m_pPlayer->MeshRender()->SetDynamicShadow(true);
+	CNetwork::GetInst()->SetPlayerObj(m_pPlayer);
 
+	for (int i = 0; i < MAX_USER; ++i)
+	{
+		CGameObject* pOtherPlayer = pMeshData->Instantiate();
+		pOtherPlayer->SetName(L"Other Object");
+		pOtherPlayer->FrustumCheck(false);
+		pOtherPlayer->Transform()->SetLocalPos(Vec3(10000.f, 200.f, 10000.f));
+		pOtherPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
+		m_cumPlayer.insert(make_pair(i, pOtherPlayer));
+	}
+	CNetwork::GetInst()->SetOtherPlayerObj(m_cumPlayer);
 	// ==================
 	// Camera Object »ý¼º
 	// ==================
@@ -512,7 +523,7 @@ void CIngameScene::Init()
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Human");
 
 	GiveStartItem();
-	ShowCursor(m_bShowCursor);
+	ShowCursor(m_bShowCursor);	
 }
 
 void CIngameScene::GiveStartItem()

@@ -57,19 +57,19 @@ void CPlayerProcess::PlayerLogin(unsigned short playerId, char * packet)
 	// Player Init
 	{
 		tPlayerStatus tStatus;
-		tStatus.fHP = 100.f;
+		tStatus.fHealth = 100.f;
 		tStatus.fHungry = 100.f;
-		tStatus.fStamina = 100.f;
 		tStatus.fThirst = 100.f;
 		tStatus.fSpeed = 200.f;
+		tStatus.fDamage = 20.f;
 
 		m_pPlayerPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
 	}
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetNumID(login_packet->id);
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetWcID(login_packet->player_id);
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(10000.f, 273.f, 10000.f));
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(10000.f, 200.f, 10000.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(true);
 
 	// Server -> Client에 초기 플레이어 값 패킷 전송
@@ -77,11 +77,11 @@ void CPlayerProcess::PlayerLogin(unsigned short playerId, char * packet)
 	status_packet.id = m_pPlayerPool->m_cumPlayerPool[playerId]->GetNumID();
 	status_packet.size = sizeof(sc_status_player_packet);
 	status_packet.type = SC_STATUS_PLAYER;
-	status_packet.fHP = m_pPlayerPool->m_cumPlayerPool[playerId]->GetHP();
+	status_packet.fHealth = m_pPlayerPool->m_cumPlayerPool[playerId]->GetHealth();
 	status_packet.fHungry = m_pPlayerPool->m_cumPlayerPool[playerId]->GetHungry();
-	status_packet.fStamina = m_pPlayerPool->m_cumPlayerPool[playerId]->GetStamina();
 	status_packet.vLocalPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 	//status_packet.vLocalRot = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalRot();
+	CPacketMgr::Send_Packet(playerId, &status_packet);
 
 	// Player ViewList Update
 	Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
@@ -135,32 +135,30 @@ void CPlayerProcess::PlayerLogin(unsigned short playerId, char * packet)
 
 void CPlayerProcess::PlayerMove(unsigned short playerId, char * packet)
 {
+	cout << "Worker " << CTimerMgr::GetInst()->GetDeltaTime() << endl;
 	cs_move_packet* move_packet = reinterpret_cast<cs_move_packet*>(packet);
 
-	bool bRun = move_packet->bRun;
-	Vec3 vWorldDir = move_packet->vWorldDir;
+	Vec3 vLocalPos = move_packet->vLocalPos;
+	Vec3 vLocalRot = move_packet->vLocalRot;
+	//bool bRun = move_packet->bRun;
+	//Vec3 vWorldDir = move_packet->vWorldDir;
 
-	Vec3 vPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	Vec3 vOriginPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	float fSpeed = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
-	float fHeight = move_packet->fHeight;
-	cout << fHeight << endl;
-	float fMaxHeight = max(0, fHeight);
-	// Walk or Run
-	if (bRun)
-	{
-		fSpeed *= 5.f;
-	}
-	vPos += vWorldDir * fSpeed * 0.2f;
-	// Height
-	/*if (vOriginPos.y > fMaxHeight + 5.f)
-	{
-		vOriginPos.y -= fSpeed * 0.2f * 5.f;
-	}*/
-	cout << "aft)Pos : " << vPos.x << ", " << vOriginPos.y << ", " << vPos.z << endl;
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
+	//Vec3 vPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	//Vec3 vOriginPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	//float fSpeed = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
+	//float fHeight = move_packet->fHeight;
+	//// Walk or Run
+	//if (bRun)
+	//{
+	//	fSpeed *= 5.f;
+	//}
+	//vPos += vWorldDir * fSpeed * CTimerMgr::GetInst()->GetDeltaTime();
 
-	//CPacketMgr::GetInst()->Send_Pos_Player_Packet(playerId, playerId);
+	cout << "aft)Pos : " << vLocalPos.x << ", " << vLocalPos.y << ", " << vLocalPos.z << endl;
+	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vLocalPos);
+	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(vLocalRot);
+	//CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
+
 	UpdateViewList(playerId);
 }
 

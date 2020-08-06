@@ -77,7 +77,7 @@ struct sc_death_player_packet {
 	char type;
 	unsigned short id;
 
-	float	fHP;
+	float	fHealth;
 	float	fStamina;
 	float	fHungry;
 
@@ -90,7 +90,7 @@ struct sc_status_player_packet{
 	char type;
 	unsigned short id;
 
-	float	fHP;
+	float	fHealth;
 	float	fStamina;
 	float	fHungry;
 	float	fSpeed;
@@ -182,7 +182,7 @@ struct sc_status_npc_packet
 	char type;
 	unsigned short id;
 
-	float fHP;
+	float fHealth;
 	float fStamina;
 	float fDamage;
 
@@ -211,6 +211,7 @@ struct cs_move_packet {
 	char type;
 	unsigned short id;
 
+	Vec3 vLocalPos;
 	bool bRun;
 	Vec3 vWorldDir;
 	Vec3 vLocalRot;

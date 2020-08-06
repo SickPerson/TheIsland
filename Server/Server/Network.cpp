@@ -160,6 +160,9 @@ void CNetwork::CheckThisCputCount()
 
 void CNetwork::WorkerThread()
 {
+	CTimerMgr::GetInst()->Tick();
+	cout << "Worker " << CTimerMgr::GetInst()->GetDeltaTime() << endl;
+
 	DWORD		num_byte;
 	ULONGLONG	key64;
 	PULONG_PTR	p_key = &key64;
@@ -272,22 +275,24 @@ void CNetwork::UpdateThread()
 	}
 	while (m_bRunningServer)
 	{
-		CTimerMgr::GetInst()->Tick();
 		/*while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
 		}*/
-		Update_Event ev;
-		if (CProcess::CheckEventStart(ev))
+		while (!CProcess::EmptyEventQueue())
 		{
-			OVER_EX*	pOver_ex = new OVER_EX;
-			ZeroMemory(&pOver_ex->m_Overlapped, sizeof(WSAOVERLAPPED));
-			pOver_ex->m_Event = ev.m_EventType;
-			pOver_ex->m_Status = ev.m_ObjState;
-
-			PostQueuedCompletionStatus(m_hIocp, 1, ev.m_Do_Object, &pOver_ex->m_Overlapped);
+			Update_Event ev;
+			if (CProcess::CheckEventStart(ev))
+			{
+				OVER_EX*	pOver_ex = new OVER_EX;
+				ZeroMemory(&pOver_ex->m_Overlapped, sizeof(WSAOVERLAPPED));
+				pOver_ex->m_Event = ev.m_EventType;
+				pOver_ex->m_Status = ev.m_ObjState;
+				pOver_ex->m_usOtherID = ev.m_From_Object;
+				PostQueuedCompletionStatus(m_hIocp, 1, ev.m_Do_Object, &pOver_ex->m_Overlapped);
+			}
+			else
+				break;
 		}
-		else
-			break;
 	}
 }
 

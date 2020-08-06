@@ -4,11 +4,11 @@
 enum class PLAYER_LOCK_TYPE
 {
 	STATUS,
-	HP,
+	HEALTH,
 	HUNGRY,
-	STAMINA,
 	THIRST,
 	SPEED,
+	DAMAGE,
 	SOCKET,
 	CONNECT,
 	NUMID,
@@ -43,11 +43,11 @@ public:
 
 public:
 	void SetPlayerStatus(tPlayerStatus& status);
-	void SetHP(float& fHP);
+	void SetHealth(float& fHealth);
 	void SetHungry(float& fHungry);
-	void SetStamina(float& fStamina);
 	void SetThirst(float& fThirst);
 	void SetSpeed(float& fSpeed);
+	void SetDamage(float& fDamage);
 
 	void SetNumID(unsigned short& numID);
 	void SetWcID(wchar_t* wcID);
@@ -56,11 +56,11 @@ public:
 
 public:
 	tPlayerStatus& GetPlayerStatus();
-	float&	GetHP();
+	float&	GetHealth();
 	float&	GetHungry();
-	float&	GetStamina();
 	float&	GetThirst();
 	float&	GetSpeed();
+	float&	GetDamage();
 
 	unsigned short&	GetNumID();
 	wchar_t*	GetWcID();

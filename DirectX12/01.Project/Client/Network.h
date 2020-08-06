@@ -88,14 +88,16 @@ public:
 
 public:
 	void Send_Login_Packet(wstring playerID);
-	void Send_Move_Packet(Vec3 vWorldDir, bool bRun);
-	void Send_Rot_Packet();
+	void Send_Move_Packet();
+	//void Send_Move_Packet(Vec3 vWorldDir, bool bRun);
+	//void Send_Rot_Packet();
 	//void Send_Rot_Packet();
 	void Send_Chat_Packet(string message);
 	void Send_Collision_Animal_Packet(unsigned short animalId, bool bRun);
 public:
 	void Recv_Login_OK_Packet(char* packet);
 	void Recv_Login_Fail_Packet(char* packet);
+	void Recv_Status_Player_Packet(char* packet);
 	void Recv_Put_Player_Packet(char* packet);
 	void Recv_Remove_Player_Packet(char* packet);
 	void Recv_Pos_Player_Packet(char* packet);

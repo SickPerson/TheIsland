@@ -45,7 +45,7 @@ void CMonsterProcess::AttackEvent(unsigned short uiMonster, unsigned short uiTar
 	}
 	else // 타켓이 있을때
 	{
-		float player_HP = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetHP();
+		float player_HP = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetHealth();
 		Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetLocalPos();
 		float player_AfterHP = player_HP;
 
@@ -81,7 +81,7 @@ void CMonsterProcess::AttackEvent(unsigned short uiMonster, unsigned short uiTar
 			}
 		}
 		else { // 플레이어 체력이 0이 안되었을 경우
-			m_pPlayerPool->m_cumPlayerPool[uiTarget]->SetHP(player_AfterHP);
+			m_pPlayerPool->m_cumPlayerPool[uiTarget]->SetHealth(player_AfterHP);
 			// 플레이어 패킷 보내기
 
 			for (auto& au : range_list) {
@@ -375,7 +375,7 @@ void CMonsterProcess::HealEvent(unsigned short uiMonster)
 
 	CopyBeforeLoginList(login_list);
 	InRangePlayer(login_list, range_list, monster_id);
-	float monster_hp = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetHP();
+	float monster_hp = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetHealth();
 	float limit_hp = 100.f;
 
 	if (monster_hp < limit_hp)
@@ -387,7 +387,7 @@ void CMonsterProcess::HealEvent(unsigned short uiMonster)
 	{
 		monster_hp = limit_hp;
 	}
-	m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetHP(monster_hp);
+	m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetHealth(monster_hp);
 
 	// 몬스터 관련 넘겨줘야합니당
 	if (range_list.empty())

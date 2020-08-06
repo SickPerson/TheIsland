@@ -228,6 +228,11 @@ void CNetwork::ProcessPacket(char* packet)
 	{
 
 	}
+	case SC_STATUS_PLAYER:
+	{
+		Recv_Status_Player_Packet(packet);
+		break;
+	}
 	case SC_PUT_PLAYER: {
 		SetLoopStart(true);
 		Recv_Put_Player_Packet(packet);
@@ -250,17 +255,17 @@ void CNetwork::ProcessPacket(char* packet)
 	}
 				  // NPC, MONSTER ฐüทร
 	case SC_PUT_NPC: {
-		Recv_Put_Npc_Packet(packet);
+		//Recv_Put_Npc_Packet(packet);
 		break;
 	}
 	case SC_POS_NPC:
 	{
-		Recv_Pos_Npc_Packet(packet);
+		//Recv_Pos_Npc_Packet(packet);
 		break;
 	}
 	case SC_REMOVE_NPC:
 	{
-		Recv_Remove_Npc_Packet(packet);
+		//Recv_Remove_Npc_Packet(packet);
 		break;
 	}
 	}
@@ -286,7 +291,7 @@ void CNetwork::Send_Login_Packet(wstring playerID)
 	}
 }
 
-void CNetwork::Send_Move_Packet(Vec3 vWorldDir, bool bRun)
+void CNetwork::Send_Move_Packet()
 {
 	DWORD size, flag = 0;
 
@@ -296,9 +301,11 @@ void CNetwork::Send_Move_Packet(Vec3 vWorldDir, bool bRun)
 	packet->size = sizeof(cs_move_packet);
 	packet->type = CS_MOVE;
 	packet->id = m_usID;
-	packet->bRun = bRun;
-	packet->vWorldDir = vWorldDir;
-	packet->fHeight = CNaviMgr::GetInst()->GetY(m_pPlayer->Transform()->GetLocalPos());
+	packet->vLocalPos = m_pPlayer->Transform()->GetLocalPos();
+	packet->vLocalRot = m_pPlayer->Transform()->GetLocalRot();
+	//packet->bRun = bRun;
+	//packet->vWorldDir = vWorldDir;
+	//packet->fHeight = CNaviMgr::GetInst()->GetY(m_pPlayer->Transform()->GetLocalPos());
 
 	m_SendWsaBuf.len = sizeof(cs_move_packet);
 
@@ -310,6 +317,31 @@ void CNetwork::Send_Move_Packet(Vec3 vWorldDir, bool bRun)
 		Err_display("Err while sending packet - ", err_no);
 	}
 }
+
+//void CNetwork::Send_Move_Packet(Vec3 vWorldDir, bool bRun)
+//{
+//	DWORD size, flag = 0;
+//
+//	cs_move_packet* packet = reinterpret_cast<cs_move_packet*>(m_cSendBuf);
+//
+//	//Vec3 vRot = m_pPlayer->Transform()->GetLocalRot();
+//	packet->size = sizeof(cs_move_packet);
+//	packet->type = CS_MOVE;
+//	packet->id = m_usID;
+//	packet->bRun = bRun;
+//	packet->vWorldDir = vWorldDir;
+//	packet->fHeight = CNaviMgr::GetInst()->GetY(m_pPlayer->Transform()->GetLocalPos());
+//
+//	m_SendWsaBuf.len = sizeof(cs_move_packet);
+//
+//	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+//
+//	if (retval != 0)
+//	{
+//		int err_no = WSAGetLastError();
+//		Err_display("Err while sending packet - ", err_no);
+//	}
+//}
 
 void CNetwork::Send_Chat_Packet(string message)
 {
@@ -365,6 +397,24 @@ void CNetwork::Recv_Login_OK_Packet(char * packet)
 void CNetwork::Recv_Login_Fail_Packet(char * packet)
 {
 	SetLogin(false);
+}
+
+void CNetwork::Recv_Status_Player_Packet(char * packet)
+{
+	sc_status_player_packet* status_player_packet = reinterpret_cast<sc_status_player_packet*>(packet);
+	unsigned short player_id = status_player_packet->id;
+
+	if (m_usID == player_id)
+	{
+		//m_pPlayer->GetScript<CStatusScript>()->Set
+		//m_pPlayer->GetScript<CStatusScript>()->
+		//m_pPlayer->Transform()->SetLocalPos(status_player_packet->vLocalPos);
+		//m_pPlayer->Transform()->SetLocalRot(status_player_packet->vLocalRot);
+	}
+	else
+	{
+
+	}
 }
 
 void CNetwork::Recv_Put_Player_Packet(char * packet)

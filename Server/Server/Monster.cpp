@@ -17,15 +17,15 @@ void CMonster::SetAnimalStatus(tAnimalStatus & animalStatus)
 	m_tStatus.eKind = animalStatus.eKind;
 	m_tStatus.eType = animalStatus.eType;
 	m_tStatus.fDamage = animalStatus.fDamage;
-	m_tStatus.fHP = animalStatus.fHP;
+	m_tStatus.fHealth = animalStatus.fHealth;
 	m_tStatus.fSpeed = animalStatus.fSpeed;
 	m_tStatus.fStamina = animalStatus.fStamina;
 }
 
-void CMonster::SetHP(float & fHP)
+void CMonster::SetHealth(float & fHealth)
 {
 	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::HP]);
-	m_tStatus.fHP = fHP;
+	m_tStatus.fHealth = fHealth;
 }
 
 void CMonster::SetSpeed(float & fSpeed)
@@ -76,16 +76,16 @@ tAnimalStatus & CMonster::GetAnimalStatus()
 	return m_tStatus;
 }
 
-float & CMonster::GetHP()
+float & CMonster::GetHealth()
 {
 	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::HP]);
-	return m_tStatus.fHP;
+	return m_tStatus.fHealth;
 }
 
 float & CMonster::GetSpeed()
 {
 	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::SPEED]);
-	return m_tStatus.fHP;
+	return m_tStatus.fHealth;
 }
 
 float & CMonster::GetDamage()

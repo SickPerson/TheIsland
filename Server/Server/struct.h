@@ -10,7 +10,7 @@ typedef struct Over_ex
 	char			m_MessageBuffer[MAX_BUF];
 	EVENT_TYPE		m_Event;
 	char			m_Status;
-	unsigned short	m_uiOtherID;
+	unsigned short	m_usOtherID;
 }OVER_EX, POVER_EX;
 
 struct User_info {
@@ -127,16 +127,16 @@ struct User_Data {
 
 struct tPlayerStatus
 {
-	float fHP;
+	float fHealth;
 	float fHungry;
-	float fStamina;
 	float fThirst;
 	float fSpeed;
+	float fDamage;
 };
 
 struct tAnimalStatus
 {
-	float fHP;
+	float fHealth;
 	float fStamina;
 	float fSpeed;
 	float fDamage;

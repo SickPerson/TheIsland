@@ -36,7 +36,7 @@ private:
 
 public:
 	void SetAnimalStatus(tAnimalStatus& animalStatus);
-	void SetHP(float& fHP);
+	void SetHealth(float& fHealth);
 	void SetSpeed(float& fSpeed);
 	void SetDamage(float& fDamage);
 	void SetType(BEHAVIOR_TYPE& eType);
@@ -47,7 +47,7 @@ public:
 
 public:
 	tAnimalStatus& GetAnimalStatus();
-	float&	GetHP();
+	float&	GetHealth();
 	float&	GetSpeed();
 	float&	GetDamage();
 	BEHAVIOR_TYPE&	GetType();

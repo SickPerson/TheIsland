@@ -17,7 +17,7 @@ CMonsterpool::CMonsterpool()
 		if (i < ANIMAL_BEAR)
 		{
 			tAnimalStatus tStatus;
-			tStatus.fHP = 200.f;
+			tStatus.fHealth = 200.f;
 			tStatus.fStamina = 100.f;
 			tStatus.fDamage = 20.f;
 			tStatus.fSpeed = 150.f;
@@ -32,7 +32,7 @@ CMonsterpool::CMonsterpool()
 		else if (i < ANIMAL_BOAR)
 		{
 			tAnimalStatus tStatus;
-			tStatus.fHP = 200.f;
+			tStatus.fHealth = 200.f;
 			tStatus.fStamina = 100.f;
 			tStatus.fDamage = 20.f;
 			tStatus.fSpeed = 150.f;
@@ -47,7 +47,7 @@ CMonsterpool::CMonsterpool()
 		else if (i < ANIMAL_DEER)
 		{
 			tAnimalStatus tStatus;
-			tStatus.fHP = 100.f;
+			tStatus.fHealth = 100.f;
 			tStatus.fStamina = 100.f;
 			tStatus.fDamage = 0.f;
 			tStatus.fSpeed = 250.f;
@@ -62,7 +62,7 @@ CMonsterpool::CMonsterpool()
 		else if (i < ANIMAL_WOLF)
 		{
 			tAnimalStatus tStatus;
-			tStatus.fHP = 200.f;
+			tStatus.fHealth = 200.f;
 			tStatus.fStamina = 100.f;
 			tStatus.fDamage = 20.f;
 			tStatus.fSpeed = 200.f;

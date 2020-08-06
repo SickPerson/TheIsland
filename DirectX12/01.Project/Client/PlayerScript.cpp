@@ -20,6 +20,7 @@
 #include <Engine/NaviMgr.h>
 
 #include <iostream>
+#include "Network.h"
 
 CPlayerScript::CPlayerScript()
 	: CScript((UINT)SCRIPT_TYPE::PLAYERSCRIPT)
@@ -118,7 +119,6 @@ void CPlayerScript::Update()
 	if(m_fAttackCoolTime > -1.f)
 		m_fAttackCoolTime -= DT;
 	
-
 	if (m_pChat && m_pInventory)
 	{
 		// 채팅창도 꺼져있고 인벤토리도 꺼져있는 경우
@@ -238,6 +238,8 @@ void CPlayerScript::Update()
 			SetCursorPos(vCenter.x, vCenter.y);
 			m_fHouseHeight = 0.f;
 			m_bEnable = true;
+
+			CNetwork::GetInst()->Send_Move_Packet();
 		}
 		else
 			m_bEnable = false;
