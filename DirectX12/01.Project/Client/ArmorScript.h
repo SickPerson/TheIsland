@@ -1,10 +1,13 @@
 #pragma once
 #include "ItemScript.h"
+
 #define ARMOR_MAX_COUNT 1
 
 class CArmorScript :
 	public CItemScript
 {
+	float	m_fArmor;
+	CGameObject* m_pHost;
 public:
 	CArmorScript(ITEM_TYPE eType, int iCount = 1);
 	virtual ~CArmorScript();
@@ -19,5 +22,10 @@ public:
 	virtual void Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num) override;
 	virtual void EnableItem(CGameObject* pHost, int num) override {};
 	virtual void DisableItem(CGameObject* pHost, int num) override {};
+
+public:
+	void EquipArmor();
+	void DestroyArmor();
+	void SetArmorValue(float fValue);
 };
 

@@ -848,6 +848,18 @@ void CIngameScene::CreatePlayerStatusUI()
 	pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::INT_0, &a);
 	pObject->AddChild(pChildObject);
 	m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
+	// PlayerStatus ArmorBar
+	pChildObject = new CGameObject;
+	pChildObject->AddComponent(new CTransform);
+	pChildObject->AddComponent(new CMeshRender);
+	pChildObject->Transform()->SetLocalPos(Vec3(0.075f, 0.3f, -1000.f));
+	pChildObject->Transform()->SetLocalScale(Vec3(190.f / 250.f, 30.f / 135.f, 1.f));
+	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	pChildObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl")->Clone());
+	Vec4 vColor2 = Vec4(0.25f, 0.85f, 0.7f, 1.f);
+	pChildObject->MeshRender()->GetCloneMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor2);
+	pObject->AddChild(pChildObject);
+	m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
 
 	// =================================
 	pChildObject = new CGameObject;
@@ -1097,6 +1109,7 @@ void CIngameScene::CreateInventoryUI()
 
 	pInventory->GetScript<CInventoryScript>()->Init();
 	m_pInventory = pInventory;
+	m_pInventory->GetScript<CInventoryScript>()->SetPlayer(m_pPlayer);
 	m_pPlayer->GetScript<CPlayerScript>()->SetInventoryObject(m_pInventory);
 }
 

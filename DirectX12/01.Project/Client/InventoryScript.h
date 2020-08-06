@@ -30,6 +30,7 @@ class CInventoryScript :
 
 	CItemLootScript*		m_pItemLootScript;
 
+	CGameObject*			m_pPlayer;
 public:
 	CInventoryScript();
 	virtual ~CInventoryScript();
@@ -51,6 +52,9 @@ public:
 
 	int CheckItem(UINT eType, int iCount = 1);
 	bool DecreaseItem(int idx, int iCount = 1);
+	void DestroyArmor();
+
+	void SetPlayer(CGameObject* pPlayer);
 
 	void Use_Left(CGameObject* pHost, CGameObject* pObj, int index);
 	void Use_Right(CGameObject* pHost, CGameObject* pObj, int index);
@@ -67,5 +71,6 @@ private:
 	void RecipeInit();
 	void ShowRecipe();
 	void HideRecipe();
+
 };
 
