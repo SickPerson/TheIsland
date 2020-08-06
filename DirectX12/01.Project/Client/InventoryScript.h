@@ -1,6 +1,7 @@
 #pragma once
 #include <Engine/Script.h>
 
+#define ARMOR_SLOT 25
 class CItemScript;
 class CItemLootScript;
 
@@ -16,6 +17,9 @@ class CInventoryScript :
 	CGameObject*			m_pPrevPage;
 
 	CGameObject*			m_pItemInfo;
+
+	CGameObject*			m_pArmorSlot;
+	CGameObject*			m_pArmor;
 
 	bool					m_bActive;
 	bool					m_bAddable;

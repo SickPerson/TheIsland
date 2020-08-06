@@ -939,13 +939,13 @@ void CIngameScene::CreateInventoryUI()
 
 		pObject->Transform()->SetLocalPos(Vec3(-450.f, 0.f, 500.f));
 
-		Vec3 vScale(250.f, 450.f, 1.f);
+		Vec3 vScale(450.f, 450.f, 1.f);
 		pObject->Transform()->SetLocalScale(vScale);
 
 		// MeshRender 설정
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
-		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"TexMtrl");
-		pObject->MeshRender()->SetMaterial(pMtrl->Clone());
+		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"AlphaTexMtrl");
+		pObject->MeshRender()->SetMaterial(pMtrl);
 		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, PlayerTex.GetPointer());
 
 		// AddGameObject
@@ -1057,6 +1057,32 @@ void CIngameScene::CreateInventoryUI()
 		pInventory->AddChild(pObject);
 		m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
 	}
+
+	{
+		CGameObject* pObject = new CGameObject;
+		pObject->SetName(L"Inventory Player Background");
+
+		pObject->AddComponent(new CTransform);
+		pObject->AddComponent(new CMeshRender);
+
+		pObject->Transform()->SetLocalPos(Vec3(-450.f, 0.f, 600.f));
+
+		Vec3 vScale(250.f, 450.f, 1.f);
+		pObject->Transform()->SetLocalScale(vScale);
+
+		// MeshRender 설정
+		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
+		pObject->MeshRender()->SetMaterial(pMtrl->Clone());
+
+		Vec4 vColor = Vec4(0.35f, 0.35f, 0.35f, 1.f);
+		pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
+
+		// AddGameObject
+		pInventory->AddChild(pObject);
+		m_pScene->FindLayer(L"Invisible")->AddGameObject(pObject);
+	}
+
 	pInventory->GetScript<CInventoryScript>()->Init();
 	m_pInventory = pInventory;
 	m_pPlayer->GetScript<CPlayerScript>()->SetInventoryObject(m_pInventory);
