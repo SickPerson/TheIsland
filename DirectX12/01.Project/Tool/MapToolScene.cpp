@@ -83,22 +83,24 @@ void CMapToolScene::Init()
 	// =======================
 	// LandScape 오브젝트 생성
 	// =======================
-	Ptr<CTexture> pLandScape = CResMgr::GetInst()->Load<CTexture>( L"Grass", L"Texture\\LandScape\\DIRT_00.bmp" );
+	Ptr<CTexture> pLandScape = CResMgr::GetInst()->Load<CTexture>(L"Grass", L"Texture\\LandScape\\mapTexture.png");
+	Ptr<CTexture> pLandScapeNormal = CResMgr::GetInst()->Load<CTexture>(L"LandScapeNormal", L"Texture\\ISLAND_NORMAL.png");
 
 	pObject = new CGameObject;
-	pObject->SetName( L"LandScape Object" );
-	pObject->AddComponent( new CTransform );
-	pObject->AddComponent( new CMeshRender );
-	pObject->AddComponent( new CLandScape );
-	pObject->LandScape()->CreateLandScape( L"Texture/ISLAND_110.bmp", 110, 110);
-	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"LandScapeMesh" ) );
-	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"LandScapeMtrl" ) );
-	pObject->MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::TEX_0, pLandScape.GetPointer() );
-	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 0.f ) );
-	pObject->Transform()->SetLocalScale( Vec3( 200.f, 400.f, 200.f ) );
-	pObject->FrustumCheck( false );
-	CNaviMgr::GetInst()->SetLandScape( pObject->LandScape() );
-	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+	pObject->SetName(L"LandScape Object");
+	pObject->AddComponent(new CTransform);
+	pObject->AddComponent(new CMeshRender);
+	pObject->AddComponent(new CLandScape);
+	pObject->LandScape()->CreateLandScape(L"Texture/ISLAND_110.bmp", 110, 110);
+	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"LandScapeMesh"));
+	pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"LandScapeMtrl"));
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pLandScape.GetPointer());
+	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_1, pLandScapeNormal.GetPointer());
+	pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
+	pObject->Transform()->SetLocalScale(Vec3(200.f, 400.f, 200.f));
+	pObject->FrustumCheck(false);
+	CNaviMgr::GetInst()->SetLandScape(pObject->LandScape());
+	m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
 
 	pObject = new CGameObject;
 	pObject->SetName( L"Sea" );

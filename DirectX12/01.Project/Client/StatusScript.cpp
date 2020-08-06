@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "StatusScript.h"
-
+#include "ArmorScript.h"
 #include "GameOverScript.h"
 
 CStatusScript::CStatusScript() :
@@ -47,8 +47,8 @@ void CStatusScript::Update()
 	vecObj[2]->Transform()->SetLocalPos(Vec3(-0.46f + 0.46f * m_fThirst / 100.f, -0.3f, -150.f));
 	vecObj[2]->Transform()->SetLocalScale(Vec3(230.f / 250.f * m_fThirst / 100.f, 30.f / 135.f, 1.f));
 
-	vecObj[3]->Transform()->SetLocalPos(Vec3(-0.46f + 0.46f * m_fThirst / 100.f, 0.35f, -140.f));
-	vecObj[3]->Transform()->SetLocalScale(Vec3(230.f / 250.f * m_fThirst / 100.f, 25.f / 135.f, 1.f));
+	vecObj[3]->Transform()->SetLocalPos(Vec3(-0.46f + 0.46f * m_fArmor / 100.f, 0.3f, -160.f));
+	vecObj[3]->Transform()->SetLocalScale(Vec3(230.f / 250.f * m_fArmor / 100.f, 30.f / 135.f, 1.f));
 
 	float health = 1.f - (m_fHealth / 100.f);
 	vecObj[4]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &health);
@@ -56,6 +56,18 @@ void CStatusScript::Update()
 
 void CStatusScript::Damage(float fDamage)
 {
+	if (m_pArmor)
+	{
+		m_fArmor -= fDamage;
+		m_pArmor->GetScript<CArmorScript>()->SetArmorValue(m_fArmor);
+		if (m_fArmor < 0.f)
+		{
+			m_fArmor = 0.f;
+			m_pArmor->GetScript<CArmorScript>()->DestroyArmor();
+			m_pArmor = NULL;
+		}
+		return;
+	}
 	m_fHealth -= fDamage;
 	if (m_fHealth <= 0.f && m_bGameOver == false)
 	{
@@ -98,7 +110,8 @@ bool CStatusScript::GetGameOver()
 	return m_bGameOver;
 }
 
-void CStatusScript::EquipArmor(float fArmor)
+void CStatusScript::EquipArmor(CGameObject* pArmor, float fArmor)
 {
+	m_pArmor = pArmor;
 	m_fArmor = fArmor;
 }

@@ -7,6 +7,7 @@ class CArmorScript :
 	public CItemScript
 {
 	float	m_fArmor;
+	CGameObject* m_pHost;
 public:
 	CArmorScript(ITEM_TYPE eType, int iCount = 1);
 	virtual ~CArmorScript();
@@ -23,6 +24,8 @@ public:
 	virtual void DisableItem(CGameObject* pHost, int num) override {};
 
 public:
-	void EquipArmor(CGameObject* pHost);
+	void EquipArmor();
+	void DestroyArmor();
+	void SetArmorValue(float fValue);
 };
 

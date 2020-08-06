@@ -32,6 +32,6 @@ public:
 
 	bool GetGameOver();
 
-	void EquipArmor(float fArmor);
+	void EquipArmor(CGameObject* pArmor, float fArmor);
 };
 

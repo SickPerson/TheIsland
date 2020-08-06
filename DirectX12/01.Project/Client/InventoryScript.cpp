@@ -294,7 +294,7 @@ void CInventoryScript::Update()
 									m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
 									m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
-									m_vecItem[i]->Use_Left(GetObj(), NULL, ARMOR_SLOT);
+									m_vecItem[m_iClickIdx]->Use_Left(m_pPlayer, NULL, ARMOR_SLOT);
 								}
 								// 방어구 아이템이 아닌데 슬릇에 가져다 놓을 경우
 								else
@@ -395,7 +395,7 @@ void CInventoryScript::Update()
 									m_vecItem[i]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
 									m_vecItem[i]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
-									m_vecItem[i]->Use_Left(GetObj(), NULL, ARMOR_SLOT);
+									m_vecItem[m_iClickIdx]->Use_Left(m_pPlayer, NULL, ARMOR_SLOT);
 								}
 								else
 								{
@@ -535,6 +535,19 @@ bool CInventoryScript::DecreaseItem(int idx, int iCount)
 		return true;
 	}
 	return false;
+}
+
+void CInventoryScript::DestroyArmor()
+{
+	if (m_vecItem[ARMOR_SLOT])
+	{
+		tEvent tEv;
+		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+		tEv.wParam = (DWORD_PTR)m_vecItem[ARMOR_SLOT]->GetObj();
+		CEventMgr::GetInst()->AddEvent(tEv);
+
+		m_vecItem[ARMOR_SLOT] = NULL;
+	}
 }
 
 void CInventoryScript::Use_Left(CGameObject * pHost, CGameObject * pObj, int index)
@@ -962,3 +975,7 @@ void CInventoryScript::RecipeInit()
 	m_vecRecipe.emplace_back(pObject);
 }
 
+void CInventoryScript::SetPlayer(CGameObject* pPlayer)
+{
+	m_pPlayer = pPlayer;
+}

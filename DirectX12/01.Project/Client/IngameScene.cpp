@@ -1097,6 +1097,7 @@ void CIngameScene::CreateInventoryUI()
 
 	pInventory->GetScript<CInventoryScript>()->Init();
 	m_pInventory = pInventory;
+	m_pInventory->GetScript<CInventoryScript>()->SetPlayer(m_pPlayer);
 	m_pPlayer->GetScript<CPlayerScript>()->SetInventoryObject(m_pInventory);
 }
 
