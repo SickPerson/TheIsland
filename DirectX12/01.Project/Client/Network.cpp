@@ -35,6 +35,8 @@
 #include "InputScript.h"
 #include "AnimalScript.h"
 
+#include <Engine/NaviMgr.h>
+
 unsigned int CNetwork::m_usID = 0;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumPlayer;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumAnimal;
@@ -284,7 +286,7 @@ void CNetwork::Send_Login_Packet(wstring playerID)
 	}
 }
 
-void CNetwork::Send_Move_Packet(float fSpeed, Vec3 Dir, Vec3 Rot)
+void CNetwork::Send_Move_Packet(Vec3 vWorldDir, bool bRun)
 {
 	DWORD size, flag = 0;
 
@@ -294,9 +296,9 @@ void CNetwork::Send_Move_Packet(float fSpeed, Vec3 Dir, Vec3 Rot)
 	packet->size = sizeof(cs_move_packet);
 	packet->type = CS_MOVE;
 	packet->id = m_usID;
-	packet->fSpeed = fSpeed;
-	packet->vDir = Dir;
-	packet->vRot = Rot;
+	packet->bRun = bRun;
+	packet->vWorldDir = vWorldDir;
+	packet->fHeight = CNaviMgr::GetInst()->GetY(m_pPlayer->Transform()->GetLocalPos());
 
 	m_SendWsaBuf.len = sizeof(cs_move_packet);
 
@@ -321,6 +323,26 @@ void CNetwork::Send_Chat_Packet(string message)
 	strcpy_s(chat_packet->meesage, message.c_str());
 
 	m_SendWsaBuf.len = sizeof(cs_chat_packet);
+
+	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0)
+	{
+		int err_no = WSAGetLastError();
+		Err_display("Err while sending packet - ", err_no);
+	}
+}
+
+void CNetwork::Send_Collision_Animal_Packet(unsigned short animalId, bool bRun)
+{
+	DWORD size, flag = 0;
+
+	cs_collision_packet* collision_animal_packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
+	collision_animal_packet->size = sizeof(cs_collision_packet);
+	collision_animal_packet->type = CS_ANIMAL_COLLISION;
+	collision_animal_packet->id = animalId;
+	collision_animal_packet->bRun = bRun;
+
 
 	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 
