@@ -158,6 +158,18 @@ void CResMgr::CreateDefaultShader()
 
 	AddRes( L"TexShader", pShader );
 
+	pShader = new CShader;
+	pShader->CreateVertexShader(L"Shader\\std.fx", "VS_Tex", "vs_5_0");
+	pShader->CreatePixelShader(L"Shader\\std.fx", "PS_Tex_Alpha", "ps_5_0");
+	// BlendState 설정
+	pShader->SetBlendState(BLEND_TYPE::ALPHABLEND);
+	// DSState
+	//pShader->SetDepthStencilType( DEPTH_STENCIL_TYPE::NO_DEPTHTEST_NO_WRITE );
+	// Shader Parameter 알림
+	pShader->AddShaderParam(tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 });
+	pShader->Create(SHADER_POV::FORWARD);
+	AddRes(L"AlphaTexShader", pShader);
+
 	// ==============
 	// Item Shader
 	// ==============
@@ -477,6 +489,11 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"TestShader"));
 	AddRes(L"TestMtrl", pMtrl);
+
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
+	pMtrl->SetShader(FindRes<CShader>(L"AlphaTexShader"));
+	AddRes(L"AlphaTexMtrl", pMtrl);
 
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();

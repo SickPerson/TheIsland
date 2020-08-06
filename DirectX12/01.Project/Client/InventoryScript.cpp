@@ -29,8 +29,8 @@ CInventoryScript::CInventoryScript() :
 	m_pNextPage(NULL),
 	m_pPrevPage(NULL)
 {
-	m_vecItemSlot.reserve(25);
-	m_vecItem.reserve(25);
+	m_vecItemSlot.reserve(26);
+	m_vecItem.reserve(26);
 	m_vecRecipe.reserve(25);
 
 	RecipeInit();
@@ -284,10 +284,38 @@ void CInventoryScript::Update()
 					{
 						if (m_vecItem[i] == NULL)
 						{
-							m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[i]);
+							if (i == ARMOR_SLOT)
+							{
+								// 방어구 아이템을 방어구 슬릇에 가져다 놓을 경우
+								if (m_vecItem[m_iClickIdx]->GetItemType() > ITEM_ARMOR && m_vecItem[m_iClickIdx]->GetItemType() < ITEM_ARMOR_END)
+								{
+									m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[i]);
 
-							m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-							m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+								}
+								// 방어구 아이템이 아닌데 슬릇에 가져다 놓을 경우
+								else
+								{
+									m_vecItemSlot[m_iClickIdx]->AddChild(m_pClickObj);
+
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
+									m_bClick = false;
+									m_iClickIdx = -1;
+									m_pClickObj = NULL;
+									return;
+								}
+							}
+							// 일반 슬릇
+							else
+							{
+								m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[i]);
+
+								m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+								m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+							}
 						}
 						else if (m_vecItem[i]->GetItemType() == m_vecItem[m_iClickIdx]->GetItemType())
 						{
@@ -351,14 +379,44 @@ void CInventoryScript::Update()
 						}
 						else
 						{
-							m_vecItem[i]->GetObj()->ClearParent(m_vecItemSlot[m_iClickIdx]);
-							m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[i]);
+							// 위치 교환
+							if (m_iClickIdx == ARMOR_SLOT || i == ARMOR_SLOT) // 방어구 위치 교환
+							{
+								if (m_vecItem[m_iClickIdx]->GetItemType() > ITEM_ARMOR && m_vecItem[m_iClickIdx]->GetItemType() < ITEM_ARMOR_END)
+								{
+									m_vecItem[i]->GetObj()->ClearParent(m_vecItemSlot[m_iClickIdx]);
+									m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[i]);
 
-							m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-							m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
-							m_vecItem[i]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
-							m_vecItem[i]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+									m_vecItem[i]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+									m_vecItem[i]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+								}
+								else
+								{
+									m_vecItemSlot[m_iClickIdx]->AddChild(m_pClickObj);
+
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+									m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
+									m_bClick = false;
+									m_iClickIdx = -1;
+									m_pClickObj = NULL;
+									return;
+								}
+							}
+							else
+							{
+								m_vecItem[i]->GetObj()->ClearParent(m_vecItemSlot[m_iClickIdx]);
+								m_vecItem[m_iClickIdx]->GetObj()->ClearParent(m_vecItemSlot[i]);
+
+								m_vecItem[m_iClickIdx]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+								m_vecItem[m_iClickIdx]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
+								m_vecItem[i]->Transform()->SetLocalPos(Vec3(0.f, 0.f, -10.f));
+								m_vecItem[i]->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+							}
 						}
 
 						CItemScript* pTemp = m_vecItem[i];
@@ -417,6 +475,12 @@ void CInventoryScript::Show()
 		evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
 
 		CEventMgr::GetInst()->AddEvent(evt);
+
+		tEvent evt2 = {};
+		evt2.eType = EVENT_TYPE::TRANSFER_LAYER;
+		evt2.wParam = (DWORD_PTR)m_pArmorSlot;
+		evt2.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
+		CEventMgr::GetInst()->AddEvent(evt2);
 	}
 	else
 	{
@@ -424,6 +488,12 @@ void CInventoryScript::Show()
 		m_bActive = true;
 		m_iRecipePage = 0;
 		ShowRecipe();
+
+		tEvent evt2 = {};
+		evt2.eType = EVENT_TYPE::TRANSFER_LAYER;
+		evt2.wParam = (DWORD_PTR)m_pArmorSlot;
+		evt2.lParam = ((DWORD_PTR)30 << 16 | (DWORD_PTR)true);
+		CEventMgr::GetInst()->AddEvent(evt2);
 	}
 }
 
@@ -436,7 +506,7 @@ void CInventoryScript::OnAddable(int index)
 int CInventoryScript::CheckItem(UINT eType, int iCount)
 {
 	int idx = -1;
-	for (int i = 0; i < m_vecItemSlot.size(); ++i)
+	for (int i = 0; i < m_vecItemSlot.size() - 1; ++i)
 	{
 		if (m_vecItem[i] == NULL)
 			continue;
@@ -501,7 +571,7 @@ void CInventoryScript::EnableItem(CGameObject* pHost, int index)
 void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)
 {
 	int iIdx = -1;
-	for (int i = 0; i < m_vecItemSlot.size(); ++i)
+	for (int i = 0; i < m_vecItemSlot.size() - 1; ++i)
 	{
 		if (m_vecItem[i] == NULL)
 		{
@@ -719,6 +789,24 @@ void CInventoryScript::Init()
 		m_pItemInfo->GetScript<CItemInfoScript>()->SetObject(pBackground, pItemName, pItemInfo);
 	}
 	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pItemInfo);
+
+	m_pArmorSlot = new CGameObject;
+
+	m_pArmorSlot->AddComponent(new CTransform);
+	m_pArmorSlot->AddComponent(new CMeshRender);
+
+	m_pArmorSlot->Transform()->SetLocalPos(Vec3(-370.f, -180.f, 200.f));
+	Vec3 vScale(80.f, 80.f, 1.f);
+	m_pArmorSlot->Transform()->SetLocalScale(vScale);
+
+	m_pArmorSlot->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
+	m_pArmorSlot->MeshRender()->SetMaterial(pMtrl->Clone());
+
+	Vec4 vColor = Vec4(0.7f, 0.7f, 0.7f, 1.f); // White
+	m_pArmorSlot->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pArmorSlot);
+	AddSlot(m_pArmorSlot);
 }
 
 

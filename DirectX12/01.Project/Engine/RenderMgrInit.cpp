@@ -108,7 +108,7 @@ void CRenderMgr::CreateMRT()
 	{
 		tRT arrRT[3] = {};
 
-		arrRT[0].vClearColor = Vec4(0.5f, 0.5f, 0.5f, 0.f);
+		arrRT[0].vClearColor = Vec4(0.35f, 0.35f, 0.35f, 0.f);
 		arrRT[0].pTarget = CResMgr::GetInst()->CreateTexture(L"PlayerTex"
 			, (UINT)m_tResolution.fWidth, (UINT)m_tResolution.fHeight
 			, DXGI_FORMAT_R8G8B8A8_UNORM, CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE

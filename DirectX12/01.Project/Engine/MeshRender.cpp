@@ -97,7 +97,11 @@ void CMeshRender::Render_Shadowmap()
 		}
 
 		wstring strName = GetObj()->GetName();
-		if (strName == L"sprucea" || strName == L"spruceb" || strName == L"sprucec" || strName == L"plainsgrass")
+
+		if (strName == L"sprucea" || 
+			strName == L"spruceb" || 
+			strName == L"sprucec" || 
+			strName == L"plainsgrass")
 		{
 			int b = 3;
 			pMtrl->SetData(SHADER_PARAM::TEX_0, m_vecMtrl[i]->GetTexture().GetPointer());
