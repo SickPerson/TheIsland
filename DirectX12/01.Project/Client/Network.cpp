@@ -515,10 +515,9 @@ void CNetwork::Recv_Put_Npc_Packet(char * packet)
 	Vec3 vPos = put_npc_packet->vPos;
 	Vec3 vRot = put_npc_packet->vRot;
 
-	m_cumAnimal[monster_id]->Transform()->SetLocalPos(vPos);
-	m_cumAnimal[monster_id]->Transform()->SetLocalRot(vRot);
+	UINT uiType = 0;
 
-	pScene->FindLayer(L"Animal")->AddGameObject(CNetwork::m_cumAnimal[monster_id]);
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, uiType);
 }
 
 void CNetwork::Recv_Remove_Npc_Packet(char * packet)
@@ -526,11 +525,7 @@ void CNetwork::Recv_Remove_Npc_Packet(char * packet)
 	sc_remove_npc_packet* remove_npc_packet = reinterpret_cast<sc_remove_npc_packet*>(packet);
 	unsigned int monster_id = remove_npc_packet->id;
 
-	tEvent tEv;
-	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-
-	tEv.wParam = (DWORD_PTR)m_cumAnimal[monster_id];
-	CEventMgr::GetInst()->AddEvent(tEv);
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalDestory(monster_id);
 }
 
 void CNetwork::Recv_Pos_Npc_Packet(char * packet)

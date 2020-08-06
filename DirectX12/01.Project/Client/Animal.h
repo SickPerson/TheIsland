@@ -41,4 +41,6 @@ struct tAnimalStatus
 
 	BEHAVIOR_TYPE eType;
 	ANIMAL_TYPE eKind;
+
+	UINT uiAnimalId;
 };

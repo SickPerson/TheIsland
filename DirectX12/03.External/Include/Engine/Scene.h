@@ -30,6 +30,7 @@ public:
 	void AddGameObject(int _iLayerIdx, CGameObject* _pObject, bool _bMoveAll);
 	CLayer* FindLayer(const wstring& _strLayerName);
 	CLayer* GetLayer(int _iIdx) { return m_arrLayer[_iIdx]; };
+	CSceneScript* GetSceneScript() { return m_pCurSceneScript; }
 	
 private:
 	void AddLayer(const wstring& _strLayerName, int _iIdx = -1);
