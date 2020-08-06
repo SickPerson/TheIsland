@@ -64,7 +64,24 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 		m_fDamage = 0.f;
 		break;
 	case ITEM_MAP:
+	{
+		Ptr<CTexture> pMapTex = CResMgr::GetInst()->Load<CTexture>(L"MapTex", L"Texture\\IslandMap.png");
+		m_pObj = new CGameObject;
+		m_pObj->SetName(L"Map");
+		m_pObj->AddComponent(new CTransform);
+		m_pObj->AddComponent(new CMeshRender);
+
+		m_pObj->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"TexMtrl");
+		m_pObj->MeshRender()->SetMaterial(pMtrl->Clone());
+		m_pObj->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pMapTex.GetPointer());
+
+		m_pObj->Transform()->SetLocalPos(Vec3(0.f, 0.f, 3000.f));
+		m_pObj->Transform()->SetLocalScale(Vec3(800.f, 600.f, 1.f));
+
+		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pObj);
 		m_fDamage = 0.f;
+	}
 		break;
 	default:
 		break;
@@ -348,6 +365,19 @@ void CToolItemScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int n
 			m_pObj->Transform()->SetLocalPos(vPos);
 		}
 		break;
+	case ITEM_MAP:
+		if (m_pObj)
+		{
+			/*Vec3 vDir = pHost->Transform()->GetWorldDir(DIR_TYPE::FRONT);
+			Vec3 vPos = pHost->Transform()->GetLocalPos();
+
+			vPos += -vDir * 50.f;
+			vPos.y = CNaviMgr::GetInst()->GetY(vPos);
+			vPos.y += 80;
+
+			m_pObj->Transform()->SetLocalPos(vPos);*/
+		}
+		break;
 	default:
 		break;
 	}
@@ -369,6 +399,18 @@ void CToolItemScript::EnableItem(CGameObject* pHost, int num)
 			CEventMgr::GetInst()->AddEvent(evt);
 		}
 		break;
+	case ITEM_MAP:
+		if (m_pObj)
+		{
+			tEvent evt = {};
+
+			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt.wParam = (DWORD_PTR)m_pObj;
+			evt.lParam = ((DWORD_PTR)30 << 16 | (DWORD_PTR)true);
+
+			CEventMgr::GetInst()->AddEvent(evt);
+		}
+		break;
 	default:
 		break;
 	}
@@ -379,6 +421,7 @@ void CToolItemScript::DisableItem(CGameObject* pHost, int num)
 	switch (m_eItemType)
 	{
 	case ITEM_CAMPFIRE:
+	case ITEM_MAP:
 		if (m_pObj)
 		{
 			tEvent evt = {};
