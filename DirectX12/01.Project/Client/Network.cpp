@@ -107,8 +107,7 @@ bool CNetwork::ConnectServer(string ipAddr)
 	int retval = WSAConnect(m_sock, reinterpret_cast<sockaddr*>(&serveraddr), sizeof(serveraddr), NULL, NULL, NULL, NULL);
 	if (retval == SOCKET_ERROR) {
 		int err_no = WSAGetLastError();
-		// IP가 틀렸을 경우
-		Err_display("socket err", err_no);
+		//Err_display("socket err", err_no);
 		return false;
 	}
 

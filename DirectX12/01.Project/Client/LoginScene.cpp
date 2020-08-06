@@ -172,7 +172,10 @@ void CLoginScene::Update()
 			CNetwork::GetInst()->Send_Login_Packet(wStrID);
 		}
 		else
+		{
+			cout << "d" << endl;
 			return;
+		}
 	}
 
 	if (KEY_TAB(KEY_TYPE::KEY_LBTN))
