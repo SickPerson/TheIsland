@@ -275,7 +275,8 @@ void CCamera::Render_Deferred()
 
 		CGameObject* pObj = pair.second[0].pObj;
 		Ptr<CMesh> pMesh = pObj->MeshRender()->GetMesh();
-		Ptr<CMaterial> pMtrl = pObj->MeshRender()->GetSharedMaterial(pair.second[0].iMtrlIdx);
+
+		Ptr<CMaterial> pMtrl = pObj->MeshRender()->GetCloneMaterial(pair.second[0].iMtrlIdx);
 
 		if (nullptr == pMtrl->GetShader())
 			continue;
@@ -412,7 +413,7 @@ void CCamera::Render_Forward()
 
 		CGameObject* pObj = pair.second[0].pObj;
 		Ptr<CMesh> pMesh = pObj->MeshRender()->GetMesh();
-		Ptr<CMaterial> pMtrl = pObj->MeshRender()->GetSharedMaterial(pair.second[0].iMtrlIdx);
+		Ptr<CMaterial> pMtrl = pObj->MeshRender()->GetCloneMaterial(pair.second[0].iMtrlIdx);
 
 		if (nullptr == pMtrl->GetShader())
 			continue;

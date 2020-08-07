@@ -13,11 +13,16 @@
 #include <Engine/Light3D.h>
 #include <Engine/NaviMgr.h>
 
+#include "ArrowScript.h"
+
 #include <iostream>
 
 CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 	: CItemScript((UINT) eType),
-	m_pObj(NULL)
+	m_pObj(NULL),
+	m_pSubObj(NULL),
+	m_bCharge(false),
+	m_pHost(NULL)
 {
 	m_iMaxCount = TOOL_MAX_COUNT;
 	if (iCount > m_iMaxCount)
@@ -44,6 +49,19 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 		m_fDamage = 20.f;
 		break;
 	case ITEM_BOW:
+		pTex = CResMgr::GetInst()->Load<CMeshData>(L"Arrow.mdat", L"MeshData\\arrow.mdat");
+		m_pObj = pTex->Instantiate();
+		m_pObj->AddComponent(new CCollider2D);
+
+		m_pObj->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
+		m_pObj->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+
+		m_pObj->SetName(L"Arrow");
+		m_pObj->Transform()->SetLocalPos(Vec3(10000.f, 400.f, 10000.f));
+		//m_pObj->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+		m_pObj->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pObj);
+
 		m_fDamage = 30.f;
 		break;
 	case ITEM_CAMPFIRE:
@@ -80,6 +98,25 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 		m_pObj->Transform()->SetLocalScale(Vec3(800.f, 600.f, 1.f));
 
 		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pObj);
+
+		Ptr<CTexture> pLocationTex = CResMgr::GetInst()->Load<CTexture>(L"LocationTex", L"Texture\\navigation_white_192x192.png");
+		m_pSubObj = new CGameObject;
+		m_pSubObj->SetName(L"Player Location");
+		m_pSubObj->AddComponent(new CTransform);
+		m_pSubObj->AddComponent(new CMeshRender);
+
+		m_pSubObj->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
+		pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ColorIconMtrl");
+		m_pSubObj->MeshRender()->SetMaterial(pMtrl->Clone());
+		Vec4 vColor = Vec4(1.f, 0.f, 0.f, 1.f);
+		m_pSubObj->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
+		m_pSubObj->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::TEX_0, pLocationTex.GetPointer());
+
+		m_pSubObj->Transform()->SetLocalPos(Vec3(0.f, 0.f, 2900.f));
+		m_pSubObj->Transform()->SetLocalScale(Vec3(20.f, 20.f, 1.f));
+
+		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pSubObj);
+
 		m_fDamage = 0.f;
 	}
 		break;
@@ -96,6 +133,55 @@ CToolItemScript::~CToolItemScript()
 void CToolItemScript::Update()
 {
 	CItemScript::Update();
+	if (m_eItemType == ITEM_MAP)
+	{
+		if (m_pObj && m_pSubObj && m_pHost)
+		{
+			Vec3 vPos = m_pHost->Transform()->GetLocalPos();
+			Vec3 vRot = m_pHost->Transform()->GetLocalRot();
+			Vec3 vLocationPos;
+
+			vLocationPos.x = vPos.x / 22000.f * 600.f - 300.f;
+			vLocationPos.y = vPos.z / 22000.f * 600.f - 300.f;
+			vLocationPos.z = 2900.f;
+
+			m_pSubObj->Transform()->SetLocalPos(vLocationPos);
+			m_pSubObj->Transform()->SetLocalRot(Vec3(0.f, 0.f, -vRot.y + (XM_PI * 1.f)));
+		}
+	}
+	else if (m_eItemType == ITEM_BOW)
+	{
+		if (!m_bCharge)
+			return;
+
+		if (KEY_HOLD(KEY_TYPE::KEY_LBTN) && m_bCharge)
+		{
+			m_pObj->GetScript<CArrowScript>()->Charge();
+		}
+		if (KEY_AWAY(KEY_TYPE::KEY_LBTN) && m_bCharge)
+		{
+			Vec3 vDir = m_pSubObj->Transform()->GetWorldDir(DIR_TYPE::FRONT);
+			Vec3 vRot = m_pSubObj->Transform()->GetLocalRot();
+			Vec3 vPos = m_pSubObj->Transform()->GetLocalPos();
+			m_pObj->MeshRender()->SetDynamicShadow(true);
+			m_bCharge = false;
+			m_pObj->GetScript<CArrowScript>()->Shoot(vDir, vRot, vPos);
+
+			// Regen
+			Ptr<CMeshData> pTex = CResMgr::GetInst()->Load<CMeshData>(L"Arrow.mdat", L"MeshData\\arrow.mdat");
+			m_pObj = pTex->Instantiate();
+			m_pObj->AddComponent(new CCollider2D);
+
+			m_pObj->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
+			m_pObj->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+
+			m_pObj->SetName(L"Arrow");
+			m_pObj->Transform()->SetLocalPos(Vec3(10000.f, 400.f, 10000.f));
+			//m_pObj->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+			m_pObj->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Invisible")->AddGameObject(m_pObj);
+		}
+	}
 }
 
 void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
@@ -233,6 +319,27 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	}
 		break;
 	case ITEM_BOW:
+	{
+		int idx = pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->CheckItem(ITEM_TYPE::ITEM_ARROW, 1);
+		if (idx == -1)
+		{
+			return;
+		}
+		if (m_pObj)
+		{
+			m_pObj->AddComponent(new CArrowScript);
+			
+			m_pSubObj = pHost->GetScript<CPlayerScript>()->GetMainCameraObject();
+			Vec3 vDir = m_pSubObj->Transform()->GetWorldDir(DIR_TYPE::FRONT);
+			Vec3 vRot = m_pSubObj->Transform()->GetLocalRot();
+			Vec3 vPos = m_pSubObj->Transform()->GetLocalPos();
+
+			m_pObj->GetScript<CArrowScript>()->Init(pHost, m_fDamage);
+			m_bCharge = true;
+
+			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->DecreaseItem(idx, 1);
+		}
+	}
 		break;
 	case ITEM_CAMPFIRE:
 		if (m_pObj->GetScript<CBuildScript>()->Build())
@@ -293,59 +400,6 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	default:
 		break;
 	}
-	/*if (pObj->GetName() == L"Tree")
-	{
-		CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-		pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-	}
-	else if (pObj->GetName() == L"Bear")
-	{
-		if (!pObj->GetScript<CAnimalScript>()->GetAnimalDead())
-		{
-			pObj->GetScript<CAnimalScript>()->Damage(GetObj(), 5);
-		}
-		else
-		{
-			CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
-			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-		}
-	}
-	else if (pObj->GetName() == L"Boar")
-	{
-		if (!pObj->GetScript<CAnimalScript>()->GetAnimalDead())
-		{
-			pObj->GetScript<CAnimalScript>()->Damage(GetObj(), 5);
-		}
-		else
-		{
-			CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
-			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-		}
-	}
-	else if (pObj->GetName() == L"Wolf")
-	{
-		if (!pObj->GetScript<CAnimalScript>()->GetAnimalDead())
-		{
-			pObj->GetScript<CAnimalScript>()->Damage(GetObj(), 5);
-		}
-		else
-		{
-			CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_LEATHER);
-			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-		}
-	}
-	else if (pObj->GetName() == L"Deer")
-	{
-		if (!pObj->GetScript<CAnimalScript>()->GetAnimalDead())
-		{
-			pObj->GetScript<CAnimalScript>()->Damage(GetObj(), 5);
-		}
-		else
-		{
-			CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
-			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, rand() % 3 + 1);
-		}
-	}*/
 }
 
 void CToolItemScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)
@@ -366,17 +420,6 @@ void CToolItemScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int n
 		}
 		break;
 	case ITEM_MAP:
-		if (m_pObj)
-		{
-			/*Vec3 vDir = pHost->Transform()->GetWorldDir(DIR_TYPE::FRONT);
-			Vec3 vPos = pHost->Transform()->GetLocalPos();
-
-			vPos += -vDir * 50.f;
-			vPos.y = CNaviMgr::GetInst()->GetY(vPos);
-			vPos.y += 80;
-
-			m_pObj->Transform()->SetLocalPos(vPos);*/
-		}
 		break;
 	default:
 		break;
@@ -409,6 +452,16 @@ void CToolItemScript::EnableItem(CGameObject* pHost, int num)
 			evt.lParam = ((DWORD_PTR)30 << 16 | (DWORD_PTR)true);
 
 			CEventMgr::GetInst()->AddEvent(evt);
+
+			tEvent evt2 = {};
+
+			evt2.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt2.wParam = (DWORD_PTR)m_pSubObj;
+			evt2.lParam = ((DWORD_PTR)30 << 16 | (DWORD_PTR)true);
+
+			CEventMgr::GetInst()->AddEvent(evt2);
+
+			m_pHost = pHost;
 		}
 		break;
 	default:
@@ -431,6 +484,14 @@ void CToolItemScript::DisableItem(CGameObject* pHost, int num)
 			evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
 
 			CEventMgr::GetInst()->AddEvent(evt);
+
+			tEvent evt2 = {};
+
+			evt2.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt2.wParam = (DWORD_PTR)m_pSubObj;
+			evt2.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
+
+			CEventMgr::GetInst()->AddEvent(evt2);
 		}
 		break;
 	default:

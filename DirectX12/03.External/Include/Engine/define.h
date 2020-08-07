@@ -1,6 +1,6 @@
 #pragma once
 
-#define INSTANCING_COUNT 100000
+#define INSTANCING_COUNT 2
 
 
 

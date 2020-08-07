@@ -206,6 +206,21 @@ float4 PS_Tex_Alpha(TEX_OUTPUT _input) : SV_Target
 	return vColor;
 }
 
+float4 PS_Icon_Alpha(TEX_OUTPUT _input) : SV_Target
+{
+	float4 vColor = (float4) 0.f;
+
+	if (tex_0)
+		vColor = g_tex_0.Sample(g_sam_1, _input.vUV);
+	else
+		vColor = float4(1.f, 0.f, 1.f, 1.f);
+
+	if (vColor.w < 0.1f)
+		clip(-1);
+
+	return vColor * g_vec4_0;
+}
+
 TEX_OUTPUT VS_Item(TEX_INPUT _input)
 {
 	TEX_OUTPUT output = (TEX_OUTPUT)0;

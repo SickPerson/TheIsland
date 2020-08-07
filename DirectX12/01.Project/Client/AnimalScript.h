@@ -11,6 +11,8 @@ class CAnimalScript :
 
 	Vec3			m_vOffsetScale;
 
+	Vec3			m_vPrevPos;
+
 	bool			m_bBehavior;
 	float			m_fCurrentTime;
 	Vec3			m_vMoveDir;
@@ -50,6 +52,7 @@ public:
 
 public:
 	bool CollisionSphere(Vec3 vOffsetScale, CCollider2D* _pOther, float fOffset = 1.f);
+	bool CollisionHouse(Vec3 vOffsetScale, CCollider2D* _pOther, Vec3 vHouseOffsetScale, UINT iType);
 
 	void SetAnimalStatus(tAnimalStatus tStatus);
 	tAnimalStatus GetAnimalStatus();

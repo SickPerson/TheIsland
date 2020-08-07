@@ -8,6 +8,9 @@ class CToolItemScript :
 {
 	float m_fDamage;
 	CGameObject* m_pObj;
+	CGameObject* m_pSubObj;
+	bool m_bCharge;
+	CGameObject* m_pHost;
 public:
 	CToolItemScript(ITEM_TYPE eType, int iCount = 1);
 	virtual ~CToolItemScript();

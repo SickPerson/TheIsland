@@ -17,6 +17,7 @@ class CIngameScene :
 	int m_iSelect = -1;
 	bool m_bShowCursor = false;
 	bool m_bShowMRT = false;
+	bool m_bOverlapItem = false;
 	CGameObject* m_pMRT;
 public:
 	concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;

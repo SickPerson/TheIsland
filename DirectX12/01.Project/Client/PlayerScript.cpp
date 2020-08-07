@@ -93,6 +93,16 @@ void CPlayerScript::SetMainCamera(CCamera * pCamera)
 	m_pMainCamera = pCamera;
 }
 
+CGameObject * CPlayerScript::GetMainCameraObject()
+{
+	return m_pMainCamera->GetObj();
+}
+
+CCamera * CPlayerScript::GetMainCamera()
+{
+	return m_pMainCamera;
+}
+
 bool CPlayerScript::GetEnable()
 {
 	return m_bEnable;
@@ -143,10 +153,11 @@ void CPlayerScript::Update()
 				fSpeed *= 5.f;
 			}
 
+			Vec3 vPrev;
 			if (KEY_HOLD(KEY_TYPE::KEY_W))
 			{
 				Vec3 vFront = -Transform()->GetWorldDir(DIR_TYPE::FRONT);
-				Vec3 vPrev = vPos;
+				vPrev = vPos;
 				vPos += vFront * fSpeed * DT;
 
 				float fHeight = CNaviMgr::GetInst()->GetY(vPos);
@@ -159,7 +170,7 @@ void CPlayerScript::Update()
 			if (KEY_HOLD(KEY_TYPE::KEY_S))
 			{
 				Vec3 vBack = Transform()->GetWorldDir(DIR_TYPE::FRONT);
-				Vec3 vPrev = vPos;
+				vPrev = vPos;
 				vPos += vBack * fSpeed * DT;
 
 				float fHeight = CNaviMgr::GetInst()->GetY(vPos);
@@ -172,7 +183,7 @@ void CPlayerScript::Update()
 			if (KEY_HOLD(KEY_TYPE::KEY_A))
 			{
 				Vec3 vLeft = Transform()->GetWorldDir(DIR_TYPE::RIGHT);
-				Vec3 vPrev = vPos;
+				vPrev = vPos;
 				vPos += vLeft * fSpeed * DT;
 
 				float fHeight = CNaviMgr::GetInst()->GetY(vPos);
@@ -185,7 +196,7 @@ void CPlayerScript::Update()
 			if (KEY_HOLD(KEY_TYPE::KEY_D))
 			{
 				Vec3 vRight = -Transform()->GetWorldDir(DIR_TYPE::RIGHT);
-				Vec3 vPrev = vPos;
+				vPrev = vPos;
 				vPos += vRight * fSpeed * DT;
 
 				float fHeight = CNaviMgr::GetInst()->GetY(vPos);

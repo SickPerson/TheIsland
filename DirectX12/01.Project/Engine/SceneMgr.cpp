@@ -65,6 +65,7 @@ void CSceneMgr::Init()
 	m_pCurScene->GetLayer( 4 )->SetName( L"Human" );
 	m_pCurScene->GetLayer( 5 )->SetName( L"Build" );
 	m_pCurScene->GetLayer( 6 )->SetName( L"House" );
+	m_pCurScene->GetLayer( 7 )->SetName( L"Arrow" );
 
 	m_pCurScene->GetLayer( 29 )->SetName( L"Invisible" );
 	m_pCurScene->GetLayer( 30 )->SetName( L"UI" );
