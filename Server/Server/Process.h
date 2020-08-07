@@ -32,8 +32,8 @@ public:
 
 public:
 	bool ObjectRangeCheck(Vec3& vFirst, Vec3& vSecond, float fDistance);
-	bool Animal_CollisionSphere(USHORT player_id, USHORT animal_id, float fOffset = 1.f);
-	bool Animal_CollisionHouse(USHORT player_id, USHORT animal_id);
+	/*bool Animal_CollisionSphere(USHORT player_id, USHORT animal_id, float fOffset = 1.f);
+	bool Natural_CollisionHouse(USHORT player_id, USHORT animal_id);*/
 
 public:
 	concurrent_unordered_set<USHORT>& GetLoginList()

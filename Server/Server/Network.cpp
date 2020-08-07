@@ -2,6 +2,7 @@
 #include "Network.h"
 #include "PlayerProcess.h"
 #include "MonsterProcess.h"
+#include "NaturalProcess.h"
 
 #include "PacketMgr.h"
 #include "TimerMgr.h"
@@ -14,6 +15,7 @@ CNetwork::CNetwork()
 	m_bRunningServer = true;
 	m_pPlayerProcess = nullptr;
 	m_pMonsterProcess = nullptr;
+	m_pNaturalProcess = nullptr;
 	m_UserID = 0;
 	//------------------------------
 	//Initialize();
@@ -160,9 +162,6 @@ void CNetwork::CheckThisCputCount()
 
 void CNetwork::WorkerThread()
 {
-	CTimerMgr::GetInst()->Tick();
-	cout << "Worker " << CTimerMgr::GetInst()->GetDeltaTime() << endl;
-
 	DWORD		num_byte;
 	ULONGLONG	key64;
 	PULONG_PTR	p_key = &key64;
@@ -265,6 +264,7 @@ void CNetwork::UpdateThread()
 	}
 	while (m_bRunningServer)
 	{
+		CTimerMgr::GetInst()->Tick();
 		/*while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
 		}*/

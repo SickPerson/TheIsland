@@ -41,7 +41,7 @@ public:
 		};
 		m_fpPacketProcess[CS_HOUSING_INSTALL] = [&](USHORT playerId, char* packet) {
 			PlayerInstallHousing(playerId, packet);
-		}
+		};
 	}
 
 	void AcceptClient(const SOCKET& sSocket, USHORT playerId);
