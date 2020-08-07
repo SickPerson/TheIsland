@@ -393,6 +393,7 @@ bool CBuildScript::Build()
 	{
 		CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData(HOUSING_FLOOR)->Instantiate();
 		pFloor->SetName(L"Foundation_Floor");
+		pFloor->FrustumCheck(false);
 		pFloor->Transform()->SetLocalPos(Vec3(0.f, 0.f, -14.f));
 		pFloor->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 		for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
@@ -444,6 +445,7 @@ bool CBuildScript::Upgrade()
 	{
 		CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData(HOUSING_FLOOR, m_iGrade)->Instantiate();
 		pFloor->SetName(L"Foundation_Floor");
+		pFloor->FrustumCheck(false);
 		pFloor->Transform()->SetLocalPos(Vec3(0.f, 0.f, -14.f));
 		pFloor->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 		for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)

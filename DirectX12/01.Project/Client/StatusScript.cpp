@@ -19,22 +19,22 @@ CStatusScript::~CStatusScript()
 
 void CStatusScript::Update()
 {
-	//if (m_fHealth <= 0.f)
-	//	m_fHealth = 100.f;
-
 	if (KEY_HOLD(KEY_TYPE::KEY_SPACE))
 	{
 		Damage(20.f * DT);
 	}
-	//m_fHealth -= 10 * DT;
-	//if (m_fHealth < 0.f)
-	//	m_fHealth = 100.f;
-	m_fHungry -= 15 * DT;
+	m_fHungry -= 0.2f * DT;
 	if (m_fHungry < 0.f)
-		m_fHungry = 100.f;
-	m_fThirst -= 20 * DT;
+	{
+		m_fHungry = 0.f;
+		Damage(0.5f * DT);
+	}
+	m_fThirst -= 0.35f * DT;
 	if (m_fThirst < 0.f)
-		m_fThirst = 100.f;
+	{
+		m_fThirst = 0.f;
+		Damage(0.25f * DT);
+	}
 
 	const vector<CGameObject *>& vecObj = GetObj()->GetChild();
 
@@ -54,9 +54,9 @@ void CStatusScript::Update()
 	vecObj[4]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &health);
 }
 
-void CStatusScript::Damage(float fDamage)
+void CStatusScript::Damage(float fDamage, bool bTrueDamage)
 {
-	if (m_pArmor)
+	if (m_pArmor && !bTrueDamage)
 	{
 		m_fArmor -= fDamage;
 		m_pArmor->GetScript<CArmorScript>()->SetArmorValue(m_fArmor);

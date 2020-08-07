@@ -11,6 +11,8 @@ class CSunshineScript :
 	float m_fDarkness;
 
 	CGameObject* m_pSkybox;
+	CGameObject* m_pSea;
+
 	CGameObject* m_pPlayer;
 	CGameObject* m_pClock;
 	CGameObject* m_pDay;
@@ -31,5 +33,6 @@ public:
 
 	void SetSkybox(CGameObject* pObject);
 	void SetPlayer(CGameObject* pObject);
+	void SetSea(CGameObject* pObject);
 };
 
