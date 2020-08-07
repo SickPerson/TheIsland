@@ -19,6 +19,8 @@ class CIngameScene :
 	bool m_bShowMRT = false;
 	bool m_bOverlapItem = false;
 	CGameObject* m_pMRT;
+
+	map<UINT, CGameObject*> m_mapAnimals;
 public:
 	concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
 	concurrent_unordered_map<unsigned int, CGameObject*> m_cumAnimal;
@@ -41,5 +43,8 @@ public:
 
 	void CreateNatural();
 	void CreateAnimalSpawner();
+
+	void AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType);
+	void AnimalDestory(UINT uiId);
 };
 

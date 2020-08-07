@@ -1474,10 +1474,10 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 			}
 			else
 			{
-			Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
-			pObject = pBoarTex->Instantiate();
-			pObject->AddComponent(new CCollider2D);
-			pObject->AddComponent(new CAnimalScript);
+				Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
+				pObject = pBoarTex->Instantiate();
+				pObject->AddComponent(new CCollider2D);
+				pObject->AddComponent(new CAnimalScript);
 
 			{
 				tAnimalStatus tStatus;
@@ -1496,19 +1496,19 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 				pObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
 			}
 
-			pObject->SetName(L"Boar");
+				pObject->SetName(L"Boar");
 
-			pObject->MeshRender()->SetDynamicShadow(true);
+				pObject->MeshRender()->SetDynamicShadow(true);
 
-			//pObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
-			pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-			pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+				//pObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
+				pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
+				pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
-			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-			pObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
+				pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+				pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
+				pObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
 
-			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
+				CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 			}
 		}
 		break;
@@ -1554,11 +1554,10 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 		break;
 		default:
 			break;
-
-			pObject->Transform()->SetLocalPos(vPos);
-			pObject->Transform()->SetLocalRot(vRot);
-			m_mapAnimals.insert(make_pair(uiId, pObject));
 		}
+		pObject->Transform()->SetLocalPos(vPos);
+		pObject->Transform()->SetLocalRot(vRot);
+		m_mapAnimals.insert(make_pair(uiId, pObject));
 	}
 	// 업데이트
 	else

@@ -1,5 +1,6 @@
 #pragma once
 #include <Engine/Script.h>
+
 #define NATURAL_RESPAWN_TIME 10.f
 
 enum NATURAL_TYPE {
