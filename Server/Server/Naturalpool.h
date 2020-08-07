@@ -1,7 +1,6 @@
 #pragma once
 #include "stdafx.h"
 #include "Natural.h"
-
 class CNaturalpool
 {
 public:
@@ -11,4 +10,3 @@ public:
 public:
 	static concurrent_unordered_map<USHORT, CNatural*> m_cumNaturalPool;
 };
-

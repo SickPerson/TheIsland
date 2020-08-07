@@ -24,3 +24,13 @@ bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
 		return true;
 	return false;
 }
+
+bool CProcess::Animal_CollisionSphere(USHORT player_id, USHORT animal_id, float fOffset)
+{
+	return false;
+}
+
+bool CProcess::Animal_CollisionHouse(USHORT player_id, USHORT animal_id)
+{
+	return false;
+}

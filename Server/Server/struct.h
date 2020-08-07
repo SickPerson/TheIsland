@@ -9,7 +9,7 @@ typedef struct Over_ex
 	WSABUF			m_DataBuffer;
 	char			m_MessageBuffer[MAX_BUF];
 	EVENT_TYPE		m_Event;
-	UINT			m_Status;
+	char			m_Status;
 	USHORT	m_usOtherID;
 }OVER_EX, POVER_EX;
 
@@ -28,7 +28,7 @@ _______________________________________________*/
 struct Update_Event {
 	std::chrono::high_resolution_clock::time_point wakeup_time;
 	EVENT_TYPE		m_EventType;
-	UINT	m_ObjState;
+	OBJ_STATE_TYPE	m_ObjState;
 	USHORT m_Do_Object;
 	USHORT m_From_Object;
 
@@ -84,7 +84,7 @@ struct Monster_Event {
 	float m_fRotate;
 	char	m_eState;
 	Monster_Event() {}
-	Monster_Event(DirectX::XMFLOAT3 xmf3ToTarget, float fRotate, UINT eState) {
+	Monster_Event(DirectX::XMFLOAT3 xmf3ToTarget, float fRotate, OBJ_STATE_TYPE eState) {
 		m_xmf3ToTarget = xmf3ToTarget; m_fRotate = fRotate; m_eState = eState;
 	}
 };

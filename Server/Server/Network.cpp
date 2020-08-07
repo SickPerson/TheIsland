@@ -2,7 +2,6 @@
 #include "Network.h"
 #include "PlayerProcess.h"
 #include "MonsterProcess.h"
-#include "NaturalProcess.h"
 
 #include "PacketMgr.h"
 #include "TimerMgr.h"
@@ -110,8 +109,8 @@ void CNetwork::StartServer()
 	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
 	cout << "AcceptThread Create" << endl;
 
-	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
-	cout << "UpdateThread Create" << endl;
+	/*m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
+	cout << "UpdateThread Create" << endl;*/
 
 	/*m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
 	cout << "DatabaseThread Create" << endl;*/
@@ -124,9 +123,9 @@ void CNetwork::StartServer()
 void CNetwork::CloseServer()
 {
 	/*m_pDatabaseThread->join();
-	cout << "DatabaseThread Close" << endl;*/
+	cout << "DatabaseThread Close" << endl;
 	m_pUpdateThread->join();
-	cout << "UpdateThread Close" << std::endl;
+	cout << "UpdateThread Close" << std::endl;*/
 	m_pAcceptThread->join();
 	cout << "AcceptThread Close" << std::endl;
 
@@ -200,7 +199,6 @@ void CNetwork::WorkerThread()
 			m_pPlayerProcess->RecvPacket(id, lpover_ex->m_MessageBuffer, num_byte);
 			break;
 		}
-
 		case EV_SEND:
 		{
 			// Send 오류가 발생하면 플레이어를 종료시킨다.
@@ -214,32 +212,18 @@ void CNetwork::WorkerThread()
 		}
 		case EV_MONSTER_UPDATE:
 		{
-			m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_usOtherID);
+			//m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_uiOtherID);
 			delete lpover_ex;
 			break;
 		}
 		case EV_NATURAL_UPDATE:
 		{
 			m_pNaturalProcess->UpdateNatural(lpover_ex->m_Status, id, lpover_ex->m_usOtherID);
+			delete lpover_ex;
 			break;
 		}
 		case EV_DB:
 		{
-			//DB_Event db_event;
-			//if (CDataBase::GetInst()->PopFromStateQueue(db_event)) {
-			//	switch (db_event.state) {
-			//	case DATABASE_SAVE_TYPE::DBS_LOGIN_SUCCESS:
-			//	{
-			//		m_pPlayerProcess->PlayerLogin(db_event);
-			//		break;
-			//	}
-			//	case DATABASE_SAVE_TYPE::DBS_LOGIN_FAIL:
-			//	{
-			//		//m_pPlayerProcess->PlayerLoginFail(db_event.client_num);
-			//		break;
-			//	}
-			//	}
-			//}
 			delete lpover_ex;
 			break;
 		}

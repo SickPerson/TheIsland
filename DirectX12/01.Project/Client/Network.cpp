@@ -217,7 +217,7 @@ void CNetwork::ProcessPacket(char* packet)
 {
 	switch (packet[1])
 	{
-	case SC_LOGIN_OK: 
+	case SC_LOGIN_OK:
 	{
 		SetLogin(true);
 		Recv_Login_OK_Packet(packet);
@@ -254,17 +254,17 @@ void CNetwork::ProcessPacket(char* packet)
 	}
 				  // NPC, MONSTER 관련
 	case SC_PUT_NPC: {
-		Recv_Put_Npc_Packet(packet);
+		//Recv_Put_Npc_Packet(packet);
 		break;
 	}
 	case SC_POS_NPC:
 	{
-		Recv_Pos_Npc_Packet(packet);
+		//Recv_Pos_Npc_Packet(packet);
 		break;
 	}
 	case SC_REMOVE_NPC:
 	{
-		Recv_Remove_Npc_Packet(packet);
+		//Recv_Remove_Npc_Packet(packet);
 		break;
 	}
 	}
@@ -515,9 +515,10 @@ void CNetwork::Recv_Put_Npc_Packet(char * packet)
 	Vec3 vPos = put_npc_packet->vPos;
 	Vec3 vRot = put_npc_packet->vRot;
 
-	UINT uiType = put_npc_packet->uiType;
+	m_cumAnimal[monster_id]->Transform()->SetLocalPos(vPos);
+	m_cumAnimal[monster_id]->Transform()->SetLocalRot(vRot);
 
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, uiType);
+	pScene->FindLayer(L"Animal")->AddGameObject(CNetwork::m_cumAnimal[monster_id]);
 }
 
 void CNetwork::Recv_Remove_Npc_Packet(char * packet)
@@ -525,18 +526,22 @@ void CNetwork::Recv_Remove_Npc_Packet(char * packet)
 	sc_remove_npc_packet* remove_npc_packet = reinterpret_cast<sc_remove_npc_packet*>(packet);
 	unsigned int monster_id = remove_npc_packet->id;
 
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalDestory(monster_id);
+	tEvent tEv;
+	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+
+	tEv.wParam = (DWORD_PTR)m_cumAnimal[monster_id];
+	CEventMgr::GetInst()->AddEvent(tEv);
 }
 
 void CNetwork::Recv_Pos_Npc_Packet(char * packet)
 {
 	sc_pos_npc_packet* pos_npc_packet = reinterpret_cast<sc_pos_npc_packet*>(packet);
 	unsigned int monster_id = pos_npc_packet->id;
-	Vec3 vPos = pos_npc_packet->vPos;
-	Vec3 vRot = pos_npc_packet->vRot;
-	UINT uiType = pos_npc_packet->uiType;
+	Vec3 pos = pos_npc_packet->vPos;
+	Vec3 rot = pos_npc_packet->vRot;
 
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, uiType);
+	m_cumAnimal[monster_id]->Transform()->SetLocalPos(pos);
+	m_cumAnimal[monster_id]->Transform()->SetLocalRot(rot);
 }
 
 void CNetwork::Recv_Animation_Npc_Packet(char * packet)
@@ -546,4 +551,19 @@ void CNetwork::Recv_Animation_Npc_Packet(char * packet)
 	char		monster_animation = animation_npc_packet->animation;
 
 	// 몬스터 애니메이션 키값 바꾸기
+}
+
+void CNetwork::Recv_Install_Housing_Packet(char * packet)
+{
+	sc_install_housing_packet* install_housing_packet = reinterpret_cast<sc_install_housing_packet*>(packet);
+	UINT type = install_housing_packet->housing_type;
+	Vec3 vPos = install_housing_packet->vLocalPos;
+	Vec3 vRot = install_housing_packet->vLocalRot;
+	Vec3 vScale = install_housing_packet->vLocalScale;
+
+	// INSTALL 전송
+}
+
+void CNetwork::Recv_Weather_Packet(char * packet)
+{
 }

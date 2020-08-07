@@ -4,7 +4,6 @@ concurrent_unordered_map<USHORT, CNatural*> CNaturalpool::m_cumNaturalPool;
 
 CNaturalpool::CNaturalpool()
 {
-	CNatural*	Natural;
 }
 
 

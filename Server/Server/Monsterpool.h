@@ -4,6 +4,8 @@
 
 class CMonsterpool
 {
+private:
+	USHORT m_usNumObject = 0;
 public:
 	explicit CMonsterpool();
 	virtual ~CMonsterpool();

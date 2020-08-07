@@ -30,6 +30,5 @@ public:
 	static void Send_Animation_Npc_Packet(USHORT playerId, USHORT NpcId, char AnimationType);
 
 public:
-	static void Send_Put_Natural_Packet(USHORT playerId, SHORT NaturalId);
-	
+	static void Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id);
 };

@@ -111,7 +111,7 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 
 	// [ Add Monster List ]
 	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
-		if (au.second->GetState() == (UINT)ANIMAL_UPDATE_TYPE::DIE) continue;
+		if (au.second->GetState() == OBJ_STATE_DIE) continue;
 		Vec3 monster_pos = au.second->GetLocalPos();
 
 		if (true == ObjectRangeCheck(player_pos, monster_pos, PLAYER_BETWEEN_RANGE))
@@ -124,7 +124,7 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 				ev.m_Do_Object = au.first;
 				ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
 				ev.m_From_Object = NO_TARGET;
-				ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::IDLE;
+				ev.m_ObjState = OBJ_STATE_IDLE;
 				ev.wakeup_time = high_resolution_clock::now() + 1s;
 				PushEventQueue(ev);
 			}
@@ -251,6 +251,36 @@ void CPlayerProcess::PlayerCollisionNatural(USHORT playerId, char * packet)
 	UpdateViewList(playerId);*/
 }
 
+void CPlayerProcess::PlayerCollisionHousing(USHORT playerId, char * packet)
+{
+}
+
+void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
+{
+	cs_install_housing_packet* install_housing_packet = reinterpret_cast<cs_install_housing_packet*>(packet);
+	
+	//USHORT housing_id = m_pHousingPool.
+	UINT eType = install_housing_packet->housing_type;
+	Vec3 vPos = install_housing_packet->vLocalPos;
+	Vec3 vRot = install_housing_packet->vLocalRot;
+	Vec3 vScale = install_housing_packet->vLocalScale;
+
+	USHORT housing_Id = m_pHousingPool->GetNum();
+	m_pHousingPool->InsertHousing(eType, vPos, vRot, vScale);
+
+	concurrent_unordered_set<USHORT> loginList;
+
+	CopyBeforeLoginList(loginList);
+
+	for (auto& au : loginList)
+	{
+		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
+		if (!bConnect)	continue;
+		if (au == playerId) continue;
+		CPacketMgr::Send_Install_Housing_Packet(au, housing_Id);
+	}
+}
+
 void CPlayerProcess::PlayerChat(USHORT _usID, char * _packet)
 {
 	cs_chat_packet* chat_packet = reinterpret_cast<cs_chat_packet*>(_packet);
@@ -292,7 +322,7 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 	//After List에 시야처리 리스트 추가 작업 [ Monster ]
 	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
 		// 만약 몬스터가 죽어있으면 continue;
-		if (au.second->GetState() == (UINT)ANIMAL_UPDATE_TYPE::DIE) continue;
+		if (au.second->GetState() == OBJ_STATE_DIE) continue;
 		
 		Vec3 monster_pos = au.second->GetLocalPos();
 		// 만약 몬스터가 플레이어의 범위 내에 들어와 있다면 시야처리에 넣어준다.
@@ -321,7 +351,7 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 					ev.m_Do_Object = monster_id;
 					ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
 					ev.m_From_Object = NO_TARGET;
-					ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::IDLE;
+					ev.m_ObjState = OBJ_STATE_IDLE;
 					ev.wakeup_time = high_resolution_clock::now() + 1s;
 					PushEventQueue(ev);
 				}
@@ -332,11 +362,11 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 					ev.m_EventType = EV_MONSTER_UPDATE;
 					ev.m_From_Object = playerId;
 					if (B_WARLIKE == monster_type)
-						ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::FOLLOW;
+						ev.m_ObjState = OBJ_STATE_FOLLOW;
 					else if (B_PASSIVE == monster_type)
-						ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::IDLE;
+						ev.m_ObjState = OBJ_STATE_IDLE;
 					else if (B_EVASION == monster_type)
-						ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::EVASION;
+						ev.m_ObjState = OBJ_STATE_EVASION;
 					ev.wakeup_time = high_resolution_clock::now() + 1s;
 					PushEventQueue(ev);
 				}

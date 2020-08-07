@@ -3,19 +3,14 @@
 /* ----------------------------------------
 [NETWORK]
 -----------------------------------------*/
-constexpr	USHORT	SERVER_PORT = 9000;
-constexpr	USHORT	MAX_USER = 100;
+constexpr	int				SERVER_PORT = 9000;
+constexpr	USHORT	MAX_USER	= 100;
 constexpr	USHORT	NO_TARGET = MAX_USER;
 constexpr	USHORT	ANIMAL_BEAR = 50;
 constexpr	USHORT	ANIMAL_BOAR = 50;
 constexpr	USHORT	ANIMAL_DEER = 100;
 constexpr	USHORT	ANIMAL_WOLF = 100;
 constexpr	USHORT	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER;
-constexpr	USHORT	MAX_TREE_COUNT = 10;
-constexpr	USHORT	MAX_STONE_COUNT = 10;
-constexpr	USHORT	MAX_BUSH_COUNT = 10;
-constexpr	USHORT	MAX_NONE_COUNT = 10;
-constexpr	USHORT	MAX_NATURAL = MAX_TREE_COUNT + MAX_STONE_COUNT + MAX_BUSH_COUNT + MAX_NONE_COUNT;
 constexpr	int	MAX_BUF = 255;
 constexpr	int	MAX_STR_LEN = 15;
 constexpr	int MAX_MSG_LEN = 50;
@@ -30,7 +25,10 @@ constexpr	char	CS_CHAT =	2;
 constexpr	char	CS_LOGOUT = 3;
 constexpr	char	CS_ROT =	4;
 constexpr	char	CS_ANIMAL_COLLISION = 5;
-constexpr	int		CS_END =	6;
+constexpr	char	CS_NATURAL_COLLISION = 6;
+constexpr	char	CS_HOUSING_COLLISION = 7;
+constexpr	char	CS_HOUSING_INSTALL = 8;
+constexpr	int		CS_END =	10;
 
 // Server -> Client Packet Protocol
 constexpr	char	SC_LOGIN_OK = 0;
@@ -42,14 +40,21 @@ constexpr	char	SC_POS = 5;
 constexpr	char	SC_ROT = 6;
 constexpr	char	SC_CHAT = 7;
 constexpr	char	SC_ANIMATION_PLAYER = 8;
+
 // Monster, NPC °ü·Ã
-constexpr	char	SC_WAKE_UP_NPC = 9;
-constexpr	char	SC_PUT_NPC = 10;
-constexpr	char	SC_POS_NPC = 11;
-constexpr	char	SC_REMOVE_NPC = 12;
-constexpr	char	SC_STATUS_NPC = 13;
-constexpr	char	SC_ANIMATION_NPC = 14;
-constexpr	char	SC_END = 15;
+constexpr	char	SC_WAKE_UP_NPC = 10;
+constexpr	char	SC_PUT_NPC = 11;
+constexpr	char	SC_POS_NPC = 12;
+constexpr	char	SC_REMOVE_NPC = 13;
+constexpr	char	SC_STATUS_NPC = 14;
+constexpr	char	SC_ANIMATION_NPC = 15;
+// Natural
+constexpr	char	SC_PUT_NATURAL = 20;
+constexpr	char	SC_REMOVE_NATURAL = 21;
+// Housing
+constexpr	char	SC_INSTALL_HOUSING = 25;
+
+constexpr	char	SC_END = 30;
 
 // About Player
 constexpr float PLAYER_BETWEEN_RANGE = 3000.f;
@@ -163,17 +168,15 @@ struct sc_put_npc_packet {
 
 	Vec3	vPos;
 	Vec3	vRot;
-	UINT	uiType;
 };
 
 struct sc_pos_npc_packet{
-	char	size;
-	char	type;
-	USHORT	id;
-
-	Vec3	vPos;
-	Vec3	vRot;
-	UINT	uiType;
+	char size;
+	char type;
+	USHORT id;
+	Vec3 vPos;
+	Vec3 vRot;
+	unsigned move_time;
 };
 
 struct sc_remove_npc_packet
@@ -200,6 +203,17 @@ struct sc_animation_npc_packet
 	char type;
 	char animation;
 	USHORT id;
+};
+
+// [ Housing ]
+struct sc_install_housing_packet
+{
+	char	size;
+	char	type;
+	UINT	housing_type;
+	Vec3	vLocalPos;
+	Vec3	vLocalRot;
+	Vec3	vLocalScale;
 };
 
 // ___________________________________________________________________
@@ -270,6 +284,17 @@ struct cs_collision_packet {
 	char	type;
 	USHORT id;
 	bool	bRun;
+};
+
+// [ Housing ] 
+struct cs_install_housing_packet
+{
+	char	size;
+	char	type;
+	UINT	housing_type;
+	Vec3	vLocalPos;
+	Vec3	vLocalRot;
+	Vec3	vLocalScale;
 };
 // ___________________________________________________________________
 //						[ Sever -> Client ]

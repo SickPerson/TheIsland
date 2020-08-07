@@ -31,6 +31,9 @@
     <Filter Include="03. Process\01. Process">
       <UniqueIdentifier>{a2ae356d-6948-4e91-b531-90863949d3b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Process\02. Player">
+      <UniqueIdentifier>{04ced422-0a38-4cdc-a826-c2b1d14be0e7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="04. Object\01. Dynamic">
       <UniqueIdentifier>{784145b7-bc7b-4d3e-95f1-91e9a62ba34a}</UniqueIdentifier>
     </Filter>
@@ -52,6 +55,9 @@
     <Filter Include="04. Object\01. Dynamic\01. Player\Playerpool">
       <UniqueIdentifier>{f968f2b4-682d-4c2c-81ef-dcb2d2a1148a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Process\03. Monster">
+      <UniqueIdentifier>{c655b8ec-3b79-4cc6-af96-3cfbe3d2a890}</UniqueIdentifier>
+    </Filter>
     <Filter Include="04. Object\01. Dynamic\02. Monster">
       <UniqueIdentifier>{b23bdb45-f408-4089-b1b3-904cff59e302}</UniqueIdentifier>
     </Filter>
@@ -67,14 +73,14 @@
     <Filter Include="04. Object\02. Static\01. Natural\Naturalpool">
       <UniqueIdentifier>{8918414a-f5ea-4cf7-b911-d436db09ca91}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Process\02. PlayerProcess">
-      <UniqueIdentifier>{04ced422-0a38-4cdc-a826-c2b1d14be0e7}</UniqueIdentifier>
+    <Filter Include="04. Object\02. Static\02. Housing">
+      <UniqueIdentifier>{aac9e09f-d991-48b2-ad01-6079c53a500b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Process\03. MonsterProcess">
-      <UniqueIdentifier>{c655b8ec-3b79-4cc6-af96-3cfbe3d2a890}</UniqueIdentifier>
+    <Filter Include="04. Object\02. Static\02. Housing\Housingpool">
+      <UniqueIdentifier>{0538de17-821f-4059-83ca-0548bec68673}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Process\04. NaturalProcess">
-      <UniqueIdentifier>{bda1811b-6ddf-4b5f-b10c-7eba0e1d6f0f}</UniqueIdentifier>
+      <UniqueIdentifier>{5423735c-6c5f-43ea-8bd5-12c8403d5971}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -94,7 +100,7 @@
       <Filter>03. Process\01. Process</Filter>
     </ClCompile>
     <ClCompile Include="PlayerProcess.cpp">
-      <Filter>03. Process\02. PlayerProcess</Filter>
+      <Filter>03. Process\02. Player</Filter>
     </ClCompile>
     <ClCompile Include="TimerMgr.cpp">
       <Filter>07. Util\01. TimerMgr</Filter>
@@ -121,13 +127,19 @@
       <Filter>99.default\02. SimpleMath</Filter>
     </ClCompile>
     <ClCompile Include="MonsterProcess.cpp">
-      <Filter>03. Process\03. MonsterProcess</Filter>
+      <Filter>03. Process\03. Monster</Filter>
     </ClCompile>
     <ClCompile Include="Naturalpool.cpp">
       <Filter>04. Object\02. Static\01. Natural\Naturalpool</Filter>
     </ClCompile>
+    <ClCompile Include="Housing.cpp">
+      <Filter>04. Object\02. Static\02. Housing</Filter>
+    </ClCompile>
+    <ClCompile Include="Housingpool.cpp">
+      <Filter>04. Object\02. Static\02. Housing\Housingpool</Filter>
+    </ClCompile>
     <ClCompile Include="Natural.cpp">
-      <Filter>04. Object\02. Static</Filter>
+      <Filter>04. Object\02. Static\01. Natural</Filter>
     </ClCompile>
     <ClCompile Include="NaturalProcess.cpp">
       <Filter>03. Process\04. NaturalProcess</Filter>
@@ -159,7 +171,7 @@
       <Filter>03. Process\01. Process</Filter>
     </ClInclude>
     <ClInclude Include="PlayerProcess.h">
-      <Filter>03. Process\02. PlayerProcess</Filter>
+      <Filter>03. Process\02. Player</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="TimerMgr.h">
@@ -187,13 +199,19 @@
       <Filter>99.default\02. SimpleMath</Filter>
     </ClInclude>
     <ClInclude Include="MonsterProcess.h">
-      <Filter>03. Process\03. MonsterProcess</Filter>
+      <Filter>03. Process\03. Monster</Filter>
     </ClInclude>
     <ClInclude Include="Naturalpool.h">
       <Filter>04. Object\02. Static\01. Natural\Naturalpool</Filter>
     </ClInclude>
+    <ClInclude Include="Housing.h">
+      <Filter>04. Object\02. Static\02. Housing</Filter>
+    </ClInclude>
+    <ClInclude Include="Housingpool.h">
+      <Filter>04. Object\02. Static\02. Housing\Housingpool</Filter>
+    </ClInclude>
     <ClInclude Include="Natural.h">
-      <Filter>04. Object\02. Static</Filter>
+      <Filter>04. Object\02. Static\01. Natural</Filter>
     </ClInclude>
     <ClInclude Include="NaturalProcess.h">
       <Filter>03. Process\04. NaturalProcess</Filter>

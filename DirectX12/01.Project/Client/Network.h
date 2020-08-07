@@ -94,6 +94,8 @@ public:
 	//void Send_Rot_Packet();
 	void Send_Chat_Packet(string message);
 	void Send_Collision_Animal_Packet(unsigned short animalId, bool bRun);
+
+	//void Send_Install_Housing_Packet(USHORT )
 public:
 	void Recv_Login_OK_Packet(char* packet);
 	void Recv_Login_Fail_Packet(char* packet);
@@ -110,6 +112,15 @@ public:
 	void Recv_Remove_Npc_Packet(char* packet);
 	void Recv_Pos_Npc_Packet(char* packet);
 	void Recv_Animation_Npc_Packet(char* packet);
+
+public:
+	
+public: // Housing
+	void Recv_Install_Housing_Packet(char* packet);
+
+public: //etc
+	void Recv_Weather_Packet(char* packet);
+
 public:
 	void SetChatObj(CGameObject* pObj) { m_pChat = pObj; }
 	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }

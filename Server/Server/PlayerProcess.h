@@ -33,6 +33,15 @@ public:
 		m_fpPacketProcess[CS_ANIMAL_COLLISION] = [&](USHORT playerId, char* packet) {
 			PlayerCollisionAnimal(playerId, packet);
 		};
+		m_fpPacketProcess[CS_NATURAL_COLLISION] = [&](USHORT playerId, char* packet) {
+			PlayerCollisionNatural(playerId, packet);
+		};
+		m_fpPacketProcess[CS_HOUSING_COLLISION] = [&](USHORT playerId, char* packet) {
+			PlayerCollisionHousing(playerId, packet);
+		};
+		m_fpPacketProcess[CS_HOUSING_INSTALL] = [&](USHORT playerId, char* packet) {
+			PlayerInstallHousing(playerId, packet);
+		}
 	}
 
 	void AcceptClient(const SOCKET& sSocket, USHORT playerId);
@@ -45,6 +54,8 @@ public:
 	void PlayerRot(USHORT playerId, char* packet);
 	void PlayerCollisionAnimal(USHORT playerId, char* packet);
 	void PlayerCollisionNatural(USHORT playerId, char* packet);
+	void PlayerCollisionHousing(USHORT playerId, char* packet);
+	void PlayerInstallHousing(USHORT playerId, char* packet);
 
 public:
 	void UpdateViewList(USHORT playerId);

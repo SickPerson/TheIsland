@@ -29,7 +29,7 @@ CMonsterpool::CMonsterpool()
 			Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
 			Animal->SetOffsetScale(vOffsetScale);
 		}
-		else if (i < ANIMAL_BOAR)
+		else if (i < ANIMAL_BEAR + ANIMAL_BOAR)
 		{
 			tAnimalStatus tStatus;
 			tStatus.fHealth = 200.f;
@@ -44,7 +44,7 @@ CMonsterpool::CMonsterpool()
 			Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
 			Animal->SetOffsetScale(vOffsetScale);
 		}
-		else if (i < ANIMAL_DEER)
+		else if (i < ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER)
 		{
 			tAnimalStatus tStatus;
 			tStatus.fHealth = 100.f;
@@ -59,7 +59,7 @@ CMonsterpool::CMonsterpool()
 			Vec3 vOffsetScale = Vec3(30.f, 30.f, 30.f);
 			Animal->SetOffsetScale(vOffsetScale);
 		}
-		else if (i < ANIMAL_WOLF)
+		else if (i < ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER + ANIMAL_WOLF)
 		{
 			tAnimalStatus tStatus;
 			tStatus.fHealth = 200.f;

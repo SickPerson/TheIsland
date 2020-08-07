@@ -140,6 +140,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Natural.h" />
+    <ClInclude Include="Housing.h" />
+    <ClInclude Include="Housingpool.h" />
     <ClInclude Include="MonsterProcess.h" />
     <ClInclude Include="DataBase.h" />
     <ClInclude Include="define.h" />
@@ -168,6 +170,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Natural.cpp" />
+    <ClCompile Include="Housing.cpp" />
+    <ClCompile Include="Housingpool.cpp" />
     <ClCompile Include="MonsterProcess.cpp" />
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="main.cpp" />
