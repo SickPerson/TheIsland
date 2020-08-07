@@ -349,15 +349,17 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 			pObject = new CGameObject;
 			pObject->AddComponent(new CTransform);
 			pObject->AddComponent(new CParticleSystem);
+			pObject->FrustumCheck(false);
 			pObject->SetName(L"FireEffect");
 			pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 60.f));
-			pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+			pObject->Transform()->SetLocalScale(Vec3(1.25f, 1.25f, 1.25f));
 			m_pObj->AddChild(pObject);
 
 			pObject = new CGameObject;
 			pObject->AddComponent(new CTransform);
 			pObject->AddComponent(new CParticleSystem);
 			pObject->SetName(L"FireEffect2");
+			pObject->FrustumCheck(false);
 			pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 40.f));
 			pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 			pObject->ParticleSystem()->SetStartColor(Vec4(1.f, 0.7f, 0.f, 1.f));
@@ -369,12 +371,12 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 			pObject->AddComponent(new CLight3D);
 			pObject->SetName(L"FireLight");
 
-			pObject->Light3D()->SetLightPos(Vec3(0.f, 40.f, 0.f));
+			pObject->Light3D()->SetLightPos(Vec3(0.f, 0.f, 30.f));
 			pObject->Light3D()->SetLightType(LIGHT_TYPE::POINT);
-			pObject->Light3D()->SetDiffuseColor(Vec3(1.f, 1.f, 1.f));
+			pObject->Light3D()->SetDiffuseColor(Vec3(0.9f, 0.5f, 0.1f));
 			pObject->Light3D()->SetSpecular(Vec3(0.3f, 0.3f, 0.3f));
 			pObject->Light3D()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
-			pObject->Light3D()->SetLightRange(1000.f);
+			pObject->Light3D()->SetLightRange(2000.f);
 
 			pObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
@@ -414,7 +416,7 @@ void CToolItemScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int n
 
 			vPos += -vDir * 300.f;
 			vPos.y = CNaviMgr::GetInst()->GetY(vPos);
-			vPos.y += 20;
+			//vPos.y += 20;
 
 			m_pObj->Transform()->SetLocalPos(vPos);
 		}

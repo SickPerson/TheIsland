@@ -46,6 +46,17 @@ CInventoryScript::~CInventoryScript()
 
 void CInventoryScript::Update()
 {
+	// 아이템 버리기
+	//if (KEY_TAB(KEY_TYPE::KEY_R))
+	//{
+	//	int num = m_pPlayer->GetScript<CPlayerScript>()->GetQuickSlot();
+	//	if (!m_vecItem[vecIndex[i]]->SetItemIncrease(vecRecipe[i].iCount * -1))
+	//	{
+	//		m_vecItem[vecIndex[i]] = NULL;
+	//		m_bAddable = true;
+	//	}
+	//}
+
 	if (m_bActive)
 	{
 		if (KEY_TAB(KEY_TYPE::KEY_LBTN))

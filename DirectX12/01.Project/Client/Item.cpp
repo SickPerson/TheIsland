@@ -335,7 +335,7 @@ vector<tItemRecipe> GetItemRecipe(ITEM_TYPE eType)
 		tInfo.iCount = 3;
 		vRecipe.push_back(tInfo);
 		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
-		tInfo.iCount = 3;
+		tInfo.iCount = 1;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_WOODCLUB:
@@ -360,7 +360,7 @@ vector<tItemRecipe> GetItemRecipe(ITEM_TYPE eType)
 		break;
 	case ITEM_MAP:
 		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
-		tInfo.iCount = 8;
+		tInfo.iCount = 4;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_ARROW:
@@ -372,28 +372,28 @@ vector<tItemRecipe> GetItemRecipe(ITEM_TYPE eType)
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_BANDAGE:
-		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
-		tInfo.iCount = 1;
+		tInfo.eItem = ITEM_TYPE::ITEM_CLOTH;
+		tInfo.iCount = 2;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_TSHIRT:
-		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
-		tInfo.iCount = 5;
+		tInfo.eItem = ITEM_TYPE::ITEM_CLOTH;
+		tInfo.iCount = 10;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_SHIRT:
-		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
-		tInfo.iCount = 10;
+		tInfo.eItem = ITEM_TYPE::ITEM_CLOTH;
+		tInfo.iCount = 20;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_JACKET:
 		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
-		tInfo.iCount = 20;
+		tInfo.iCount = 10;
 		vRecipe.push_back(tInfo);
 		break;
 	case ITEM_BLUEPRINT:
-		tInfo.eItem = ITEM_TYPE::ITEM_LEATHER;
-		tInfo.iCount = 3;
+		tInfo.eItem = ITEM_TYPE::ITEM_CLOTH;
+		tInfo.iCount = 10;
 		vRecipe.push_back(tInfo);
 		break;
 	default:

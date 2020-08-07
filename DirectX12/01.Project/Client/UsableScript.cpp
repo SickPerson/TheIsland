@@ -4,6 +4,8 @@
 #include "PlayerScript.h"
 #include "InventoryScript.h"
 
+#include <Engine/NaviMgr.h>
+
 #include <iostream>
 
 CUsableScript::CUsableScript(ITEM_TYPE eType, int iCount)
@@ -74,11 +76,29 @@ void CUsableScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->OnAddable(num);
 		}
 	}
+
+	else if (m_eItemType == ITEM_EMPTY_BOTTLE)
+	{
+		Vec3 vPos = pHost->Transform()->GetLocalPos();
+		Vec3 vDir = pHost->Transform()->GetWorldDir(DIR_TYPE::FRONT);
+		vPos += -vDir * 80.f;
+		vPos.y = CNaviMgr::GetInst()->GetY(vPos);
+		if (vPos.y <= 120.f)
+		{
+			CItemScript* pItem = new CUsableScript(ITEM_WATER_BOTTLE);
+			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+
+			if (!SetItemIncrease(-1))
+			{
+				pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->OnAddable(num);
+			}
+		}
+	}
 }
 
 void CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	
+	bool bUse = true;
 	if (m_eItemType > ITEM_FOOD && m_eItemType < ITEM_FOOD_END)
 	{
 		if (m_eItemType == ITEM_MEAT)
@@ -94,15 +114,43 @@ void CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	}
 	else if (m_eItemType > ITEM_DRINK && m_eItemType < ITEM_DRINK_END)
 	{
-		pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreasefThirst(m_fValue);
+		if (m_eItemType == ITEM_EMPTY_BOTTLE)
+		{
+			Vec3 vPos = pHost->Transform()->GetLocalPos();
+			Vec3 vDir = pHost->Transform()->GetWorldDir(DIR_TYPE::FRONT);
+			vPos += -vDir * 80.f;
+			vPos.y = CNaviMgr::GetInst()->GetY(vPos);
+			if (vPos.y <= 120.f)
+			{
+				CItemScript* pItem = new CUsableScript(ITEM_WATER_BOTTLE);
+				pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+			}
+			else
+			{
+				bUse = false;
+			}
+		}
+		else
+		{
+			pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreasefThirst(m_fValue);
+			if (m_eItemType == ITEM_WATER_BOTTLE)
+			{
+				CItemScript* pItem = new CUsableScript(ITEM_EMPTY_BOTTLE);
+				pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+			}
+		}
 	}
 	else if (m_eItemType > ITEM_HEAL && m_eItemType < ITEM_HEAL_END)
 	{
 		pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreaseHealth(m_fValue);
 	}
-	if (!SetItemIncrease(-1))
+
+	if (bUse)
 	{
-		pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->OnAddable(num);
+		if (!SetItemIncrease(-1))
+		{
+			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->OnAddable(num);
+		}
 	}
 }
 

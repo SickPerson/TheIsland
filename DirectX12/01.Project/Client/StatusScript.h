@@ -24,7 +24,7 @@ public:
 	CLONE(CStatusScript);
 
 public:
-	void Damage(float fDamage);
+	void Damage(float fDamage, bool bTrueDamage = false);
 
 	void SetIncreaseHealth(float fAmount);
 	void SetIncreaseHungry(float fAmount);
