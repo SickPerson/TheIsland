@@ -116,7 +116,7 @@ void CPlayer::SetDamage(float & fDamage)
 	m_tPlayerStatus.fSpeed = fDamage;
 }
 
-void CPlayer::SetNumID(unsigned short & numID)
+void CPlayer::SetNumID(USHORT & numID)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::NUMID]);
 	m_uiID = numID;
@@ -176,7 +176,7 @@ float & CPlayer::GetDamage()
 	return m_tPlayerStatus.fDamage;
 }
 
-unsigned short & CPlayer::GetNumID()
+USHORT & CPlayer::GetNumID()
 {
 	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::NUMID]);
 	return m_uiID;

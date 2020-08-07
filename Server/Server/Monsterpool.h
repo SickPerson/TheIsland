@@ -4,13 +4,11 @@
 
 class CMonsterpool
 {
-private:
-	unsigned short m_usNumObject = 0;
 public:
 	explicit CMonsterpool();
 	virtual ~CMonsterpool();
 
 public:
-	static concurrent_unordered_map<unsigned short, CMonster*> m_cumMonsterPool;
+	static concurrent_unordered_map<USHORT, CMonster*> m_cumMonsterPool;
 };
 

@@ -3,6 +3,7 @@
 
 class CPlayerProcess;
 class CMonsterProcess;
+class CNaturalProcess;
 
 class CNetwork
 {
@@ -26,9 +27,10 @@ private:
 private:
 	CPlayerProcess*		m_pPlayerProcess;
 	CMonsterProcess*	m_pMonsterProcess;
+	CNaturalProcess*	m_pNaturalProcess;
 
 private:
-	volatile unsigned short m_UserID;
+	volatile USHORT m_UserID;
 
 public:
 	void Initialize();

@@ -3,14 +3,19 @@
 /* ----------------------------------------
 [NETWORK]
 -----------------------------------------*/
-constexpr	int				SERVER_PORT = 9000;
-constexpr	unsigned short	MAX_USER	= 100;
-constexpr	unsigned short	NO_TARGET = MAX_USER;
-constexpr	unsigned short	ANIMAL_BEAR = 50;
-constexpr	unsigned short	ANIMAL_BOAR = 50;
-constexpr	unsigned short	ANIMAL_DEER = 100;
-constexpr	unsigned short	ANIMAL_WOLF = 100;
-constexpr	unsigned short	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER;
+constexpr	USHORT	SERVER_PORT = 9000;
+constexpr	USHORT	MAX_USER = 100;
+constexpr	USHORT	NO_TARGET = MAX_USER;
+constexpr	USHORT	ANIMAL_BEAR = 50;
+constexpr	USHORT	ANIMAL_BOAR = 50;
+constexpr	USHORT	ANIMAL_DEER = 100;
+constexpr	USHORT	ANIMAL_WOLF = 100;
+constexpr	USHORT	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER;
+constexpr	USHORT	MAX_TREE_COUNT = 10;
+constexpr	USHORT	MAX_STONE_COUNT = 10;
+constexpr	USHORT	MAX_BUSH_COUNT = 10;
+constexpr	USHORT	MAX_NONE_COUNT = 10;
+constexpr	USHORT	MAX_NATURAL = MAX_TREE_COUNT + MAX_STONE_COUNT + MAX_BUSH_COUNT + MAX_NONE_COUNT;
 constexpr	int	MAX_BUF = 255;
 constexpr	int	MAX_STR_LEN = 15;
 constexpr	int MAX_MSG_LEN = 50;
@@ -58,7 +63,7 @@ constexpr float MONSTER_BETWEEN_RANGE = 100.f;
 struct sc_login_ok_packet {
 	char			size;
 	char			type;
-	unsigned short	id;
+	USHORT	id;
 };
 
 struct sc_login_fail_packet {
@@ -69,13 +74,13 @@ struct sc_login_fail_packet {
 struct sc_logout_packet{
 	char	size;
 	char	type;
-	unsigned short id;
+	USHORT id;
 };
 
 struct sc_death_player_packet {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 
 	float	fHealth;
 	float	fStamina;
@@ -88,7 +93,7 @@ struct sc_death_player_packet {
 struct sc_status_player_packet{
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 
 	float	fHealth;
 	float	fStamina;
@@ -101,7 +106,7 @@ struct sc_status_player_packet{
 struct sc_put_player_packet {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 
 	Vec3	vPos;
 	Vec3	vRot;
@@ -110,7 +115,7 @@ struct sc_put_player_packet {
 struct sc_pos_player_packet{
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 
 	Vec3 vPos;
 	Vec3 vRot;
@@ -120,7 +125,7 @@ struct sc_pos_player_packet{
 struct sc_rot_player_packet {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 	Vec3	vRot;
 };
 
@@ -134,7 +139,7 @@ struct sc_chat_packet {
 struct sc_remove_player_packet {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 };
 
 struct sc_animation_player_packet
@@ -142,45 +147,47 @@ struct sc_animation_player_packet
 	char size;
 	char type;
 	char animation;
-	unsigned short id;
+	USHORT id;
 };
 
 // NPC
 struct sc_wake_up_packet{
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 };
 struct sc_put_npc_packet {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 
 	Vec3	vPos;
 	Vec3	vRot;
+	UINT	uiType;
 };
 
 struct sc_pos_npc_packet{
-	char size;
-	char type;
-	unsigned short id;
-	Vec3 vPos;
-	Vec3 vRot;
-	unsigned move_time;
+	char	size;
+	char	type;
+	USHORT	id;
+
+	Vec3	vPos;
+	Vec3	vRot;
+	UINT	uiType;
 };
 
 struct sc_remove_npc_packet
 {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 };
 
 struct sc_status_npc_packet
 {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 
 	float fHealth;
 	float fStamina;
@@ -192,7 +199,7 @@ struct sc_animation_npc_packet
 	char size;
 	char type;
 	char animation;
-	unsigned short id;
+	USHORT id;
 };
 
 // ___________________________________________________________________
@@ -202,14 +209,14 @@ struct sc_animation_npc_packet
 struct cs_login_packet {
 	char			size;
 	char			type;
-	unsigned short	id;
+	USHORT	id;
 	wchar_t			player_id[MAX_STR_LEN];	
 };
 
 struct cs_move_packet {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 
 	Vec3 vLocalPos;
 	bool bRun;
@@ -222,7 +229,7 @@ struct cs_move_packet {
 struct cs_pos_packet {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 
 	int		iHp;
 	float	fSpeed;
@@ -234,7 +241,7 @@ struct cs_pos_packet {
 struct cs_rot_packet {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 	Vec2	vDrag;
 	Vec3	vRot;
 };
@@ -242,7 +249,7 @@ struct cs_rot_packet {
 struct cs_chat_packet {
 	char size;
 	char type;
-	unsigned short id;
+	USHORT id;
 	char meesage[MAX_STR_LEN];
 };
 
@@ -255,13 +262,13 @@ struct cs_packet_chat {
 struct cs_packet_logout {
 	char	size;
 	char	type;
-	unsigned short id;
+	USHORT id;
 };
 
 struct cs_collision_packet {
 	char	size;
 	char	type;
-	unsigned short id;
+	USHORT id;
 	bool	bRun;
 };
 // ___________________________________________________________________
@@ -270,7 +277,7 @@ struct cs_collision_packet {
 struct sc_monster_login_packet {
 	char	size;
 	char	type;
-	unsigned short id;
+	USHORT id;
 };
 
 #pragma pack (pop)

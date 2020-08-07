@@ -2,6 +2,7 @@
 #include "Network.h"
 #include "PlayerProcess.h"
 #include "MonsterProcess.h"
+#include "NaturalProcess.h"
 
 #include "PacketMgr.h"
 #include "TimerMgr.h"
@@ -109,8 +110,8 @@ void CNetwork::StartServer()
 	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
 	cout << "AcceptThread Create" << endl;
 
-	/*m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
-	cout << "UpdateThread Create" << endl;*/
+	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
+	cout << "UpdateThread Create" << endl;
 
 	/*m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
 	cout << "DatabaseThread Create" << endl;*/
@@ -123,9 +124,9 @@ void CNetwork::StartServer()
 void CNetwork::CloseServer()
 {
 	/*m_pDatabaseThread->join();
-	cout << "DatabaseThread Close" << endl;
+	cout << "DatabaseThread Close" << endl;*/
 	m_pUpdateThread->join();
-	cout << "UpdateThread Close" << std::endl;*/
+	cout << "UpdateThread Close" << std::endl;
 	m_pAcceptThread->join();
 	cout << "AcceptThread Close" << std::endl;
 
@@ -172,7 +173,7 @@ void CNetwork::WorkerThread()
 		BOOL	is_error = GetQueuedCompletionStatus(m_hIocp, &num_byte, p_key,
 			reinterpret_cast<LPWSAOVERLAPPED *>(&lpover_ex), INFINITE);
 
-		unsigned short id = static_cast<unsigned>(key64);
+		USHORT id = static_cast<unsigned>(key64);
 
 		// 비정상 종료 : FALSE, 수신 바이트 크기 = 0
 		// 정상 종료 : TRUE, 수신 바이트 크기 = 0
@@ -213,8 +214,13 @@ void CNetwork::WorkerThread()
 		}
 		case EV_MONSTER_UPDATE:
 		{
-			//m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_uiOtherID);
+			m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_usOtherID);
 			delete lpover_ex;
+			break;
+		}
+		case EV_NATURAL_UPDATE:
+		{
+			m_pNaturalProcess->UpdateNatural(lpover_ex->m_Status, id, lpover_ex->m_usOtherID);
 			break;
 		}
 		case EV_DB:

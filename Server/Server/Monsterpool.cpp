@@ -1,6 +1,6 @@
 #include "Monsterpool.h"
 #include <random>
-concurrent_unordered_map<unsigned short, CMonster*> CMonsterpool::m_cumMonsterPool;
+concurrent_unordered_map<USHORT, CMonster*> CMonsterpool::m_cumMonsterPool;
 
 CMonsterpool::CMonsterpool()
 {

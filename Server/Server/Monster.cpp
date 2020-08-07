@@ -52,7 +52,7 @@ void CMonster::SetKind(ANIMAL_TYPE & eKind)
 	m_tStatus.eKind = eKind;
 }
 
-void CMonster::SetTarget(unsigned short playerId)
+void CMonster::SetTarget(USHORT playerId)
 {
 	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::TARGET]);
 	m_uiTarget = playerId;
@@ -106,7 +106,7 @@ ANIMAL_TYPE & CMonster::GetKind()
 	return m_tStatus.eKind;
 }
 
-unsigned short & CMonster::GetTarget()
+USHORT & CMonster::GetTarget()
 {
 	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::TARGET]);
 	return m_uiTarget;

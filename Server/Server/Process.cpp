@@ -3,7 +3,7 @@
 
 CPlayerpool* CProcess::m_pPlayerPool = nullptr;
 CMonsterpool*	CProcess::m_pMonsterPool = nullptr;
-concurrent_unordered_set<unsigned short> CProcess::m_cusLoginList;
+concurrent_unordered_set<USHORT> CProcess::m_cusLoginList;
 concurrent_priority_queue<Update_Event>	CProcess::m_cpqEventQueue;
 
 CProcess::CProcess()

@@ -23,14 +23,14 @@ CPlayerProcess::~CPlayerProcess()
 	}
 }
 
-void CPlayerProcess::AcceptClient(const SOCKET& sSocket, unsigned short playerId)
+void CPlayerProcess::AcceptClient(const SOCKET& sSocket, USHORT playerId)
 {
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetSocket(sSocket);
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetNumID(playerId);
 	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetRecvState();
 }
 
-void CPlayerProcess::RecvPacket(unsigned short playerId, char * packet, DWORD bytesize)
+void CPlayerProcess::RecvPacket(USHORT playerId, char * packet, DWORD bytesize)
 {
 	char* cPacket = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->RecvEvent(bytesize, packet);
 
@@ -40,7 +40,7 @@ void CPlayerProcess::RecvPacket(unsigned short playerId, char * packet, DWORD by
 	}
 }
 
-void CPlayerProcess::PlayerLogin(unsigned short playerId, char * packet)
+void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 {
 	cs_login_packet*	login_packet = reinterpret_cast<cs_login_packet*>(packet);
 	
@@ -86,7 +86,7 @@ void CPlayerProcess::PlayerLogin(unsigned short playerId, char * packet)
 	// Player ViewList Update
 	Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 
-	concurrent_unordered_set<unsigned short> list;
+	concurrent_unordered_set<USHORT> list;
 	CopyBeforeLoginList(list);
 
 	// [ Add Player List ]
@@ -111,7 +111,7 @@ void CPlayerProcess::PlayerLogin(unsigned short playerId, char * packet)
 
 	// [ Add Monster List ]
 	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
-		if (au.second->GetState() == OBJ_STATE_DIE) continue;
+		if (au.second->GetState() == (UINT)ANIMAL_UPDATE_TYPE::DIE) continue;
 		Vec3 monster_pos = au.second->GetLocalPos();
 
 		if (true == ObjectRangeCheck(player_pos, monster_pos, PLAYER_BETWEEN_RANGE))
@@ -124,7 +124,7 @@ void CPlayerProcess::PlayerLogin(unsigned short playerId, char * packet)
 				ev.m_Do_Object = au.first;
 				ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
 				ev.m_From_Object = NO_TARGET;
-				ev.m_ObjState = OBJ_STATE_IDLE;
+				ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::IDLE;
 				ev.wakeup_time = high_resolution_clock::now() + 1s;
 				PushEventQueue(ev);
 			}
@@ -133,7 +133,7 @@ void CPlayerProcess::PlayerLogin(unsigned short playerId, char * packet)
 	}
 }
 
-void CPlayerProcess::PlayerMove(unsigned short playerId, char * packet)
+void CPlayerProcess::PlayerMove(USHORT playerId, char * packet)
 {
 	cout << "Worker " << CTimerMgr::GetInst()->GetDeltaTime() << endl;
 	cs_move_packet* move_packet = reinterpret_cast<cs_move_packet*>(packet);
@@ -162,7 +162,7 @@ void CPlayerProcess::PlayerMove(unsigned short playerId, char * packet)
 	UpdateViewList(playerId);
 }
 
-void CPlayerProcess::PlayerLogout(unsigned short playerId)
+void CPlayerProcess::PlayerLogout(USHORT playerId)
 {
 	// 이미 Disconnect인 상태일 경우
 	if (!m_pPlayerPool->m_cumPlayerPool[playerId]->GetConnect()) 
@@ -173,21 +173,21 @@ void CPlayerProcess::PlayerLogout(unsigned short playerId)
 	if (ExistLoginList(playerId))
 		DeleteLoginList(playerId);
 
-	concurrent_unordered_set<unsigned short>list;
+	concurrent_unordered_set<USHORT>list;
 	CopyBeforeLoginList(list);
 	for(auto& au : list)
 		CPacketMgr::Send_Remove_Player_Packet(au, playerId);
 }
 
-void CPlayerProcess::PlayerRot(unsigned short playerId, char * packet)
+void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
 {
 	cs_rot_packet* rot_packet = reinterpret_cast<cs_rot_packet*>(packet);
-	unsigned short id = rot_packet->id;
+	USHORT id = rot_packet->id;
 	Vec3 vRot = rot_packet->vRot;
 
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(vRot);
 
-	concurrent_unordered_set<unsigned short> viewList;
+	concurrent_unordered_set<USHORT> viewList;
 
 	m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(viewList);
 
@@ -197,7 +197,7 @@ void CPlayerProcess::PlayerRot(unsigned short playerId, char * packet)
 	}
 }
 
-void CPlayerProcess::PlayerCollisionAnimal(unsigned short playerId, char * packet)
+void CPlayerProcess::PlayerCollisionAnimal(USHORT playerId, char * packet)
 {
 	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
 
@@ -224,7 +224,7 @@ void CPlayerProcess::PlayerCollisionAnimal(unsigned short playerId, char * packe
 	UpdateViewList(playerId);
 }
 
-void CPlayerProcess::PlayerCollisionNatural(unsigned short playerId, char * packet)
+void CPlayerProcess::PlayerCollisionNatural(USHORT playerId, char * packet)
 {
 	/*cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
 
@@ -251,11 +251,11 @@ void CPlayerProcess::PlayerCollisionNatural(unsigned short playerId, char * pack
 	UpdateViewList(playerId);*/
 }
 
-void CPlayerProcess::PlayerChat(unsigned short _usID, char * _packet)
+void CPlayerProcess::PlayerChat(USHORT _usID, char * _packet)
 {
 	cs_chat_packet* chat_packet = reinterpret_cast<cs_chat_packet*>(_packet);
 
-	concurrent_unordered_set<unsigned short> loginList;
+	concurrent_unordered_set<USHORT> loginList;
 
 	CopyBeforeLoginList(loginList);
 
@@ -264,11 +264,11 @@ void CPlayerProcess::PlayerChat(unsigned short _usID, char * _packet)
 	}
 }
 
-void CPlayerProcess::UpdateViewList(unsigned short playerId)
+void CPlayerProcess::UpdateViewList(USHORT playerId)
 {
-	concurrent_unordered_set<unsigned short> loginList; // 현재 로그인 리스트
-	concurrent_unordered_set<unsigned short> beforeList; // 수정 전 리스트
-	concurrent_unordered_set<unsigned short> afterList; // 수정 후 리스트
+	concurrent_unordered_set<USHORT> loginList; // 현재 로그인 리스트
+	concurrent_unordered_set<USHORT> beforeList; // 수정 전 리스트
+	concurrent_unordered_set<USHORT> afterList; // 수정 후 리스트
 
 	// 동접자 리스트를 받아옵니다.
 	CopyBeforeLoginList(loginList);
@@ -292,7 +292,7 @@ void CPlayerProcess::UpdateViewList(unsigned short playerId)
 	//After List에 시야처리 리스트 추가 작업 [ Monster ]
 	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
 		// 만약 몬스터가 죽어있으면 continue;
-		if (au.second->GetState() == OBJ_STATE_DIE) continue;
+		if (au.second->GetState() == (UINT)ANIMAL_UPDATE_TYPE::DIE) continue;
 		
 		Vec3 monster_pos = au.second->GetLocalPos();
 		// 만약 몬스터가 플레이어의 범위 내에 들어와 있다면 시야처리에 넣어준다.
@@ -314,14 +314,14 @@ void CPlayerProcess::UpdateViewList(unsigned short playerId)
 			}
 			else // Animal
 			{
-				unsigned short monster_id = au - MAX_USER;
+				USHORT monster_id = au - MAX_USER;
 				if (false == m_pMonsterPool->m_cumMonsterPool[monster_id]->GetWakeUp())
 				{
 					Update_Event ev;
 					ev.m_Do_Object = monster_id;
 					ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
 					ev.m_From_Object = NO_TARGET;
-					ev.m_ObjState = OBJ_STATE_IDLE;
+					ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::IDLE;
 					ev.wakeup_time = high_resolution_clock::now() + 1s;
 					PushEventQueue(ev);
 				}
@@ -332,11 +332,11 @@ void CPlayerProcess::UpdateViewList(unsigned short playerId)
 					ev.m_EventType = EV_MONSTER_UPDATE;
 					ev.m_From_Object = playerId;
 					if (B_WARLIKE == monster_type)
-						ev.m_ObjState = OBJ_STATE_FOLLOW;
+						ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::FOLLOW;
 					else if (B_PASSIVE == monster_type)
-						ev.m_ObjState = OBJ_STATE_IDLE;
+						ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::IDLE;
 					else if (B_EVASION == monster_type)
-						ev.m_ObjState = OBJ_STATE_EVASION;
+						ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::EVASION;
 					ev.wakeup_time = high_resolution_clock::now() + 1s;
 					PushEventQueue(ev);
 				}

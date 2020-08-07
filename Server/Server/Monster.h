@@ -17,7 +17,7 @@ public:
 private:
 	tAnimalStatus	m_tStatus;
 
-	unsigned short	m_uiTarget;
+	USHORT	m_uiTarget;
 	bool			m_bWakeUp;
 
 	bool			m_bBehavior;
@@ -41,7 +41,7 @@ public:
 	void SetDamage(float& fDamage);
 	void SetType(BEHAVIOR_TYPE& eType);
 	void SetKind(ANIMAL_TYPE& eKind);
-	void SetTarget(unsigned short playerId);
+	void SetTarget(USHORT playerId);
 	void SetWakeUp(bool bWakeUp);
 	void SetDir(Vec3& vDir);
 
@@ -52,7 +52,7 @@ public:
 	float&	GetDamage();
 	BEHAVIOR_TYPE&	GetType();
 	ANIMAL_TYPE&	GetKind();
-	unsigned short& GetTarget();
+	USHORT& GetTarget();
 	bool& GetWakeUp();
 	Vec3&	GetDir();
 };

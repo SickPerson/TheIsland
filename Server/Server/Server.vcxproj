@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CNatural.h" />
+    <ClInclude Include="Natural.h" />
     <ClInclude Include="MonsterProcess.h" />
     <ClInclude Include="DataBase.h" />
     <ClInclude Include="define.h" />
@@ -149,6 +149,8 @@
     <ClInclude Include="Monsterpool.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Naturalpool.h" />
+    <ClInclude Include="NaturalProcess.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PacketMgr.h" />
@@ -165,7 +167,7 @@
     <ClInclude Include="types.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CNatural.cpp" />
+    <ClCompile Include="Natural.cpp" />
     <ClCompile Include="MonsterProcess.cpp" />
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="main.cpp" />
@@ -175,6 +177,8 @@
     <ClCompile Include="Monsterpool.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Naturalpool.cpp" />
+    <ClCompile Include="NaturalProcess.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PacketMgr.cpp" />

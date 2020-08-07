@@ -23,7 +23,7 @@ public:
 	virtual ~CPlayer();
 
 private:
-	unsigned short	m_uiID;
+	USHORT	m_uiID;
 	wchar_t			m_wcID[MAX_STR_LEN];
 	tPlayerStatus	m_tPlayerStatus;
 	volatile bool	m_bConnect;
@@ -33,7 +33,7 @@ private:
 	int				m_iCursize;
 
 private:
-	concurrent_unordered_set<unsigned short> m_cusViewList;
+	concurrent_unordered_set<USHORT> m_cusViewList;
 	shared_mutex m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::END];
 	recursive_mutex	m_rmPlayerListMutex;
 
@@ -49,7 +49,7 @@ public:
 	void SetSpeed(float& fSpeed);
 	void SetDamage(float& fDamage);
 
-	void SetNumID(unsigned short& numID);
+	void SetNumID(USHORT& numID);
 	void SetWcID(wchar_t* wcID);
 	void SetConnect(bool bConnect);
 	void SetSocket(const SOCKET& socket);
@@ -62,18 +62,18 @@ public:
 	float&	GetSpeed();
 	float&	GetDamage();
 
-	unsigned short&	GetNumID();
+	USHORT&	GetNumID();
 	wchar_t*	GetWcID();
 	bool	GetConnect();
 	SOCKET&	GetSocket();
 
 public:
-	void CopyBefore(concurrency::concurrent_unordered_set<unsigned short>& _usCopyList)
+	void CopyBefore(concurrency::concurrent_unordered_set<USHORT>& _usCopyList)
 	{
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		_usCopyList = m_cusViewList;
 	}
-	void CopyPlayerList(concurrency::concurrent_unordered_set<unsigned short>& _usCopyList) {
+	void CopyPlayerList(concurrency::concurrent_unordered_set<USHORT>& _usCopyList) {
 		unique_lock<recursive_mutex>lock(m_rmPlayerListMutex);
 		_usCopyList = m_cusViewList;
 		lock.unlock();
@@ -86,9 +86,9 @@ public:
 				++au;
 		}
 	}
-	void DeleteList(unsigned short _usID)
+	void DeleteList(USHORT _usID)
 	{
-		concurrency::concurrent_unordered_set<unsigned short> list;
+		concurrency::concurrent_unordered_set<USHORT> list;
 		CopyBefore(list);
 		for (auto au = list.begin(); au != list.end();)
 		{
@@ -103,12 +103,12 @@ public:
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		m_cusViewList = list;
 	}
-	void InsertList(unsigned short _usID)
+	void InsertList(USHORT _usID)
 	{
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		m_cusViewList.insert(_usID);
 	}
-	bool ExistList(unsigned short _usID)
+	bool ExistList(USHORT _usID)
 	{
 		if (m_cusViewList.count(_usID) != 0)
 			return true;

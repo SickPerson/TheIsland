@@ -9,16 +9,16 @@ typedef struct Over_ex
 	WSABUF			m_DataBuffer;
 	char			m_MessageBuffer[MAX_BUF];
 	EVENT_TYPE		m_Event;
-	char			m_Status;
-	unsigned short	m_usOtherID;
+	UINT			m_Status;
+	USHORT	m_usOtherID;
 }OVER_EX, POVER_EX;
 
 struct User_info {
 	SOCKET				socket;
 	OVER_EX				over;
-	unsigned short		id;
+	USHORT		id;
 	DirectX::XMFLOAT3	pos;
-	set<unsigned short>	near_id;
+	set<USHORT>	near_id;
 	mutex				near_lock;
 };
 
@@ -28,9 +28,9 @@ _______________________________________________*/
 struct Update_Event {
 	std::chrono::high_resolution_clock::time_point wakeup_time;
 	EVENT_TYPE		m_EventType;
-	OBJ_STATE_TYPE	m_ObjState;
-	unsigned short m_Do_Object;
-	unsigned short m_From_Object;
+	UINT	m_ObjState;
+	USHORT m_Do_Object;
+	USHORT m_From_Object;
 
 	constexpr bool operator <(const Update_Event& _left) const
 	{
@@ -84,7 +84,7 @@ struct Monster_Event {
 	float m_fRotate;
 	char	m_eState;
 	Monster_Event() {}
-	Monster_Event(DirectX::XMFLOAT3 xmf3ToTarget, float fRotate, OBJ_STATE_TYPE eState) {
+	Monster_Event(DirectX::XMFLOAT3 xmf3ToTarget, float fRotate, UINT eState) {
 		m_xmf3ToTarget = xmf3ToTarget; m_fRotate = fRotate; m_eState = eState;
 	}
 };
@@ -115,10 +115,10 @@ struct UserData {
 
 struct User_Data {
 	std::string m_sID;
-	unsigned short m_uiID;
+	USHORT m_uiID;
 	int m_iPlayerNum;
 
-	User_Data(std::string sID, unsigned short usNum, int iPlayerNum) {
+	User_Data(std::string sID, USHORT usNum, int iPlayerNum) {
 		m_sID = sID;
 		m_uiID = usNum;
 		m_iPlayerNum = iPlayerNum;

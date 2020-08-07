@@ -254,17 +254,17 @@ void CNetwork::ProcessPacket(char* packet)
 	}
 				  // NPC, MONSTER ฐüทร
 	case SC_PUT_NPC: {
-		//Recv_Put_Npc_Packet(packet);
+		Recv_Put_Npc_Packet(packet);
 		break;
 	}
 	case SC_POS_NPC:
 	{
-		//Recv_Pos_Npc_Packet(packet);
+		Recv_Pos_Npc_Packet(packet);
 		break;
 	}
 	case SC_REMOVE_NPC:
 	{
-		//Recv_Remove_Npc_Packet(packet);
+		Recv_Remove_Npc_Packet(packet);
 		break;
 	}
 	}
@@ -515,7 +515,7 @@ void CNetwork::Recv_Put_Npc_Packet(char * packet)
 	Vec3 vPos = put_npc_packet->vPos;
 	Vec3 vRot = put_npc_packet->vRot;
 
-	UINT uiType = 0;
+	UINT uiType = put_npc_packet->uiType;
 
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, uiType);
 }
@@ -532,11 +532,11 @@ void CNetwork::Recv_Pos_Npc_Packet(char * packet)
 {
 	sc_pos_npc_packet* pos_npc_packet = reinterpret_cast<sc_pos_npc_packet*>(packet);
 	unsigned int monster_id = pos_npc_packet->id;
-	Vec3 pos = pos_npc_packet->vPos;
-	Vec3 rot = pos_npc_packet->vRot;
+	Vec3 vPos = pos_npc_packet->vPos;
+	Vec3 vRot = pos_npc_packet->vRot;
+	UINT uiType = pos_npc_packet->uiType;
 
-	m_cumAnimal[monster_id]->Transform()->SetLocalPos(pos);
-	m_cumAnimal[monster_id]->Transform()->SetLocalRot(rot);
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, uiType);
 }
 
 void CNetwork::Recv_Animation_Npc_Packet(char * packet)
