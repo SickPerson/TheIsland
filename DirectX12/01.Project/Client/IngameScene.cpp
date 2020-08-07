@@ -273,7 +273,7 @@ void CIngameScene::Init()
 
 	pPlayer->SetName(L"Player Object");
 	pPlayer->FrustumCheck(false);
-	pPlayer->Transform()->SetLocalPos(Vec3(10000.f, 200.f, 10000.f));
+	pPlayer->Transform()->SetLocalPos(Vec3(18000.f, 200.f, 2000.f));
 	pPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 	//pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
@@ -481,6 +481,7 @@ void CIngameScene::Init()
 	pObject->Transform()->SetLocalRot(Vec3(XM_PI / 2.f, 0.f, 0.f));
 
 	m_pScene->FindLayer(L"Environment")->AddGameObject(pObject);
+	pSun->GetScript<CSunshineScript>()->SetSea(pObject);
 
 	// ====================
 	// Particle Object »ý¼º
@@ -554,6 +555,18 @@ void CIngameScene::GiveStartItem()
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 	pItem = new CUsableScript(ITEM_TYPE::ITEM_MEAT);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 4);
+	pItem = new CUsableScript(ITEM_TYPE::ITEM_CAN);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	pItem = new CUsableScript(ITEM_TYPE::ITEM_SODA);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	pItem = new CUsableScript(ITEM_TYPE::ITEM_MEDICKIT);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_WOODSTICK);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	pItem = new CUsableScript(ITEM_TYPE::ITEM_APPLE);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	pItem = new CStuffScript(ITEM_TYPE::ITEM_CLOTH);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 }
 
 void CIngameScene::Update()
@@ -1195,7 +1208,7 @@ void CIngameScene::CreateItemUI()
 	Vec4 vColor = Vec4(0.4f, 0.8f, 0.4f, 0.8f);
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
 
-	pObject->Transform()->SetLocalPos(Vec3(490.f, -210.f, 300.f));
+	pObject->Transform()->SetLocalPos(Vec3(490.f, -210.f, 2000.f));
 	pObject->Transform()->SetLocalScale(Vec3(250.f, 40.f, 1.f));
 
 	pLootObject->GetScript<CItemLootScript>()->SetBackgroundObject(pObject);
@@ -1211,7 +1224,7 @@ void CIngameScene::CreateItemUI()
 	pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ItemMtrl");
 	pObject->MeshRender()->SetMaterial(pMtrl->Clone());
 
-	pObject->Transform()->SetLocalPos(Vec3(385.f, -210.f, 250.f));
+	pObject->Transform()->SetLocalPos(Vec3(385.f, -210.f, 1900.f));
 	pObject->Transform()->SetLocalScale(Vec3(35.f, 35.f, 1.f));
 
 	pLootObject->AddChild(pObject);
@@ -1223,7 +1236,7 @@ void CIngameScene::CreateItemUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CFont);
 
-	pObject->Transform()->SetLocalPos(Vec3(500.f, -210.f, 250.f));
+	pObject->Transform()->SetLocalPos(Vec3(500.f, -210.f, 1900.f));
 	pObject->Transform()->SetLocalScale(Vec3(180.f, 35.f, 1.f));
 
 	pObject->Font()->SetFontColor(Vec4(1.f, 1.f, 1.f, 1.f));
@@ -1312,7 +1325,7 @@ void CIngameScene::CreateNatural()
 
 			pObject->AddComponent(new CCollider2D);
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 60.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(1.7f, 1.7f, 1.7f));
 
 		}
@@ -1323,8 +1336,6 @@ void CIngameScene::CreateNatural()
 		string str1;
 		wstring str2 = strName;
 		str1.assign(str2.begin(), str2.end());
-
-		std::cout << str1 << std::endl;
 
 		pObject->SetName( str2 );
 		if (str1 == "sprucea" || str1 == "sprucec")
@@ -1338,11 +1349,49 @@ void CIngameScene::CreateNatural()
 		else if (str1 == "plainsgrass")
 		{
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
+			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 			//pObject->FrustumCheck(false);
+		}
+		else if (str1 == "mountainsrocks01")
+		{
+			pObject->Collider2D()->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
+			pObject->Collider2D()->SetOffsetScale(Vec3(350.f, 350.f, 350.f));
+		}
+		else if (str1 == "mountainsrocks02")
+		{
+			pObject->Collider2D()->SetOffsetPos(Vec3(20.f, 0.f, 0.f));
+			pObject->Collider2D()->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
+		}
+		else if (str1 == "genericcliffa")
+		{
+			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			pObject->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
+		}
+		else if (str1 == "mountainsrocks01_a")
+		{
+			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
+			pObject->Collider2D()->SetOffsetScale(Vec3(200.f, 200.f, 200.f));
+		}
+		else if (str1 == "mountainsrocks01_b")
+		{
+			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, -60.f));
+			pObject->Collider2D()->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
+		}
+		else if (str1 == "mountainsrocks01_c")
+		{
+			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
+			pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
+		}
+		else if (str1 == "mountainsrocks01_d")
+		{
+			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
+			pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 		}
 		else
 		{
-			//pObject->FrustumCheck(false);
+			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			pObject->Collider2D()->SetOffsetScale(Vec3(4.f, 4.f, 4.f));
 		}
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		pScene->AddGameObject( L"Environment", pObject, false );

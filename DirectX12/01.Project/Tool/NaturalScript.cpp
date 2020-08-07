@@ -173,13 +173,13 @@ bool CNaturalScript::Damage( CGameObject* pObj, float fDamage )
 		m_pParticleObj->ParticleSystem()->SetStartSpeed( 200.f );
 		m_pParticleObj->ParticleSystem()->SetEndSpeed( 200.f );
 
-		Vec3 vPos = Transform()->GetLocalPos();
+		Vec3 vPos = Transform()->GetWorldPos();
 		Vec3 vScale = Transform()->GetLocalScale();
 
-		m_pParticleObj->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 1.f ) );
-		m_pParticleObj->Transform()->SetLocalScale( Vec3( 1.2f, 1.2f, 1.2f ) );
+		m_pParticleObj->Transform()->SetLocalPos( Vec3(vPos.x, vPos.y + 20.f, vPos.z) );
+		m_pParticleObj->Transform()->SetLocalScale( Vec3( 10.f, 10.f, 10.f ) );
 
-		GetObj()->AddChild( m_pParticleObj );
+		//GetObj()->AddChild( m_pParticleObj );
 
 		tEvent tEv;
 		tEv.eType = EVENT_TYPE::CREATE_OBJECT;

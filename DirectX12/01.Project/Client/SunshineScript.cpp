@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-#define DAYCYCLE 10.f // 배속
+#define DAYCYCLE 60.f // 배속
 // 아무리 빨라도 1프레임당 1초가 최대
 
 CSunshineScript::CSunshineScript() :
@@ -98,6 +98,10 @@ void CSunshineScript::Update()
 			{
 				m_pSkybox->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fLight);
 			}
+			if (m_pSea)
+			{
+				m_pSea->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_3, &fLight);
+			}
 		}
 		else 
 		{
@@ -105,6 +109,10 @@ void CSunshineScript::Update()
 			if (m_pSkybox)
 			{
 				m_pSkybox->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fLight);
+			}
+			if (m_pSea)
+			{
+				m_pSea->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_3, &fLight);
 			}
 		}
 		Light3D()->SetDiffuseColor(Vec3(fLight, fLight, fLight));
@@ -176,4 +184,9 @@ void CSunshineScript::SetSkybox(CGameObject* pObject)
 void CSunshineScript::SetPlayer(CGameObject * pObject)
 {
 	m_pPlayer = pObject;
+}
+
+void CSunshineScript::SetSea(CGameObject* pObject)
+{
+	m_pSea = pObject;
 }

@@ -252,7 +252,7 @@ float4 PS_AdvancedWater(PS_ADV_WATER_INPUT _input) : SV_Target
 	{
 		//return water;
 		float4 skybox = g_tex_3.Sample(g_sam_0, vUV);
-		return skybox * water;
+		return skybox * water * g_float_3;
 	}
 	else
 	{
@@ -261,12 +261,12 @@ float4 PS_AdvancedWater(PS_ADV_WATER_INPUT _input) : SV_Target
 		{
 			//return water;
 			float4 skybox = g_tex_3.Sample(g_sam_0, vUV);
-			return skybox * water;
+			return skybox * water * g_float_3;
 		}
 	}
 	//return gaussian5x5Sample(vUV, g_tex_0) * gaussian5x5Sample(vUV, g_tex_1);
 
-	return (color * water);
+	return (color * water) * g_float_3;
 }
 
 #endif
