@@ -34,7 +34,6 @@ private:
 	float		m_fDownSpeed;
 
 	Vec3		m_vPrevPos;
-	
 public:
 	virtual void Awake();	
 	virtual void Update();
@@ -68,6 +67,8 @@ public:
 	void DisableItem(int num);
 
 	void SetMainCamera(CCamera* pCamera);
+	CGameObject* GetMainCameraObject();
+	CCamera* GetMainCamera();
 
 	bool GetEnable();
 

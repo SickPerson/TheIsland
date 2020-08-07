@@ -69,8 +69,8 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	//Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\housing_door_basic.fbx", 1);
-	//pTestMeshData->Save(pTestMeshData->GetPath());
+	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\arrow.fbx", 0);
+	pTestMeshData->Save(pTestMeshData->GetPath());
 	//Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
 	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
 	//pTestMeshData->Save( pTestMeshData->GetPath() );
@@ -351,6 +351,11 @@ void CIngameScene::Init()
 	CreateChatUI();
 	CreateItemUI();
 	m_pMRT = CSceneMgr::GetInst()->CreateMRTUI();
+	tEvent evt = {};
+	evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+	evt.wParam = (DWORD_PTR)m_pMRT;
+	evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
+	CEventMgr::GetInst()->AddEvent(evt);
 
 	// ====================
 	// 3D Light Object Ãß°¡
@@ -517,6 +522,9 @@ void CIngameScene::Init()
 
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Animal", L"Environment" );
 
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"Animal" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"House" );
+
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Animal");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Environment");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"House");
@@ -539,6 +547,8 @@ void CIngameScene::GiveStartItem()
 	pItem = new CUsableScript(ITEM_TYPE::ITEM_COOKMEAT);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 5);
 	pItem = new CUsableScript(ITEM_TYPE::ITEM_WATER_BOTTLE);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 5);
+	pItem = new CUsableScript(ITEM_TYPE::ITEM_EMPTY_BOTTLE);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 5);
 	pItem = new CToolItemScript(ITEM_TYPE::ITEM_WOODCLUB);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
@@ -591,10 +601,20 @@ void CIngameScene::Update()
 				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
 				m_iSelect = 1;
 				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+				m_bOverlapItem = false;
 			}
 			else
 			{
-				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				if (m_bOverlapItem)
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+					m_bOverlapItem = false;
+				}
+				else
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+					m_bOverlapItem = true;
+				}
 			}
 		}
 	}
@@ -608,10 +628,20 @@ void CIngameScene::Update()
 				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
 				m_iSelect = 2;
 				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+				m_bOverlapItem = false;
 			}
 			else
 			{
-				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				if (m_bOverlapItem)
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+					m_bOverlapItem = false;
+				}
+				else
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+					m_bOverlapItem = true;
+				}
 			}
 		}
 	}
@@ -625,10 +655,20 @@ void CIngameScene::Update()
 				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
 				m_iSelect = 3;
 				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+				m_bOverlapItem = false;
 			}
 			else
 			{
-				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				if (m_bOverlapItem)
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+					m_bOverlapItem = false;
+				}
+				else
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+					m_bOverlapItem = true;
+				}
 			}
 		}
 	}
@@ -642,10 +682,20 @@ void CIngameScene::Update()
 				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
 				m_iSelect = 4;
 				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+				m_bOverlapItem = false;
 			}
 			else
 			{
-				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				if (m_bOverlapItem)
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+					m_bOverlapItem = false;
+				}
+				else
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+					m_bOverlapItem = true;
+				}
 			}
 		}
 	}
@@ -659,10 +709,20 @@ void CIngameScene::Update()
 				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
 				m_iSelect = 5;
 				m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+				m_bOverlapItem = false;
 			}
 			else
 			{
-				m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+				if (m_bOverlapItem)
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->EnableItem(m_iSelect - 1);
+					m_bOverlapItem = false;
+				}
+				else
+				{
+					m_pPlayer->GetScript<CPlayerScript>()->DisableItem(m_iSelect - 1);
+					m_bOverlapItem = true;
+				}
 			}
 		}
 	}

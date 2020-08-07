@@ -5,6 +5,9 @@
 #include "NaturalScript.h"
 #include "AnimalSpawner.h"
 
+#include "BuildScript.h"
+#include "ArrowScript.h"
+
 #include <Engine/ParticleSystem.h>
 #include <Engine/NaviMgr.h>
 
@@ -85,6 +88,7 @@ void CAnimalScript::Update()
 			m_fIdleBehaviorTime = (rand () / (float)RAND_MAX * 5.f) + 3.f;
 		}
 		Vec3 vPos = Transform()->GetLocalPos();
+		m_vPrevPos = vPos;
 
 		vPos += m_vMoveDir * m_tStatus.fSpeed * DT;
 
@@ -145,6 +149,7 @@ void CAnimalScript::Update()
 	{
 		// 마지막 방향으로 꾸준히 달림
 		Vec3 vPos = Transform()->GetLocalPos();
+		m_vPrevPos = vPos;
 
 		vPos += m_vMoveDir * m_tStatus.fSpeed * DT;
 
@@ -167,6 +172,8 @@ void CAnimalScript::Update()
 
 		Vec3 vDir = XMVector3Normalize(vOtherPos - vPos);
 		vDir.y = 0.f;
+
+		m_vPrevPos = vPos;
 
 		vPos += vDir * m_tStatus.fSpeed * DT;
 
@@ -196,6 +203,8 @@ void CAnimalScript::Update()
 
 		Vec3 vDir = XMVector3Normalize(vOtherPos - vPos);
 		vDir.y = 0.f;
+
+		m_vPrevPos = vPos;
 
 		vPos += vDir * m_tStatus.fSpeed * DT;
 
@@ -228,32 +237,67 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 			{
 				return;
 			}
-		}
 
-		if (CollisionSphere(m_vOffsetScale, _pOther)) // 환경요소랑은 자기 몸통만큼 추가 충돌체크를 진행하고 막히면 반대로 튕겨나오도록
-		{
-			Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
-
-			Vec3 vPos = Transform()->GetLocalPos();
-
-			Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
-			vDir.y = 0.f;
-
-			vPos += vDir * m_tStatus.fSpeed * DT;
-
-			Vec3 vRot = _pOther->Transform()->GetLocalRot();
-
-			//Transform()->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
-			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
-			if (vPos.y <= 80.f)
+			if (CollisionSphere(m_vOffsetScale, _pOther)) // 환경요소랑은 자기 몸통만큼 추가 충돌체크를 진행하고 막히면 반대로 튕겨나오도록
 			{
-				vPos += -m_vMoveDir * m_tStatus.fSpeed * DT;
+				Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
+
+				Vec3 vPos = Transform()->GetLocalPos();
+
+				Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
+				vDir.y = 0.f;
+
+				m_vPrevPos = vPos;
+
+				vPos += vDir * m_tStatus.fSpeed * DT;
+
+				Vec3 vRot = _pOther->Transform()->GetLocalRot();
+
+				//Transform()->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
 				vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+				if (vPos.y <= 80.f)
+				{
+					vPos += -m_vMoveDir * m_tStatus.fSpeed * DT;
+					vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
+				}
+				Transform()->SetLocalPos(vPos);
 			}
-			Transform()->SetLocalPos(vPos);
 		}
 
 		// 타입에 따른 추가 행동 요소 구현할 곳
+		// 화살과 충돌체크
+		if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Arrow")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
+		{
+			if (!_pOther->GetObj()->GetScript<CArrowScript>()->GetCollision())
+			{
+				if (CollisionSphere(m_vOffsetScale, _pOther)) // 환경요소랑은 자기 몸통만큼 추가 충돌체크를 진행하고 막히면 반대로 튕겨나오도록
+				{
+					float fDamage = _pOther->GetObj()->GetScript<CArrowScript>()->GetDamage();
+					Damage(_pOther->GetObj()->GetScript<CArrowScript>()->GetHost(), fDamage);
+					_pOther->GetObj()->GetScript<CArrowScript>()->Collision(GetObj());
+				}
+			}
+		}
+
+		// 건물과 부딪힌건지 건물은 AABB로 충돌체크 수행
+		if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
+		{
+			HOUSING_TYPE eType = _pOther->GetObj()->GetScript<CBuildScript>()->GetHousingType();
+			if (eType >= HOUSING_TYPE::HOUSING_FOUNDATION && eType < HOUSING_TYPE::HOUSING_END)
+			{
+				bool bCollision = false;
+				bCollision = CollisionHouse(m_vOffsetScale, _pOther, _pOther->GetObj()->GetScript<CBuildScript>()->GetOffsetScale(), eType);
+				if (bCollision)
+				{
+					Vec3 vPos = Transform()->GetWorldPos();
+					Vec3 vBuildPos = _pOther->Transform()->GetLocalPos();
+
+					float fDiff = vBuildPos.y - vPos.y;
+
+					Transform()->SetLocalPos(m_vPrevPos);
+				}
+			}
+		}
 
 		return;
 	}
@@ -268,6 +312,7 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
 		vDir.y = 0.f;
 
+		m_vPrevPos = vPos;
 		vPos += vDir * m_tStatus.fSpeed * DT;
 
 		Vec3 vRot = _pOther->Transform()->GetLocalRot();
@@ -297,6 +342,7 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 			Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
 			vDir.y = 0.f;
 
+			m_vPrevPos = vPos;
 			vPos += vDir * m_tStatus.fSpeed * DT;
 
 			Vec3 vRot = _pOther->Transform()->GetLocalRot();
@@ -331,6 +377,7 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		Vec3 vDir = XMVector3Normalize(vOtherPos - vPos);
 		vDir.y = 0.f;
 
+		m_vPrevPos = vPos;
 		vPos += vDir * m_tStatus.fSpeed * DT;
 
 		Vec3 vRot = _pOther->Transform()->GetLocalRot();
@@ -513,10 +560,32 @@ void CAnimalScript::Damage(CGameObject* _pOther, float fDamage)
 	if (m_tStatus.fHp > 0.f) 
 	{
 		m_tStatus.fHp -= fDamage;
-		if (BEHAVIOR_TYPE::B_PASSIVE == m_tStatus.eType)
+		// 회피형 동물 ( 사슴 )
+		if (BEHAVIOR_TYPE::B_EVASION == m_tStatus.eType)
+		{
+			m_vMoveDir = _pOther->Transform()->GetLocalDir(DIR_TYPE::FRONT);
+			Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
+			Vec3 vPos = Transform()->GetLocalPos();
+
+			m_vMoveDir = XMVector3Normalize(vPos - vOtherPos);
+			m_vMoveDir.y = 0.f;
+
+			m_bBehavior = true;
+			m_fCurrentTime = m_tStatus.fBehaviorTime;
+		}
+		else if (BEHAVIOR_TYPE::B_PASSIVE == m_tStatus.eType)
 		{
 			m_bBehavior = true;
 			m_pTarget = _pOther;
+			m_fCurrentTime = m_tStatus.fBehaviorTime;
+
+		}
+		else if (BEHAVIOR_TYPE::B_WARLIKE == m_tStatus.eType)
+		{
+			m_pTarget = _pOther;
+
+			m_vMoveDir = _pOther->Transform()->GetLocalDir(DIR_TYPE::FRONT);
+			m_bBehavior = true;
 			m_fCurrentTime = m_tStatus.fBehaviorTime;
 		}
 	}
@@ -535,4 +604,75 @@ bool CAnimalScript::GetAnimalDead()
 void CAnimalScript::SetAnimalSpawner(CAnimalSpawner* pSpawner)
 {
 	m_pSpawner = pSpawner;
+}
+
+bool CAnimalScript::CollisionHouse(Vec3 vOffsetScale, CCollider2D* _pOther, Vec3 vHouseOffsetScale, UINT iType)
+{
+	const Matrix& matCol1 = Collider2D()->GetColliderWorldMat();
+	const Matrix& matCol2 = _pOther->GetColliderWorldMat();
+
+	Vec3 vCol1 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol1);
+	Vec3 vCol2 = XMVector3TransformCoord(Vec3(0.f, 0.f, 0.f), matCol2);
+
+	Vec3 vScale1 = Transform()->GetLocalScale();
+	Vec3 vScale2 = _pOther->Transform()->GetLocalScale();
+
+	Vec3 vColScale1 = vOffsetScale;
+	Vec3 vColScale2 = Vec3(1.f, 1.f, 1.f);
+
+	HOUSING_TYPE eType = (HOUSING_TYPE)iType;
+
+	switch (eType)
+	{
+	case HOUSING_FOUNDATION:
+		vColScale2 = vHouseOffsetScale;
+		break;
+	case HOUSING_WALL:
+	case HOUSING_WINDOW:
+	case HOUSING_DOOR:
+	{
+		Vec3 vRot = _pOther->Transform()->GetLocalRot();
+		if (vRot.y != 0.f)
+		{
+			vColScale2 = Vec3(vHouseOffsetScale.z, vHouseOffsetScale.y, vHouseOffsetScale.x);
+			//std::cout << "Turn" << vOffsetScale.x << std::endl;
+		}
+		else
+		{
+			vColScale2 = Vec3(vHouseOffsetScale.x, vHouseOffsetScale.y, vHouseOffsetScale.z);
+		}
+	}
+	break;
+	case HOUSING_FLOOR:
+	{
+		vColScale2 = vHouseOffsetScale;
+	}
+	break;
+	default:
+		vColScale2 = vHouseOffsetScale;
+		break;
+	}
+
+	vScale1 *= vColScale1;
+	vScale2 *= vColScale2;
+
+	Vec3 vMax, vOtherMax;
+	Vec3 vMin, vOtherMin;
+
+	Vec3 vPos = Transform()->GetLocalPos();
+	vPos.y += 50.f;
+
+	vMax = vPos + vScale1;
+	vMin = vPos - vScale1;
+	vOtherMax = vCol2 + vScale2;
+	vOtherMin = vCol2 - vScale2;
+
+	//std::cout << "Player : " << vPos.x << " || " << vPos.y << " || " << vPos.z << " || " << std::endl;
+	//std::cout << "House : " << vCol2.x << " || " << vCol2.y << " || " << vCol2.z << " || " << std::endl;
+
+	if (vMax.x < vOtherMin.x || vMin.x > vOtherMax.x) return false;
+	if (vMax.y < vOtherMin.y || vMin.y > vOtherMax.y) return false;
+	if (vMax.z < vOtherMin.z || vMin.z > vOtherMax.z) return false;
+
+	return true;
 }

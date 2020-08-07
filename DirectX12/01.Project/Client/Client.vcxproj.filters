@@ -177,6 +177,9 @@
     <ClInclude Include="Animal.h">
       <Filter>ComponentScript\Animal</Filter>
     </ClInclude>
+    <ClInclude Include="ArrowScript.h">
+      <Filter>ComponentScript\Item\Tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -271,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="AnimalSpawner.cpp">
       <Filter>ComponentScript\Animal</Filter>
+    </ClCompile>
+    <ClCompile Include="ArrowScript.cpp">
+      <Filter>ComponentScript\Item\Tool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
