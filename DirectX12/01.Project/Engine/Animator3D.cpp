@@ -155,14 +155,11 @@ void CAnimator3D::LateUpdate()
 
 void CAnimator3D::FinalUpdate()
 {
-	if ( m_bStop )
-		return;
-
 	m_dCurTime = 0.f;
 
 	// 현재 재생중인 Clip 의 시간을 진행한다.
 	/*m_vecClipUpdateTime[m_iCurClip] += DT;
-	
+
 	if ( m_vecClipUpdateTime[m_iCurClip] >= m_pVecClip->at( m_iCurClip ).dTimeLength )
 	{
 		m_vecClipUpdateTime[m_iCurClip] = 0.f;
@@ -174,10 +171,15 @@ void CAnimator3D::FinalUpdate()
 
 	if ( m_mapClipUpdateTime[m_strCurAniKey] >= m_mapClip[m_strCurAniKey]->dTimeLength )
 	{
-		m_mapClipUpdateTime[m_strCurAniKey] = 0.f;
-		if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::ONCE_RETURN )
+		if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::LOOP )
+		{
+			m_mapClipUpdateTime[m_strCurAniKey] = 0.f;
+		}
+
+		else if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::ONCE_RETURN )
 		{
 			m_strCurAniKey = m_strDefaultKey;
+			m_mapClipUpdateTime[m_strCurAniKey] = 0.f;
 		}
 
 		else if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::ONCE_STOP )
@@ -186,7 +188,15 @@ void CAnimator3D::FinalUpdate()
 		}
 	}
 
-	m_dCurTime = m_mapClip[m_strCurAniKey]->dStartTime + m_mapClipUpdateTime[m_strCurAniKey];
+	if ( !m_bStop )
+	{
+		m_dCurTime = m_mapClip[m_strCurAniKey]->dStartTime + m_mapClipUpdateTime[m_strCurAniKey];
+	}
+
+	else
+	{
+		m_dCurTime = m_mapClip[m_strCurAniKey]->dEndTime;
+	}
 
 	m_iFrameIdx = ( int )( m_dCurTime * ( float )m_iFrameCount );
 

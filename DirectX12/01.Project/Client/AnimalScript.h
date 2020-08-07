@@ -69,5 +69,7 @@ public:
 	bool GetAnimalDead();
 
 	void SetAnimalSpawner(CAnimalSpawner* pSpawner);
+
+	void SetAnimation( CAnimator3D* pAnimation );		// 항상 SetAnimalStatus()호출 후 호출하기
 };
 

@@ -11,6 +11,8 @@
 #include <Engine/ParticleSystem.h>
 #include <Engine/NaviMgr.h>
 
+#include <Engine/Animator3D.h>
+
 #include <iostream>
 
 CAnimalScript::CAnimalScript()
@@ -460,6 +462,8 @@ void CAnimalScript::OnCollisionExit(CCollider2D * _pOther)
 			m_bBehavior = true;
 			m_fCurrentTime = m_tStatus.fBehaviorTime;
 		}
+
+		Animator3D()->ChangeAnimation( L"Idle" );
 	}
 }
 
@@ -593,6 +597,8 @@ void CAnimalScript::Damage(CGameObject* _pOther, float fDamage)
 	{
 		m_bAnimalDead = true;
 		m_fLivingTime = 3.f;
+
+		Animator3D()->ChangeAnimation( L"Die" );
 	}
 }
 
@@ -604,6 +610,54 @@ bool CAnimalScript::GetAnimalDead()
 void CAnimalScript::SetAnimalSpawner(CAnimalSpawner* pSpawner)
 {
 	m_pSpawner = pSpawner;
+}
+
+void CAnimalScript::SetAnimation( CAnimator3D * pAnimation )
+{
+	switch ( m_tStatus.eKind )
+	{
+	case A_BEAR:
+		pAnimation->AddClip( L"Walk", 432, 465, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Run", 398, 420, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Idle", 234, 390, ANIMATION_MODE::LOOP );
+		pAnimation->AddClip( L"Eat", 111, 233, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Die", 0, 50, ANIMATION_MODE::ONCE_STOP );
+		pAnimation->AddClip( L"Attack", 51, 110, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->SetDefaultKey( L"Idle" );
+		break;
+
+	case A_BOAR:
+		pAnimation->AddClip( L"Walk", 0, 29, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Run", 30, 47, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Idle", 231, 400, ANIMATION_MODE::LOOP );
+		pAnimation->AddClip( L"Eat", 48, 230, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Die", 401, 423, ANIMATION_MODE::ONCE_STOP );
+		pAnimation->AddClip( L"Attack", 424, 445, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->SetDefaultKey( L"Idle" );
+		break;
+
+	case A_DEER:	
+		pAnimation->AddClip( L"Walk", 393, 423, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Run", 423, 442, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Idle", 0, 230, ANIMATION_MODE::LOOP );
+		pAnimation->AddClip( L"Eat", 231, 320, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Die", 321, 392, ANIMATION_MODE::ONCE_STOP );
+		pAnimation->SetDefaultKey( L"Idle" );
+		break;
+		
+	case A_WOLF:	
+		pAnimation->AddClip( L"Walk", 0, 29, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Run", 30, 46, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Idle", 47, 212, ANIMATION_MODE::LOOP );
+		pAnimation->AddClip( L"Eat", 213, 400, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->AddClip( L"Die", 480, 546, ANIMATION_MODE::ONCE_STOP );
+		pAnimation->AddClip( L"Attack", 547, 575, ANIMATION_MODE::ONCE_RETURN );
+		pAnimation->SetDefaultKey( L"Idle" );
+		break;
+
+	default:
+		break;
+	}
 }
 
 bool CAnimalScript::CollisionHouse(Vec3 vOffsetScale, CCollider2D* _pOther, Vec3 vHouseOffsetScale, UINT iType)

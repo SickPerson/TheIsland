@@ -101,9 +101,7 @@ void CAnimalSpawner::Respawn()
 
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-			pObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-
-			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
+			pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
 		}
 			break;
 		case B_PASSIVE:
@@ -143,8 +141,6 @@ void CAnimalSpawner::Respawn()
 				pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 				pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 				pObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-
-				CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 			}
 			else
 			{
@@ -180,8 +176,6 @@ void CAnimalSpawner::Respawn()
 				pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 				pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 				pObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
-
-				CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 			}
 		}
 			break;
@@ -221,12 +215,16 @@ void CAnimalSpawner::Respawn()
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(300.f, 300.f, 300.f));
 
-			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 		}
 			break;
 		default:
 			break;
 		}
+
+		CAnimalScript* pAnimalScript = pObject->GetScript<CAnimalScript>();
+		pAnimalScript->SetAnimation( pObject->Animator3D() );
+
+		CSceneMgr::GetInst()->GetCurScene()->FindLayer( L"Animal" )->AddGameObject( pObject );
 
 		Vec3 vPos = Transform()->GetLocalPos();
 		while (1)

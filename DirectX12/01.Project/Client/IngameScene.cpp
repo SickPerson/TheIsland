@@ -416,7 +416,7 @@ void CIngameScene::Init()
 
 	// 
 	CreateNatural();
-	//CreateAnimalSpawner();
+	CreateAnimalSpawner();
 
 	//// ====================
 	//// Grid 오브젝트 생성
