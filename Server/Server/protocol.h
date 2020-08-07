@@ -54,7 +54,9 @@ constexpr	char	SC_REMOVE_NATURAL = 21;
 // Housing
 constexpr	char	SC_INSTALL_HOUSING = 25;
 
-constexpr	char	SC_END = 30;
+// etc
+constexpr	char	SC_WEATHER = 30;
+constexpr	char	SC_END = 35;
 
 // About Player
 constexpr float PLAYER_BETWEEN_RANGE = 3000.f;
