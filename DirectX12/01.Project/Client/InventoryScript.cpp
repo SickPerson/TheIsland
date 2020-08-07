@@ -561,18 +561,18 @@ void CInventoryScript::DestroyArmor()
 	}
 }
 
-void CInventoryScript::Use_Left(CGameObject * pHost, CGameObject * pObj, int index)
+UINT CInventoryScript::Use_Left(CGameObject * pHost, CGameObject * pObj, int index)
 {
 	if (index == -1 || m_vecItem[index] == NULL)
-		return;
-	m_vecItem[index]->Use_Left(pHost, pObj, index);
+		return 0;
+	return m_vecItem[index]->Use_Left(pHost, pObj, index);
 }
 
-void CInventoryScript::Use_Right(CGameObject * pHost, CGameObject * pObj, int index)
+UINT CInventoryScript::Use_Right(CGameObject * pHost, CGameObject * pObj, int index)
 {
 	if (index == -1 || m_vecItem[index] == NULL)
-		return;
-	m_vecItem[index]->Use_Right(pHost, pObj, index);
+		return 0;
+	return m_vecItem[index]->Use_Right(pHost, pObj, index);
 }
 
 void CInventoryScript::Use_Highlight(CGameObject * pHost, CGameObject * pObj, int index)
@@ -589,11 +589,12 @@ void CInventoryScript::DisableItem(CGameObject* pHost, int index)
 	m_vecItem[index]->DisableItem(pHost, index);
 }
 
-void CInventoryScript::EnableItem(CGameObject* pHost, int index)
+UINT CInventoryScript::EnableItem(CGameObject* pHost, int index)
 {
 	if (index < 0 || m_vecItem[index] == NULL)
-		return;
-	m_vecItem[index]->EnableItem(pHost, index);
+		return 0;
+
+	return m_vecItem[index]->EnableItem(pHost, index);
 }
 
 void CInventoryScript::AddItemFunc(CItemScript * pItem, int iCount)

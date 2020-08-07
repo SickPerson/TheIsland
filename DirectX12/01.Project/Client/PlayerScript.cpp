@@ -82,7 +82,11 @@ CGameObject * CPlayerScript::GetChatObject()
 
 void CPlayerScript::EnableItem(int num)
 {
-	m_pInventory->GetScript<CInventoryScript>()->EnableItem(GetObj(), num);
+	ITEM_TYPE eType = (ITEM_TYPE)m_pInventory->GetScript<CInventoryScript>()->EnableItem(GetObj(), num);
+	if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
+	{
+		Animator3D()->ChangeAnimation(L"TakeWeapon");
+	}
 }
 
 void CPlayerScript::DisableItem(int num)
@@ -137,11 +141,43 @@ void CPlayerScript::Update()
 		{
 			if (KEY_TAB(KEY_TYPE::KEY_LBTN))
 			{
-				PlayerPicking(LEFT_CLICK);
+				ITEM_TYPE eType = (ITEM_TYPE)PlayerPicking(LEFT_CLICK);
+				if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
+				{
+					int type = rand() % 3;
+					if (type == 0)
+					{
+						Animator3D()->ChangeAnimation(L"Attack1");
+					}
+					else if (type == 1)
+					{
+						Animator3D()->ChangeAnimation(L"Attack2");
+					}
+					else
+					{
+						Animator3D()->ChangeAnimation(L"Attack3");
+					}
+				}
 			}
 			else if (KEY_TAB(KEY_TYPE::KEY_RBTN))
 			{
-				PlayerPicking(RIGHT_CLICK);
+				ITEM_TYPE eType = (ITEM_TYPE)PlayerPicking(RIGHT_CLICK);
+				if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
+				{
+					int type = rand() % 3;
+					if (type == 0)
+					{
+						Animator3D()->ChangeAnimation(L"Attack1");
+					}
+					else if (type == 1)
+					{
+						Animator3D()->ChangeAnimation(L"Attack2");
+					}
+					else
+					{
+						Animator3D()->ChangeAnimation(L"Attack3");
+					}
+				}
 			}
 
 			if (KEY_TAB(KEY_TYPE::KEY_Z))
@@ -456,14 +492,29 @@ void CPlayerScript::Damage(float fDamage)
 {
 	if (!m_bInvincible)
 	{
-		m_pStatus->GetScript<CStatusScript>()->Damage(fDamage);
+		if (m_pStatus->GetScript<CStatusScript>()->Damage(fDamage))
+		{
+			Animator3D()->ChangeAnimation(L"Die");
+		}
+		else
+		{
+			bool type = rand() % 2;
+			if (type)
+			{
+				Animator3D()->ChangeAnimation(L"Hit1");
+			}
+			else
+			{
+				Animator3D()->ChangeAnimation(L"Hit2");
+			}
+		}
 	}
 }
 
-void CPlayerScript::PlayerPicking(bool bLeft)
+UINT CPlayerScript::PlayerPicking(bool bLeft)
 {
 	if (m_fAttackCoolTime > 0.f)
-		return;
+		return 0;
 	else
 	{
 		m_fAttackCoolTime = PLAYER_ATTACK_COOLTIME;
@@ -498,10 +549,14 @@ void CPlayerScript::PlayerPicking(bool bLeft)
 		}
 	}
 	int num = m_pQuickSlot->GetSelect();
-	if(bLeft)
-		m_pInventory->GetScript<CInventoryScript>()->Use_Left(GetObj(), pCollider, num);
+	if (bLeft)
+	{
+		return m_pInventory->GetScript<CInventoryScript>()->Use_Left(GetObj(), pCollider, num);
+	}
 	else
-		m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), pCollider, num);
+	{
+		return m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), pCollider, num);
+	}
 }
 
 void CPlayerScript::AnimationInfo( CAnimator3D * pAnimation )

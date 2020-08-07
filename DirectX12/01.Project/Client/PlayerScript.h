@@ -76,7 +76,7 @@ public:
 	bool GetEnable();
 
 	void Damage(float fDamage);
-	void PlayerPicking(bool bLeft = LEFT_CLICK);
+	UINT PlayerPicking(bool bLeft = LEFT_CLICK);
 
 	void AnimationInfo(CAnimator3D* pAnimation);
 };

@@ -54,7 +54,7 @@ void CStatusScript::Update()
 	vecObj[4]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &health);
 }
 
-void CStatusScript::Damage(float fDamage, bool bTrueDamage)
+bool CStatusScript::Damage(float fDamage, bool bTrueDamage)
 {
 	if (m_pArmor && !bTrueDamage)
 	{
@@ -66,7 +66,7 @@ void CStatusScript::Damage(float fDamage, bool bTrueDamage)
 			m_pArmor->GetScript<CArmorScript>()->DestroyArmor();
 			m_pArmor = NULL;
 		}
-		return;
+		return false;
 	}
 	m_fHealth -= fDamage;
 	if (m_fHealth <= 0.f && m_bGameOver == false)
@@ -81,7 +81,9 @@ void CStatusScript::Damage(float fDamage, bool bTrueDamage)
 		CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"UI")->AddGameObject(pObject);
 		m_bGameOver = true;
 		ShowCursor(true);
+		return true;
 	}
+	return false;
 }
 
 void CStatusScript::SetIncreaseHealth(float fAmount)
