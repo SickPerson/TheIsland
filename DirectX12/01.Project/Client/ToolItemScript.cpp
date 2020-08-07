@@ -224,7 +224,6 @@ void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 
 void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	
 	CGameObject* pObject = nullptr;
 
 	switch (m_eItemType)

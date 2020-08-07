@@ -268,6 +268,8 @@ void CIngameScene::Init()
 	pPlayer->AddComponent(new CPlayerScript);
 	pPlayer->AddComponent(new CCollider2D);
 
+	CPlayerScript* pPlayerScript = pPlayer->GetScript<CPlayerScript>();
+	pPlayerScript->AnimationInfo( pPlayer->Animator3D() );
 	pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
 	pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
@@ -414,7 +416,7 @@ void CIngameScene::Init()
 
 	// 
 	CreateNatural();
-	CreateAnimalSpawner();
+	//CreateAnimalSpawner();
 
 	//// ====================
 	//// Grid 오브젝트 생성
@@ -434,7 +436,7 @@ void CIngameScene::Init()
 	//pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
 	//pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"GridMtrl" ) );
 
-	//// Script 설정	
+	//// Script 설정	f
 	//pObject->GetScript<CGridScript>()->SetToolCamera( pMainCam );
 	//pObject->GetScript<CGridScript>()->SetGridColor( Vec3( 0.8f, 0.2f, 0.2f ) );
 

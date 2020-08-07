@@ -34,6 +34,9 @@ private:
 	float		m_fDownSpeed;
 
 	Vec3		m_vPrevPos;
+
+	bool		m_bHoldShift;
+
 public:
 	virtual void Awake();	
 	virtual void Update();
@@ -74,5 +77,7 @@ public:
 
 	void Damage(float fDamage);
 	void PlayerPicking(bool bLeft = LEFT_CLICK);
+
+	void AnimationInfo(CAnimator3D* pAnimation);
 };
 

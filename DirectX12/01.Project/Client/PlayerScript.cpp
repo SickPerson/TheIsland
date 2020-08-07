@@ -18,6 +18,7 @@
 #include <Engine/Camera.h>
 #include <Engine/RenderMgr.h>
 #include <Engine/NaviMgr.h>
+#include <Engine/Animator3D.h>
 
 #include <iostream>
 
@@ -34,6 +35,7 @@ CPlayerScript::CPlayerScript()
 	, m_pMainCamera(NULL)
 	, m_fAttackCoolTime(PLAYER_ATTACK_COOLTIME)
 	, m_fDownSpeed(0.f)
+	, m_bHoldShift(false)
 {
 	m_vCollisionObj.reserve(5);
 }
@@ -110,7 +112,6 @@ bool CPlayerScript::GetEnable()
 
 void CPlayerScript::Awake()
 {
-
 }
 
 void CPlayerScript::Update()
@@ -151,6 +152,14 @@ void CPlayerScript::Update()
 			if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
 			{
 				fSpeed *= 5.f;
+				m_bHoldShift = true;
+				Animator3D()->ChangeAnimation( L"Run" );
+			}
+
+			if ( KEY_AWAY( KEY_TYPE::KEY_LSHIFT ) )
+			{
+				m_bHoldShift = false;
+				Animator3D()->ChangeAnimation( L"Idle2" );
 			}
 
 			Vec3 vPrev;
@@ -165,6 +174,9 @@ void CPlayerScript::Update()
 				{
 					vPos = vPrev;
 				}
+
+				if ( !m_bHoldShift )
+					Animator3D()->ChangeAnimation( L"Walk" );
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_S))
@@ -178,6 +190,9 @@ void CPlayerScript::Update()
 				{
 					vPos = vPrev;
 				}
+
+				if ( !m_bHoldShift )
+					Animator3D()->ChangeAnimation( L"Walk" );
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_A))
@@ -191,6 +206,9 @@ void CPlayerScript::Update()
 				{
 					vPos = vPrev;
 				}
+
+				if ( !m_bHoldShift )
+					Animator3D()->ChangeAnimation( L"Walk" );
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_D))
@@ -204,6 +222,14 @@ void CPlayerScript::Update()
 				{
 					vPos = vPrev;
 				}
+
+				if ( !m_bHoldShift )
+					Animator3D()->ChangeAnimation( L"Walk" );
+			}
+
+			if ( KEY_AWAY( KEY_TYPE::KEY_W ) || KEY_AWAY( KEY_TYPE::KEY_A ) || KEY_AWAY( KEY_TYPE::KEY_S ) || KEY_AWAY( KEY_TYPE::KEY_D ) )
+			{
+				Animator3D()->ChangeAnimation( L"Idle2" );
 			}
 
 			POINT vMousePos = CKeyMgr::GetInst()->GetMousePos();
@@ -476,6 +502,23 @@ void CPlayerScript::PlayerPicking(bool bLeft)
 		m_pInventory->GetScript<CInventoryScript>()->Use_Left(GetObj(), pCollider, num);
 	else
 		m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), pCollider, num);
+}
+
+void CPlayerScript::AnimationInfo( CAnimator3D * pAnimation )
+{
+	pAnimation->AddClip( L"Walk", 0, 24, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Run", 25, 42, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Idle1", 43, 193, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Idle2", 200, 379, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Die", 380, 442, ANIMATION_MODE::ONCE_STOP );
+	pAnimation->AddClip( L"TakeWeapon", 443, 477, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Attack1", 478, 554, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Attack2", 555, 624, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Attack3", 625, 695, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Hit1", 696, 730, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Hit2", 731, 778, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Jump", 779, 830, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->SetDefaultKey( L"Idle1" );
 }
 
 
