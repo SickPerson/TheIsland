@@ -1479,7 +1479,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
 
-			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
+			//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 		}
 		break;
 		case B_PASSIVE:
@@ -1521,7 +1521,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 				pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 				pObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
 
-				CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
+				//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 			}
 			else
 			{
@@ -1559,7 +1559,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 				pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 				pObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
 
-				CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
+				//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 			}
 		}
 		break;
@@ -1600,12 +1600,19 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(300.f, 300.f, 300.f));
 
-			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
+			//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 		}
 		break;
 		default:
 			break;
 		}
+
+		tEvent tEv;
+		tEv.eType = EVENT_TYPE::CREATE_OBJECT;
+		tEv.lParam = 2;
+		tEv.wParam = (DWORD_PTR)(pObject);
+		CEventMgr::GetInst()->AddEvent(tEv);
+
 		pObject->Transform()->SetLocalPos(vPos);
 		pObject->Transform()->SetLocalRot(vRot);
 		m_mapAnimals.insert(make_pair(uiId, pObject));
@@ -1639,13 +1646,15 @@ void CIngameScene::InstallHousing(UINT uiType, Vec3 vPos, Vec3 vRot, Vec3 vScale
 {
 	CGameObject* pObject = nullptr;
 
-	if (HOUSING_ETC == uiType)
+	if ((HOUSING_TYPE)uiType != HOUSING_ETC)
 	{
-		Ptr<CMeshData> pTex = CResMgr::GetInst()->Load<CMeshData>(L"Campfire.mdat", L"MeshData\\campfire.mdat");;
-		pObject = pTex->Instantiate();
+		pObject = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)uiType)->Instantiate();
 	}
 	else
-		pObject = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)uiType)->Instantiate();
+	{
+		Ptr<CMeshData> pTex = CResMgr::GetInst()->Load<CMeshData>(L"Campfire.mdat", L"MeshData\\campfire.mdat");
+		pObject = pTex->Instantiate();
+	}
 	pObject->AddComponent(new CBuildScript((HOUSING_TYPE)uiType));
 
 	pObject->AddComponent(new CCollider2D);
@@ -1666,5 +1675,10 @@ void CIngameScene::InstallHousing(UINT uiType, Vec3 vPos, Vec3 vRot, Vec3 vScale
 	pObject->GetScript<CBuildScript>()->Init();
 	pObject->GetScript<CBuildScript>()->MustBuild();
 
-	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->AddGameObject(pObject);
+	//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->AddGameObject(pObject);
+	tEvent tEv;
+	tEv.eType = EVENT_TYPE::CREATE_OBJECT;
+	tEv.lParam = 6;
+	tEv.wParam = (DWORD_PTR)(pObject);
+	CEventMgr::GetInst()->AddEvent(tEv);
 }
