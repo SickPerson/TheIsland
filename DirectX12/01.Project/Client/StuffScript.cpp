@@ -22,16 +22,14 @@ void CStuffScript::Update()
 	CItemScript::Update();
 }
 
-void CStuffScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CStuffScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	
-
+	return m_eItemType;
 }
 
-void CStuffScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CStuffScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	
-
+	return m_eItemType;
 }
 
 void CStuffScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)

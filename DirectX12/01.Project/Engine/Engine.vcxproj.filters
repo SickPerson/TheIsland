@@ -94,9 +94,6 @@
     <Filter Include="06. GameObject\Component\Particle">
       <UniqueIdentifier>{8efbd3dd-7818-4b1b-b1a2-b7617e045459}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\Component\Font">
-      <UniqueIdentifier>{4b6071b6-b6e0-43a4-b7d6-75d369098c53}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Manager\Instancing">
       <UniqueIdentifier>{44071d1a-0a69-4202-9dda-6f94456f1b57}</UniqueIdentifier>
     </Filter>
@@ -105,6 +102,9 @@
     </Filter>
     <Filter Include="06. GameObject\Component\Mouse">
       <UniqueIdentifier>{33f3f387-6d37-4b5b-85f2-a30e3e7a5ad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\Component\Font">
+      <UniqueIdentifier>{4b6071b6-b6e0-43a4-b7d6-75d369098c53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

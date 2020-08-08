@@ -54,7 +54,7 @@ void CHousingScript::Update()
 	CItemScript::Update();
 }
 
-void CHousingScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CHousingScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	{
 		tEvent evt = {};
@@ -78,14 +78,16 @@ void CHousingScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 		evt.lParam = ((DWORD_PTR)5 << 16 | (DWORD_PTR)true);
 		CEventMgr::GetInst()->AddEvent(evt);
 	}
+
+	return m_eItemType;
 }
 
-void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	int idx = pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->CheckItem(ITEM_TYPE::ITEM_WOOD, 3);
 	if (idx == -1)
 	{
-		return;
+		return 0;
 	}
 
 	if (m_pObj[m_eType]->GetScript<CBuildScript>()->Build())
@@ -129,6 +131,8 @@ void CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 
 		pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->DecreaseItem(idx, 3);
 	}
+
+	return m_eItemType;
 }
 
 void CHousingScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)
@@ -146,7 +150,7 @@ void CHousingScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int nu
 }
 
 
-void CHousingScript::EnableItem(CGameObject* pHost, int num)
+UINT CHousingScript::EnableItem(CGameObject* pHost, int num)
 {
 	tEvent evt = {};
 
@@ -155,6 +159,8 @@ void CHousingScript::EnableItem(CGameObject* pHost, int num)
 	evt.lParam = ((DWORD_PTR)5 << 16 | (DWORD_PTR)true);
 
 	CEventMgr::GetInst()->AddEvent(evt);
+
+	return m_eItemType;
 }
 
 void CHousingScript::DisableItem(CGameObject* pHost, int num)

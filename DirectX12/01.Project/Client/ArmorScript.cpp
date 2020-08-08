@@ -43,15 +43,17 @@ void CArmorScript::Update()
 	CItemScript::Update();
 }
 
-void CArmorScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CArmorScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	
+	return m_eItemType;
 }
 
-void CArmorScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CArmorScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	m_pHost = pHost;
 	EquipArmor();
+
+	return m_eItemType;
 }
 
 void CArmorScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)

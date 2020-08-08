@@ -3,6 +3,8 @@
 #include <Engine/FontMgr.h>
 #include <Engine/Font.h>
 
+#include "CheatMgr.h"
+
 #include <iostream>
 
 CChatScript::CChatScript() : 
@@ -10,6 +12,7 @@ CChatScript::CChatScript() :
 	, m_vNameColor(Vec4(1.f, 0.f, 0.f, 1.f))
 	, m_vChatColor(Vec4(1.f, 1.f, 1.f, 1.f))
 	, m_vBackColor(Vec4(0.5f, 0.5f, 0.5f, 0.3f))
+	, m_bCheat(true)
 {
 	for (int i = 0; i < MAX_CHAT_LINE; ++i)
 	{
@@ -39,6 +42,14 @@ void CChatScript::AddChat(string name, string chat)
 {
 	if (chat.size() == 0)
 		return;
+
+	if (m_bCheat)
+	{
+		if (CCheatMgr::GetInst()->CheckCheat(chat))
+		{
+			AddChat("System", "Enable Cheat!");
+		}
+	}
 
 	for (int i = MAX_CHAT_LINE - 2; i >= 0; --i)
 	{

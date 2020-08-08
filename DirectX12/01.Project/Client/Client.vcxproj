@@ -164,6 +164,7 @@
     <ClInclude Include="ArmorScript.h" />
     <ClInclude Include="ArrowScript.h" />
     <ClInclude Include="BuildScript.h" />
+    <ClInclude Include="CheatMgr.h" />
     <ClInclude Include="ConstStringScript.h" />
     <ClInclude Include="ChatScript.h" />
     <ClInclude Include="Client.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="ArmorScript.cpp" />
     <ClCompile Include="ArrowScript.cpp" />
     <ClCompile Include="BuildScript.cpp" />
+    <ClCompile Include="CheatMgr.cpp" />
     <ClCompile Include="ConstStringScript.cpp" />
     <ClCompile Include="ChatScript.cpp" />
     <ClCompile Include="Client.cpp" />

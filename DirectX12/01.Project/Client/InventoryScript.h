@@ -56,11 +56,11 @@ public:
 
 	void SetPlayer(CGameObject* pPlayer);
 
-	void Use_Left(CGameObject* pHost, CGameObject* pObj, int index);
-	void Use_Right(CGameObject* pHost, CGameObject* pObj, int index);
+	UINT Use_Left(CGameObject* pHost, CGameObject* pObj, int index);
+	UINT Use_Right(CGameObject* pHost, CGameObject* pObj, int index);
 	void Use_Highlight(CGameObject* pHost, CGameObject* pObj, int index);
 	void DisableItem(CGameObject* pHost, int index);
-	void EnableItem(CGameObject* pHost, int index);
+	UINT EnableItem(CGameObject* pHost, int index);
 
 private:
 	void AddItemFunc(CItemScript* pItem, int iCount);

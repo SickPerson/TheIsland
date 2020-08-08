@@ -6,10 +6,11 @@
 #include <Engine/NaviMgr.h>
 #include <Engine/Font.h>
 #include <Engine/RenderMgr.h>
+#include <Engine/PlayerScript.h>
 
 #include <iostream>
 
-#define DAYCYCLE 60.f // 배속
+//#define DAYCYCLE 60.f // 배속
 // 아무리 빨라도 1프레임당 1초가 최대
 
 CSunshineScript::CSunshineScript() :
@@ -20,7 +21,9 @@ CSunshineScript::CSunshineScript() :
 	m_iHour(11),
 	m_iMinute(0),
 	m_pSkybox(NULL),
-	m_pPlayer(NULL)
+	m_pPlayer(NULL),
+	DAYCYCLE(60.f),
+	m_pRain(NULL)
 {
 }
 
@@ -91,9 +94,17 @@ void CSunshineScript::Update()
 		vDir.x = sinf((fTime * 15.f) * XM_PI / 180.f);
 		vDir.Normalize(-vDir);
 		float fLight = 0.f;
-		if (m_iHour < 12)
+
+		// 6시 ~ 18시
+		if (m_iHour <= 20 && m_iHour >= 5)
 		{
-			fLight = (float)(fTime - 6.f) / 6.f;
+			// 12 = 1
+			// 5 = 0
+			if(m_iHour <= 12)
+				fLight = (float)(fTime - 5.f) / 7.f;
+			else
+				fLight = (float)(fTime - 20.f) / -7.f;
+			fLight += 0.3f;
 			if (m_pSkybox)
 			{
 				m_pSkybox->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fLight);
@@ -105,7 +116,8 @@ void CSunshineScript::Update()
 		}
 		else 
 		{
-			fLight = (float)(18 - fTime) / 6.f;
+			//fLight = (float)(18 - fTime) / 6.f;
+			fLight = 0.05f;
 			if (m_pSkybox)
 			{
 				m_pSkybox->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fLight);
@@ -136,6 +148,17 @@ void CSunshineScript::Update()
 	Light3D()->SetLightDir(vDir);
 
 	//Transform()->SetLocalRot(Vec3(vPlayerRot.x + XM_PI / 2.f, vPlayerRot.y + XM_PI, vPlayerRot.z));
+
+
+	// Rain
+	if ( !m_pRain )
+		return;
+	CGameObject* pMainCam = CSceneMgr::GetInst()->GetCurScene()->GetLayer(0)->GetMainCamera();
+	Vec3 vMainCam = pMainCam->Transform()->GetLocalPos();
+	Vec3 vRain = m_pRain->Transform()->GetLocalPos();
+	vRain.x = vMainCam.x;
+	vRain.z = vMainCam.z;
+	m_pRain->Transform()->SetLocalPos(vRain);
 }
 
 void CSunshineScript::Init()
@@ -171,9 +194,16 @@ float CSunshineScript::GetTime()
 	return m_fTime;
 }
 
-void CSunshineScript::SetTime(float fTime)
+void CSunshineScript::SetTime(int iHour, int iMin)
 {
-	m_fTime = fTime;
+	m_iHour = iHour;
+	m_iMinute = iMin;
+	DAYCYCLE = 60.f;
+}
+
+void CSunshineScript::SetDayCycle(float fCycle)
+{
+	DAYCYCLE = fCycle;
 }
 
 void CSunshineScript::SetSkybox(CGameObject* pObject)
@@ -189,4 +219,9 @@ void CSunshineScript::SetPlayer(CGameObject * pObject)
 void CSunshineScript::SetSea(CGameObject* pObject)
 {
 	m_pSea = pObject;
+}
+
+void CSunshineScript::SetRain( CGameObject * pObject )
+{
+	m_pRain = pObject;
 }
