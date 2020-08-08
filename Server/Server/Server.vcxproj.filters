@@ -82,6 +82,9 @@
     <Filter Include="03. Process\04. NaturalProcess">
       <UniqueIdentifier>{5423735c-6c5f-43ea-8bd5-12c8403d5971}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Process\04. HousingProcess">
+      <UniqueIdentifier>{81ded5e7-5462-4385-96e4-04b22c866f78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -143,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="NaturalProcess.cpp">
       <Filter>03. Process\04. NaturalProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="HousingProcess.cpp">
+      <Filter>03. Process\04. HousingProcess</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="NaturalProcess.h">
       <Filter>03. Process\04. NaturalProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="HousingProcess.h">
+      <Filter>03. Process\04. HousingProcess</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

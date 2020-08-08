@@ -4,6 +4,7 @@
 class CPlayerProcess;
 class CMonsterProcess;
 class CNaturalProcess;
+class CHousingProcess;
 
 class CNetwork
 {
@@ -28,6 +29,7 @@ private:
 	CPlayerProcess*		m_pPlayerProcess;
 	CMonsterProcess*	m_pMonsterProcess;
 	CNaturalProcess*	m_pNaturalProcess;
+	CHousingProcess*	m_pHousingProcess;
 
 private:
 	volatile USHORT m_UserID;

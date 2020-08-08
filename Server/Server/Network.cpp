@@ -3,6 +3,7 @@
 #include "PlayerProcess.h"
 #include "MonsterProcess.h"
 #include "NaturalProcess.h"
+#include "HousingProcess.h"
 
 #include "PacketMgr.h"
 #include "TimerMgr.h"
@@ -13,9 +14,12 @@ CNetwork::CNetwork()
 {
 	m_ListenSock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	m_bRunningServer = true;
+
+	// [ Process Init ]
 	m_pPlayerProcess = nullptr;
 	m_pMonsterProcess = nullptr;
 	m_pNaturalProcess = nullptr;
+	m_pHousingProcess = nullptr;
 	m_UserID = 0;
 	serverTimer = high_resolution_clock::now();
 	//------------------------------
@@ -53,8 +57,11 @@ void CNetwork::Initialize()
 {
 	CProcess::InitBeforeStart();
 
+	// [ Process Init ] 
 	m_pPlayerProcess = new CPlayerProcess();
 	m_pMonsterProcess = new CMonsterProcess();
+	m_pNaturalProcess = new CNaturalProcess();
+	m_pHousingProcess = new CHousingProcess();
 
 	CTimerMgr::GetInst()->Reset();
 

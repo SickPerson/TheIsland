@@ -272,19 +272,24 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 	Vec3 vPos = install_housing_packet->vLocalPos;
 	Vec3 vRot = install_housing_packet->vLocalRot;
 	Vec3 vScale = install_housing_packet->vLocalScale;
-
+	//USHORT usHousingNum = m_pHousingPool->GetNum();
 	//USHORT housing_Id = m_pHousingPool->GetNum();
 
 	//m_pHousingPool->InsertHousing(eType, vPos, vRot, vScale);
 
-	CHousing*	Housing = new CHousing();
+	//m_pHousingPool->InsertHousing(eType, vPos, vRot, vScale);
+	/*CHousing*	Housing = new CHousing();
 	Housing->SetInstall(true);
 	Housing->SetType((HOUSING_TYPE)eType);
 	Housing->SetLocalPos(vPos);
 	Housing->SetLocalRot(vRot);
 	Housing->SetLocalScale(vScale);
-	m_pHousingPool->m_cumHousingPool.insert(make_pair(m_housingNum, Housing));
-
+	m_pHousingPool->m_cumHousingPool.insert(make_pair(m_housingNum, Housing));*/
+	m_pHousingPool->m_cumHousingPool[m_housingNum]->SetInstall(true);
+	m_pHousingPool->m_cumHousingPool[m_housingNum]->SetType((HOUSING_TYPE)eType);
+	m_pHousingPool->m_cumHousingPool[m_housingNum]->SetLocalPos(vPos);
+	m_pHousingPool->m_cumHousingPool[m_housingNum]->SetLocalRot(vRot);
+	m_pHousingPool->m_cumHousingPool[m_housingNum]->SetLocalScale(vScale);
 	concurrent_unordered_set<USHORT> loginList;
 
 	CopyBeforeLoginList(loginList);

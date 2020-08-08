@@ -16,6 +16,8 @@ public:
 	~CHousingpool();
 
 public:
+	recursive_mutex m_rmHousingPoolMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::END];
+public:
 	volatile USHORT m_HousingNum;
 	shared_mutex m_smHusingPoolSharedMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::END];
 

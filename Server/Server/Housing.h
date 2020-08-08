@@ -20,8 +20,8 @@ public:
 	HOUSING_TYPE	m_eType;
 	bool			m_bInstall;
 
-public:
-	shared_mutex m_smHousingSharedMutex[(UINT)HOUSING_LOCK_TYPE::END];
+private:
+	std::shared_mutex m_smHousingSharedMutex[(UINT)HOUSING_LOCK_TYPE::END];
 
 public:
 	void SetType(HOUSING_TYPE eType);
