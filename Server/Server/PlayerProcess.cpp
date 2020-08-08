@@ -137,7 +137,7 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 	{
 		bool bInstall = m_pHousingPool->m_cumHousingPool[au.first]->GetInstall();
 		if (!bInstall) continue;
-		CPacketMgr::GetInst()->Send_Install_Housing_Packet(playerId, au.first);
+		CPacketMgr::Send_Install_Housing_Packet(playerId, au.first);
 	}
 }
 
@@ -294,7 +294,7 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!bConnect)	continue;
 		if (au == playerId) continue;
-		CPacketMgr::GetInst()->Send_Install_Housing_Packet(au, m_housingNum);
+		CPacketMgr::Send_Install_Housing_Packet(au, m_housingNum);
 	}
 	++m_housingNum;
 }

@@ -404,6 +404,14 @@ bool CBuildScript::Build()
 		}
 		GetObj()->AddChild(pFloor);
 	}
+
+	// Install_Housing packet Send
+	Vec3 vPos = Transform()->GetLocalPos();
+	Vec3 vRot = Transform()->GetLocalRot();
+	Vec3 vScale = Transform()->GetLocalScale();
+
+	CNetwork::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale);
+
 	return true;
 }
 
@@ -411,12 +419,6 @@ void CBuildScript::MustBuild()
 {
 	m_bCollision = false;
 	Build();
-	// Install_Housing packet Send
-	Vec3 vPos = Transform()->GetLocalPos();
-	Vec3 vRot = Transform()->GetLocalRot();
-	Vec3 vScale = Transform()->GetLocalScale();
-
-	CNetwork::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale);
 }
 
 bool CBuildScript::Upgrade()
