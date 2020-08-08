@@ -298,7 +298,7 @@ void CIngameScene::Init()
 	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
 
 	pMainCam->Camera()->SetProjType( PROJ_TYPE::PERSPECTIVE );
-	pMainCam->Camera()->SetFar( 100000.f );
+	pMainCam->Camera()->SetFar( 10000.f );
 	pMainCam->Camera()->SetLayerAllCheck();
 	pMainCam->Camera()->SetLayerCheck( 30, false );
 	pMainCam->Camera()->SetLayerCheck( 29, false );
@@ -418,7 +418,6 @@ void CIngameScene::Init()
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
 
-	// 
 	CreateNatural();
 	CreateAnimalSpawner();
 
