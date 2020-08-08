@@ -178,8 +178,8 @@ void CAnimator3D::FinalUpdate()
 
 		else if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::ONCE_RETURN )
 		{
-			m_strCurAniKey = m_strDefaultKey;
 			m_mapClipUpdateTime[m_strCurAniKey] = 0.f;
+			m_strCurAniKey = m_strDefaultKey;
 		}
 
 		else if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::ONCE_STOP )
