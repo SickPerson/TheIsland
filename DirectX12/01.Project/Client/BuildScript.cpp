@@ -407,6 +407,12 @@ bool CBuildScript::Build()
 	return true;
 }
 
+void CBuildScript::MustBuild()
+{
+	m_bCollision = false;
+	Build();
+}
+
 bool CBuildScript::Upgrade()
 {
 	if(m_iGrade >= MAX_GRADE - 1)
