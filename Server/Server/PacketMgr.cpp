@@ -239,3 +239,12 @@ void CPacketMgr::Send_Weather_Packet(USHORT player_Id, bool bRain)
 	packet.bRain = bRain;
 	Send_Packet(player_Id, &packet);
 }
+
+void CPacketMgr::Send_Time_Packet(USHORT player_Id, float fTime)
+{
+	sc_time_packet packet;
+	packet.size = sizeof(sc_time_packet);
+	packet.type = SC_TIME;
+	packet.fTime = fTime;
+	Send_Packet(player_Id, &packet);
+}

@@ -56,6 +56,7 @@ constexpr	char	SC_INSTALL_HOUSING = 25;
 
 // etc
 constexpr	char	SC_WEATHER = 30;
+constexpr	char	SC_TIME = 31;
 constexpr	char	SC_END = 35;
 
 // About Player
@@ -227,6 +228,13 @@ struct sc_weather_packet
 	char size;
 	char type;
 	bool bRain;
+};
+
+struct sc_time_packet
+{
+	char size;
+	char type;
+	float fTime;
 };
 
 // ___________________________________________________________________

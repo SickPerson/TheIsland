@@ -44,6 +44,7 @@ public:
 
 public:
 	static void Weather_Event();
+	static void Time_Event();
 
 public:
 	concurrent_unordered_set<USHORT>& GetLoginList()

@@ -1,5 +1,6 @@
 #include "Process.h"
 #include "PacketMgr.h"
+#include "TimerMgr.h"
 
 CPlayerpool*	CProcess::m_pPlayerPool = nullptr;
 CMonsterpool*	CProcess::m_pMonsterPool = nullptr;
@@ -59,10 +60,10 @@ bool CProcess::PlayerAndNatural_CollisionSphere(USHORT playerId, USHORT naturalI
 	Vec3 vPlayerColScale = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalScale() * fOffset;
 	Vec3 vAnimalColScale = m_pPlayerPool->m_cumPlayerPool[naturalId]->GetLocalScale();
 
-	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vAnimalPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
+	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vPlayerPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
 	fDist = sqrtf(fDist);
 
-	if (fDist > fabsf(vPlayerScale.x * vPlayerColScale.x) + fabsf(vAnimalScale.x * vAnimalScale.x))
+	if (fDist > fabsf(vPlayerScale.x * vPlayerColScale.x) + fabsf(vAnimalScale.x * vAnimalColScale.x))
 		return false;
 
 	return true;
@@ -198,5 +199,16 @@ void CProcess::Weather_Event()
 		if (!bConnect) continue;
 		bool bRain = rand() % 2;
 		CPacketMgr::GetInst()->Send_Weather_Packet(au, bRain);
+	}
+}
+
+void CProcess::Time_Event()
+{
+	for (auto& au : m_cusLoginList)
+	{
+		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
+		if (!bConnect) continue;
+		float fTime = CTimerMgr::GetInst()->GetTotalTime();
+		CPacketMgr::GetInst()->Send_Time_Packet(au, fTime);
 	}
 }

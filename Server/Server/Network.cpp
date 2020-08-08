@@ -22,6 +22,7 @@ CNetwork::CNetwork()
 	m_pHousingProcess = nullptr;
 	m_UserID = 0;
 	serverTimer = high_resolution_clock::now();
+	eventTimer = high_resolution_clock::now();
 	//------------------------------
 	//Initialize();
 	CheckThisCputCount();
@@ -276,12 +277,18 @@ void CNetwork::UpdateThread()
 		/*while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
 		}*/
-		if (high_resolution_clock::now() - serverTimer >= 10s)
+		/*if (high_resolution_clock::now() - serverTimer >= 1s)
+		{
+			CProcess::Time_Event();
+			serverTimer = high_resolution_clock::now();
+		}*/
+
+		/*if (high_resolution_clock::now() - eventTimer >= 30s)
 		{
 			CProcess::Weather_Event();
-			//CPacketMgr::GetInst()->Send_Weather_Packet();
-			serverTimer = high_resolution_clock::now();
-		}
+			eventTimer = high_resolution_clock::now();
+		}*/
+
 		while (!CProcess::EmptyEventQueue())
 		{
 			Update_Event ev;

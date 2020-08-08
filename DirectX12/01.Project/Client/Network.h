@@ -121,6 +121,7 @@ public: // Housing
 
 public: //etc
 	void Recv_Weather_Packet(char* packet);
+	void Recv_Time_Packet(char* packet);
 
 public:
 	void SetChatObj(CGameObject* pObj) { m_pChat = pObj; }

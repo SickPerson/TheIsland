@@ -34,4 +34,5 @@ public:
 
 public:
 	static void Send_Weather_Packet(USHORT player_Id, bool bRain);
+	static void Send_Time_Packet(USHORT player_Id, float fTime);
 };

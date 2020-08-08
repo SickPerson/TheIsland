@@ -280,6 +280,11 @@ void CNetwork::ProcessPacket(char* packet)
 		Recv_Weather_Packet(packet);
 		break;
 	}
+	case SC_TIME:
+	{
+		Recv_Time_Packet(packet);
+		break;
+	}
 	}
 }
 
@@ -598,5 +603,13 @@ void CNetwork::Recv_Weather_Packet(char * packet)
 	bool bRain = weather_packet->bRain;
 
 	// ¹Þ±â
-	cout << bRain << endl;
+	//cout << bRain << endl;
+}
+
+void CNetwork::Recv_Time_Packet(char * packet)
+{
+	sc_time_packet* time_packet = reinterpret_cast<sc_time_packet*>(packet);
+	float fTime = time_packet->fTime;
+
+	cout << fTime << endl;
 }

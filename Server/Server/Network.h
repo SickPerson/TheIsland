@@ -36,6 +36,7 @@ private:
 
 private:
 	high_resolution_clock::time_point serverTimer;
+	high_resolution_clock::time_point eventTimer;
 
 public:
 	void Initialize();
