@@ -24,7 +24,7 @@ CHousingpool::~CHousingpool()
 
 USHORT CHousingpool::GetNum()
 {
-	shared_lock<shared_mutex> lock(m_smHusingPoolSharedMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::NUM]);
+	//shared_lock<shared_mutex> lock(m_smHusingPoolSharedMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::NUM]);
 	return m_HousingNum;
 }
 

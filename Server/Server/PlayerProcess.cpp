@@ -131,6 +131,14 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 			CPacketMgr::Send_Put_Npc_Packet(playerId, au.first);
 		}
 	}
+
+	// [ Add Housing ]
+	for (auto& au : m_pHousingPool->m_cumHousingPool)
+	{
+		bool bInstall = m_pHousingPool->m_cumHousingPool[au.first]->GetInstall();
+		if (!bInstall) continue;
+		CPacketMgr::GetInst()->Send_Install_Housing_Packet(playerId, au.first);
+	}
 }
 
 void CPlayerProcess::PlayerMove(USHORT playerId, char * packet)
@@ -216,7 +224,7 @@ void CPlayerProcess::PlayerCollisionAnimal(USHORT playerId, char * packet)
 	}
 	else
 	{
-		vPlayerPos += vDir * fPlayerSpeed * 0.2f;
+		vPlayerPos += vDir * fPlayerSpeed * 0.02f;
 	}
 
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
@@ -265,8 +273,17 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 	Vec3 vRot = install_housing_packet->vLocalRot;
 	Vec3 vScale = install_housing_packet->vLocalScale;
 
-	USHORT housing_Id = m_pHousingPool->GetNum();
-	m_pHousingPool->InsertHousing(eType, vPos, vRot, vScale);
+	//USHORT housing_Id = m_pHousingPool->GetNum();
+
+	//m_pHousingPool->InsertHousing(eType, vPos, vRot, vScale);
+
+	CHousing*	Housing = new CHousing();
+	Housing->SetInstall(true);
+	Housing->SetType((HOUSING_TYPE)eType);
+	Housing->SetLocalPos(vPos);
+	Housing->SetLocalRot(vRot);
+	Housing->SetLocalScale(vScale);
+	m_pHousingPool->m_cumHousingPool.insert(make_pair(m_housingNum, Housing));
 
 	concurrent_unordered_set<USHORT> loginList;
 
@@ -277,8 +294,9 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!bConnect)	continue;
 		if (au == playerId) continue;
-		CPacketMgr::Send_Install_Housing_Packet(au, housing_Id);
+		CPacketMgr::GetInst()->Send_Install_Housing_Packet(au, m_housingNum);
 	}
+	++m_housingNum;
 }
 
 void CPlayerProcess::PlayerChat(USHORT _usID, char * _packet)

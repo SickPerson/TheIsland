@@ -94,6 +94,7 @@ public:
 	//void Send_Rot_Packet();
 	void Send_Chat_Packet(string message);
 	void Send_Collision_Animal_Packet(unsigned short animalId, bool bRun);
+	void Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale);
 
 	//void Send_Install_Housing_Packet(USHORT )
 public:

@@ -223,7 +223,7 @@ void CPacketMgr::Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id
 
 	packet.size = sizeof(sc_install_housing_packet);
 	packet.type = SC_INSTALL_HOUSING;
-	packet.type =			CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetType();
+	packet.housing_type =	CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetType();
 	packet.vLocalPos =		CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetLocalPos();
 	packet.vLocalRot =		CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetLocalRot();
 	packet.vLocalScale =	CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetLocalScale();

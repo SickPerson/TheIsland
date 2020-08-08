@@ -256,7 +256,7 @@ void CNetwork::ProcessPacket(char* packet)
 		break;
 	}
 	// NPC, MONSTER ฐüทร
-	case SC_PUT_NPC: {
+	/*case SC_PUT_NPC: {
 		Recv_Put_Npc_Packet(packet);
 		break;
 	}
@@ -269,7 +269,7 @@ void CNetwork::ProcessPacket(char* packet)
 	{
 		Recv_Remove_Npc_Packet(packet);
 		break;
-	}
+	}*/
 	case SC_INSTALL_HOUSING:
 	{
 		Recv_Install_Housing_Packet(packet);
@@ -387,6 +387,26 @@ void CNetwork::Send_Collision_Animal_Packet(unsigned short animalId, bool bRun)
 	collision_animal_packet->id = animalId;
 	collision_animal_packet->bRun = bRun;
 
+
+	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0)
+	{
+		int err_no = WSAGetLastError();
+		Err_display("Err while sending packet - ", err_no);
+	}
+}
+
+void CNetwork::Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale)
+{
+	DWORD size, flag = 0;
+
+	cs_install_housing_packet* install_housing_packet = reinterpret_cast<cs_install_housing_packet*>(m_cSendBuf);
+	install_housing_packet->type = CS_HOUSING_INSTALL;
+	install_housing_packet->housing_type = uiType;
+	install_housing_packet->vLocalPos = vLocalPos;
+	install_housing_packet->vLocalRot = vLocalRot;
+	install_housing_packet->vLocalScale = vLocalScale;
 
 	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 

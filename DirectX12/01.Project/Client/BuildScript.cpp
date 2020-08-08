@@ -2,6 +2,7 @@
 #include "BuildScript.h"
 #include "HousingMgr.h"
 #include "NaturalScript.h"
+#include "Network.h"
 
 CBuildScript::CBuildScript(HOUSING_TYPE eType, UINT iGrade) :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
@@ -403,7 +404,6 @@ bool CBuildScript::Build()
 		}
 		GetObj()->AddChild(pFloor);
 	}
-
 	return true;
 }
 
@@ -411,6 +411,12 @@ void CBuildScript::MustBuild()
 {
 	m_bCollision = false;
 	Build();
+	// Install_Housing packet Send
+	Vec3 vPos = Transform()->GetLocalPos();
+	Vec3 vRot = Transform()->GetLocalRot();
+	Vec3 vScale = Transform()->GetLocalScale();
+
+	CNetwork::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale);
 }
 
 bool CBuildScript::Upgrade()

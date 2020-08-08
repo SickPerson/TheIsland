@@ -22,6 +22,7 @@ public:
 	recursive_mutex	m_rmProcessMutex;
 
 public:
+	static USHORT	m_housingNum;
 	static CPlayerpool*	m_pPlayerPool;
 	static CMonsterpool* m_pMonsterPool;
 	static CNaturalpool* m_pNaturalPool;
@@ -32,6 +33,8 @@ public:
 
 public:
 	bool ObjectRangeCheck(Vec3& vFirst, Vec3& vSecond, float fDistance);
+
+public:
 	/*bool Animal_CollisionSphere(USHORT player_id, USHORT animal_id, float fOffset = 1.f);
 	bool Natural_CollisionHouse(USHORT player_id, USHORT animal_id);*/
 

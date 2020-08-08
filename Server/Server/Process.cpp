@@ -5,6 +5,7 @@ CPlayerpool*	CProcess::m_pPlayerPool = nullptr;
 CMonsterpool*	CProcess::m_pMonsterPool = nullptr;
 CNaturalpool*	CProcess::m_pNaturalPool = nullptr;
 CHousingpool*	CProcess::m_pHousingPool = nullptr;
+USHORT	CProcess::m_housingNum = 0;
 concurrent_unordered_set<USHORT> CProcess::m_cusLoginList;
 concurrent_priority_queue<Update_Event>	CProcess::m_cpqEventQueue;
 

@@ -1638,7 +1638,14 @@ void CIngameScene::AnimalDestory(USHORT uiId)
 void CIngameScene::InstallHousing(UINT uiType, Vec3 vPos, Vec3 vRot, Vec3 vScale)
 {
 	CGameObject* pObject = nullptr;
-	pObject = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)uiType)->Instantiate();
+
+	if (HOUSING_ETC == uiType)
+	{
+		Ptr<CMeshData> pTex = CResMgr::GetInst()->Load<CMeshData>(L"Campfire.mdat", L"MeshData\\campfire.mdat");;
+		pObject = pTex->Instantiate();
+	}
+	else
+		pObject = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)uiType)->Instantiate();
 	pObject->AddComponent(new CBuildScript((HOUSING_TYPE)uiType));
 
 	pObject->AddComponent(new CCollider2D);
