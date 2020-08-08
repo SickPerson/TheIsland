@@ -161,7 +161,7 @@ float4 PS_Particle(GS_OUT _in) : SV_Target
 // g_float_3 : Max Speed
 // ===============
 [numthreads(1024, 1, 1)]
-void CS_RainParticleUpdate(int3 _iThreadIdx : SV_DispatchThreadID)
+void CS_ParticleUpdate(int3 _iThreadIdx : SV_DispatchThreadID)
 {
 	if (_iThreadIdx.x >= g_int_0)
 		return;
@@ -258,7 +258,7 @@ void CS_RainParticleUpdate(int3 _iThreadIdx : SV_DispatchThreadID)
 				float3 vDir = float3( 0.f, -1.f, 0.f );
 					
 				tRWData[_iThreadIdx.x].vWorldDir = normalize( vDir ); //normalize((vNoise.xyz - 0.5f) * 2.f);
-				tRWData[_iThreadIdx.x].vWorldPos = ( vNoise.xyz - 0.5f ) * 50;
+				tRWData[_iThreadIdx.x].vWorldPos = ( vNoise.xyz - 0.5f ) * 100;
 				tRWData[_iThreadIdx.x].m_fLifeTime = ( ( g_float_1 - g_float_0 ) * vNoise.x ) + g_float_0;
 				tRWData[_iThreadIdx.x].m_fCurTime = 0.f;
 			}

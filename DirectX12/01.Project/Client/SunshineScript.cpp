@@ -6,6 +6,7 @@
 #include <Engine/NaviMgr.h>
 #include <Engine/Font.h>
 #include <Engine/RenderMgr.h>
+#include <Engine/PlayerScript.h>
 
 #include <iostream>
 
@@ -21,7 +22,8 @@ CSunshineScript::CSunshineScript() :
 	m_iMinute(0),
 	m_pSkybox(NULL),
 	m_pPlayer(NULL),
-	DAYCYCLE(60.f)
+	DAYCYCLE(60.f),
+	m_pRain(NULL)
 {
 }
 
@@ -146,6 +148,17 @@ void CSunshineScript::Update()
 	Light3D()->SetLightDir(vDir);
 
 	//Transform()->SetLocalRot(Vec3(vPlayerRot.x + XM_PI / 2.f, vPlayerRot.y + XM_PI, vPlayerRot.z));
+
+
+	// Rain
+	if ( !m_pRain )
+		return;
+	CGameObject* pMainCam = CSceneMgr::GetInst()->GetCurScene()->GetLayer(0)->GetMainCamera();
+	Vec3 vMainCam = pMainCam->Transform()->GetLocalPos();
+	Vec3 vRain = m_pRain->Transform()->GetLocalPos();
+	vRain.x = vMainCam.x;
+	vRain.z = vMainCam.z;
+	m_pRain->Transform()->SetLocalPos(vRain);
 }
 
 void CSunshineScript::Init()
@@ -206,4 +219,9 @@ void CSunshineScript::SetPlayer(CGameObject * pObject)
 void CSunshineScript::SetSea(CGameObject* pObject)
 {
 	m_pSea = pObject;
+}
+
+void CSunshineScript::SetRain( CGameObject * pObject )
+{
+	m_pRain = pObject;
 }
