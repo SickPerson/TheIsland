@@ -277,17 +277,17 @@ void CNetwork::UpdateThread()
 		/*while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
 		}*/
-		/*if (high_resolution_clock::now() - serverTimer >= 1s)
+		if (high_resolution_clock::now() - serverTimer >= 1s)
 		{
 			CProcess::Time_Event();
 			serverTimer = high_resolution_clock::now();
-		}*/
+		}
 
-		/*if (high_resolution_clock::now() - eventTimer >= 30s)
+		if (high_resolution_clock::now() - eventTimer >= 30s)
 		{
 			CProcess::Weather_Event();
 			eventTimer = high_resolution_clock::now();
-		}*/
+		}
 
 		while (!CProcess::EmptyEventQueue())
 		{

@@ -193,22 +193,22 @@ bool CProcess::PlayerAndHouse_Collision_Door(USHORT playerId, USHORT houseId, Ve
 
 void CProcess::Weather_Event()
 {
+	bool bRain = rand() % 2;
 	for (auto& au : m_cusLoginList)
 	{
 		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!bConnect) continue;
-		bool bRain = rand() % 2;
 		CPacketMgr::GetInst()->Send_Weather_Packet(au, bRain);
 	}
 }
 
 void CProcess::Time_Event()
 {
+	float fTime = CTimerMgr::GetInst()->GetTotalTime();
 	for (auto& au : m_cusLoginList)
 	{
 		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!bConnect) continue;
-		float fTime = CTimerMgr::GetInst()->GetTotalTime();
 		CPacketMgr::GetInst()->Send_Time_Packet(au, fTime);
 	}
 }
