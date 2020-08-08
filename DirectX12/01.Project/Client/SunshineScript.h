@@ -17,6 +17,9 @@ class CSunshineScript :
 	CGameObject* m_pPlayer;
 	CGameObject* m_pClock;
 	CGameObject* m_pDay;
+
+	CGameObject* m_pRain;
+
 public:
 	CSunshineScript();
 	virtual ~CSunshineScript();
@@ -37,5 +40,6 @@ public:
 	void SetSkybox(CGameObject* pObject);
 	void SetPlayer(CGameObject* pObject);
 	void SetSea(CGameObject* pObject);
+	void SetRain( CGameObject* pObject );
 };
 

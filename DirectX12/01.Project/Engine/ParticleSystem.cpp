@@ -110,9 +110,25 @@ void CParticleSystem::SetEndSpeed(float fSpeed)
 	m_fMaxSpeed = fSpeed;
 }
 
+void CParticleSystem::SetStartScale( float fScale )
+{
+	m_fStartScale = fScale;
+}
+
+void CParticleSystem::SetEndScale( float fScale )
+{
+	m_fEndScale = fScale;
+}
+
 void CParticleSystem::SetKind( int iKind )
 {
 	m_iKind = iKind;
+}
+
+void CParticleSystem::SetTexture( const wstring & strKey, const wstring & strPath )
+{
+	Ptr<CTexture> pParticle = CResMgr::GetInst()->Load<CTexture>( strKey, strPath );
+	m_pMtrl->SetData( SHADER_PARAM::TEX_0, pParticle.GetPointer() );
 }
 
 void CParticleSystem::SaveToScene( FILE * _pFile )

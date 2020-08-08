@@ -41,7 +41,6 @@ private:
 
 	int					m_iKind;					// 파티클 종류
 
-
 public:
 	virtual void FinalUpdate();
 	virtual void Render();
@@ -53,7 +52,11 @@ public:
 	void SetStartSpeed(float fSpeed);
 	void SetEndSpeed(float fSpeed);
 
+	void SetStartScale( float fScale );
+	void SetEndScale( float fScale );
+
 	void SetKind( int iKind );
+	void SetTexture( const wstring& strKey, const wstring& strPath );
 
 public:
 	virtual void SaveToScene( FILE* _pFile );
