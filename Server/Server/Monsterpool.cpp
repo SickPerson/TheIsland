@@ -13,7 +13,6 @@ CMonsterpool::CMonsterpool()
 	{
 		Animal = new CMonster();
 		Animal->SetWakeUp(false);
-
 		if (i < ANIMAL_BEAR)
 		{
 			tAnimalStatus tStatus;

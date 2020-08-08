@@ -35,6 +35,10 @@ public:
 	bool ObjectRangeCheck(Vec3& vFirst, Vec3& vSecond, float fDistance);
 
 public:
+	bool PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId, float fOffset = 1.f);
+	bool PlayerAndNatural_CollisionSphere(USHORT playerId, USHORT naturalId, float fOffset = 1.f);
+	bool PlayerAndHouse_Collision(USHORT playerId, USHORT houseId, UINT uiType);
+	bool PlayerAndHouse_Collision_Door(USHORT playerId, USHORT houseId, Vec3 vOffsetScale, Vec3 vOffsetPos);
 	/*bool Animal_CollisionSphere(USHORT player_id, USHORT animal_id, float fOffset = 1.f);
 	bool Natural_CollisionHouse(USHORT player_id, USHORT animal_id);*/
 

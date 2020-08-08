@@ -26,7 +26,7 @@ constexpr	char	CS_LOGOUT = 3;
 constexpr	char	CS_ROT =	4;
 constexpr	char	CS_ANIMAL_COLLISION = 5;
 constexpr	char	CS_NATURAL_COLLISION = 6;
-constexpr	char	CS_HOUSING_COLLISION = 7;
+constexpr	char	CS_HOUSE_COLLISION = 7;
 constexpr	char	CS_HOUSING_INSTALL = 8;
 constexpr	int		CS_END =	9;
 

@@ -209,58 +209,73 @@ void CPlayerProcess::PlayerCollisionAnimal(USHORT playerId, char * packet)
 {
 	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
 
-	bool AnimalId = collision_packet->id;
+	USHORT AnimalId = collision_packet->id;
 	bool bRun = collision_packet->bRun;
 
-	Vec3 vAnimalPos = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
-	Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	float fPlayerSpeed = m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
-	Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
-	vDir.y = 0.f;
-
-	if (bRun)
+	if (PlayerAndAnimal_CollisionSphere(playerId, AnimalId, 0.2f))
 	{
-		vPlayerPos += vDir * fPlayerSpeed * 0.02f * 5.f;
-	}
-	else
-	{
-		vPlayerPos += vDir * fPlayerSpeed * 0.02f;
-	}
+		Vec3 vAnimalPos = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
+		Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+		float fPlayerSpeed = m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
+		Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
+		vDir.y = 0.f;
 
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
+		if (bRun)
+		{
+			vPlayerPos += vDir * fPlayerSpeed * 0.02f * 5.f;
+		}
+		else
+		{
+			vPlayerPos += vDir * fPlayerSpeed * 0.02f;
+		}
 
-	UpdateViewList(playerId);
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
+
+		UpdateViewList(playerId);
+	}
 }
 
 void CPlayerProcess::PlayerCollisionNatural(USHORT playerId, char * packet)
 {
-	/*cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
+	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
 
-	bool AnimalId = collision_packet->id;
+	USHORT naturalId = collision_packet->id;
 	bool bRun = collision_packet->bRun;
 
-	Vec3 vNatural = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
-	Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	float fPlayerSpeed = m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
-	Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
-	vDir.y = 0.f;
-
-	if (bRun)
+	if (PlayerAndAnimal_CollisionSphere(playerId, naturalId, 0.2f))
 	{
-		vPlayerPos += vDir * fPlayerSpeed * 0.2f * 5.f;
-	}
-	else
-	{
-		vPlayerPos += vDir * fPlayerSpeed * 0.2f;
-	}
+		Vec3 vAnimalPos = m_pMonsterPool->m_cumMonsterPool[naturalId]->GetLocalPos();
+		Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+		float fPlayerSpeed = m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
+		Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
+		vDir.y = 0.f;
 
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
+		if (bRun)
+		{
+			vPlayerPos += vDir * fPlayerSpeed * 0.02f * 5.f;
+		}
+		else
+		{
+			vPlayerPos += vDir * fPlayerSpeed * 0.02f;
+		}
 
-	UpdateViewList(playerId);*/
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
+
+		UpdateViewList(playerId);
+	}
 }
 
-void CPlayerProcess::PlayerCollisionHousing(USHORT playerId, char * packet)
+void CPlayerProcess::PlayerCollisionHouse(USHORT playerId, char * packet)
 {
+	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
+
+	USHORT houseId = collision_packet->id;
+	UINT uiType = m_pHousingPool->m_cumHousingPool[houseId]->GetType();
+
+	if (uiType >= HOUSING_TYPE::HOUSING_FOUNDATION && uiType < HOUSING_TYPE::HOUSING_END)
+	{
+		bool bCollision = 
+	}
 }
 
 void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
