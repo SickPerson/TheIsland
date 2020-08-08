@@ -48,6 +48,7 @@ CNetwork::CNetwork()
 
 CNetwork::~CNetwork()
 {
+	DisConnect();
 }
 
 void CNetwork::Err_quit(const char * msg, int err_no)
@@ -145,6 +146,8 @@ bool CNetwork::CreateEventSelect()
 
 void CNetwork::DisConnect()
 {
+	m_tNetworkThread->join();
+
 	closesocket(m_sock);
 	WSACloseEvent(m_hEvent);
 	WSACleanup();
@@ -576,4 +579,9 @@ void CNetwork::Recv_Install_Housing_Packet(char * packet)
 
 void CNetwork::Recv_Weather_Packet(char * packet)
 {
+	sc_weather_packet* weather_packet = reinterpret_cast<sc_weather_packet*>(packet);
+	bool bRain = weather_packet->bRain;
+
+	// ¹Þ±â
+	cout << bRain << endl;
 }

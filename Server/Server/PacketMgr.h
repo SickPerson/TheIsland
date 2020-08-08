@@ -31,4 +31,7 @@ public:
 
 public:
 	static void Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id);
+
+public:
+	static void Send_Weather_Packet(USHORT player_Id, bool bRain);
 };

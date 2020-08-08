@@ -32,6 +32,9 @@ private:
 private:
 	volatile USHORT m_UserID;
 
+private:
+	high_resolution_clock::time_point serverTimer;
+
 public:
 	void Initialize();
 	void StartServer();

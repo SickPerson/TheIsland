@@ -224,3 +224,12 @@ void CPacketMgr::Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id
 	packet.vLocalScale =	CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetLocalScale();
 	Send_Packet(player_Id, &packet);
 }
+
+void CPacketMgr::Send_Weather_Packet(USHORT player_Id, bool bRain)
+{
+	sc_weather_packet packet;
+	packet.size = sizeof(sc_weather_packet);
+	packet.type = SC_WEATHER;
+	packet.bRain = bRain;
+	Send_Packet(player_Id, &packet);
+}

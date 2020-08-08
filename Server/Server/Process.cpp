@@ -26,3 +26,14 @@ bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
 		return true;
 	return false;
 }
+
+void CProcess::Weather_Event()
+{
+	for (auto& au : m_cusLoginList)
+	{
+		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
+		if (!bConnect) continue;
+		bool bRain = rand() % 2;
+		CPacketMgr::GetInst()->Send_Weather_Packet(au, bRain);
+	}
+}

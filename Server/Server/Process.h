@@ -36,6 +36,9 @@ public:
 	bool Natural_CollisionHouse(USHORT player_id, USHORT animal_id);*/
 
 public:
+	static void Weather_Event();
+
+public:
 	concurrent_unordered_set<USHORT>& GetLoginList()
 	{
 		lock_guard<recursive_mutex>lock(m_rmProcessMutex);

@@ -17,6 +17,7 @@ CNetwork::CNetwork()
 	m_pMonsterProcess = nullptr;
 	m_pNaturalProcess = nullptr;
 	m_UserID = 0;
+	serverTimer = high_resolution_clock::now();
 	//------------------------------
 	//Initialize();
 	CheckThisCputCount();
@@ -111,8 +112,8 @@ void CNetwork::StartServer()
 	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
 	cout << "AcceptThread Create" << endl;
 
-	/*m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
-	cout << "UpdateThread Create" << endl;*/
+	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
+	cout << "UpdateThread Create" << endl;
 
 	/*m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
 	cout << "DatabaseThread Create" << endl;*/
@@ -125,9 +126,9 @@ void CNetwork::StartServer()
 void CNetwork::CloseServer()
 {
 	/*m_pDatabaseThread->join();
-	cout << "DatabaseThread Close" << endl;
+	cout << "DatabaseThread Close" << endl;*/
 	m_pUpdateThread->join();
-	cout << "UpdateThread Close" << std::endl;*/
+	cout << "UpdateThread Close" << std::endl;
 	m_pAcceptThread->join();
 	cout << "AcceptThread Close" << std::endl;
 
@@ -268,6 +269,13 @@ void CNetwork::UpdateThread()
 		/*while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
 		}*/
+		if (high_resolution_clock::now() - serverTimer >= 10s)
+		{
+			CProcess::Weather_Event();
+			cout << "10s" << endl;
+			//CPacketMgr::GetInst()->Send_Weather_Packet();
+			serverTimer = high_resolution_clock::now();
+		}
 		while (!CProcess::EmptyEventQueue())
 		{
 			Update_Event ev;

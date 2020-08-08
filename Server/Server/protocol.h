@@ -28,7 +28,7 @@ constexpr	char	CS_ANIMAL_COLLISION = 5;
 constexpr	char	CS_NATURAL_COLLISION = 6;
 constexpr	char	CS_HOUSING_COLLISION = 7;
 constexpr	char	CS_HOUSING_INSTALL = 8;
-constexpr	int		CS_END =	10;
+constexpr	int		CS_END =	9;
 
 // Server -> Client Packet Protocol
 constexpr	char	SC_LOGIN_OK = 0;
@@ -68,8 +68,8 @@ constexpr float MONSTER_BETWEEN_RANGE = 100.f;
 // ___________________________________________________________________
 // Player
 struct sc_login_ok_packet {
-	char			size;
-	char			type;
+	char	size;
+	char	type;
 	USHORT	id;
 };
 
@@ -218,6 +218,14 @@ struct sc_install_housing_packet
 	Vec3	vLocalScale;
 };
 
+// [ Etc ]
+struct sc_weather_packet
+{
+	char size;
+	char type;
+	bool bRain;
+};
+
 // ___________________________________________________________________
 //						[ Client -> Server ]
 // ___________________________________________________________________
@@ -225,7 +233,6 @@ struct sc_install_housing_packet
 struct cs_login_packet {
 	char			size;
 	char			type;
-	USHORT	id;
 	wchar_t			player_id[MAX_STR_LEN];	
 };
 

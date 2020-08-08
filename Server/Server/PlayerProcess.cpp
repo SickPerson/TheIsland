@@ -65,7 +65,7 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 
 		m_pPlayerPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
 	}
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetNumID(login_packet->id);
+	//m_pPlayerPool->m_cumPlayerPool[playerId]->SetNumID(login_packet->id);
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetWcID(login_packet->player_id);
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(10000.f, 200.f, 10000.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
