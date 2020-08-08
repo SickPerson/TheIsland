@@ -37,7 +37,7 @@ bool CProcess::PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId,
 	Vec3 vAnimalScale = m_pPlayerPool->m_cumPlayerPool[animalId]->GetLocalScale();
 
 	Vec3 vPlayerColScale = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalScale() * fOffset;
-	Vec3 vAnimalScale = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalScale();
+	Vec3 vAnimalColScale = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalScale();
 
 	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vAnimalPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
 	fDist = sqrtf(fDist);
@@ -57,7 +57,7 @@ bool CProcess::PlayerAndNatural_CollisionSphere(USHORT playerId, USHORT naturalI
 	Vec3 vAnimalScale = m_pPlayerPool->m_cumPlayerPool[naturalId]->GetLocalScale();
 
 	Vec3 vPlayerColScale = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalScale() * fOffset;
-	Vec3 vAnimalScale = m_pPlayerPool->m_cumPlayerPool[naturalId]->GetLocalScale();
+	Vec3 vAnimalColScale = m_pPlayerPool->m_cumPlayerPool[naturalId]->GetLocalScale();
 
 	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vAnimalPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
 	fDist = sqrtf(fDist);

@@ -274,7 +274,7 @@ void CPlayerProcess::PlayerCollisionHouse(USHORT playerId, char * packet)
 
 	if (uiType >= HOUSING_TYPE::HOUSING_FOUNDATION && uiType < HOUSING_TYPE::HOUSING_END)
 	{
-		bool bCollision = 
+		
 	}
 }
 
