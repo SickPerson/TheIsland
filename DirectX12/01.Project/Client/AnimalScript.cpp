@@ -113,7 +113,7 @@ void CAnimalScript::Update()
 		}
 
 		Transform()->SetLocalPos(vPos);
-
+		Animator3D()->ChangeAnimation(L"Walk");
 		return;
 	}
 
@@ -134,9 +134,12 @@ void CAnimalScript::Update()
 			m_vMoveDir = Vec3(rand() / (float)RAND_MAX, 0.f, rand() / (float)RAND_MAX);
 			m_vMoveDir = XMVector3Normalize(m_vMoveDir);
 		}
+		//if(!m_bIdleBehavior)
+		//	Animator3D()->ChangeAnimation(L"Idle");
 		return;
 	}
 
+	// Ãß°Ý Á¾·á
 	m_fCurrentTime -= DT;
 	if (m_fCurrentTime < 0.f)
 	{
@@ -161,7 +164,7 @@ void CAnimalScript::Update()
 			vPos += -m_vMoveDir * m_tStatus.fSpeed * DT;
 			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
 		}
-
+		Animator3D()->ChangeAnimation(L"Run");
 		Transform()->SetLocalPos(vPos);
 	}
 	else if (BEHAVIOR_TYPE::B_PASSIVE == m_tStatus.eType)
@@ -193,6 +196,7 @@ void CAnimalScript::Update()
 			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
 		}
 		Transform()->SetLocalPos(vPos);
+		Animator3D()->ChangeAnimation(L"Run");
 	}
 	else if (BEHAVIOR_TYPE::B_WARLIKE == m_tStatus.eType)
 	{
@@ -221,6 +225,7 @@ void CAnimalScript::Update()
 			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
 		}
 		Transform()->SetLocalPos(vPos);
+		Animator3D()->ChangeAnimation(L"Run");
 	}
 }
 
@@ -327,6 +332,7 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
 		}
 		Transform()->SetLocalPos(vPos);
+		Animator3D()->ChangeAnimation(L"Run");
 	}
 	else if (BEHAVIOR_TYPE::B_PASSIVE == m_tStatus.eType)
 	{
@@ -362,8 +368,13 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 				if (m_fAttackTime < 0.f)
 				{
 					m_pTarget->GetScript<CPlayerScript>()->Damage(m_tStatus.fDamage);
+					Animator3D()->ChangeAnimation(L"Attack");
 					m_fAttackTime = m_fAttackCoolTime;
 				}
+			}
+			else
+			{
+				Animator3D()->ChangeAnimation(L"Run");
 			}
 		}
 
@@ -393,15 +404,21 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
 		}
 		Transform()->SetLocalPos(vPos);
+		//Animator3D()->ChangeAnimation(L"Run");
 
 		if (CollisionSphere(m_vOffsetScale, _pOther, 0.2f))
 		{
 			if (m_fAttackTime < 0.f)
 			{
 				_pOther->GetObj()->GetScript<CPlayerScript>()->Damage(m_tStatus.fDamage);
+				Animator3D()->ChangeAnimation(L"Attack");
 				m_fAttackTime = m_fAttackCoolTime;
 			}
 			Transform()->SetLocalPos(vTempPos);
+		}
+		else
+		{
+			Animator3D()->ChangeAnimation(L"Run");
 		}
 		m_bIdleBehavior = false;
 	}
@@ -462,8 +479,6 @@ void CAnimalScript::OnCollisionExit(CCollider2D * _pOther)
 			m_bBehavior = true;
 			m_fCurrentTime = m_tStatus.fBehaviorTime;
 		}
-
-		Animator3D()->ChangeAnimation( L"Idle" );
 	}
 }
 
@@ -535,6 +550,7 @@ void CAnimalScript::Damage(CGameObject* _pOther, float fDamage)
 		// ====================
 		CGameObject* pObject = new CGameObject;
 		pObject->SetName(L"Animal Particle");
+		pObject->FrustumCheck(false);
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CParticleSystem);
 
@@ -596,7 +612,7 @@ void CAnimalScript::Damage(CGameObject* _pOther, float fDamage)
 	else // »ç¸Á But ¼Ò¸ê x
 	{
 		m_bAnimalDead = true;
-		m_fLivingTime = 3.f;
+		m_fLivingTime = 10.f;
 
 		Animator3D()->ChangeAnimation( L"Die" );
 	}
