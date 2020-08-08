@@ -21,6 +21,7 @@ class CIngameScene :
 	CGameObject* m_pMRT;
 
 	map<UINT, CGameObject*> m_mapAnimals;
+	map<UINT, CGameObject*> m_mapHousing;
 public:
 	concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
 	concurrent_unordered_map<unsigned int, CGameObject*> m_cumAnimal;
@@ -46,5 +47,6 @@ public:
 
 	void AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType);
 	void AnimalDestory(USHORT uiId);
+	void InstallHousing(UINT uiType, Vec3 vPos, Vec3 vRot, Vec3 vScale);
 };
 

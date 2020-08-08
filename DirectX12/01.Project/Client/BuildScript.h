@@ -25,6 +25,7 @@ public:
 public:
 	void Init();
 	bool Build();
+	void MustBuild();
 
 	bool Upgrade();
 

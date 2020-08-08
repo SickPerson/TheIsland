@@ -42,6 +42,8 @@
 #include "AnimalScript.h"
 #include "AnimalSpawner.h"
 #include "NaturalScript.h"
+#include "BuildScript.h"
+#include "HousingMgr.h"
 
 #include "ItemScript.h"
 #include "StuffScript.h"
@@ -1631,4 +1633,31 @@ void CIngameScene::AnimalDestory(USHORT uiId)
 	CEventMgr::GetInst()->AddEvent(tEv);
 
 	m_mapAnimals.erase(uiId);
+}
+
+void CIngameScene::InstallHousing(UINT uiType, Vec3 vPos, Vec3 vRot, Vec3 vScale)
+{
+	CGameObject* pObject = nullptr;
+	pObject = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)uiType)->Instantiate();
+	pObject->AddComponent(new CBuildScript((HOUSING_TYPE)uiType));
+
+	pObject->AddComponent(new CCollider2D);
+	pObject->Collider2D()->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
+
+	if (uiType >= HOUSING_WALL && uiType < HOUSING_FLOOR)
+		pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
+
+	pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+
+	pObject->SetName(L"House");
+	pObject->Transform()->SetLocalPos(vPos);
+	pObject->Transform()->SetLocalRot(vRot);
+	pObject->Transform()->SetLocalScale(vScale);
+
+	pObject->MeshRender()->SetDynamicShadow(true);
+
+	pObject->GetScript<CBuildScript>()->Init();
+	pObject->GetScript<CBuildScript>()->MustBuild();
+
+	CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->AddGameObject(pObject);
 }

@@ -569,6 +569,7 @@ void CNetwork::Recv_Install_Housing_Packet(char * packet)
 	Vec3 vScale = install_housing_packet->vLocalScale;
 
 	// INSTALL Àü¼Û
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->InstallHousing(type, vPos, vRot, vScale);
 }
 
 void CNetwork::Recv_Weather_Packet(char * packet)
