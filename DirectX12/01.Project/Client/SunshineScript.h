@@ -4,6 +4,7 @@
 class CSunshineScript :
 	public CScript
 {
+	float DAYCYCLE;
 	float m_fTime;
 	int m_iDay;
 	int m_iHour;
@@ -29,7 +30,9 @@ public:
 	void Init();
 
 	float GetTime();
-	void SetTime(float fTime);
+	void SetTime(int iHour, int iMin);
+
+	void SetDayCycle(float fCycle);
 
 	void SetSkybox(CGameObject* pObject);
 	void SetPlayer(CGameObject* pObject);

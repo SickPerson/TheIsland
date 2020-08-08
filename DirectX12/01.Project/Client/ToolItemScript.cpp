@@ -277,10 +277,20 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				if (eType == NATURAL_TREE)
 				{
 					int iAmount = 1;
-					if (m_eItemType == ITEM_AXE)
-						iAmount = 3;
-					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-					pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+
+					int random = rand() % 5;
+					if (random == 0)
+					{
+						CItemScript* pItem = new CUsableScript(ITEM_TYPE::ITEM_APPLE);
+						pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+					}
+					else
+					{
+						if (m_eItemType == ITEM_AXE)
+							iAmount = 3;
+						CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
+						pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+					}
 				}
 				else if (eType == NATURAL_STONE)
 				{

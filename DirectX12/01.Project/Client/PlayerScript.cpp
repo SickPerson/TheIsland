@@ -519,10 +519,11 @@ UINT CPlayerScript::PlayerPicking(bool bLeft)
 	{
 		m_fAttackCoolTime = PLAYER_ATTACK_COOLTIME;
 	}
-	POINT vPoint = CKeyMgr::GetInst()->GetMousePos();
+	//POINT vPoint = CKeyMgr::GetInst()->GetMousePos();
 
 	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
-	//Vec2 vPoint = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
+
+	Vec2 vPoint = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
 
 	Matrix matProj = m_pMainCamera->GetProjMat();
 

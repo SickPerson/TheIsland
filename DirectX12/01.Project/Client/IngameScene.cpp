@@ -48,6 +48,8 @@
 #include "ToolItemScript.h"
 #include "UsableScript.h"
 
+#include "CheatMgr.h"
+
 #include <Engine/TestScript.h>
 
 #include <Engine/ParticleSystem.h>
@@ -281,6 +283,7 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
 	m_pPlayer->MeshRender()->SetDynamicShadow(true);
+	CCheatMgr::GetInst()->SetPlayer(m_pPlayer);
 
 	// ==================
 	// Camera Object 积己
@@ -372,6 +375,7 @@ void CIngameScene::Init()
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
 	CGameObject* pSun = pObject;
+	CCheatMgr::GetInst()->SetClock(pSun);
 
 	// ====================
 	// Skybox 坷宏璃飘 积己
@@ -557,7 +561,7 @@ void CIngameScene::GiveStartItem()
 	pItem = new CUsableScript(ITEM_TYPE::ITEM_APPLE);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 	pItem = new CStuffScript(ITEM_TYPE::ITEM_CLOTH);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 100);
 }
 
 void CIngameScene::Update()
@@ -1406,7 +1410,7 @@ void CIngameScene::CreateAnimalSpawner()
 	pSpawner->AddComponent(new CTransform);
 	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_WARLIKE));
 
-	pSpawner->Transform()->SetLocalPos(Vec3(6100.f, 0.f, 18200.f));
+	pSpawner->Transform()->SetLocalPos(Vec3(8100.f, 0.f, 16200.f));
 	pSpawner->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
 	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner);
 

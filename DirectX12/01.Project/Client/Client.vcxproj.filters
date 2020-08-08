@@ -180,6 +180,9 @@
     <ClInclude Include="ArrowScript.h">
       <Filter>ComponentScript\Item\Tool</Filter>
     </ClInclude>
+    <ClInclude Include="CheatMgr.h">
+      <Filter>ComponentScript\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -277,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="ArrowScript.cpp">
       <Filter>ComponentScript\Item\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="CheatMgr.cpp">
+      <Filter>ComponentScript\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

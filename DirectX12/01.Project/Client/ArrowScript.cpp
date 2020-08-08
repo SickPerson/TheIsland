@@ -153,6 +153,15 @@ void CArrowScript::Collision(CGameObject * pOther)
 	if (m_bCollision)
 		return;
 
+	if (pOther->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->GetLayerIdx())
+	{
+		tEvent tEv;
+		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+		tEv.wParam = (DWORD_PTR)GetObj();
+		CEventMgr::GetInst()->AddEvent(tEv);
+		return;
+	}
+
 	m_pCollisionObj = pOther;
 	m_vDiffPos = Transform()->GetLocalPos() - pOther->Transform()->GetLocalPos();
 	m_bCollision = true;
