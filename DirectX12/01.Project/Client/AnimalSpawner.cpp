@@ -93,8 +93,6 @@ void CAnimalSpawner::Respawn()
 
 			pObject->SetName(L"Bear");
 
-			pObject->MeshRender()->SetDynamicShadow(true);
-
 			//pObject->Transform()->SetLocalPos(Vec3(1500.f, 20.f, 2000.f));
 			pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
@@ -132,8 +130,6 @@ void CAnimalSpawner::Respawn()
 
 				pObject->SetName(L"Wolf");
 
-				pObject->MeshRender()->SetDynamicShadow(true);
-
 				//pObject->Transform()->SetLocalPos(Vec3(-0.f, 20.f, 4000.f));
 				pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 				pObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
@@ -166,8 +162,6 @@ void CAnimalSpawner::Respawn()
 				}
 
 				pObject->SetName(L"Boar");
-
-				pObject->MeshRender()->SetDynamicShadow(true);
 
 				//pObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
 				pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -203,8 +197,6 @@ void CAnimalSpawner::Respawn()
 			}
 
 			pObject->SetName(L"Deer");
-
-			pObject->MeshRender()->SetDynamicShadow(true);
 
 			//pObject->Transform()->SetLocalPos(Vec3(0.f, 20.f, 2000.f));
 			pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
@@ -242,7 +234,8 @@ void CAnimalSpawner::Respawn()
 			if (vPos.y > 80.f)
 				break;
 		}
-		
+
+		pObject->MeshRender()->SetDynamicShadow(true);
 		pObject->Transform()->SetLocalPos(vPos);
 
 		pObject->GetScript<CAnimalScript>()->SetAnimalSpawner(this);

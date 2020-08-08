@@ -38,6 +38,7 @@ CAnimalScript::CAnimalScript()
 	, m_bIdleBehavior(false)
 	, m_fIdleBehaviorTime(3.f)
 	, m_pSpawner(NULL)
+	, m_bAttack(false)
 {
 
 }
@@ -79,6 +80,16 @@ void CAnimalScript::Update()
 		}
 		return;
 	}
+
+	if (m_bAttack)
+	{
+		m_fAnimationCoolTime -= DT;
+		if (m_fAnimationCoolTime < 0.f)
+		{
+			m_bAttack = false;
+		}
+	}
+
 	if (m_bIdleBehavior)
 	{
 		// 주위에 아무도 없을때 일정 시간이 흐른 뒤 하는 행동
@@ -134,8 +145,8 @@ void CAnimalScript::Update()
 			m_vMoveDir = Vec3(rand() / (float)RAND_MAX, 0.f, rand() / (float)RAND_MAX);
 			m_vMoveDir = XMVector3Normalize(m_vMoveDir);
 		}
-		//if(!m_bIdleBehavior)
-		//	Animator3D()->ChangeAnimation(L"Idle");
+		if (!m_bIdleBehavior)
+			Animator3D()->ChangeAnimation(L"Idle");
 		return;
 	}
 
@@ -145,7 +156,8 @@ void CAnimalScript::Update()
 	{
 		m_bBehavior = false;
 		m_fCurrentTime = 0.f;
-		m_fIdleBehaviorTime = (rand() / (float)RAND_MAX * 5.f) + 3.f;;
+		m_fIdleBehaviorTime = (rand() / (float)RAND_MAX * 5.f) + 3.f;
+		Animator3D()->ChangeAnimation(L"Idle");
 	}
 
 	// 플레이어가 시야범위를 벗어날 경우 어떤 행동을 계속 취할 것인가
@@ -196,7 +208,9 @@ void CAnimalScript::Update()
 			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
 		}
 		Transform()->SetLocalPos(vPos);
-		Animator3D()->ChangeAnimation(L"Run");
+
+		if (!m_bAttack)
+			Animator3D()->ChangeAnimation(L"Run");
 	}
 	else if (BEHAVIOR_TYPE::B_WARLIKE == m_tStatus.eType)
 	{
@@ -225,7 +239,9 @@ void CAnimalScript::Update()
 			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
 		}
 		Transform()->SetLocalPos(vPos);
-		Animator3D()->ChangeAnimation(L"Run");
+
+		if(!m_bAttack)
+			Animator3D()->ChangeAnimation(L"Run");
 	}
 }
 
@@ -277,7 +293,7 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		{
 			if (!_pOther->GetObj()->GetScript<CArrowScript>()->GetCollision())
 			{
-				if (CollisionSphere(m_vOffsetScale, _pOther)) // 환경요소랑은 자기 몸통만큼 추가 충돌체크를 진행하고 막히면 반대로 튕겨나오도록
+				if (CollisionSphere(m_vOffsetScale, _pOther)) // 화살에 맞음
 				{
 					float fDamage = _pOther->GetObj()->GetScript<CArrowScript>()->GetDamage();
 					Damage(_pOther->GetObj()->GetScript<CArrowScript>()->GetHost(), fDamage);
@@ -309,7 +325,78 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		return;
 	}
 
+
 	// 회피형 동물 ( 사슴 )
+	if (BEHAVIOR_TYPE::B_EVASION == m_tStatus.eType)
+	{
+		m_vMoveDir = -_pOther->Transform()->GetLocalDir(DIR_TYPE::FRONT);
+		Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
+		Vec3 vPos = Transform()->GetLocalPos();
+
+		Vec3 vRot = _pOther->Transform()->GetLocalRot();
+		Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
+		vDir.y = 0.f;
+		Transform()->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+
+		m_vMoveDir = XMVector3Normalize(vPos - vOtherPos);
+		m_vMoveDir.y = 0.f;
+
+		m_bBehavior = true;
+		m_fCurrentTime = m_tStatus.fBehaviorTime;
+	}
+	else if (BEHAVIOR_TYPE::B_PASSIVE == m_tStatus.eType)
+	{
+		// 비선공 유형 동물의 시야에 플레이어가 들어왔을때
+		if (CollisionSphere(m_vOffsetScale, _pOther, 0.2f))
+		{
+			if (_pOther->GetObj() == m_pTarget)
+			{
+				if (m_fAttackTime < 0.f)
+				{
+					m_pTarget->GetScript<CPlayerScript>()->Damage(m_tStatus.fDamage);
+					Animator3D()->ChangeAnimation(L"Attack");
+					m_fAnimationCoolTime = ANIMAL_ANIMATION_COOLTIME;
+					m_bAttack = true;
+					m_fAttackTime = m_fAttackCoolTime;
+				}
+			}
+		}
+
+	}
+	else if (BEHAVIOR_TYPE::B_WARLIKE == m_tStatus.eType)
+	{
+		m_pTarget = _pOther->GetObj();
+
+		m_vMoveDir = -_pOther->Transform()->GetLocalDir(DIR_TYPE::FRONT);
+		m_bBehavior = true;
+		m_fCurrentTime = m_tStatus.fBehaviorTime;
+		m_bIdleBehavior = false;
+
+		Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
+		Vec3 vPos = Transform()->GetLocalPos();
+		Vec3 vDir = XMVector3Normalize(vOtherPos - vPos);
+		vDir.y = 0.f;
+		Vec3 vRot = _pOther->Transform()->GetLocalRot();
+		Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+
+		if (CollisionSphere(m_vOffsetScale, _pOther, 0.2f))
+		{
+			if (_pOther->GetObj() == m_pTarget)
+			{
+				if (m_fAttackTime < 0.f)
+				{
+					m_pTarget->GetScript<CPlayerScript>()->Damage(m_tStatus.fDamage);
+					Animator3D()->ChangeAnimation(L"Attack");
+					m_fAnimationCoolTime = ANIMAL_ANIMATION_COOLTIME;
+					m_bAttack = true;
+					m_fAttackTime = m_fAttackCoolTime;
+				}
+			}
+		}
+	}
+
+	// 회피형 동물 ( 사슴 )
+	/*
 	if (BEHAVIOR_TYPE::B_EVASION == m_tStatus.eType)
 	{
 		Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
@@ -334,6 +421,8 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		Transform()->SetLocalPos(vPos);
 		Animator3D()->ChangeAnimation(L"Run");
 	}
+	*/
+	/*
 	else if (BEHAVIOR_TYPE::B_PASSIVE == m_tStatus.eType)
 	{
 		// 비선공 유형 동물의 시야에 플레이어가 들어왔을때
@@ -379,6 +468,8 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		}
 
 	}
+	*/
+	/*
 	else if (BEHAVIOR_TYPE::B_WARLIKE == m_tStatus.eType)
 	{
 		// 선공몹
@@ -422,7 +513,7 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		}
 		m_bIdleBehavior = false;
 	}
-	
+	*/
 
 
 }

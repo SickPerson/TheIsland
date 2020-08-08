@@ -2,6 +2,8 @@
 #include <Engine/Script.h>
 #include "Animal.h"
 
+#define ANIMAL_ANIMATION_COOLTIME 2.f
+
 class CAnimalSpawner;
 
 class CAnimalScript :
@@ -23,6 +25,9 @@ class CAnimalScript :
 
 	bool			m_bIdleBehavior;
 	float			m_fIdleBehaviorTime;
+
+	bool			m_bAttack;
+	float			m_fAnimationCoolTime;
 
 	bool			m_bAnimalDead;
 	float			m_fLivingTime;
