@@ -21,6 +21,7 @@ CParticleSystem::CParticleSystem()
 	, m_fEndScale(10.f)
 	, m_vStartColor(Vec4(0.8f, 0.8f, 0.8f, 1.4f))
 	, m_vEndColor(Vec4(0.2f, 0.2f, 0.2f, 1.0f))
+	, m_iKind(0)
 {
 	// 구조화 버퍼 생성
 	m_pParticleBuffer = new CStructuredBuffer;
@@ -64,6 +65,7 @@ void CParticleSystem::FinalUpdate()
 
 	m_pUpdateMtrl->SetData( SHADER_PARAM::INT_0, &m_iMaxParticle );
 	m_pUpdateMtrl->SetData( SHADER_PARAM::INT_1, &iAdd );
+	m_pUpdateMtrl->SetData( SHADER_PARAM::INT_2, &m_iKind );
 	m_pUpdateMtrl->SetData( SHADER_PARAM::FLOAT_0, &m_fMinLifeTime );
 	m_pUpdateMtrl->SetData( SHADER_PARAM::FLOAT_1, &m_fMaxLifeTime );
 
@@ -106,6 +108,11 @@ void CParticleSystem::SetStartSpeed(float fSpeed)
 void CParticleSystem::SetEndSpeed(float fSpeed)
 {
 	m_fMaxSpeed = fSpeed;
+}
+
+void CParticleSystem::SetKind( int iKind )
+{
+	m_iKind = iKind;
 }
 
 void CParticleSystem::SaveToScene( FILE * _pFile )
