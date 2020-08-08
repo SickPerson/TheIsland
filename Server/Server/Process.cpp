@@ -1,7 +1,7 @@
 #include "Process.h"
 #include "PacketMgr.h"
 
-CPlayerpool* CProcess::m_pPlayerPool = nullptr;
+CPlayerpool*	CProcess::m_pPlayerPool = nullptr;
 CMonsterpool*	CProcess::m_pMonsterPool = nullptr;
 CNaturalpool*	CProcess::m_pNaturalPool = nullptr;
 CHousingpool*	CProcess::m_pHousingPool = nullptr;

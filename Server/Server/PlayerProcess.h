@@ -8,6 +8,7 @@ class CPlayerProcess:
 private:
 	recursive_mutex						m_rmPlayerProcessLock;
 	function<void(USHORT, char*)> m_fpPacketProcess[CS_END];
+
 public:
 	explicit CPlayerProcess();
 	virtual ~CPlayerProcess();

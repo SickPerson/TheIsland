@@ -375,30 +375,30 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 	}
 	else
 	{
-		// 실제 동물의 크기와 부딪힌건지
-		Vec3 vOffsetScale = _pOther->GetObj()->GetScript<CAnimalScript>()->GetOffsetScale();
-		if (CollisionSphere(_pOther, vOffsetScale, 0.2f))
-		{
-			Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
+		//// 실제 동물의 크기와 부딪힌건지
+		//Vec3 vOffsetScale = _pOther->GetObj()->GetScript<CAnimalScript>()->GetOffsetScale();
+		//if (CollisionSphere(_pOther, vOffsetScale, 0.2f))
+		//{
+		//	Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
 
-			Vec3 vPos = Transform()->GetLocalPos();
+		//	Vec3 vPos = Transform()->GetLocalPos();
 
-			Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
-			vDir.y = 0.f;
+		//	Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
+		//	vDir.y = 0.f;
 
-			if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
-			{
-				vPos += vDir * m_fSpeed * DT * 5.f;
-			}
-			else
-			{
-				vPos += vDir * m_fSpeed * DT;
-			}
+		//	if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
+		//	{
+		//		vPos += vDir * m_fSpeed * DT * 5.f;
+		//	}
+		//	else
+		//	{
+		//		vPos += vDir * m_fSpeed * DT;
+		//	}
 
-			Vec3 vRot = _pOther->Transform()->GetLocalRot();
+		//	Vec3 vRot = _pOther->Transform()->GetLocalRot();
 
-			Transform()->SetLocalPos(vPos);
-		}
+		//	Transform()->SetLocalPos(vPos);
+		//}
 	}
 }
 

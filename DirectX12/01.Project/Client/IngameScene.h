@@ -44,7 +44,7 @@ public:
 	void CreateNatural();
 	void CreateAnimalSpawner();
 
-	void AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType);
-	void AnimalDestory(UINT uiId);
+	void AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType);
+	void AnimalDestory(USHORT uiId);
 };
 

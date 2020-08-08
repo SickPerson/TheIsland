@@ -272,7 +272,6 @@ void CNetwork::UpdateThread()
 		if (high_resolution_clock::now() - serverTimer >= 10s)
 		{
 			CProcess::Weather_Event();
-			cout << "10s" << endl;
 			//CPacketMgr::GetInst()->Send_Weather_Packet();
 			serverTimer = high_resolution_clock::now();
 		}

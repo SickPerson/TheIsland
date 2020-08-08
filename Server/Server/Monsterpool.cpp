@@ -76,7 +76,7 @@ CMonsterpool::CMonsterpool()
 		}
 		random_device rd;
 		default_random_engine dre(rd());
-		uniform_real_distribution<float> urd{ 0.f, 30000.f };
+		uniform_real_distribution<float> urd{ 10000.f, 20000.f };
 		
 		Animal->SetLocalPos(Vec3(urd(dre), 20.f, urd(dre)));
 		Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));

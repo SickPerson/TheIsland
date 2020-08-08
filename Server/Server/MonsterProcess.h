@@ -9,7 +9,7 @@ public:
 
 private:
 	function<void(USHORT, USHORT)> m_fpMonsterUpdate[OBJ_STATE_END];
-	function<void(USHORT)>	m_fpMonsterByPlayer;
+	function<void(USHORT)>	m_fpMonsterByPlayerUpdate;
 
 public:
 	void BindMonsterUpdate() {

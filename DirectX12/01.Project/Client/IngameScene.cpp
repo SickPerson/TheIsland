@@ -425,7 +425,7 @@ void CIngameScene::Init()
 
 	// 
 	CreateNatural();
-	CreateAnimalSpawner();
+	//CreateAnimalSpawner();
 
 	//// ====================
 	//// Grid 오브젝트 생성
@@ -1431,7 +1431,7 @@ void CIngameScene::CreateAnimalSpawner()
 	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner);
 }
 
-void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
+void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 {
 	auto p = m_mapAnimals.find(uiId);
 	if (p == m_mapAnimals.end())
@@ -1446,7 +1446,7 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 			Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
 			pObject = pBearTex->Instantiate();
 			pObject->AddComponent(new CCollider2D);
-			pObject->AddComponent(new CAnimalScript);
+			/*pObject->AddComponent(new CAnimalScript);
 
 			{
 				tAnimalStatus tStatus;
@@ -1463,7 +1463,7 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 
 				pObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 				pObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-			}
+			}*/
 
 			pObject->SetName(L"Bear");
 
@@ -1488,7 +1488,7 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 				Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
 				pObject = pWolfTex->Instantiate();
 				pObject->AddComponent(new CCollider2D);
-				pObject->AddComponent(new CAnimalScript);
+				/*pObject->AddComponent(new CAnimalScript);
 
 				{
 					tAnimalStatus tStatus;
@@ -1505,7 +1505,7 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 
 					pObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 					pObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-				}
+				}*/
 
 				pObject->SetName(L"Wolf");
 
@@ -1526,7 +1526,7 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 				Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
 				pObject = pBoarTex->Instantiate();
 				pObject->AddComponent(new CCollider2D);
-				pObject->AddComponent(new CAnimalScript);
+				/*pObject->AddComponent(new CAnimalScript);
 
 			{
 				tAnimalStatus tStatus;
@@ -1543,7 +1543,7 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 
 				pObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 				pObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-			}
+			}*/
 
 				pObject->SetName(L"Boar");
 
@@ -1566,7 +1566,7 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 			Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
 			pObject = pDeerTex->Instantiate();
 			pObject->AddComponent(new CCollider2D);
-			pObject->AddComponent(new CAnimalScript);
+			/*pObject->AddComponent(new CAnimalScript);
 
 			{
 				tAnimalStatus tStatus;
@@ -1583,7 +1583,7 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 
 				pObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 				pObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-			}
+			}*/
 
 			pObject->SetName(L"Deer");
 
@@ -1616,7 +1616,7 @@ void CIngameScene::AnimalUpdate(UINT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 	}
 }
 
-void CIngameScene::AnimalDestory(UINT uiId)
+void CIngameScene::AnimalDestory(USHORT uiId)
 {
 	auto p = m_mapAnimals.find(uiId);
 	if (p == m_mapAnimals.end())

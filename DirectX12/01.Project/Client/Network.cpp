@@ -257,17 +257,17 @@ void CNetwork::ProcessPacket(char* packet)
 	}
 	// NPC, MONSTER ฐüทร
 	case SC_PUT_NPC: {
-		//Recv_Put_Npc_Packet(packet);
+		Recv_Put_Npc_Packet(packet);
 		break;
 	}
 	case SC_POS_NPC:
 	{
-		//Recv_Pos_Npc_Packet(packet);
+		Recv_Pos_Npc_Packet(packet);
 		break;
 	}
 	case SC_REMOVE_NPC:
 	{
-		//Recv_Remove_Npc_Packet(packet);
+		Recv_Remove_Npc_Packet(packet);
 		break;
 	}
 	case SC_INSTALL_HOUSING:
@@ -523,38 +523,32 @@ void CNetwork::Recv_WakeUp_Npc_Packet(char * packet)
 void CNetwork::Recv_Put_Npc_Packet(char * packet)
 {
 	sc_put_npc_packet* put_npc_packet = reinterpret_cast<sc_put_npc_packet*>(packet);
-	unsigned int monster_id = put_npc_packet->id;
+	USHORT monster_id = put_npc_packet->id;
 
+	UINT eType = put_npc_packet->eType;
 	Vec3 vPos = put_npc_packet->vPos;
 	Vec3 vRot = put_npc_packet->vRot;
 
-	m_cumAnimal[monster_id]->Transform()->SetLocalPos(vPos);
-	m_cumAnimal[monster_id]->Transform()->SetLocalRot(vRot);
-
-	pScene->FindLayer(L"Animal")->AddGameObject(CNetwork::m_cumAnimal[monster_id]);
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
 }
 
 void CNetwork::Recv_Remove_Npc_Packet(char * packet)
 {
 	sc_remove_npc_packet* remove_npc_packet = reinterpret_cast<sc_remove_npc_packet*>(packet);
-	unsigned int monster_id = remove_npc_packet->id;
+	USHORT monster_id = remove_npc_packet->id;
 
-	tEvent tEv;
-	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-
-	tEv.wParam = (DWORD_PTR)m_cumAnimal[monster_id];
-	CEventMgr::GetInst()->AddEvent(tEv);
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalDestory(monster_id);
 }
 
 void CNetwork::Recv_Pos_Npc_Packet(char * packet)
 {
 	sc_pos_npc_packet* pos_npc_packet = reinterpret_cast<sc_pos_npc_packet*>(packet);
 	unsigned int monster_id = pos_npc_packet->id;
-	Vec3 pos = pos_npc_packet->vPos;
-	Vec3 rot = pos_npc_packet->vRot;
+	UINT eType = pos_npc_packet->eType;
+	Vec3 vPos = pos_npc_packet->vPos;
+	Vec3 vRot = pos_npc_packet->vRot;
 
-	m_cumAnimal[monster_id]->Transform()->SetLocalPos(pos);
-	m_cumAnimal[monster_id]->Transform()->SetLocalRot(rot);
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
 }
 
 void CNetwork::Recv_Animation_Npc_Packet(char * packet)

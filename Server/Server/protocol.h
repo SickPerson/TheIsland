@@ -168,6 +168,7 @@ struct sc_put_npc_packet {
 	char type;
 	USHORT id;
 
+	UINT	eType;
 	Vec3	vPos;
 	Vec3	vRot;
 };
@@ -176,9 +177,10 @@ struct sc_pos_npc_packet{
 	char size;
 	char type;
 	USHORT id;
+
+	UINT eType;
 	Vec3 vPos;
 	Vec3 vRot;
-	unsigned move_time;
 };
 
 struct sc_remove_npc_packet
