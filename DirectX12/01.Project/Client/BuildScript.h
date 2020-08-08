@@ -24,7 +24,7 @@ public:
 
 public:
 	void Init();
-	bool Build();
+	bool Build(bool bSendPacket = true);
 	void MustBuild();
 
 	bool Upgrade();

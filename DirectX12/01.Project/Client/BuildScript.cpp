@@ -378,7 +378,7 @@ void CBuildScript::Init()
 	}
 }
 
-bool CBuildScript::Build()
+bool CBuildScript::Build(bool bSendPacket)
 {
 	if (m_bCollision)
 		return false;
@@ -410,7 +410,8 @@ bool CBuildScript::Build()
 	Vec3 vRot = Transform()->GetLocalRot();
 	Vec3 vScale = Transform()->GetLocalScale();
 
-	CNetwork::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale);
+	if(bSendPacket)
+		CNetwork::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale);
 
 	return true;
 }
@@ -418,7 +419,7 @@ bool CBuildScript::Build()
 void CBuildScript::MustBuild()
 {
 	m_bCollision = false;
-	Build();
+	Build(false);
 }
 
 bool CBuildScript::Upgrade()
