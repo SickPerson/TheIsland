@@ -256,7 +256,7 @@ void CNetwork::ProcessPacket(char* packet)
 		break;
 	}
 	// NPC, MONSTER ฐüทร
-	/*case SC_PUT_NPC: {
+	case SC_PUT_NPC: {
 		Recv_Put_Npc_Packet(packet);
 		break;
 	}
@@ -269,7 +269,7 @@ void CNetwork::ProcessPacket(char* packet)
 	{
 		Recv_Remove_Npc_Packet(packet);
 		break;
-	}*/
+	}
 	case SC_INSTALL_HOUSING:
 	{
 		Recv_Install_Housing_Packet(packet);
