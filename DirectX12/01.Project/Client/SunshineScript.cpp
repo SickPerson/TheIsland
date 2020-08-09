@@ -10,9 +10,6 @@
 
 #include <iostream>
 
-//#define DAYCYCLE 60.f // 배속
-// 아무리 빨라도 1프레임당 1초가 최대
-
 CSunshineScript::CSunshineScript() :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
 	m_fTime(0.f),
@@ -54,35 +51,11 @@ void CSunshineScript::Update()
 		string strTime = std::to_string(m_iHour) + " : " + std::to_string(m_iMinute);
 		m_pClock->Font()->SetString(strTime);
 	}
-	//std::cout << "Day : " << m_iDay << " | " << m_iHour << " : " << m_iMinute << " : " << m_fTime << std::endl;
 
 	CLight3D* pLight = Light3D();
 	Vec3 vDir = Vec3(1.f, -1.f, 1.f);
 	Vec3 vPos = Vec3(0.f, 0.f, 0.f);
 
-	//if (m_iHour > 18)
-	//{
-	//	vDir = Vec3(0.f, 0.f, 0.f);
-	//	vPos = Vec3(0.f, 6000.f, 0.f);
-	//	Light3D()->SetDiffuseColor(Vec3(0.2f, 0.2f, 0.2f));
-	//	float fLight = 0.0f;
-	//	if (m_pSkybox)
-	//	{
-	//		m_pSkybox->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fLight);
-	//	}
-	//}
-	//else if (m_iHour < 6)
-	//{
-	//	vDir = Vec3(0.f, 0.f, 0.f);
-	//	vPos = Vec3(0.f, 6000.f, 0.f);
-	//	Light3D()->SetDiffuseColor(Vec3(0.2f, 0.2f, 0.2f));
-	//	float fLight = 0.0f;
-	//	if (m_pSkybox)
-	//	{
-	//		m_pSkybox->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fLight);
-	//	}
-	//}
-	//else
 	{
 		float fTime = (float)(m_iHour);
 		//fTime += 3.f;
@@ -95,11 +68,9 @@ void CSunshineScript::Update()
 		vDir.Normalize(-vDir);
 		float fLight = 0.f;
 
-		// 6시 ~ 18시
+		// 5시 ~ 20시
 		if (m_iHour <= 20 && m_iHour >= 5)
 		{
-			// 12 = 1
-			// 5 = 0
 			if(m_iHour <= 12)
 				fLight = (float)(fTime - 5.f) / 7.f;
 			else
@@ -116,7 +87,6 @@ void CSunshineScript::Update()
 		}
 		else 
 		{
-			//fLight = (float)(18 - fTime) / 6.f;
 			fLight = 0.05f;
 			if (m_pSkybox)
 			{
@@ -129,11 +99,6 @@ void CSunshineScript::Update()
 		}
 		Light3D()->SetDiffuseColor(Vec3(fLight, fLight, fLight));
 	}
-	//std::cout << vDir.x << " | " << m_iHour << " : " << vDir.y << " : " << vDir.z << std::endl;
-
-	//pLight->SetLightDir(vDir);
-	//Transform()->SetLocalPos(vPos);
-	//Light3D()->SetLightDir(Vec3(1.f, -1.f, 1.f));
 
 	Vec3 vPlayerPos = m_pPlayer->Transform()->GetWorldPos();
 	Vec3 vPlayerRot = m_pPlayer->Transform()->GetLocalRot();
@@ -143,12 +108,8 @@ void CSunshineScript::Update()
 	vShadowPos.y = CNaviMgr::GetInst()->GetY(vShadowPos);
 	vShadowPos += vDir * -3000.f;
 
-	//vPlayerPos += vPlayerDir * Vec3(-1000.f, 1000.f, -1000.f);
-	//Transform()->SetLocalPos(vShadowPos);
 	Light3D()->SetLightPos(vShadowPos);
 	Light3D()->SetLightDir(vDir);
-
-	//Transform()->SetLocalRot(Vec3(vPlayerRot.x + XM_PI / 2.f, vPlayerRot.y + XM_PI, vPlayerRot.z));
 
 	// Rain
 	if ( !m_pRain )
