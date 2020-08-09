@@ -57,8 +57,13 @@ void CAnimator3D::UpdateData()
 		m_pBoneFinalMat->UpdateRWData(UAV_REGISTER::u0);
 
 		UINT iBoneCount = (UINT)m_pVecBones->size();
+		UINT iRow = 0;
+
 		m_pBoneMtrl->SetData(SHADER_PARAM::INT_0, &iBoneCount);
 		m_pBoneMtrl->SetData(SHADER_PARAM::INT_1, &m_iFrameIdx);
+		m_pBoneMtrl->SetData(SHADER_PARAM::INT_2, &m_iNextFrameIdx);
+		m_pBoneMtrl->SetData(SHADER_PARAM::INT_3, &iRow);
+		m_pBoneMtrl->SetData(SHADER_PARAM::FLOAT_0, &m_fRatio);
 
 		UINT iGrounX = (iBoneCount / 256) + 1;
 		m_pBoneMtrl->Dispatch(iGrounX, 1, 1);
@@ -86,6 +91,7 @@ void CAnimator3D::UpdateData_Inst(CStructuredBuffer * _pBoneBuffer, UINT _iRow)
 		m_pBoneMtrl->SetData(SHADER_PARAM::INT_0, &iBoneCount);
 		m_pBoneMtrl->SetData(SHADER_PARAM::INT_1, &m_iFrameIdx);
 		m_pBoneMtrl->SetData(SHADER_PARAM::INT_3, &_iRow);
+		m_pBoneMtrl->SetData(SHADER_PARAM::FLOAT_0, &m_fRatio);
 
 		UINT iGrounX = (iBoneCount / 256) + 1;
 		m_pBoneMtrl->Dispatch(iGrounX, 1, 1);
@@ -159,19 +165,45 @@ void CAnimator3D::LateUpdate()
 void CAnimator3D::FinalUpdate()
 {
 	m_dCurTime = 0.f;
-
 	// 현재 재생중인 Clip 의 시간을 진행한다.
-	/*m_vecClipUpdateTime[m_iCurClip] += DT;
+	m_vecClipUpdateTime[m_iCurClip] += DT;
 
-	if ( m_vecClipUpdateTime[m_iCurClip] >= m_pVecClip->at( m_iCurClip ).dTimeLength )
+	if (m_vecClipUpdateTime[m_iCurClip] >= m_pVecClip->at(m_iCurClip).dTimeLength)
 	{
 		m_vecClipUpdateTime[m_iCurClip] = 0.f;
 	}
 
+	m_dCurTime = m_pVecClip->at(m_iCurClip).dStartTime + m_vecClipUpdateTime[m_iCurClip];
+
+	// 현재 프레임 인덱스 구하기
+	double dFrameIdx = m_dCurTime * (double)m_iFrameCount;
+	m_iFrameIdx = (int)(dFrameIdx);
+
+	// 다음 프레임 인덱스
+	if (m_iFrameIdx >= m_pVecClip->at(0).iFrameLength - 1)
+		m_iNextFrameIdx = m_iFrameIdx;	// 끝이면 현재 인덱스를 유지
+	else
+		m_iNextFrameIdx = m_iFrameIdx + 1;
+
+	// 프레임간의 시간에 따른 비율을 구해준다.
+	m_fRatio = (float)(dFrameIdx - (double)m_iFrameIdx);
+
+	// 컴퓨트 쉐이더 연산여부
+	m_bFinalMatUpdate = false;
+
+	return;
+
+	m_dCurTime = 0.f;
+	// 현재 재생중인 Clip 의 시간을 진행한다.
+	/*m_vecClipUpdateTime[m_iCurClip] += DT;
+	
+	if ( m_vecClipUpdateTime[m_iCurClip] >= m_pVecClip->at( m_iCurClip ).dTimeLength )
+	{
+		m_vecClipUpdateTime[m_iCurClip] = 0.f;
+	}
+	
 	m_dCurTime = m_pVecClip->at( m_iCurClip ).dStartTime + m_vecClipUpdateTime[m_iCurClip];*/
-
 	m_mapClipUpdateTime[m_strCurAniKey] += DT;
-
 	if ( m_mapClipUpdateTime[m_strCurAniKey] >= m_mapClip[m_strCurAniKey]->dTimeLength )
 	{
 		if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::LOOP )
@@ -190,19 +222,15 @@ void CAnimator3D::FinalUpdate()
 			m_bStop = true;
 		}
 	}
-
 	if ( !m_bStop )
 	{
 		m_dCurTime = m_mapClip[m_strCurAniKey]->dStartTime + m_mapClipUpdateTime[m_strCurAniKey];
 	}
-
 	else
 	{
 		m_dCurTime = m_mapClip[m_strCurAniKey]->dEndTime;
 	}
-
 	m_iFrameIdx = ( int )( m_dCurTime * ( float )m_iFrameCount );
-
 	m_bFinalMatUpdate = false;
 }
 
