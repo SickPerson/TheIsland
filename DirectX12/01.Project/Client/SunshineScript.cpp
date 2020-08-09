@@ -20,7 +20,9 @@ CSunshineScript::CSunshineScript() :
 	m_pSkybox(NULL),
 	m_pPlayer(NULL),
 	DAYCYCLE(60.f),
-	m_pRain(NULL)
+	m_pRain(NULL),
+	m_fRainTime(60.f),
+	m_bRain(false)
 {
 }
 
@@ -51,6 +53,26 @@ void CSunshineScript::Update()
 		string strTime = std::to_string(m_iHour) + " : " + std::to_string(m_iMinute);
 		m_pClock->Font()->SetString(strTime);
 	}
+
+	/*if ( !m_bRain )
+	{
+		if ( m_iDay % 4 == 1 )
+		{
+			m_bRain = true;
+		}
+	}
+
+	else
+	{
+		m_fRainTime -= DT * DAYCYCLE;
+
+		if ( m_fRainTime <= 0 )
+		{
+			m_bRain = false;
+		}
+	}*/
+
+	//m_pRain->SetActive( m_bRain );
 
 	CLight3D* pLight = Light3D();
 	Vec3 vDir = Vec3(1.f, -1.f, 1.f);

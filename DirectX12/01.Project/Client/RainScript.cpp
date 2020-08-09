@@ -21,9 +21,11 @@ CRainScript::~CRainScript()
 
 void CRainScript::Update()
 {
-	CGameObject* pMainCam = CSceneMgr::GetInst()->GetCurScene()->GetLayer( 0 )->GetMainCamera();
-	//CFPSCamScript* pCamScript = pMainCam->GetScript<CFPSCamScript>();
+	CGameObject* pRain = CSceneMgr::GetInst()->GetCurScene()->GetLayer( 0 )->FindObject( L"Rain" );
+	
+	m_bActive = pRain->IsActive();
 
+	CGameObject* pMainCam = CSceneMgr::GetInst()->GetCurScene()->GetLayer( 0 )->GetMainCamera();
 	Vec3 vCamRot = pMainCam->Transform()->GetLocalRot();
 
 	if ( m_bActive )
@@ -33,6 +35,11 @@ void CRainScript::Update()
 
 		else
 			MeshRender()->SetActive( false );
+	}
+
+	else
+	{
+		MeshRender()->SetActive( false );
 	}
 
 	if ( KEY_TAB( KEY_TYPE::KEY_L ) )

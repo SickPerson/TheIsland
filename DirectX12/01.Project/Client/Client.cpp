@@ -180,7 +180,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 	break;
 	case WM_CHAR:
 	{
-		if ( VK_BACK == wParam )
+		/*if ( VK_BACK == wParam )
 		{
 			strID.pop_back();
 		}
@@ -188,7 +188,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 		else if ( VK_RETURN != wParam )
 		{
 			strID += ( wchar_t* )&wParam;
-		}
+		}*/
 
 		/*CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		CLoginScene* pLoginScene = pScene->GetCurSceneScript<CLoginScene>();

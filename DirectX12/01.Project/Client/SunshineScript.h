@@ -11,6 +11,9 @@ class CSunshineScript :
 	int m_iMinute;
 	float m_fDarkness;
 
+	float m_fRainTime;
+	bool	m_bRain;
+
 	CGameObject* m_pSkybox;
 	CGameObject* m_pSea;
 
