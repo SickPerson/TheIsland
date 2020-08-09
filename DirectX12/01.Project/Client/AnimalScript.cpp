@@ -49,6 +49,8 @@ CAnimalScript::~CAnimalScript()
 
 void CAnimalScript::Update()
 {
+	return;
+
 	if (m_pParticleObj != NULL)
 	{
 		m_fParticleTime -= DT;
@@ -247,6 +249,8 @@ void CAnimalScript::Update()
 
 void CAnimalScript::OnCollision(CCollider2D * _pOther)
 {
+	return;
+
 	if (m_bAnimalDead)
 		return;
 
@@ -395,131 +399,12 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 		}
 	}
 
-	// 회피형 동물 ( 사슴 )
-	/*
-	if (BEHAVIOR_TYPE::B_EVASION == m_tStatus.eType)
-	{
-		Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
-
-		Vec3 vPos = Transform()->GetLocalPos();
-
-		Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
-		vDir.y = 0.f;
-
-		m_vPrevPos = vPos;
-		vPos += vDir * m_tStatus.fSpeed * DT;
-
-		Vec3 vRot = _pOther->Transform()->GetLocalRot();
-
-		Transform()->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
-		vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
-		if (vPos.y <= 80.f)
-		{
-			vPos += -m_vMoveDir * m_tStatus.fSpeed * DT;
-			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
-		}
-		Transform()->SetLocalPos(vPos);
-		Animator3D()->ChangeAnimation(L"Run");
-	}
-	*/
-	/*
-	else if (BEHAVIOR_TYPE::B_PASSIVE == m_tStatus.eType)
-	{
-		// 비선공 유형 동물의 시야에 플레이어가 들어왔을때
-		if (m_bBehavior)
-		{
-			m_fCurrentTime = m_tStatus.fBehaviorTime;
-		}
-		if (CollisionSphere(m_vOffsetScale, _pOther, 0.2f))
-		{
-			Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
-
-			Vec3 vPos = Transform()->GetLocalPos();
-
-			Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
-			vDir.y = 0.f;
-
-			m_vPrevPos = vPos;
-			vPos += vDir * m_tStatus.fSpeed * DT;
-
-			Vec3 vRot = _pOther->Transform()->GetLocalRot();
-
-			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
-			if (vPos.y <= 80.f)
-			{
-				vPos += -m_vMoveDir * m_tStatus.fSpeed * DT;
-				vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
-			}
-			Transform()->SetLocalPos(vPos);
-
-			if (_pOther->GetObj() == m_pTarget)
-			{
-				if (m_fAttackTime < 0.f)
-				{
-					m_pTarget->GetScript<CPlayerScript>()->Damage(m_tStatus.fDamage);
-					Animator3D()->ChangeAnimation(L"Attack");
-					m_fAttackTime = m_fAttackCoolTime;
-				}
-			}
-			else
-			{
-				Animator3D()->ChangeAnimation(L"Run");
-			}
-		}
-
-	}
-	*/
-	/*
-	else if (BEHAVIOR_TYPE::B_WARLIKE == m_tStatus.eType)
-	{
-		// 선공몹
-		Vec3 vOtherPos = _pOther->Transform()->GetLocalPos();
-
-		Vec3 vPos = Transform()->GetLocalPos();
-		Vec3 vTempPos = vPos;
-
-		Vec3 vDir = XMVector3Normalize(vOtherPos - vPos);
-		vDir.y = 0.f;
-
-		m_vPrevPos = vPos;
-		vPos += vDir * m_tStatus.fSpeed * DT;
-
-		Vec3 vRot = _pOther->Transform()->GetLocalRot();
-
-		Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
-
-		vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
-		if (vPos.y <= 80.f)
-		{
-			vPos += -m_vMoveDir * m_tStatus.fSpeed * DT;
-			vPos.y = CNaviMgr::GetInst()->GetY(Transform()->GetWorldPos());
-		}
-		Transform()->SetLocalPos(vPos);
-		//Animator3D()->ChangeAnimation(L"Run");
-
-		if (CollisionSphere(m_vOffsetScale, _pOther, 0.2f))
-		{
-			if (m_fAttackTime < 0.f)
-			{
-				_pOther->GetObj()->GetScript<CPlayerScript>()->Damage(m_tStatus.fDamage);
-				Animator3D()->ChangeAnimation(L"Attack");
-				m_fAttackTime = m_fAttackCoolTime;
-			}
-			Transform()->SetLocalPos(vTempPos);
-		}
-		else
-		{
-			Animator3D()->ChangeAnimation(L"Run");
-		}
-		m_bIdleBehavior = false;
-	}
-	*/
-
-
 }
 
 void CAnimalScript::OnCollisionEnter(CCollider2D * _pOther)
 {
+	return;
+
 	if (m_bAnimalDead)
 		return;
 	if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Player")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
@@ -539,6 +424,8 @@ void CAnimalScript::OnCollisionEnter(CCollider2D * _pOther)
 
 void CAnimalScript::OnCollisionExit(CCollider2D * _pOther)
 {
+	return;
+	
 	if (m_bAnimalDead)
 		return;
 	// 플레이어가 시야반경에서 벗어나도 일정 행동을 수행하도록

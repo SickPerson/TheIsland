@@ -36,6 +36,7 @@
 #include "AnimalScript.h"
 
 #include <Engine/NaviMgr.h>
+#include <Engine/Layer.h>
 
 unsigned int CNetwork::m_usID = 0;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumPlayer;
@@ -622,6 +623,10 @@ void CNetwork::Recv_Weather_Packet(char * packet)
 
 	// ¹Þ±â
 	//cout << bRain << endl;
+
+	CGameObject* pRainObj = pScene->GetLayer( 0 )->FindObject( L"Rain" );
+	if ( pRainObj )
+		pRainObj->SetActive( bRain );
 }
 
 void CNetwork::Recv_Time_Packet(char * packet)

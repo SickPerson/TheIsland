@@ -115,6 +115,17 @@ CGameObject * CLayer::GetMainCamera()
 	return nullptr;
 }
 
+CGameObject * CLayer::FindObject( const wstring & strKey )
+{
+	for ( UINT i = 0; i < m_vecLayerObj.size(); ++i )
+	{
+		if ( m_vecLayerObj[i]->GetName() == strKey )
+			return m_vecLayerObj[i];
+	}
+
+	return nullptr;
+}
+
 void CLayer::Awake()
 {
 	for (UINT i = 0; i < m_vecParentObj.size(); ++i)

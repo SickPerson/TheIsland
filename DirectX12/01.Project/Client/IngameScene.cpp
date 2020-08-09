@@ -330,6 +330,8 @@ void CIngameScene::Init()
 	pObject->ParticleSystem()->SetEndScale( 20.f );
 	pObject->ParticleSystem()->SetTexture( L"Rain", L"Texture\\Particle\\HardRain.png" );
 	
+	pObject->SetName( L"Rain" );
+	pObject->SetActive( false );
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 	pSun->GetScript<CSunshineScript>()->SetRain( pObject );
 

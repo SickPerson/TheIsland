@@ -39,7 +39,7 @@ private:
 public:
 	CScene* pScene;
 	static unsigned int m_usID;
-	CGameObject* m_pPlayer;
+	CGameObject*	m_pPlayer;
 	CGameObject*	m_pChat;
 
 	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
