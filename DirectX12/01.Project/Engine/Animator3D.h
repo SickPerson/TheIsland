@@ -44,10 +44,12 @@ private:
 
 	vector<float>				m_vecClipUpdateTime;
 	vector<Matrix>				m_vecFinalBoneMat; // 텍스쳐에 전달할 최종 행렬정보
-	int							m_iFrameCount; // 30
+	int							m_iFrameCount; // (초당 프레임)
 	double						m_dCurTime;
 	int							m_iCurClip; // 클립 인덱스	
-	int							m_iFrameIdx; // 클립의 현제 프레임
+	int							m_iFrameIdx; // 클립의 현재 프레임
+	int							m_iNextFrameIdx; // 다음 프레임 인덱스
+	float						m_fRatio;	// 프레임 사이 비율
 
 	Ptr<CMaterial>				m_pBoneMtrl; // BoneData Update Compute Shader
 	CStructuredBuffer*			m_pBoneFinalMat;  // 특정 프레임의 최종 행렬
