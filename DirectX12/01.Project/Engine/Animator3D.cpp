@@ -13,7 +13,8 @@ CAnimator3D::CAnimator3D() :
 	m_iFrameCount(30),
 	CComponent(COMPONENT_TYPE::ANIMATOR3D),
 	m_pBoneFinalMat(NULL),
-	m_bFinalMatUpdate(false)
+	m_bFinalMatUpdate(false),
+	m_bStop(false)
 {
 	m_pBoneMtrl = CResMgr::GetInst()->FindRes<CMaterial>( L"Animation3DUpdateMtrl" );
 	m_pBoneFinalMat = new CStructuredBuffer;
@@ -23,6 +24,8 @@ CAnimator3D::CAnimator3D() :
 CAnimator3D::~CAnimator3D()
 {
 	SAFE_DELETE( m_pBoneFinalMat );
+
+	Safe_Delete_Map( m_mapClip );
 }
 
 CAnimator3D * CAnimator3D::Clone()
@@ -88,6 +91,51 @@ void CAnimator3D::UpdateData_Inst(CStructuredBuffer * _pBoneBuffer, UINT _iRow)
 	}
 }
 
+void CAnimator3D::AddClip( const wstring & strKey, int iStartFrame, int iEndFrame, ANIMATION_MODE eMode )
+{
+	tAnimation* pAnimClip = new tAnimation;
+
+	pAnimClip->iStartFrame = iStartFrame;
+	pAnimClip->iEndFrame = iEndFrame;
+	pAnimClip->iFrameLength = iEndFrame - iStartFrame + 1;
+
+	pAnimClip->dStartTime = ( double )iStartFrame / m_iFrameCount;
+	pAnimClip->dEndTime = ( double )iEndFrame / m_iFrameCount;
+	pAnimClip->dTimeLength = pAnimClip->dEndTime - pAnimClip->dStartTime;
+
+	pAnimClip->eMode = eMode;
+
+	m_mapClip[strKey] = pAnimClip;
+
+	m_mapClipUpdateTime[strKey] = 0.f;
+}
+
+void CAnimator3D::ChangeAnimation( const wstring & strKey )
+{
+	if ( m_strCurAniKey == strKey )
+		return;
+	m_mapClipUpdateTime[m_strCurAniKey] = 0.f;
+	m_strCurAniKey = strKey;
+}
+
+void CAnimator3D::SetDefaultKey( const wstring & strKey )
+{
+	m_strDefaultKey = strKey;
+
+	m_strCurAniKey = strKey;
+}
+
+void CAnimator3D::Restart( const wstring& strKey )
+{
+	m_bStop = false;
+
+	if ( strKey == L"" )
+		m_strCurAniKey = m_strDefaultKey;
+
+	else
+		m_strCurAniKey = strKey;
+}
+
 void CAnimator3D::Check_Mesh( Ptr<CMesh> pMesh )
 {
 	UINT iBoneCount = pMesh->GetBoneCount();
@@ -110,14 +158,45 @@ void CAnimator3D::FinalUpdate()
 	m_dCurTime = 0.f;
 
 	// 현재 재생중인 Clip 의 시간을 진행한다.
-	m_vecClipUpdateTime[m_iCurClip] += DT;
+	/*m_vecClipUpdateTime[m_iCurClip] += DT;
 
 	if ( m_vecClipUpdateTime[m_iCurClip] >= m_pVecClip->at( m_iCurClip ).dTimeLength )
 	{
 		m_vecClipUpdateTime[m_iCurClip] = 0.f;
 	}
 
-	m_dCurTime = m_pVecClip->at( m_iCurClip ).dStartTime + m_vecClipUpdateTime[m_iCurClip];
+	m_dCurTime = m_pVecClip->at( m_iCurClip ).dStartTime + m_vecClipUpdateTime[m_iCurClip];*/
+
+	m_mapClipUpdateTime[m_strCurAniKey] += DT;
+
+	if ( m_mapClipUpdateTime[m_strCurAniKey] >= m_mapClip[m_strCurAniKey]->dTimeLength )
+	{
+		if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::LOOP )
+		{
+			m_mapClipUpdateTime[m_strCurAniKey] = 0.f;
+		}
+
+		else if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::ONCE_RETURN )
+		{
+			m_mapClipUpdateTime[m_strCurAniKey] = 0.f;
+			m_strCurAniKey = m_strDefaultKey;
+		}
+
+		else if ( m_mapClip[m_strCurAniKey]->eMode == ANIMATION_MODE::ONCE_STOP )
+		{
+			m_bStop = true;
+		}
+	}
+
+	if ( !m_bStop )
+	{
+		m_dCurTime = m_mapClip[m_strCurAniKey]->dStartTime + m_mapClipUpdateTime[m_strCurAniKey];
+	}
+
+	else
+	{
+		m_dCurTime = m_mapClip[m_strCurAniKey]->dEndTime;
+	}
 
 	m_iFrameIdx = ( int )( m_dCurTime * ( float )m_iFrameCount );
 

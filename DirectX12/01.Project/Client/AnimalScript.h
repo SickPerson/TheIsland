@@ -2,6 +2,8 @@
 #include <Engine/Script.h>
 #include "Animal.h"
 
+#define ANIMAL_ANIMATION_COOLTIME 2.f
+
 class CAnimalSpawner;
 
 class CAnimalScript :
@@ -23,6 +25,9 @@ class CAnimalScript :
 
 	bool			m_bIdleBehavior;
 	float			m_fIdleBehaviorTime;
+
+	bool			m_bAttack;
+	float			m_fAnimationCoolTime;
 
 	bool			m_bAnimalDead;
 	float			m_fLivingTime;
@@ -69,5 +74,7 @@ public:
 	bool GetAnimalDead();
 
 	void SetAnimalSpawner(CAnimalSpawner* pSpawner);
+
+	void SetAnimation( CAnimator3D* pAnimation );		// 항상 SetAnimalStatus()호출 후 호출하기
 };
 

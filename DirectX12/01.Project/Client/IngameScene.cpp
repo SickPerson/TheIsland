@@ -50,6 +50,8 @@
 #include "ToolItemScript.h"
 #include "UsableScript.h"
 
+#include "CheatMgr.h"
+
 #include <Engine/TestScript.h>
 
 #include <Engine/ParticleSystem.h>
@@ -71,12 +73,6 @@ CIngameScene::~CIngameScene()
 
 void CIngameScene::Init()
 {
-	Ptr<CMeshData> pTestMeshData = CResMgr::GetInst()->LoadFBX(L"FBX\\arrow.fbx", 0);
-	pTestMeshData->Save(pTestMeshData->GetPath());
-	//Ptr<CMeshData> pTestTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\player.mdat", L"MeshData\\player.mdat");
-	//pTestMeshData = CResMgr::GetInst()->LoadFBX( L"FBX\\Wolf.fbx" );
-	//pTestMeshData->Save( pTestMeshData->GetPath() );
-
 	// MeshData 로드
 	Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
 	Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
@@ -87,153 +83,7 @@ void CIngameScene::Init()
 	Ptr<CMeshData> pTreeCTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucec.mdat", L"MeshData\\sprucec.mdat");
 
 	CGameObject * pTestObject = nullptr;
-	   
-
-	// Animal //
-	/*
-	// ====================================================================
-	pTestObject = pDeerTex->Instantiate();
-	pTestObject->AddComponent(new CCollider2D);
-	pTestObject->AddComponent(new CAnimalScript);
-
-	{
-		tAnimalStatus tStatus;
-		tStatus.fHp = 100.f;
-		tStatus.fStamina = 100.f;
-		tStatus.fDamage = 0.f;
-		tStatus.fSpeed = 250.f;
-		tStatus.fBehaviorTime = 4.f;
-		tStatus.eType = BEHAVIOR_TYPE::B_EVASION;
-		tStatus.eKind = ANIMAL_TYPE::A_DEER;
-
-		Vec3 vOffsetScale = Vec3(30.f, 30.f, 30.f);
-
-		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
-		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-	}
-
-	pTestObject->SetName(L"Deer");
-
-	pTestObject->MeshRender()->SetDynamicShadow(true);
-
-	pTestObject->Transform()->SetLocalPos(Vec3(0.f, 20.f, 2000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
-
-	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	pTestObject->Collider2D()->SetOffsetScale(Vec3(300.f, 300.f, 300.f));
-
-	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
-	// ====================================================================
-	// ====================================================================
-	pTestObject = pBearTex->Instantiate();
-	pTestObject->AddComponent(new CCollider2D);
-	pTestObject->AddComponent(new CAnimalScript);
-
-	{
-		tAnimalStatus tStatus;
-		tStatus.fHp = 200.f;
-		tStatus.fStamina = 100.f;
-		tStatus.fDamage = 20.f;
-		tStatus.fSpeed = 150.f;
-		tStatus.fBehaviorTime = 4.f;
-		tStatus.eType = BEHAVIOR_TYPE::B_WARLIKE;
-		tStatus.eKind = ANIMAL_TYPE::A_BEAR;
-
-		Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
-
-		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
-		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-	}
-
-	pTestObject->SetName(L"Bear");
-
-	pTestObject->MeshRender()->SetDynamicShadow(true);
-
-	pTestObject->Transform()->SetLocalPos(Vec3(1500.f, 20.f, 2000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
-
-	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	pTestObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-
-	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
-	// ====================================================================
-	// ====================================================================
-	pTestObject = pBoarTex->Instantiate();
-	pTestObject->AddComponent(new CCollider2D);
-	pTestObject->AddComponent(new CAnimalScript);
-
-	{
-		tAnimalStatus tStatus;
-		tStatus.fHp = 200.f;
-		tStatus.fStamina = 100.f;
-		tStatus.fDamage = 20.f;
-		tStatus.fSpeed = 150.f;
-		tStatus.fBehaviorTime = 4.f;
-		tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
-		tStatus.eKind = ANIMAL_TYPE::A_BOAR;
-
-		Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
-
-		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
-		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-	}
-
-	pTestObject->SetName(L"Boar");
-
-	pTestObject->MeshRender()->SetDynamicShadow(true);
-
-	pTestObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-
-	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	pTestObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
-
-	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
-	// ====================================================================
-	// ====================================================================
-	pTestObject = pWolfTex->Instantiate();
-	pTestObject->AddComponent(new CCollider2D);
-	pTestObject->AddComponent(new CAnimalScript);
-
-	{
-		tAnimalStatus tStatus;
-		tStatus.fHp = 200.f;
-		tStatus.fStamina = 100.f;
-		tStatus.fDamage = 20.f;
-		tStatus.fSpeed = 200.f;
-		tStatus.fBehaviorTime = 4.f;
-		tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
-		tStatus.eKind = ANIMAL_TYPE::A_WOLF;
-
-		Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
-
-		pTestObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
-		pTestObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-	}
-
-	pTestObject->SetName(L"Wolf");
-
-	pTestObject->MeshRender()->SetDynamicShadow(true);
-
-	pTestObject->Transform()->SetLocalPos(Vec3(-0.f, 20.f, 4000.f));
-	pTestObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	pTestObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
-
-	pTestObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-	pTestObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-	pTestObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-
-	m_pScene->FindLayer(L"Animal")->AddGameObject(pTestObject);
-	*/
-	// ====================================================================
-
+	  
 	Ptr<CTexture> pTex = CResMgr::GetInst()->Load<CTexture>( L"TestTex", L"Texture\\Health.png" );
 	Ptr<CTexture> pExplosionTex = CResMgr::GetInst()->Load<CTexture>( L"Explosion", L"Texture\\Explosion\\Explosion80.png" );
 	Ptr<CTexture> pBlackTex = CResMgr::GetInst()->Load<CTexture>( L"Black", L"Texture\\asd.png" );
@@ -270,6 +120,8 @@ void CIngameScene::Init()
 	pPlayer->AddComponent(new CPlayerScript);
 	pPlayer->AddComponent(new CCollider2D);
 
+	CPlayerScript* pPlayerScript = pPlayer->GetScript<CPlayerScript>();
+	pPlayerScript->AnimationInfo( pPlayer->Animator3D() );
 	pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
 	pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
@@ -281,7 +133,9 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
 	m_pPlayer->MeshRender()->SetDynamicShadow(true);
+
 	CNetwork::GetInst()->SetPlayerObj(m_pPlayer);
+	CCheatMgr::GetInst()->SetPlayer(m_pPlayer);
 
 	for (int i = 0; i < MAX_USER; ++i)
 	{
@@ -306,7 +160,7 @@ void CIngameScene::Init()
 	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
 
 	pMainCam->Camera()->SetProjType( PROJ_TYPE::PERSPECTIVE );
-	pMainCam->Camera()->SetFar( 100000.f );
+	pMainCam->Camera()->SetFar( 10000.f );
 	pMainCam->Camera()->SetLayerAllCheck();
 	pMainCam->Camera()->SetLayerCheck( 30, false );
 	pMainCam->Camera()->SetLayerCheck( 29, false );
@@ -383,6 +237,7 @@ void CIngameScene::Init()
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
 	CGameObject* pSun = pObject;
+	CCheatMgr::GetInst()->SetClock(pSun);
 
 	// ====================
 	// Skybox 오브젝트 생성
@@ -425,34 +280,8 @@ void CIngameScene::Init()
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 
 
-	// 
 	CreateNatural();
 	//CreateAnimalSpawner();
-
-	//// ====================
-	//// Grid 오브젝트 생성
-	//// ====================
-	//pObject = new CGameObject;
-	//pObject->SetName( L"Grid" );
-	//pObject->FrustumCheck( false );
-	//pObject->AddComponent( new CTransform );
-	//pObject->AddComponent( new CMeshRender );
-	//pObject->AddComponent( new CGridScript );
-
-	//// Transform 설정
-	//pObject->Transform()->SetLocalScale( Vec3( 100000.f, 100000.f, 1.f ) );
-	//pObject->Transform()->SetLocalRot( Vec3( XM_PI / 2.f, 0.f, 0.f ) );
-
-	//// MeshRender 설정
-	//pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
-	//pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"GridMtrl" ) );
-
-	//// Script 설정	
-	//pObject->GetScript<CGridScript>()->SetToolCamera( pMainCam );
-	//pObject->GetScript<CGridScript>()->SetGridColor( Vec3( 0.8f, 0.2f, 0.2f ) );
-
-	//// AddGameObject
-	//m_pScene->FindLayer( L"Tool" )->AddGameObject( pObject );
 
 	// ==========================
 	// Distortion Object 만들기
@@ -485,18 +314,24 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Environment")->AddGameObject(pObject);
 	pSun->GetScript<CSunshineScript>()->SetSea(pObject);
 
-	// ====================
-	// Particle Object 생성
-	// ====================
-	//pObject = new CGameObject;
-	//pObject->SetName(L"Particle");
-	//pObject->AddComponent(new CTransform);
-	//pObject->AddComponent(new CParticleSystem);
+	//====================
+	//Particle Object 생성
+	//====================
+	pObject = new CGameObject;
+	pObject->SetName( L"Particle" );
+	pObject->AddComponent( new CTransform );
+	pObject->AddComponent( new CParticleSystem );
 
-	//pObject->FrustumCheck(false);
-	//pObject->Transform()->SetLocalPos(Vec3(-300.f, 50.f, 300.f));
-
-	//m_pScene->FindLayer(L"Default")->AddGameObject(pObject);
+	pObject->FrustumCheck( false );
+	pObject->ParticleSystem()->SetKind( 1 );
+	pObject->ParticleSystem()->SetStartColor( Vec4( 0.7f, 0.8f, 1.f, 1.f ) );
+	pObject->ParticleSystem()->SetEndColor( Vec4( 0.f, 0.3f, 1.f, 1.f ) );
+	pObject->ParticleSystem()->SetStartScale( 10.f );
+	pObject->ParticleSystem()->SetEndScale( 20.f );
+	pObject->ParticleSystem()->SetTexture( L"Rain", L"Texture\\Particle\\HardRain.png" );
+	
+	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
+	pSun->GetScript<CSunshineScript>()->SetRain( pObject );
 
 	// =============
 	// FBX 파일 로드
@@ -568,7 +403,7 @@ void CIngameScene::GiveStartItem()
 	pItem = new CUsableScript(ITEM_TYPE::ITEM_APPLE);
 	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 	pItem = new CStuffScript(ITEM_TYPE::ITEM_CLOTH);
-	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+	m_pInventory->GetScript<CInventoryScript>()->AddItem(pItem, 100);
 }
 
 void CIngameScene::Update()
@@ -1418,7 +1253,7 @@ void CIngameScene::CreateAnimalSpawner()
 	pSpawner->AddComponent(new CTransform);
 	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_WARLIKE));
 
-	pSpawner->Transform()->SetLocalPos(Vec3(6100.f, 0.f, 18200.f));
+	pSpawner->Transform()->SetLocalPos(Vec3(8100.f, 0.f, 16200.f));
 	pSpawner->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
 	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner);
 

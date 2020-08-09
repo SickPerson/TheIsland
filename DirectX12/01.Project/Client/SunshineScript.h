@@ -4,6 +4,7 @@
 class CSunshineScript :
 	public CScript
 {
+	float DAYCYCLE;
 	float m_fTime;
 	int m_iDay;
 	int m_iHour;
@@ -16,6 +17,9 @@ class CSunshineScript :
 	CGameObject* m_pPlayer;
 	CGameObject* m_pClock;
 	CGameObject* m_pDay;
+
+	CGameObject* m_pRain;
+
 public:
 	CSunshineScript();
 	virtual ~CSunshineScript();
@@ -29,10 +33,13 @@ public:
 	void Init();
 
 	float GetTime();
-	void SetTime(float fTime);
+	void SetTime(int iHour, int iMin);
+
+	void SetDayCycle(float fCycle);
 
 	void SetSkybox(CGameObject* pObject);
 	void SetPlayer(CGameObject* pObject);
 	void SetSea(CGameObject* pObject);
+	void SetRain( CGameObject* pObject );
 };
 

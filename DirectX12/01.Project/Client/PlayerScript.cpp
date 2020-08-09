@@ -18,6 +18,7 @@
 #include <Engine/Camera.h>
 #include <Engine/RenderMgr.h>
 #include <Engine/NaviMgr.h>
+#include <Engine/Animator3D.h>
 
 #include <iostream>
 #include "Network.h"
@@ -35,6 +36,7 @@ CPlayerScript::CPlayerScript()
 	, m_pMainCamera(NULL)
 	, m_fAttackCoolTime(PLAYER_ATTACK_COOLTIME)
 	, m_fDownSpeed(0.f)
+	, m_bHoldShift(false)
 {
 	m_vCollisionObj.reserve(5);
 }
@@ -81,7 +83,11 @@ CGameObject * CPlayerScript::GetChatObject()
 
 void CPlayerScript::EnableItem(int num)
 {
-	m_pInventory->GetScript<CInventoryScript>()->EnableItem(GetObj(), num);
+	ITEM_TYPE eType = (ITEM_TYPE)m_pInventory->GetScript<CInventoryScript>()->EnableItem(GetObj(), num);
+	if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
+	{
+		Animator3D()->ChangeAnimation(L"TakeWeapon");
+	}
 }
 
 void CPlayerScript::DisableItem(int num)
@@ -111,7 +117,6 @@ bool CPlayerScript::GetEnable()
 
 void CPlayerScript::Awake()
 {
-
 }
 
 void CPlayerScript::Update()
@@ -136,11 +141,43 @@ void CPlayerScript::Update()
 		{
 			if (KEY_TAB(KEY_TYPE::KEY_LBTN))
 			{
-				PlayerPicking(LEFT_CLICK);
+				ITEM_TYPE eType = (ITEM_TYPE)PlayerPicking(LEFT_CLICK);
+				if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
+				{
+					int type = rand() % 3;
+					if (type == 0)
+					{
+						Animator3D()->ChangeAnimation(L"Attack1");
+					}
+					else if (type == 1)
+					{
+						Animator3D()->ChangeAnimation(L"Attack2");
+					}
+					else
+					{
+						Animator3D()->ChangeAnimation(L"Attack3");
+					}
+				}
 			}
 			else if (KEY_TAB(KEY_TYPE::KEY_RBTN))
 			{
-				PlayerPicking(RIGHT_CLICK);
+				ITEM_TYPE eType = (ITEM_TYPE)PlayerPicking(RIGHT_CLICK);
+				if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
+				{
+					int type = rand() % 3;
+					if (type == 0)
+					{
+						Animator3D()->ChangeAnimation(L"Attack1");
+					}
+					else if (type == 1)
+					{
+						Animator3D()->ChangeAnimation(L"Attack2");
+					}
+					else
+					{
+						Animator3D()->ChangeAnimation(L"Attack3");
+					}
+				}
 			}
 
 			if (KEY_TAB(KEY_TYPE::KEY_Z))
@@ -151,6 +188,14 @@ void CPlayerScript::Update()
 			if (KEY_HOLD(KEY_TYPE::KEY_LSHIFT))
 			{
 				fSpeed *= 5.f;
+				m_bHoldShift = true;
+				Animator3D()->ChangeAnimation( L"Run" );
+			}
+
+			if ( KEY_AWAY( KEY_TYPE::KEY_LSHIFT ) )
+			{
+				m_bHoldShift = false;
+				Animator3D()->ChangeAnimation( L"Idle2" );
 			}
 
 			Vec3 vPrev;
@@ -165,6 +210,9 @@ void CPlayerScript::Update()
 				{
 					vPos = vPrev;
 				}
+
+				if ( !m_bHoldShift )
+					Animator3D()->ChangeAnimation( L"Walk" );
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_S))
@@ -178,6 +226,9 @@ void CPlayerScript::Update()
 				{
 					vPos = vPrev;
 				}
+
+				if ( !m_bHoldShift )
+					Animator3D()->ChangeAnimation( L"Walk" );
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_A))
@@ -191,6 +242,9 @@ void CPlayerScript::Update()
 				{
 					vPos = vPrev;
 				}
+
+				if ( !m_bHoldShift )
+					Animator3D()->ChangeAnimation( L"Walk" );
 			}
 
 			if (KEY_HOLD(KEY_TYPE::KEY_D))
@@ -204,6 +258,14 @@ void CPlayerScript::Update()
 				{
 					vPos = vPrev;
 				}
+
+				if ( !m_bHoldShift )
+					Animator3D()->ChangeAnimation( L"Walk" );
+			}
+
+			if ( KEY_AWAY( KEY_TYPE::KEY_W ) || KEY_AWAY( KEY_TYPE::KEY_A ) || KEY_AWAY( KEY_TYPE::KEY_S ) || KEY_AWAY( KEY_TYPE::KEY_D ) )
+			{
+				Animator3D()->ChangeAnimation( L"Idle2" );
 			}
 
 			POINT vMousePos = CKeyMgr::GetInst()->GetMousePos();
@@ -432,22 +494,38 @@ void CPlayerScript::Damage(float fDamage)
 {
 	if (!m_bInvincible)
 	{
-		m_pStatus->GetScript<CStatusScript>()->Damage(fDamage);
+		if (m_pStatus->GetScript<CStatusScript>()->Damage(fDamage))
+		{
+			Animator3D()->ChangeAnimation(L"Die");
+		}
+		else
+		{
+			bool type = rand() % 2;
+			if (type)
+			{
+				Animator3D()->ChangeAnimation(L"Hit1");
+			}
+			else
+			{
+				Animator3D()->ChangeAnimation(L"Hit2");
+			}
+		}
 	}
 }
 
-void CPlayerScript::PlayerPicking(bool bLeft)
+UINT CPlayerScript::PlayerPicking(bool bLeft)
 {
 	if (m_fAttackCoolTime > 0.f)
-		return;
+		return 0;
 	else
 	{
 		m_fAttackCoolTime = PLAYER_ATTACK_COOLTIME;
 	}
-	POINT vPoint = CKeyMgr::GetInst()->GetMousePos();
+	//POINT vPoint = CKeyMgr::GetInst()->GetMousePos();
 
 	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
-	//Vec2 vPoint = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
+
+	Vec2 vPoint = Vec2(vResolution.fWidth / 2.f, vResolution.fHeight / 2.f);
 
 	Matrix matProj = m_pMainCamera->GetProjMat();
 
@@ -474,10 +552,31 @@ void CPlayerScript::PlayerPicking(bool bLeft)
 		}
 	}
 	int num = m_pQuickSlot->GetSelect();
-	if(bLeft)
-		m_pInventory->GetScript<CInventoryScript>()->Use_Left(GetObj(), pCollider, num);
+	if (bLeft)
+	{
+		return m_pInventory->GetScript<CInventoryScript>()->Use_Left(GetObj(), pCollider, num);
+	}
 	else
-		m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), pCollider, num);
+	{
+		return m_pInventory->GetScript<CInventoryScript>()->Use_Right(GetObj(), pCollider, num);
+	}
+}
+
+void CPlayerScript::AnimationInfo( CAnimator3D * pAnimation )
+{
+	pAnimation->AddClip( L"Walk", 0, 24, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Run", 25, 42, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Idle1", 43, 193, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Idle2", 200, 379, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Die", 380, 442, ANIMATION_MODE::ONCE_STOP );
+	pAnimation->AddClip( L"TakeWeapon", 443, 477, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Attack1", 478, 554, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Attack2", 555, 624, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Attack3", 625, 695, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Hit1", 696, 730, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Hit2", 731, 778, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->AddClip( L"Jump", 779, 830, ANIMATION_MODE::ONCE_RETURN );
+	pAnimation->SetDefaultKey( L"Idle1" );
 }
 
 

@@ -152,6 +152,7 @@ float4 PS_Particle(GS_OUT _in) : SV_Target
 
 // g_int_0 : Particle Max Count
 // g_int_1 : AddCount
+// g_int_2 : Particle Kind
 
 // g_float_0 : Min LifeTime
 // g_float_1 : Max LifeTime
@@ -188,42 +189,79 @@ void CS_ParticleUpdate(int3 _iThreadIdx : SV_DispatchThreadID)
 
 		if (1 == tRWData[_iThreadIdx.x].iAlive)
 		{
-			// 랜덤 생성 위치, 방향           
-			float2 vUV = float2(((float)_iThreadIdx.x / (float)g_int_0) + g_fAccTime, g_fAccTime);
-			vUV.y += sin(vUV.x * 2 * 3.141592);
-
-			if (vUV.x > 0)
-				vUV.x = frac(vUV.x);
-			else
-				vUV.x = ceil(abs(vUV.x)) - abs(vUV.x);
-
-			if (vUV.y > 0)
-				vUV.y = frac(vUV.y);
-			else
-				vUV.y = ceil(abs(vUV.y)) - abs(vUV.y);
-
-			vUV = vUV * g_vec2_0;
-
-			float3 vNoise =
+			if ( g_int_2 == 0 )
 			{
-				gaussian5x5Sample(vUV + int2(0, -100), g_tex_0)
-				, gaussian5x5Sample(vUV + int2(0, 0), g_tex_0)
-				, gaussian5x5Sample(vUV + int2(0, 100), g_tex_0)
-			};
+				// 랜덤 생성 위치, 방향           
+				float2 vUV = float2( ( ( float )_iThreadIdx.x / ( float )g_int_0 ) + g_fAccTime, g_fAccTime );
+				vUV.y += sin( vUV.x * 2 * 3.141592 );
+
+				if ( vUV.x > 0 )
+					vUV.x = frac( vUV.x );
+				else
+					vUV.x = ceil( abs( vUV.x ) ) - abs( vUV.x );
+
+				if ( vUV.y > 0 )
+					vUV.y = frac( vUV.y );
+				else
+					vUV.y = ceil( abs( vUV.y ) ) - abs( vUV.y );
+
+				vUV = vUV * g_vec2_0;
+
+				float3 vNoise =
+				{
+					gaussian5x5Sample( vUV + int2( 0, -100 ), g_tex_0 )
+					, gaussian5x5Sample( vUV + int2( 0, 0 ), g_tex_0 )
+					, gaussian5x5Sample( vUV + int2( 0, 100 ), g_tex_0 )
+				};
 
 
-			float3 vDir = (float4) 0.f;
+				float3 vDir = ( float4 ) 0.f;
 
-			vDir = (vNoise - 0.5f) * 2.f;
+				vDir = ( vNoise - 0.5f ) * 2.f;
 
-			//vDir = float3(0.f, 1.f, 0.f);
-			//vDir.x = (vNoise.x - 0.5f) * 2.f * sin(3.141592 / 8.f);
-			//vDir.z = (vNoise.z - 0.5f) * 2.f * sin(3.141592 / 8.f);
+				//vDir = float3(0.f, 1.f, 0.f);
+				//vDir.x = (vNoise.x - 0.5f) * 2.f * sin(3.141592 / 8.f);
+				//vDir.z = (vNoise.z - 0.5f) * 2.f * sin(3.141592 / 8.f);
 
-			tRWData[_iThreadIdx.x].vWorldDir = normalize(vDir); //normalize((vNoise.xyz - 0.5f) * 2.f);
-			tRWData[_iThreadIdx.x].vWorldPos = (vNoise.xyz - 0.5f) * 50;
-			tRWData[_iThreadIdx.x].m_fLifeTime = ((g_float_1 - g_float_0) * vNoise.x) + g_float_0;
-			tRWData[_iThreadIdx.x].m_fCurTime = 0.f;
+				tRWData[_iThreadIdx.x].vWorldDir = normalize( vDir ); //normalize((vNoise.xyz - 0.5f) * 2.f);
+				tRWData[_iThreadIdx.x].vWorldPos = ( vNoise.xyz - 0.5f ) * 50;
+				tRWData[_iThreadIdx.x].m_fLifeTime = ( ( g_float_1 - g_float_0 ) * vNoise.x ) + g_float_0;
+				tRWData[_iThreadIdx.x].m_fCurTime = 0.f;
+			}
+
+			// 비 파티클
+			else if ( g_int_2 == 1 )
+			{
+				float2 vUV = float2( ( ( float )_iThreadIdx.x / ( float )g_int_0 ) + g_fAccTime, g_fAccTime );
+				vUV.y += sin( vUV.x * 2 * 3.141592 );
+
+				if ( vUV.x > 0 )
+					vUV.x = frac( vUV.x );
+				else
+					vUV.x = ceil( abs( vUV.x ) ) - abs( vUV.x );
+
+				if ( vUV.y > 0 )
+					vUV.y = frac( vUV.y );
+				else
+					vUV.y = ceil( abs( vUV.y ) ) - abs( vUV.y );
+
+				vUV = vUV * g_vec2_0;
+
+				float3 vNoise =
+				{
+					gaussian5x5Sample( vUV + int2( 0, -100 ), g_tex_0 )
+					, gaussian5x5Sample( vUV + int2( 0, 0 ), g_tex_0 )
+					, gaussian5x5Sample( vUV + int2( 0, 100 ), g_tex_0 )
+				};
+
+
+				float3 vDir = float3( 0.f, -1.f, 0.f );
+					
+				tRWData[_iThreadIdx.x].vWorldDir = normalize( vDir ); //normalize((vNoise.xyz - 0.5f) * 2.f);
+				tRWData[_iThreadIdx.x].vWorldPos = ( vNoise.xyz - 0.5f ) * 100;
+				tRWData[_iThreadIdx.x].m_fLifeTime = ( ( g_float_1 - g_float_0 ) * vNoise.x ) + g_float_0;
+				tRWData[_iThreadIdx.x].m_fCurTime = 0.f;
+			}
 		}
 	}
 	else // Particle Update 하기
@@ -236,13 +274,13 @@ void CS_ParticleUpdate(int3 _iThreadIdx : SV_DispatchThreadID)
 		}
 
 		float fRatio = tRWData[_iThreadIdx.x].m_fCurTime / tRWData[_iThreadIdx.x].m_fLifeTime;
-		float fSpeed = (g_float_3 - g_float_2) * fRatio + g_float_2;
+		float fSpeed = ( g_float_3 - g_float_2 ) * fRatio + g_float_2;
 		tRWData[_iThreadIdx.x].vWorldPos += tRWData[_iThreadIdx.x].vWorldDir * fSpeed * g_fDT;
+	
 
 		// 생존 파티클 개수 확인
 		tRWSharedData[0].iCurCount = 0;
 		InterlockedAdd(tRWSharedData[0].iCurCount, 1);
 	}
 }
-
 #endif

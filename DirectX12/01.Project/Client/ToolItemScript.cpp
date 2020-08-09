@@ -184,7 +184,7 @@ void CToolItemScript::Update()
 	}
 }
 
-void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	
 	switch (m_eItemType)
@@ -196,7 +196,7 @@ void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 	case ITEM_HAMMER:
 	{
 		if (pObj == NULL)
-			return;
+			return 0;
 
 		if (pObj->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx())
 		{
@@ -220,11 +220,12 @@ void CToolItemScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 	default:
 		break;
 	}
+
+	return m_eItemType;
 }
 
-void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
-	
 	CGameObject* pObject = nullptr;
 
 	switch (m_eItemType)
@@ -268,7 +269,7 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 
 				if (eType == NATURAL_NONE)
 				{
-					return;
+					return 0;
 				}
 
 				pObj->GetScript<CNaturalScript>()->Damage(pHost, m_fDamage);
@@ -276,10 +277,20 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				if (eType == NATURAL_TREE)
 				{
 					int iAmount = 1;
-					if (m_eItemType == ITEM_AXE)
-						iAmount = 3;
-					CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
-					pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+
+					int random = rand() % 5;
+					if (random == 0)
+					{
+						CItemScript* pItem = new CUsableScript(ITEM_TYPE::ITEM_APPLE);
+						pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+					}
+					else
+					{
+						if (m_eItemType == ITEM_AXE)
+							iAmount = 3;
+						CItemScript* pItem = new CStuffScript(ITEM_TYPE::ITEM_WOOD);
+						pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, iAmount);
+					}
 				}
 				else if (eType == NATURAL_STONE)
 				{
@@ -301,14 +312,14 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	case ITEM_HAMMER:
 	{
 		if (pObj == NULL)
-			return;
+			return 0;
 
 		if (pObj->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->GetLayerIdx())
 		{
 			int idx = pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->CheckItem(ITEM_TYPE::ITEM_STONE, 3);
 			if (idx == -1)
 			{
-				return;
+				return 0;
 			}
 
 			if (pObj->GetScript<CBuildScript>()->Upgrade())
@@ -323,7 +334,7 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		int idx = pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->CheckItem(ITEM_TYPE::ITEM_ARROW, 1);
 		if (idx == -1)
 		{
-			return;
+			return 0;
 		}
 		if (m_pObj)
 		{
@@ -402,6 +413,8 @@ void CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	default:
 		break;
 	}
+
+	return m_eItemType;
 }
 
 void CToolItemScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)
@@ -428,7 +441,7 @@ void CToolItemScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int n
 	}
 }
 
-void CToolItemScript::EnableItem(CGameObject* pHost, int num)
+UINT CToolItemScript::EnableItem(CGameObject* pHost, int num)
 {
 	switch (m_eItemType)
 	{
@@ -469,6 +482,8 @@ void CToolItemScript::EnableItem(CGameObject* pHost, int num)
 	default:
 		break;
 	}
+
+	return m_eItemType;
 }
 
 void CToolItemScript::DisableItem(CGameObject* pHost, int num)

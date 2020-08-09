@@ -60,11 +60,11 @@ void CUsableScript::Update()
 	CItemScript::Update();
 }
 
-void CUsableScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CUsableScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	
 	if (pObj == NULL)
-		return;
+		return 0;
 
 	if (m_eItemType == ITEM_MEAT && pObj->GetName() == L"Campfire")
 	{
@@ -94,9 +94,11 @@ void CUsableScript::Use_Right(CGameObject* pHost, CGameObject* pObj, int num)
 			}
 		}
 	}
+
+	return m_eItemType;
 }
 
-void CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
+UINT CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 {
 	bool bUse = true;
 	if (m_eItemType > ITEM_FOOD && m_eItemType < ITEM_FOOD_END)
@@ -152,6 +154,8 @@ void CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 			pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->OnAddable(num);
 		}
 	}
+
+	return m_eItemType;
 }
 
 void CUsableScript::Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num)

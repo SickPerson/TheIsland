@@ -35,6 +35,7 @@ public:
 	UINT GetScriptType() { return m_iScriptType; }
 
 public:
+	virtual void Awake() {};
 	virtual void Update() = 0;
 
 public:

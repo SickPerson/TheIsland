@@ -39,6 +39,7 @@ private:
 	Vec4				m_vStartColor;				// 파티클 초기 색상
 	Vec4				m_vEndColor;				// 파티클 최종 색상
 
+	int					m_iKind;					// 파티클 종류
 
 public:
 	virtual void FinalUpdate();
@@ -50,6 +51,12 @@ public:
 
 	void SetStartSpeed(float fSpeed);
 	void SetEndSpeed(float fSpeed);
+
+	void SetStartScale( float fScale );
+	void SetEndScale( float fScale );
+
+	void SetKind( int iKind );
+	void SetTexture( const wstring& strKey, const wstring& strPath );
 
 public:
 	virtual void SaveToScene( FILE* _pFile );

@@ -93,17 +93,13 @@ void CAnimalSpawner::Respawn()
 
 			pObject->SetName(L"Bear");
 
-			pObject->MeshRender()->SetDynamicShadow(true);
-
 			//pObject->Transform()->SetLocalPos(Vec3(1500.f, 20.f, 2000.f));
 			pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
 
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-			pObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-
-			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
+			pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
 		}
 			break;
 		case B_PASSIVE:
@@ -134,8 +130,6 @@ void CAnimalSpawner::Respawn()
 
 				pObject->SetName(L"Wolf");
 
-				pObject->MeshRender()->SetDynamicShadow(true);
-
 				//pObject->Transform()->SetLocalPos(Vec3(-0.f, 20.f, 4000.f));
 				pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 				pObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
@@ -143,8 +137,6 @@ void CAnimalSpawner::Respawn()
 				pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 				pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 				pObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
-
-				CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 			}
 			else
 			{
@@ -171,8 +163,6 @@ void CAnimalSpawner::Respawn()
 
 				pObject->SetName(L"Boar");
 
-				pObject->MeshRender()->SetDynamicShadow(true);
-
 				//pObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
 				pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 				pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
@@ -180,8 +170,6 @@ void CAnimalSpawner::Respawn()
 				pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 				pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 				pObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
-
-				CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 			}
 		}
 			break;
@@ -210,8 +198,6 @@ void CAnimalSpawner::Respawn()
 
 			pObject->SetName(L"Deer");
 
-			pObject->MeshRender()->SetDynamicShadow(true);
-
 			//pObject->Transform()->SetLocalPos(Vec3(0.f, 20.f, 2000.f));
 			pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 			//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -221,12 +207,16 @@ void CAnimalSpawner::Respawn()
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(300.f, 300.f, 300.f));
 
-			CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 		}
 			break;
 		default:
 			break;
 		}
+
+		CAnimalScript* pAnimalScript = pObject->GetScript<CAnimalScript>();
+		pAnimalScript->SetAnimation( pObject->Animator3D() );
+
+		CSceneMgr::GetInst()->GetCurScene()->FindLayer( L"Animal" )->AddGameObject( pObject );
 
 		Vec3 vPos = Transform()->GetLocalPos();
 		while (1)
@@ -244,7 +234,8 @@ void CAnimalSpawner::Respawn()
 			if (vPos.y > 80.f)
 				break;
 		}
-		
+
+		pObject->MeshRender()->SetDynamicShadow(true);
 		pObject->Transform()->SetLocalPos(vPos);
 
 		pObject->GetScript<CAnimalScript>()->SetAnimalSpawner(this);

@@ -22,10 +22,10 @@ public:
 	CItemScript(UINT iItemType);
 	virtual ~CItemScript();
 public:
-	virtual void Use_Right(CGameObject* pHost, CGameObject* pObj, int num) = 0;
-	virtual void Use_Left(CGameObject* pHost, CGameObject* pObj, int num) = 0;
+	virtual UINT Use_Right(CGameObject* pHost, CGameObject* pObj, int num) = 0;
+	virtual UINT Use_Left(CGameObject* pHost, CGameObject* pObj, int num) = 0;
 	virtual void Use_Highlight(CGameObject* pHost, CGameObject* pObj, int num) = 0;
-	virtual void EnableItem(CGameObject* pHost, int num) = 0;
+	virtual UINT EnableItem(CGameObject* pHost, int num) = 0;
 	virtual void DisableItem(CGameObject* pHost, int num) = 0;
 	virtual void Update() override;
 	virtual CItemScript* Clone() = 0;

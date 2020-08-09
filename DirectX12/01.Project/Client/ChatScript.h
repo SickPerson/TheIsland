@@ -12,6 +12,8 @@ class CChatScript :
 	Vec4					m_vNameColor;
 	Vec4					m_vChatColor;
 	Vec4					m_vBackColor;
+
+	bool					m_bCheat;
 public:
 	CChatScript();
 	virtual ~CChatScript();

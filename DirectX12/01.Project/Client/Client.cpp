@@ -15,6 +15,7 @@
 #include "IngameScene.h"
 
 #include "HousingMgr.h"
+#include "CheatMgr.h"
 
 #include "Network.h"
 
@@ -60,6 +61,7 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	}
 
 	CHousingMgr::GetInst()->Init();
+	CCheatMgr::GetInst()->Init();
 
 	// Network Init
 	//CNetwork::GetInst();
