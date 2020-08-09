@@ -1442,6 +1442,9 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 			break;
 		}
 
+		CAnimalScript* pAnimalScript = pObject->GetScript<CAnimalScript>();
+		pAnimalScript->SetAnimation(pObject->Animator3D());
+
 		tEvent tEv;
 		tEv.eType = EVENT_TYPE::CREATE_OBJECT;
 		tEv.lParam = 2;
