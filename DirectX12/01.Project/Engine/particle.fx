@@ -258,7 +258,7 @@ void CS_ParticleUpdate(int3 _iThreadIdx : SV_DispatchThreadID)
 				float3 vDir = float3( 0.f, -1.f, 0.f );
 					
 				tRWData[_iThreadIdx.x].vWorldDir = normalize( vDir ); //normalize((vNoise.xyz - 0.5f) * 2.f);
-				tRWData[_iThreadIdx.x].vWorldPos = ( vNoise.xyz - 0.5f ) * 100;
+				tRWData[_iThreadIdx.x].vWorldPos = (vNoise.xyz - 0.5f ) * 2500;
 				tRWData[_iThreadIdx.x].m_fLifeTime = ( ( g_float_1 - g_float_0 ) * vNoise.x ) + g_float_0;
 				tRWData[_iThreadIdx.x].m_fCurTime = 0.f;
 			}

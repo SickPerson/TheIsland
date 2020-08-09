@@ -7,6 +7,7 @@
 #include <Engine/Font.h>
 #include <Engine/RenderMgr.h>
 #include <Engine/PlayerScript.h>
+#include <Engine/ParticleSystem.h>
 
 #include <iostream>
 
@@ -21,7 +22,7 @@ CSunshineScript::CSunshineScript() :
 	m_pPlayer(NULL),
 	DAYCYCLE(60.f),
 	m_pRain(NULL),
-	m_fRainTime(60.f),
+	m_fRainTime(3600.f),
 	m_bRain(false)
 {
 }
@@ -54,11 +55,19 @@ void CSunshineScript::Update()
 		m_pClock->Font()->SetString(strTime);
 	}
 
-	/*if ( !m_bRain )
+	if ( !m_bRain )
 	{
 		if ( m_iDay % 4 == 1 )
 		{
 			m_bRain = true;
+
+			tEvent evt = {};
+
+			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt.wParam = ( DWORD_PTR )m_pRain;
+			evt.lParam = ( ( DWORD_PTR )1 << 16 | ( DWORD_PTR )true );
+
+			CEventMgr::GetInst()->AddEvent( evt );
 		}
 	}
 
@@ -69,10 +78,21 @@ void CSunshineScript::Update()
 		if ( m_fRainTime <= 0 )
 		{
 			m_bRain = false;
-		}
-	}*/
+			m_fRainTime = 3600.f;
 
-	//m_pRain->SetActive( m_bRain );
+			tEvent evt = {};
+
+			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt.wParam = ( DWORD_PTR )m_pRain;
+			evt.lParam = ( ( DWORD_PTR )29 << 16 | ( DWORD_PTR )true );
+
+			CEventMgr::GetInst()->AddEvent( evt );
+		}
+	}
+
+	m_pRain->SetActive( m_bRain );
+	
+
 
 	CLight3D* pLight = Light3D();
 	Vec3 vDir = Vec3(1.f, -1.f, 1.f);
@@ -207,4 +227,9 @@ void CSunshineScript::SetSea(CGameObject* pObject)
 void CSunshineScript::SetRain( CGameObject * pObject )
 {
 	m_pRain = pObject;
+}
+
+void CSunshineScript::SetRainDrop( bool bRain )
+{
+	m_bRain = bRain;
 }

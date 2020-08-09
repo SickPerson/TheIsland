@@ -118,5 +118,18 @@ bool CCheatMgr::CheckCheat(string strText)
 		m_pPlayer->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->Invincible(m_bInvincible);
 		bResult = true;
 	}
+	
+	else if ( strText == "RainDropTrue" )
+	{
+		m_pClock->GetScript<CSunshineScript>()->SetRainDrop( true );
+		bResult = true;
+	}
+
+	else if ( strText == "RainDropFalse" )
+	{
+		m_pClock->GetScript<CSunshineScript>()->SetRainDrop( false );
+		bResult = true;
+	}
+
 	return bResult;
 }
