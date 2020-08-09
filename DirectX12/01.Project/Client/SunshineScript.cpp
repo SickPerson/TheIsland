@@ -144,11 +144,11 @@ void CSunshineScript::Update()
 	vShadowPos += vDir * -3000.f;
 
 	//vPlayerPos += vPlayerDir * Vec3(-1000.f, 1000.f, -1000.f);
-	Transform()->SetLocalPos(vShadowPos);
+	//Transform()->SetLocalPos(vShadowPos);
+	Light3D()->SetLightPos(vShadowPos);
 	Light3D()->SetLightDir(vDir);
 
 	//Transform()->SetLocalRot(Vec3(vPlayerRot.x + XM_PI / 2.f, vPlayerRot.y + XM_PI, vPlayerRot.z));
-
 
 	// Rain
 	if ( !m_pRain )

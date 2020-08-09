@@ -65,6 +65,9 @@ void CAnimator3D::UpdateData()
 
 		m_bFinalMatUpdate = true;
 	}
+
+	// t7 레지스터에 최종행렬 데이터(구조버퍼) 바인딩
+	m_pBoneFinalMat->UpdateData(TEXTURE_REGISTER::t7);
 }
 
 void CAnimator3D::UpdateData_Inst(CStructuredBuffer * _pBoneBuffer, UINT _iRow)
