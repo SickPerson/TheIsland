@@ -189,6 +189,7 @@
     <ClInclude Include="PlayerCamScript.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="QuickSlotScript.h" />
+    <ClInclude Include="RainScript.h" />
     <ClInclude Include="RecipeScript.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StatusScript.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="PlayerCamScript.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="QuickSlotScript.cpp" />
+    <ClCompile Include="RainScript.cpp" />
     <ClCompile Include="RecipeScript.cpp" />
     <ClCompile Include="StatusScript.cpp" />
     <ClCompile Include="stdafx.cpp">

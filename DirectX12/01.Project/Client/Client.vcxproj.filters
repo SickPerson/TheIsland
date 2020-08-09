@@ -183,6 +183,9 @@
     <ClInclude Include="CheatMgr.h">
       <Filter>ComponentScript\Player</Filter>
     </ClInclude>
+    <ClInclude Include="RainScript.h">
+      <Filter>ComponentScript\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -283,6 +286,9 @@
     </ClCompile>
     <ClCompile Include="CheatMgr.cpp">
       <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="RainScript.cpp">
+      <Filter>ComponentScript\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

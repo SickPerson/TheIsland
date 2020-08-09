@@ -319,6 +319,11 @@ void CIngameScene::Init()
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
 	pSun->GetScript<CSunshineScript>()->SetRain( pObject );
 
+	//==========================
+	//비올 때 카메라에 빗물 생성
+	//==========================
+
+
 	// =============
 	// FBX 파일 로드
 	// =============
