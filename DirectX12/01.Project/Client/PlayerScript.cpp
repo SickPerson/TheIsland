@@ -277,9 +277,9 @@ void CPlayerScript::Update()
 
 			Vec3 vRot = Transform()->GetLocalRot();
 
-			//std::cout << vDrag.x << std::endl;
+			std::cout << vDrag.x << std::endl;
 			// x -= 18, y -= 41
-			//vDrag.x += 18.f;
+			vDrag.x += 18.f;
 
 			if (vDrag.x != 0.f)
 			{

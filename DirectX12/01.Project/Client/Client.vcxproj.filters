@@ -186,6 +186,9 @@
     <ClInclude Include="ShowFPSScript.h">
       <Filter>ComponentScript\UI</Filter>
     </ClInclude>
+    <ClInclude Include="RainScript.h">
+      <Filter>ComponentScript\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -289,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="ShowFPSScript.cpp">
       <Filter>ComponentScript\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RainScript.cpp">
+      <Filter>ComponentScript\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -49,10 +49,10 @@ void CFPSCamScript::Update()
 
 		Vec3 vCameraRot = Transform()->GetLocalRot();
 
-		//vDrag.y -= 41.f;
+		vDrag.y -= 41.f;
 		vCameraRot.x -= vDrag.y * DT * 3.f;
 
-		if(vCameraRot.x > -XM_PI / 2.f && vCameraRot.x < XM_PI / 2.f)
+		if(vCameraRot.x > -1.f && vCameraRot.x < XM_PI / 2.f)
 			Transform()->SetLocalRot(Vec3(vCameraRot.x, vRot.y + 3.141592f, 0.f));
 
 	}

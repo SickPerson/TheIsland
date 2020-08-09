@@ -12,5 +12,7 @@ public:
 	CLONE( CRainScript );
 	virtual void Update() override;
 
+private:
+	bool m_bActive;
 };
 
