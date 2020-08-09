@@ -44,5 +44,7 @@ public:
 	void SetPlayer(CGameObject* pObject);
 	void SetSea(CGameObject* pObject);
 	void SetRain( CGameObject* pObject );
+
+	void SetRainDrop( bool bRain );
 };
 

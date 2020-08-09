@@ -307,7 +307,7 @@ void CIngameScene::Init()
 	//====================
 	//Particle Object 생성
 	//====================
-	/*pObject = new CGameObject;
+	pObject = new CGameObject;
 	pObject->SetName( L"Rain" );
 	pObject->AddComponent( new CTransform );
 	pObject->AddComponent( new CParticleSystem );
@@ -319,31 +319,34 @@ void CIngameScene::Init()
 	pObject->ParticleSystem()->SetEndColor( Vec4( 0.f, 0.3f, 1.f, 1.f ) );
 	pObject->ParticleSystem()->SetStartScale( 10.f );
 	pObject->ParticleSystem()->SetEndScale( 20.f );
+	pObject->ParticleSystem()->SetStartSpeed( 200.f );
+	pObject->ParticleSystem()->SetEndSpeed( 200.f );
+	pObject->ParticleSystem()->SetEndScale( 20.f );
 	pObject->ParticleSystem()->SetTexture( L"Rain", L"Texture\\Particle\\HardRain.png" );
 	
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
-	pSun->GetScript<CSunshineScript>()->SetRain( pObject );*/
+	pSun->GetScript<CSunshineScript>()->SetRain( pObject );
 
 	//==========================
 	//비올 때 카메라에 빗물 생성
 	//==========================
 	//====================
-	//Ptr<CTexture> pRainDrop = CResMgr::GetInst()->Load<CTexture>( L"RainDrop", L"Texture\\raindrop3.png" );
-	//pObject = new CGameObject;
-	//pObject->SetName( L"Particle" );
-	//pObject->AddComponent( new CTransform );
-	//pObject->AddComponent( new CRainScript );
-	//pObject->AddComponent( new CMeshRender );
+	Ptr<CTexture> pRainDrop = CResMgr::GetInst()->Load<CTexture>( L"RainDrop", L"Texture\\raindrop3.png" );
+	pObject = new CGameObject;
+	pObject->SetName( L"Particle" );
+	pObject->AddComponent( new CTransform );
+	pObject->AddComponent( new CRainScript );
+	pObject->AddComponent( new CMeshRender );
 
-	//pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
-	//pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"IconMtrl" ) );
-	//pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 3000.f ) );
-	//tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
-	//pObject->Transform()->SetLocalScale( Vec3( vResolution.fWidth, vResolution.fHeight, 1.f ) );
-	////pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
+	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
+	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"IconMtrl" ) );
+	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 3000.f ) );
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	pObject->Transform()->SetLocalScale( Vec3( vResolution.fWidth, vResolution.fHeight, 1.f ) );
+	//pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
 
-	//pObject->MeshRender()->GetCloneMaterial()->SetData( SHADER_PARAM::TEX_0, pRainDrop.GetPointer() );
-	//m_pScene->FindLayer( L"UI" )->AddGameObject( pObject );
+	pObject->MeshRender()->GetCloneMaterial()->SetData( SHADER_PARAM::TEX_0, pRainDrop.GetPointer() );
+	m_pScene->FindLayer( L"UI" )->AddGameObject( pObject );
 
 	// =============
 	// FBX 파일 로드

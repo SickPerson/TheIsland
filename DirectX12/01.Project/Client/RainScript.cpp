@@ -30,7 +30,7 @@ void CRainScript::Update()
 
 	if ( m_bActive )
 	{
-		if ( vCamRot.x <= -XM_PI / 4 )
+		if ( vCamRot.x <= -XM_PI / 5.f )
 			MeshRender()->SetActive( true );
 
 		else
@@ -40,10 +40,5 @@ void CRainScript::Update()
 	else
 	{
 		MeshRender()->SetActive( false );
-	}
-
-	if ( KEY_TAB( KEY_TYPE::KEY_L ) )
-	{
-		m_bActive = !m_bActive;
 	}
 }
