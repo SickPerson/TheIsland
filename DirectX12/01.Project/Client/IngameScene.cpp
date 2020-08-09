@@ -49,6 +49,7 @@
 #include "UsableScript.h"
 
 #include "CheatMgr.h"
+#include "ShowFPSScript.h"
 
 #include <Engine/TestScript.h>
 
@@ -61,6 +62,7 @@
 CIngameScene::CIngameScene() 
 	: m_pChat(NULL)
 	, m_pPlayer(NULL)
+	, m_pFPSInfo(NULL)
 {
 }
 
@@ -268,6 +270,7 @@ void CIngameScene::Init()
 
 	CreateNatural();
 	CreateAnimalSpawner();
+	CreateShowFPS();
 
 	// ==========================
 	// Distortion Object 만들기
@@ -394,6 +397,16 @@ void CIngameScene::GiveStartItem()
 
 void CIngameScene::Update()
 {
+	if (KEY_TAB(KEY_TYPE::KEY_ESC))
+	{
+		for (UINT i = 0; i < MAX_LAYER; ++i)
+		{
+			CSceneMgr::GetInst()->GetCurScene()->GetLayer(i)->RemoveAll();
+		}
+		PostQuitMessage(0);
+		return;
+	}
+
 	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
 	{
 		if (m_pChat)
@@ -401,7 +414,7 @@ void CIngameScene::Update()
 			if (m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive()) 
 			{
 				string str = m_pChat->GetScript<CInputScript>()->GetString();
-				string strPlayerName = "Test";
+				string strPlayerName = "Player";
 				m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
 				m_pChat->GetScript<CInputScript>()->SetEnable(false);
 				m_pChat->GetScript<CInputScript>()->Clear();
@@ -587,6 +600,31 @@ void CIngameScene::Update()
 		}
 		m_bShowMRT = !m_bShowMRT;
 	}
+
+	if (KEY_TAB(KEY_TYPE::KEY_O))
+	{
+		if (m_bShowFPS)
+		{
+			tEvent evt = {};
+
+			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt.wParam = (DWORD_PTR)m_pFPSInfo;
+			evt.lParam = ((DWORD_PTR)30 << 16 | (DWORD_PTR)true);
+
+			CEventMgr::GetInst()->AddEvent(evt);
+		}
+		else
+		{
+			tEvent evt = {};
+
+			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt.wParam = (DWORD_PTR)m_pFPSInfo;
+			evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
+
+			CEventMgr::GetInst()->AddEvent(evt);
+		}
+		m_bShowFPS = !m_bShowFPS;
+	}
 }
 
 void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
@@ -599,7 +637,10 @@ void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(0.f, -320.f, 1000.f));
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	Vec3 vPos = Vec3(0.f, vResolution.fHeight / -2.f + 80.f, 1000.f);
+
+	pObject->Transform()->SetLocalPos(vPos);
 	pObject->Transform()->SetLocalScale(Vec3(500.f, 80.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -618,7 +659,7 @@ void CIngameScene::CreateQuickSlotUI(CGameObject* _pInventory)
 		pChildObject->AddComponent(new CTransform);
 		pChildObject->AddComponent(new CMeshRender);
 
-		pChildObject->Transform()->SetLocalPos(Vec3(-200.f + (i * 100.f), -325.f, 800.f));
+		pChildObject->Transform()->SetLocalPos(Vec3(-200.f + (i * 100.f), vPos.y, 800.f));
 		pChildObject->Transform()->SetLocalScale(Vec3(75.f, 75.f, 1.f));
 
 		pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -690,7 +731,11 @@ void CIngameScene::CreatePlayerStatusUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 	pObject->SetName(L"Player Status");
-	pObject->Transform()->SetLocalPos(Vec3(490.f, -300.f, 2000.f));
+
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	Vec3 vPos = Vec3(vResolution.fWidth / 2.f - 150.f, vResolution.fHeight / -2.f + 100.f, 2000.f);
+
+	pObject->Transform()->SetLocalPos(vPos);
 	pObject->Transform()->SetLocalScale(Vec3(250.f, 135.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -763,8 +808,8 @@ void CIngameScene::CreatePlayerStatusUI()
 	pChildObject->AddComponent(new CMeshRender);
 
 	// Transform 설정
-	pChildObject->Transform()->SetLocalPos(Vec3(-1.95f, 2.25f, 1000.f));
-	pChildObject->Transform()->SetLocalScale(Vec3(5.2f, 5.8f, 1.f));
+	pChildObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 1200.f));
+	pChildObject->Transform()->SetLocalScale(Vec3(vResolution.fWidth, vResolution.fHeight, 1.f));
 
 	// MeshRender 설정
 	pChildObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -773,7 +818,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	float health = 1.f;
 	pChildObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &health);
 	// AddGameObject
-	pObject->AddChild(pChildObject);
+	pObject->GetScript<CStatusScript>()->SetScreenDamage(pChildObject);
 	m_pScene->FindLayer(L"UI")->AddGameObject(pChildObject);
 
 	//
@@ -782,7 +827,9 @@ void CIngameScene::CreatePlayerStatusUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(390.f, -260.f, 1.f));
+	vPos = Vec3(vResolution.fWidth / 2.f - 250.f, vResolution.fHeight / -2.f + 140.f, 1.f);
+
+	pObject->Transform()->SetLocalPos(vPos);
 	pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -800,7 +847,9 @@ void CIngameScene::CreatePlayerStatusUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(390.f, -300.f, 1.f));
+	vPos.y -= 40.f;
+
+	pObject->Transform()->SetLocalPos(vPos);
 	pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -817,7 +866,9 @@ void CIngameScene::CreatePlayerStatusUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(390.f, -340.f, 1.f));
+	vPos.y -= 40.f;
+
+	pObject->Transform()->SetLocalPos(vPos);
 	pObject->Transform()->SetLocalScale(Vec3(30.f, 30.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -1023,6 +1074,9 @@ void CIngameScene::CreateItemUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	Vec3 vPos = Vec3(vResolution.fWidth / 2.f - 150.f, vResolution.fHeight / -2.f + 200.f, 2000.f);
+
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
 	Ptr<CMaterial> pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"HighUIMtrl");
 	pObject->MeshRender()->SetMaterial(pMtrl->Clone());
@@ -1030,7 +1084,7 @@ void CIngameScene::CreateItemUI()
 	Vec4 vColor = Vec4(0.4f, 0.8f, 0.4f, 0.8f);
 	pObject->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::VEC4_0, &vColor);
 
-	pObject->Transform()->SetLocalPos(Vec3(490.f, -210.f, 2000.f));
+	pObject->Transform()->SetLocalPos(vPos);
 	pObject->Transform()->SetLocalScale(Vec3(250.f, 40.f, 1.f));
 
 	pLootObject->GetScript<CItemLootScript>()->SetBackgroundObject(pObject);
@@ -1046,7 +1100,9 @@ void CIngameScene::CreateItemUI()
 	pMtrl = CResMgr::GetInst()->FindRes<CMaterial>(L"ItemMtrl");
 	pObject->MeshRender()->SetMaterial(pMtrl->Clone());
 
-	pObject->Transform()->SetLocalPos(Vec3(385.f, -210.f, 1900.f));
+	vPos.x -= 100.f;
+
+	pObject->Transform()->SetLocalPos(Vec3(vPos.x, vPos.y, 1900.f));
 	pObject->Transform()->SetLocalScale(Vec3(35.f, 35.f, 1.f));
 
 	pLootObject->AddChild(pObject);
@@ -1058,7 +1114,8 @@ void CIngameScene::CreateItemUI()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CFont);
 
-	pObject->Transform()->SetLocalPos(Vec3(500.f, -210.f, 1900.f));
+	vPos.x += 120.f;
+	pObject->Transform()->SetLocalPos(Vec3(vPos.x, vPos.y, 1900.f));
 	pObject->Transform()->SetLocalScale(Vec3(180.f, 35.f, 1.f));
 
 	pObject->Font()->SetFontColor(Vec4(1.f, 1.f, 1.f, 1.f));
@@ -1079,7 +1136,12 @@ void CIngameScene::CreateChatUI()
 	m_pChat->AddComponent(new CFont);
 	m_pChat->AddComponent(new CInputScript);
 	m_pChat->AddComponent(new CChatScript);
-	m_pChat->Transform()->SetLocalPos(Vec3(-480.f, -355.f, 500.f));
+
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	Vec3 vPos = Vec3(vResolution.fWidth / -2.f + 180.f, vResolution.fHeight / -2.f + 60.f, 500.f);
+
+	//m_pChat->Transform()->SetLocalPos(Vec3(-480.f, -355.f, 500.f));
+	m_pChat->Transform()->SetLocalPos(vPos);
 	m_pChat->Transform()->SetLocalScale(Vec3(300.f, 40.f, 1.f));
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pChat);
 
@@ -1087,6 +1149,7 @@ void CIngameScene::CreateChatUI()
 	m_pChat->GetScript<CInputScript>()->SetMaxCount(20);
 	m_pChat->GetScript<CInputScript>()->SetEnable(false);
 	
+	vPos.y += 40.f;
 
 	for (int i = 0; i < MAX_CHAT_LINE; ++i)
 	{
@@ -1094,7 +1157,7 @@ void CIngameScene::CreateChatUI()
 		pObject->SetName(L"ChatLog Bar");
 		pObject->AddComponent(new CTransform);
 		pObject->AddComponent(new CFont);
-		pObject->Transform()->SetLocalPos(Vec3(-480.f, -315.f + (i * 30.f), 900.f));
+		pObject->Transform()->SetLocalPos(Vec3(vPos.x, vPos.y + (i * 30.f), 900.f));
 		pObject->Transform()->SetLocalScale(Vec3(300.f, 30.f, 1000.f));
 		pObject->Font()->SetBackColor(Vec4(0.5f, 0.5f, 0.5f, 0.3f));
 		pObject->Font()->SetString(" ");
@@ -1224,31 +1287,51 @@ void CIngameScene::CreateNatural()
 
 void CIngameScene::CreateAnimalSpawner()
 {
-	CGameObject* pSpawner = new CGameObject;
-	pSpawner->AddComponent(new CTransform);
-	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_EVASION));
+	CGameObject* pSpawner1 = new CGameObject;
+	pSpawner1->AddComponent(new CTransform);
+	pSpawner1->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_EVASION));
 
-	pSpawner->Transform()->SetLocalPos(Vec3(10000.f, 0.f, 10000.f));
-	pSpawner->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
-	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner);
-
-	// =========================================================================
-
-	pSpawner = new CGameObject;
-	pSpawner->AddComponent(new CTransform);
-	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_WARLIKE));
-
-	pSpawner->Transform()->SetLocalPos(Vec3(8100.f, 0.f, 16200.f));
-	pSpawner->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
-	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner);
+	pSpawner1->Transform()->SetLocalPos(Vec3(10000.f, 0.f, 10000.f));
+	pSpawner1->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
+	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner1);
 
 	// =========================================================================
 
-	pSpawner = new CGameObject;
-	pSpawner->AddComponent(new CTransform);
-	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_PASSIVE));
+	CGameObject* pSpawner3 = new CGameObject;
+	pSpawner3->AddComponent(new CTransform);
+	pSpawner3->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_WARLIKE));
 
-	pSpawner->Transform()->SetLocalPos(Vec3(6900.f, 0.f, 5285.f));
-	pSpawner->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
-	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner);
+	pSpawner3->Transform()->SetLocalPos(Vec3(8100.f, 0.f, 16200.f));
+	pSpawner3->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
+	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner3);
+
+	// =========================================================================
+
+	CGameObject* pSpawner2 = new CGameObject;
+	pSpawner2->AddComponent(new CTransform);
+	pSpawner2->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_PASSIVE));
+
+	pSpawner2->Transform()->SetLocalPos(Vec3(6900.f, 0.f, 5285.f));
+	pSpawner2->GetScript<CAnimalSpawner>()->SpawnStartAnimal();
+	m_pScene->FindLayer(L"Default")->AddGameObject(pSpawner2);
+
+	CCheatMgr::GetInst()->SetSpawner(pSpawner1, pSpawner2, pSpawner3);
+}
+
+void CIngameScene::CreateShowFPS()
+{
+	m_pFPSInfo = new CGameObject;
+	m_pFPSInfo->AddComponent(new CTransform);
+	m_pFPSInfo->AddComponent(new CShowFPSScript);
+	m_pFPSInfo->AddComponent(new CFont);
+
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	Vec3 vPos = Vec3(vResolution.fWidth / -2.f + 100.f, vResolution.fHeight / 2.f - 40.f, 10.f);
+
+	m_pFPSInfo->Transform()->SetLocalPos(vPos);
+	m_pFPSInfo->Transform()->SetLocalScale(Vec3(100.f, 80.f, 1.f));
+
+	m_pFPSInfo->Font()->SetFontColor(Vec4(1.f, 0.5f, 0.f, 1.f));
+
+	m_pScene->FindLayer(L"Invisible")->AddGameObject(m_pFPSInfo);
 }

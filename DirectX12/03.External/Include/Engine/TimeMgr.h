@@ -19,6 +19,7 @@ public:
 
 public:
 	float GetDeltaTime() { return m_fDeltaTime;}
+	int GetFrame() { return (int)m_fFPS; }
 	void DTFreeze(){m_bFreeze = true;}
 	SINGLE(CTimeMgr);
 };

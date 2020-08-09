@@ -139,6 +139,7 @@ void CPlayerScript::Update()
 		// 채팅창도 꺼져있고 인벤토리도 꺼져있는 경우
 		if (!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 		{
+
 			if (KEY_TAB(KEY_TYPE::KEY_LBTN))
 			{
 				ITEM_TYPE eType = (ITEM_TYPE)PlayerPicking(LEFT_CLICK);
@@ -276,9 +277,9 @@ void CPlayerScript::Update()
 
 			Vec3 vRot = Transform()->GetLocalRot();
 
-			//std::cout << vDrag.y << std::endl;
+			//std::cout << vDrag.x << std::endl;
 			// x -= 18, y -= 41
-			vDrag.x += 18.f;
+			//vDrag.x += 18.f;
 
 			if (vDrag.x != 0.f)
 			{

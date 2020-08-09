@@ -168,7 +168,7 @@ void CSunshineScript::Init()
 	m_pClock = new CGameObject;
 	m_pClock->AddComponent(new CTransform);
 	m_pClock->AddComponent(new CFont);
-	m_pClock->Transform()->SetLocalPos(Vec3(vResolution.fWidth / 2.f - 100.f, vResolution.fHeight / 2.f - 25.f, 1.f));
+	m_pClock->Transform()->SetLocalPos(Vec3(vResolution.fWidth / 2.f - 100.f, vResolution.fHeight / 2.f - 25.f, 500.f));
 	m_pClock->Transform()->SetLocalScale(Vec3(200.f, 50.f, 1.f));
 
 	string strTime = std::to_string(m_iHour) + " : " + std::to_string(m_iMinute);
@@ -179,7 +179,7 @@ void CSunshineScript::Init()
 	m_pDay = new CGameObject;
 	m_pDay->AddComponent(new CTransform);
 	m_pDay->AddComponent(new CFont);
-	m_pDay->Transform()->SetLocalPos(Vec3(vResolution.fWidth / 2.f - 270.f, vResolution.fHeight / 2.f - 25.f, 1.f));
+	m_pDay->Transform()->SetLocalPos(Vec3(vResolution.fWidth / 2.f - 270.f, vResolution.fHeight / 2.f - 25.f, 500.f));
 	m_pDay->Transform()->SetLocalScale(Vec3(100.f, 50.f, 1.f));
 	m_pDay->Font()->SetFontColor(Vec4(1.f, 0.5f, 0.2f, 1.f));
 
