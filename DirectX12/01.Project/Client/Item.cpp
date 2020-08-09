@@ -29,7 +29,7 @@ Ptr<CTexture> GetItemIconByType(ITEM_TYPE eType)
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Hammer_Icon", L"Texture\\Item\\T_Hammer_256x256.tga");
 		break;
 	case ITEM_PICKAXE:
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"Pickaxe_Icon", L"Texture\\Item\\T_Crowbar_256x256.tga");
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"Pickaxe_Icon", L"Texture\\Item\\gok.png");
 		break;
 	case ITEM_AXE:
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Axe_Icon", L"Texture\\Item\\T_Axe_256x256.tga");
