@@ -8,7 +8,8 @@ CStatusScript::CStatusScript() :
 	m_fHealth(100.f), m_fHungry(100.f), m_fThirst(100.f),
 	m_bGameOver(false),
 	m_pArmor(NULL),
-	m_fArmor(0.f)
+	m_fArmor(0.f),
+	m_pScreenDamage(NULL)
 {
 }
 
@@ -19,7 +20,7 @@ CStatusScript::~CStatusScript()
 
 void CStatusScript::Update()
 {
-	if (KEY_HOLD(KEY_TYPE::KEY_SPACE))
+	if (KEY_HOLD(KEY_TYPE::KEY_L))
 	{
 		Damage(20.f * DT);
 	}
@@ -51,11 +52,16 @@ void CStatusScript::Update()
 	vecObj[3]->Transform()->SetLocalScale(Vec3(230.f / 250.f * m_fArmor / 100.f, 30.f / 135.f, 1.f));
 
 	float health = 1.f - (m_fHealth / 100.f);
-	vecObj[4]->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &health);
+	m_pScreenDamage->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &health);
 }
 
 bool CStatusScript::Damage(float fDamage, bool bTrueDamage)
 {
+	if (m_bInvincible)
+	{
+		return false;
+	}
+
 	if (m_pArmor && !bTrueDamage)
 	{
 		m_fArmor -= fDamage;
@@ -107,6 +113,11 @@ void CStatusScript::SetIncreasefThirst(float fAmount)
 		m_fThirst = 100.f;
 }
 
+void CStatusScript::SetScreenDamage(CGameObject * pObject)
+{
+	m_pScreenDamage = pObject;
+}
+
 bool CStatusScript::GetGameOver()
 {
 	return m_bGameOver;
@@ -116,4 +127,11 @@ void CStatusScript::EquipArmor(CGameObject* pArmor, float fArmor)
 {
 	m_pArmor = pArmor;
 	m_fArmor = fArmor;
+}
+
+void CStatusScript::Invincible(bool bOn)
+{
+	m_bInvincible = bOn;
+	if(m_bInvincible)
+		m_fHealth = 100.f;
 }

@@ -183,8 +183,8 @@
     <ClInclude Include="CheatMgr.h">
       <Filter>ComponentScript\Player</Filter>
     </ClInclude>
-    <ClInclude Include="RainScript.h">
-      <Filter>ComponentScript\Environment</Filter>
+    <ClInclude Include="ShowFPSScript.h">
+      <Filter>ComponentScript\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -287,8 +287,8 @@
     <ClCompile Include="CheatMgr.cpp">
       <Filter>ComponentScript\Player</Filter>
     </ClCompile>
-    <ClCompile Include="RainScript.cpp">
-      <Filter>ComponentScript\Environment</Filter>
+    <ClCompile Include="ShowFPSScript.cpp">
+      <Filter>ComponentScript\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

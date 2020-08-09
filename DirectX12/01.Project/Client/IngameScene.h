@@ -19,6 +19,9 @@ class CIngameScene :
 	bool m_bShowMRT = false;
 	bool m_bOverlapItem = false;
 	CGameObject* m_pMRT;
+
+	CGameObject* m_pFPSInfo;
+	bool m_bShowFPS = false;
 public:
 	concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
 	concurrent_unordered_map<unsigned int, CGameObject*> m_cumAnimal;
@@ -41,5 +44,7 @@ public:
 
 	void CreateNatural();
 	void CreateAnimalSpawner();
+
+	void CreateShowFPS();
 };
 
