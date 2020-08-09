@@ -26,10 +26,12 @@ CNetwork::CNetwork()
 	//------------------------------
 	//Initialize();
 	CheckThisCputCount();
+	CDataBase::GetInst();
 }
 
 CNetwork::~CNetwork()
 {
+	CDataBase::GetInst()->DisConnectDataBase();
 	CloseServer();
 }
 

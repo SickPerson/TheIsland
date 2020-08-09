@@ -1448,7 +1448,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 			Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
 			pObject = pBearTex->Instantiate();
 			pObject->AddComponent(new CCollider2D);
-			/*pObject->AddComponent(new CAnimalScript);
+			pObject->AddComponent(new CAnimalScript);
 
 			{
 				tAnimalStatus tStatus;
@@ -1465,7 +1465,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 
 				pObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 				pObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-			}*/
+			}
 
 			pObject->SetName(L"Bear");
 
@@ -1490,7 +1490,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 				Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
 				pObject = pWolfTex->Instantiate();
 				pObject->AddComponent(new CCollider2D);
-				/*pObject->AddComponent(new CAnimalScript);
+				pObject->AddComponent(new CAnimalScript);
 
 				{
 					tAnimalStatus tStatus;
@@ -1507,7 +1507,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 
 					pObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 					pObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-				}*/
+				}
 
 				pObject->SetName(L"Wolf");
 
@@ -1528,7 +1528,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 				Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
 				pObject = pBoarTex->Instantiate();
 				pObject->AddComponent(new CCollider2D);
-				/*pObject->AddComponent(new CAnimalScript);
+				pObject->AddComponent(new CAnimalScript);
 
 			{
 				tAnimalStatus tStatus;
@@ -1545,7 +1545,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 
 				pObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 				pObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-			}*/
+			}
 
 				pObject->SetName(L"Boar");
 
@@ -1568,7 +1568,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 			Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
 			pObject = pDeerTex->Instantiate();
 			pObject->AddComponent(new CCollider2D);
-			/*pObject->AddComponent(new CAnimalScript);
+			pObject->AddComponent(new CAnimalScript);
 
 			{
 				tAnimalStatus tStatus;
@@ -1585,7 +1585,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 
 				pObject->GetScript<CAnimalScript>()->SetAnimalStatus(tStatus);
 				pObject->GetScript<CAnimalScript>()->SetOffsetScale(vOffsetScale);
-			}*/
+			}
 
 			pObject->SetName(L"Deer");
 
