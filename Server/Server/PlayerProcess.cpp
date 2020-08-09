@@ -44,6 +44,14 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 {
 	cs_login_packet*	login_packet = reinterpret_cast<cs_login_packet*>(packet);
 	
+	// Database USE
+	wstring wname = login_packet->player_id;
+	if (CDataBase::GetInst()->IsIDExist(wname))
+	{
+
+	}
+
+	// NO DA
 	if (!ExistLoginList(playerId))
 	{
 		InsertLoginList(playerId);

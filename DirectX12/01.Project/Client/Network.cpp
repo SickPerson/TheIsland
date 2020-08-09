@@ -382,16 +382,34 @@ void CNetwork::Send_Chat_Packet(string message)
 	}
 }
 
-void CNetwork::Send_Collision_Animal_Packet(unsigned short animalId, bool bRun)
+void CNetwork::Send_Collision_House_Packet(USHORT houseId, bool bRun)
 {
 	DWORD size, flag = 0;
 
-	cs_collision_packet* collision_animal_packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
-	collision_animal_packet->size = sizeof(cs_collision_packet);
-	collision_animal_packet->type = CS_ANIMAL_COLLISION;
-	collision_animal_packet->id = animalId;
-	collision_animal_packet->bRun = bRun;
+	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
 
+	collision_packet->type = CS_HOUSE_COLLISION;
+	collision_packet->id = houseId;
+	collision_packet->bRun = bRun;
+
+	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0)
+	{
+		int err_no = WSAGetLastError();
+		Err_display("Err while sending packet - ", err_no);
+	}
+}
+
+void CNetwork::Send_Collision_Animal_Packet(USHORT animalId, bool bRun)
+{
+	DWORD size, flag = 0;
+
+	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
+
+	collision_packet->type = CS_ANIMAL_COLLISION;
+	collision_packet->id = animalId;
+	collision_packet->bRun = bRun;
 
 	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 
