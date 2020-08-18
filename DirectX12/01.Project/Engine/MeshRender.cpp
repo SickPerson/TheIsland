@@ -92,6 +92,7 @@ void CMeshRender::Render_Shadowmap()
 	{
 		if (Animator3D())
 		{
+			a = 1;
 			Animator3D()->UpdateData();
 			pMtrl->SetData(SHADER_PARAM::INT_0, &a); // Animation Mesh ¾Ë¸®±â
 		}

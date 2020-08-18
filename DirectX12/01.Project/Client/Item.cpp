@@ -53,10 +53,10 @@ Ptr<CTexture> GetItemIconByType(ITEM_TYPE eType)
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Arrow_Icon", L"Texture\\Item\\T_Arrows_256x256.tga");
 		break;
 	case ITEM_MEAT:
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"RawMeat_Icon", L"Texture\\Item\\meat.png");
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"RawMeat_Icon", L"Texture\\Item\\T_Cooked_Meat_02_256x256.tga");
 		break;
 	case ITEM_COOKMEAT:
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"CookedMeat_Icon", L"Texture\\Item\\meat_roast.png");
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"CookedMeat_Icon", L"Texture\\Item\\T_Cooked_Meat_02_256x256.tga");
 		break;
 	case ITEM_CHOCOLATEBAR:
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"ChocolateBar_Icon", L"Texture\\Item\\T_Chocolate_bar_256x256.tga");
@@ -68,10 +68,10 @@ Ptr<CTexture> GetItemIconByType(ITEM_TYPE eType)
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Can_Icon", L"Texture\\Item\\T_Can_of_Beans_Small_256x256.tga");
 		break;
 	case ITEM_EMPTY_BOTTLE:
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"EmptyBottle_Icon", L"Texture\\Item\\water.png");
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"EmptyBottle_Icon", L"Texture\\Item\\T_Bottle_256x256.tga");
 		break;
 	case ITEM_WATER_BOTTLE:
-		pTex = CResMgr::GetInst()->Load<CTexture>(L"WaterBottle_Icon", L"Texture\\Item\\water_full.png");
+		pTex = CResMgr::GetInst()->Load<CTexture>(L"WaterBottle_Icon", L"Texture\\Item\\T_Bottle_256x256.tga");
 		break;
 	case ITEM_SODA:
 		pTex = CResMgr::GetInst()->Load<CTexture>(L"Soda_Icon", L"Texture\\Item\\T_Soda_256x256.tga");

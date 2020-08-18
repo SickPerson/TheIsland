@@ -24,6 +24,8 @@ public:
 
 	CGameObject* GetMainCamera();
 
+	CGameObject* FindObject( const wstring& strKey );
+
 public:
 	void Awake();
 	void Start();
