@@ -228,7 +228,7 @@ void CNetwork::ProcessPacket(char* packet)
 	}
 	case SC_LOGIN_FAIL:
 	{
-
+		break;
 	}
 	case SC_STATUS_PLAYER:
 	{
@@ -270,11 +270,25 @@ void CNetwork::ProcessPacket(char* packet)
 		Recv_Remove_Npc_Packet(packet);
 		break;
 	}
+	// Natural
+	case SC_PUT_NATURAL:
+	{
+		Recv_Put_Natural_Packet(packet);
+		break;
+	}
+	case SC_DESTROY_NATURAL:
+	{
+		Recv_Destroy_Natural_Packet(packet);
+		break;
+	}
+	// Housing
 	case SC_INSTALL_HOUSING:
 	{
 		Recv_Install_Housing_Packet(packet);
 		break;
 	}
+	
+	// etc
 	case SC_WEATHER:
 	{
 		Recv_Weather_Packet(packet);
@@ -319,7 +333,7 @@ void CNetwork::Send_Move_Packet()
 	packet->type = CS_MOVE;
 	packet->id = m_usID;
 	packet->vLocalPos = m_pPlayer->Transform()->GetLocalPos();
-	packet->vLocalRot = m_pPlayer->Transform()->GetLocalRot();
+	//packet->vLocalRot = m_pPlayer->Transform()->GetLocalRot();
 	//packet->bRun = bRun;
 	//packet->vWorldDir = vWorldDir;
 	//packet->fHeight = CNaviMgr::GetInst()->GetY(m_pPlayer->Transform()->GetLocalPos());
@@ -382,14 +396,15 @@ void CNetwork::Send_Chat_Packet(string message)
 	}
 }
 
-void CNetwork::Send_Collision_House_Packet(USHORT houseId, bool bRun)
+void CNetwork::Send_Collision_Player_Packet(UINT Collision_type, USHORT Collision_Id, bool bRun)
 {
-	DWORD size, flag = 0;
+	DWORD	size, flag = 0;
 
 	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
 
-	collision_packet->type = CS_HOUSE_COLLISION;
-	collision_packet->id = houseId;
+	collision_packet->type = CS_COLLISION;
+	collision_packet->collision_uitype = Collision_type;
+	collision_packet->collision_id = Collision_Id;
 	collision_packet->bRun = bRun;
 
 	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
@@ -401,15 +416,15 @@ void CNetwork::Send_Collision_House_Packet(USHORT houseId, bool bRun)
 	}
 }
 
-void CNetwork::Send_Collision_Animal_Packet(USHORT animalId, bool bRun)
+void CNetwork::Send_Attack_Player_Packet(UINT attack_type, USHORT attack_Id)
 {
-	DWORD size, flag = 0;
+	DWORD	size, flag = 0;
 
-	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
+	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(m_cSendBuf);
 
-	collision_packet->type = CS_ANIMAL_COLLISION;
-	collision_packet->id = animalId;
-	collision_packet->bRun = bRun;
+	attack_packet->type = CS_ATTACK;
+	attack_packet->attack_uiType = attack_type;
+	attack_packet->attack_id = attack_Id;
 
 	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 
@@ -420,7 +435,7 @@ void CNetwork::Send_Collision_Animal_Packet(USHORT animalId, bool bRun)
 	}
 }
 
-void CNetwork::Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale)
+void CNetwork::Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale, Vec3 vOffsetPos, Vec3 vOffsetScale)
 {
 	DWORD size, flag = 0;
 
@@ -430,6 +445,25 @@ void CNetwork::Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLo
 	install_housing_packet->vLocalPos = vLocalPos;
 	install_housing_packet->vLocalRot = vLocalRot;
 	install_housing_packet->vLocalScale = vLocalScale;
+	install_housing_packet->vOffsetPos = vOffsetPos;
+	install_housing_packet->vOffsetScale = vOffsetScale;
+
+	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0)
+	{
+		int err_no = WSAGetLastError();
+		Err_display("Err while sending packet - ", err_no);
+	}
+}
+
+void CNetwork::Send_Remove_Housing_Packet(USHORT house_id)
+{
+	DWORD size, flag = 0;
+
+	cs_remove_housing_packet* remove_housing_packet = reinterpret_cast<cs_remove_housing_packet*>(m_cSendBuf);
+	remove_housing_packet->type = CS_HOUSING_REMOVE;
+	remove_housing_packet->house_id = house_id;
 
 	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 
@@ -457,18 +491,18 @@ void CNetwork::Recv_Login_Fail_Packet(char * packet)
 void CNetwork::Recv_Status_Player_Packet(char * packet)
 {
 	sc_status_player_packet* status_player_packet = reinterpret_cast<sc_status_player_packet*>(packet);
-	unsigned short player_id = status_player_packet->id;
+	USHORT player_id = status_player_packet->id;
+	float fHealth = status_player_packet->fHealth;
+	float fHungry = status_player_packet->fHungry;
+	float fThrist = status_player_packet->fThrist;
 
 	if (m_usID == player_id)
 	{
-		//m_pPlayer->GetScript<CStatusScript>()->Set
-		//m_pPlayer->GetScript<CStatusScript>()->
-		//m_pPlayer->Transform()->SetLocalPos(status_player_packet->vLocalPos);
-		//m_pPlayer->Transform()->SetLocalRot(status_player_packet->vLocalRot);
+		// 추가
 	}
 	else
 	{
-
+		return;
 	}
 }
 
@@ -541,16 +575,53 @@ void CNetwork::Recv_Chat_Packet(char * packet)
 void CNetwork::Recv_Animation_Player_Packet(char * packet)
 {
 	sc_animation_player_packet* animation_player_packet = reinterpret_cast<sc_animation_player_packet*>(packet);
-	unsigned int player_id = animation_player_packet->id;
-	char player_animation = animation_player_packet->animation;
+	USHORT player_id = animation_player_packet->id;
+	UINT uiType = animation_player_packet->animation_uiType;
 
 	if (m_usID == player_id)
 	{
-		// 자기 자신 애니메이션 키값 변환
+		// 자기 자신 애니메이션 키값 변환 -> 클라이언트에서 진행
 	}
 	else
 	{
-		// 타 플레이어 애니메이션 키값 변환
+		if (uiType == (UINT)PLAYER_ANIMATION_TYPE::WALK) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::RUN) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE1) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE2) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::DIE) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK1) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK2) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK3) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT1) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT2) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::JUMP) {
+
+		}
+		else
+			return;
 	}
 }
 
@@ -598,14 +669,57 @@ void CNetwork::Recv_Animation_Npc_Packet(char * packet)
 {
 	sc_animation_npc_packet* animation_npc_packet = reinterpret_cast<sc_animation_npc_packet*>(packet);
 	unsigned int monster_id = animation_npc_packet->id;
-	char		monster_animation = animation_npc_packet->animation;
+	UINT		uiType = animation_npc_packet->animation;
 
 	// 몬스터 애니메이션 키값 바꾸기
+	if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::WALK) {
+
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::RUN) {
+
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::IDLE) {
+
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::EAT) {
+
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::DIE) {
+
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::ATTACK) {
+
+	}
+	else
+		return;
+}
+
+void CNetwork::Recv_Put_Natural_Packet(char * packet)
+{
+	sc_put_natural_packet* put_natural_packet = reinterpret_cast<sc_put_natural_packet*>(packet);
+	float fHealth = put_natural_packet->fHealth;
+	bool bDestroy = put_natural_packet->bDestroy;
+	USHORT natural_id = put_natural_packet->natural_id;
+	Vec3 vLocalPos = put_natural_packet->vLocalPos;
+	Vec3 vLocalScale = put_natural_packet->vLocalScale;
+	Vec3 vOffsetPos = put_natural_packet->vOffsetPos;
+	Vec3 vOffsetScale = put_natural_packet->vOffsetScale;
+
+	// 추가
+}
+
+void CNetwork::Recv_Destroy_Natural_Packet(char * packet)
+{
+	sc_destroy_natural_packet* destroy_natural_packet = reinterpret_cast<sc_destroy_natural_packet*>(packet);
+	USHORT natural_id = destroy_natural_packet->natural_id;
+
+	// 제거
 }
 
 void CNetwork::Recv_Install_Housing_Packet(char * packet)
 {
 	sc_install_housing_packet* install_housing_packet = reinterpret_cast<sc_install_housing_packet*>(packet);
+	USHORT house_id = install_housing_packet->house_id;
 	UINT type = install_housing_packet->housing_type;
 	Vec3 vPos = install_housing_packet->vLocalPos;
 	Vec3 vRot = install_housing_packet->vLocalRot;
@@ -613,6 +727,18 @@ void CNetwork::Recv_Install_Housing_Packet(char * packet)
 
 	// INSTALL 전송
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->InstallHousing(type, vPos, vRot, vScale);
+}
+
+void CNetwork::Recv_Remove_Housing_Packet(char * packet)
+{
+	sc_remove_housing_packet* remove_housing_packet = reinterpret_cast<sc_remove_housing_packet*>(packet);
+	USHORT house_id = remove_housing_packet->house_id;
+
+	// REMOVE 
+}
+
+void CNetwork::Recv_Add_Item_Packet(char * packet)
+{
 }
 
 void CNetwork::Recv_Weather_Packet(char * packet)

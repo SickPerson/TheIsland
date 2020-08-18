@@ -3,17 +3,9 @@
 concurrent_unordered_map<USHORT, CHousing*> CHousingpool::m_cumHousingPool;
 
 
-CHousingpool::CHousingpool():
-	m_HousingNum(0)
+CHousingpool::CHousingpool()
 {
-	CHousing* Housing;
-
-	for (int i = 0; i < 100; ++i)
-	{
-		Housing = new CHousing();
-		Housing->SetInstall(false);
-		m_cumHousingPool.insert(make_pair(i, Housing));
-	}
+	
 }
 
 
@@ -30,20 +22,14 @@ CHousingpool::~CHousingpool()
 	m_cumHousingPool.clear();
 }
 
-USHORT CHousingpool::GetNum()
+void CHousingpool::Install_House(CHousing * pHouse, USHORT usHouseNum)
 {
-	shared_lock<shared_mutex> lock(m_smHusingPoolSharedMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::NUM]);
-	return m_HousingNum;
+	lock_guard<recursive_mutex>	lock(m_rmHousingPoolMutex);
+	m_cumHousingPool.insert(make_pair(usHouseNum, pHouse));
 }
 
-void CHousingpool::InsertHousing(UINT eType, Vec3 vPos, Vec3 vRot, Vec3 vScale)
+void CHousingpool::Remove_House(USHORT usHouseNum)
 {
-	CHousing*	Housing = new CHousing();
-	Housing->SetType((HOUSING_TYPE)eType);
-	Housing->SetLocalPos(vPos);
-	Housing->SetLocalRot(vRot);
-	Housing->SetLocalScale(vScale);
-	//shared_lock<shared_mutex> lock(m_smHusingPoolSharedMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::INSERT]);
-	lock_guard<recursive_mutex>lock(m_rmHousingPoolMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::INSERT]);
-	m_cumHousingPool.insert(make_pair(m_HousingNum++, Housing));
+	lock_guard<recursive_mutex>	lock(m_rmHousingPoolMutex);
+	m_cumHousingPool.unsafe_erase(usHouseNum);
 }

@@ -28,7 +28,7 @@ _______________________________________________*/
 struct Update_Event {
 	std::chrono::high_resolution_clock::time_point wakeup_time;
 	EVENT_TYPE		m_EventType;
-	OBJ_STATE_TYPE	m_ObjState;
+	UINT	m_ObjState;
 	USHORT m_Do_Object;
 	USHORT m_From_Object;
 
@@ -42,18 +42,17 @@ struct Update_Event {
 			[DataBase Event]
 _______________________________________________*/
 typedef struct DB_Event {
-	char state; // DataBase_TYPE
+	UINT state; // DataBase_TYPE
 	int inum; // ID �õ尪
 	wstring sid; // ID
 
-	int ihp;
-	int istamina;
-	int ihungry;
-	int ithirst;
+	float fHealth;
+	float fHungry;
+	float fThirst;
 
-	float fposx;
-	float fposy;
-	float fposz;
+	float fX;
+	float fY;
+	float fZ;
 };
 
 /*_____________________________________________
@@ -84,7 +83,7 @@ struct Monster_Event {
 	float m_fRotate;
 	char	m_eState;
 	Monster_Event() {}
-	Monster_Event(DirectX::XMFLOAT3 xmf3ToTarget, float fRotate, OBJ_STATE_TYPE eState) {
+	Monster_Event(DirectX::XMFLOAT3 xmf3ToTarget, float fRotate, UINT eState) {
 		m_xmf3ToTarget = xmf3ToTarget; m_fRotate = fRotate; m_eState = eState;
 	}
 };
@@ -114,14 +113,14 @@ struct UserData {
 };
 
 struct User_Data {
-	std::string m_sID;
-	USHORT m_uiID;
-	int m_iPlayerNum;
+	string m_sId;
+	USHORT m_usId;
+	int	m_iUserNum;
 
-	User_Data(std::string sID, USHORT usNum, int iPlayerNum) {
-		m_sID = sID;
-		m_uiID = usNum;
-		m_iPlayerNum = iPlayerNum;
+	User_Data(string sId, USHORT usId, int iUserNum) {
+		m_sId = sId;
+		m_usId = usId;
+		m_iUserNum = iUserNum;
 	}
 };
 

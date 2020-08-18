@@ -13,6 +13,7 @@ enum class PLAYER_LOCK_TYPE
 	CONNECT,
 	NUMID,
 	WCID,
+	DBID,
 	END
 };
 
@@ -23,8 +24,9 @@ public:
 	virtual ~CPlayer();
 
 private:
-	USHORT	m_uiID;
+	USHORT			m_usID;
 	wchar_t			m_wcID[MAX_STR_LEN];
+	int				m_db_ID;
 	tPlayerStatus	m_tPlayerStatus;
 	volatile bool	m_bConnect;
 	SOCKET			m_sSocket;
@@ -51,6 +53,7 @@ public:
 
 	void SetNumID(USHORT& numID);
 	void SetWcID(wchar_t* wcID);
+	void SetDbID(int& dbID);
 	void SetConnect(bool bConnect);
 	void SetSocket(const SOCKET& socket);
 
@@ -64,6 +67,7 @@ public:
 
 	USHORT&	GetNumID();
 	wchar_t*	GetWcID();
+	int		GetDbID();
 	bool	GetConnect();
 	SOCKET&	GetSocket();
 

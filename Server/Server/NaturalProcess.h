@@ -8,17 +8,30 @@ public:
 	virtual ~CNaturalProcess();
 
 private:
-	function<void(USHORT, USHORT)> m_fpNaturalUpdate[OBJ_STATE_END];
+	function<void(USHORT, USHORT)> m_fpNaturalUpdate[(UINT)NATURAL_UPDATE_TYPE::END];
 
 public:
 	void BindNaturalUpdate() {
-
+		m_fpNaturalUpdate[(UINT)NATURAL_UPDATE_TYPE::RESPAWN] = [&](USHORT NaturalId, USHORT PlayerId) {
+			RespawnEvent(NaturalId);
+		};
+		m_fpNaturalUpdate[(UINT)NATURAL_UPDATE_TYPE::DAMAGE] = [&](USHORT NaturalId, USHORT PlayerId) {
+			DamageEvent(NaturalId, PlayerId);
+		};
 	}
 
 public:
-	void UpdateNatural(char state, USHORT natural_id, USHORT player_id)
+	void UpdateNatural(UINT state, USHORT natural_id, USHORT player_id)
 	{
-		//m_fpNaturalUpdate[]
+		m_fpNaturalUpdate[state](natural_id, player_id);
 	}
+
+public:
+	void RespawnEvent(USHORT natural_id);
+	void DamageEvent(USHORT NaturalId, USHORT PlayerId);
+
+public:
+	void PushEvent_Respawn(USHORT natural_id);
+	void PushEvent_Damage(USHORT NaturalId, USHORT PlayerId);
 };
 

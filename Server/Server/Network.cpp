@@ -31,7 +31,6 @@ CNetwork::CNetwork()
 
 CNetwork::~CNetwork()
 {
-	CDataBase::GetInst()->DisConnectDataBase();
 	CloseServer();
 }
 
@@ -222,7 +221,7 @@ void CNetwork::WorkerThread()
 		}
 		case EV_MONSTER_UPDATE:
 		{
-			//m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_uiOtherID);
+			m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_usOtherID);
 			delete lpover_ex;
 			break;
 		}
@@ -256,10 +255,7 @@ void CNetwork::AcceptThread()
 			Err_display("ACCEPT INVALID_SOCKET!", err_no);
 			break;
 		}
-
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_sock), m_hIocp, m_UserID, 0);
-
-
 		//cout << "현재 인원: " << m_usUserID + 1 << endl;
 		//cout << "접속 : " << inet_ntoa(m_clientAddr.sin_addr) << '\t' << ntohs(m_clientAddr.sin_port) << endl;
 		m_pPlayerProcess->AcceptClient(client_sock, m_UserID);
@@ -314,10 +310,10 @@ void CNetwork::DataBaseThread()
 	while (m_bRunningServer)
 	{
 		this_thread::sleep_for(10ms);
-		while (!CDataBase::GetInst()->IsEmptyDBQueue())
+		while (!CDataBase::GetInst()->EmptyDatabaseEventQueue())
 		{
 			DB_Event db_ev;
-			if (CDataBase::GetInst()->TryPopDBQueue(db_ev))
+			if (CDataBase::GetInst()->PopDatabaseEventQueue(db_ev))
 				CDataBase::GetInst()->RunDataBase(db_ev);
 			else
 				break;

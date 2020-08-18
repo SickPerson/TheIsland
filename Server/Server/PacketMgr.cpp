@@ -96,6 +96,20 @@ void CPacketMgr::Send_Pos_Player_Packet(USHORT playerId, USHORT OtherId)
 		Send_Put_Player_Packet(playerId, OtherId);
 }
 
+void CPacketMgr::Send_Status_Player_Packet(USHORT playerId, USHORT OtherId)
+{
+	sc_status_player_packet packet;
+	packet.size = sizeof(sc_status_player_packet);
+	packet.type = SC_STATUS_PLAYER;
+
+	packet.id = playerId;
+	packet.fHealth = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetHealth();
+	packet.fHungry = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetHungry();
+	packet.fThrist = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetThirst();
+
+	Send_Packet(playerId, &packet);
+}
+
 void CPacketMgr::Send_Rot_Player_Packet(USHORT playerId, USHORT OtherId)
 {
 	sc_rot_player_packet packet;
@@ -131,16 +145,22 @@ void CPacketMgr::Send_Chat_Packet(USHORT playerId, USHORT OtherId, char message[
 
 void CPacketMgr::Send_Death_Player_Packet(USHORT playerId)
 {
+
 }
 
-void CPacketMgr::Send_Animation_Player_Packet(USHORT playerId, USHORT OtherId, char AnimationType)
+void CPacketMgr::Send_Animation_Player_Packet(USHORT playerId, UINT AnimationType)
 {
+	concurrent_unordered_set<USHORT> list;
+	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(list);
+	list.insert(playerId);
+	
 	sc_animation_player_packet packet;
 	packet.size = sizeof(sc_animation_npc_packet);
 	packet.type = SC_ANIMATION_PLAYER;
-	packet.id = OtherId;
-	packet.animation = AnimationType;
-	Send_Packet(playerId, &packet);
+	packet.animation_uiType = AnimationType;
+	packet.id = playerId;
+	for(auto& au : list)
+		Send_Packet(playerId, &packet);
 }
 
 void CPacketMgr::Send_Wakeup_Npc_Packet(USHORT playerId, USHORT NpcId)
@@ -207,12 +227,12 @@ void CPacketMgr::Send_Remove_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 		CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->DeleteList(NpcID + MAX_USER);
 }
 
-void CPacketMgr::Send_Animation_Npc_Packet(USHORT playerId, USHORT NpcId, char AnimationType)
+void CPacketMgr::Send_Animation_Npc_Packet(USHORT playerId, USHORT NpcId, UINT AnimationType)
 {
 	sc_animation_player_packet packet;
 	packet.size = sizeof(sc_animation_npc_packet);
 	packet.type = SC_ANIMATION_NPC;
-	packet.animation = AnimationType;
+	packet.animation_uiType = AnimationType;
 	packet.id = NpcId;
 	Send_Packet(playerId, &packet);
 }
@@ -223,12 +243,48 @@ void CPacketMgr::Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id
 
 	packet.size = sizeof(sc_install_housing_packet);
 	packet.type = SC_INSTALL_HOUSING;
+	packet.house_id = housing_Id;
 
 	packet.housing_type =	CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetType();
 	packet.vLocalPos =		CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetLocalPos();
 	packet.vLocalRot =		CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetLocalRot();
 	packet.vLocalScale =	CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetLocalScale();
 	Send_Packet(player_Id, &packet);
+}
+
+void CPacketMgr::Send_Remove_Housing_Packet(USHORT player_Id, USHORT housing_Id)
+{
+	sc_remove_housing_packet packet;
+
+	packet.size = sizeof(sc_remove_housing_packet);
+	packet.type = SC_REMOVE_HOUSING;
+	packet.house_id = housing_Id;
+	Send_Packet(player_Id, &packet);
+}
+
+void CPacketMgr::Send_Put_Natural_Packet(USHORT PlayerId, USHORT NaturalId)
+{
+	sc_put_natural_packet packet;
+	packet.size = sizeof(sc_put_natural_packet);
+	packet.type = SC_PUT_NATURAL;
+	packet.natural_id = NaturalId;
+	packet.fHealth = CProcess::m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetHealth();
+	packet.bDestroy = CProcess::m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetDestroy();
+	packet.vLocalPos = CProcess::m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetLocalPos();
+	packet.vLocalScale = CProcess::m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetLocalScale();
+	packet.vOffsetPos = CProcess::m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetOffsetPos();
+	packet.vOffsetScale = CProcess::m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetOffsetScale();
+	Send_Packet(PlayerId, &packet);
+}
+
+void CPacketMgr::Send_Natural_Destroy_Packet(USHORT PlayerId, USHORT NaturalId)
+{
+	sc_destroy_natural_packet packet;
+	packet.size = sizeof(sc_destroy_natural_packet);
+	packet.type = SC_DESTROY_NATURAL;
+	packet.natural_id = NaturalId;
+	Send_Packet(PlayerId, &packet);
+
 }
 
 void CPacketMgr::Send_Weather_Packet(USHORT player_Id, bool bRain)

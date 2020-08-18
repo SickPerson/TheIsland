@@ -93,10 +93,17 @@ public:
 	//void Send_Rot_Packet();
 	//void Send_Rot_Packet();
 	void Send_Chat_Packet(string message);
-	void Send_Collision_Natural_Packet(unsigned short naturalId, bool bRun);
+	void Send_Collision_Player_Packet(UINT Collision_type, USHORT Collision_Id, bool bRun);
+	void Send_Attack_Player_Packet(UINT attack_type, USHORT attack_Id);
+	/*void Send_Collision_Natural_Packet(unsigned short naturalId, bool bRun);
 	void Send_Collision_House_Packet(USHORT houseId, bool bRun);
-	void Send_Collision_Animal_Packet(USHORT animalId, bool bRun);
-	void Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale);
+	void Send_Collision_Animal_Packet(USHORT animalId, bool bRun);*/
+public: // Natural
+
+public: // Housing
+	void Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale, Vec3 vOffsetPos, Vec3 vOffsetScale);
+	void Send_Remove_Housing_Packet(USHORT house_id);
+
 
 	//void Send_Install_Housing_Packet(USHORT )
 public:
@@ -116,10 +123,15 @@ public:
 	void Recv_Pos_Npc_Packet(char* packet);
 	void Recv_Animation_Npc_Packet(char* packet);
 
-public:
+public: // Natural
+	void Recv_Put_Natural_Packet(char* packet);
+	void Recv_Destroy_Natural_Packet(char* packet);
 	
 public: // Housing
 	void Recv_Install_Housing_Packet(char* packet);
+	void Recv_Remove_Housing_Packet(char* packet);
+public:
+	void Recv_Add_Item_Packet(char* packet);
 
 public: //etc
 	void Recv_Weather_Packet(char* packet);

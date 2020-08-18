@@ -27,7 +27,7 @@ public:
 private:
 	tAnimalStatus	m_tStatus;
 
-	USHORT	m_uiTarget;
+	USHORT			m_uiTarget;
 	bool			m_bWakeUp;
 
 	bool			m_bBehavior;
@@ -40,9 +40,6 @@ private:
 
 	float	m_fRotate = 0.f;
 	shared_mutex m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::END];
-	//concurrent_priority_queue<Monster_Event>	m_MonsterEventQueue;
-	chrono::high_resolution_clock::time_point	m_tpLastChangeDir;
-	Vec3 vRandomPos;
 
 public:
 	void SetAnimalStatus(tAnimalStatus& animalStatus);

@@ -22,7 +22,7 @@ public:
 	recursive_mutex	m_rmProcessMutex;
 
 public:
-	static USHORT	m_housingNum;
+	static USHORT	m_houseNum;
 	static CPlayerpool*	m_pPlayerPool;
 	static CMonsterpool* m_pMonsterPool;
 	static CNaturalpool* m_pNaturalPool;

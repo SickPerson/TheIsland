@@ -2,13 +2,6 @@
 #include "stdafx.h"
 #include "Housing.h"
 
-enum class HOUSINGPOOL_LOCK_TYPE
-{
-	NUM,
-	INSERT,
-	END
-};
-
 class CHousingpool
 {
 public:
@@ -16,17 +9,13 @@ public:
 	~CHousingpool();
 
 public:
-	recursive_mutex m_rmHousingPoolMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::END];
-public:
-	volatile USHORT m_HousingNum;
-	shared_mutex m_smHusingPoolSharedMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::END];
+	recursive_mutex m_rmHousingPoolMutex;
 
 public:
 	static concurrent_unordered_map<USHORT, CHousing*> m_cumHousingPool;
 
 public:
-	USHORT GetNum();
-public:
-	void InsertHousing(UINT eType, Vec3 vPos, Vec3 vRot, Vec3 vScale);
+	void Install_House(CHousing* pHouse, USHORT usHouseNum);
+	void Remove_House(USHORT usHouseNum);
 };
 

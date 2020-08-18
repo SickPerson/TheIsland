@@ -24,11 +24,16 @@ constexpr	char	CS_MOVE =	1;
 constexpr	char	CS_CHAT =	2;
 constexpr	char	CS_LOGOUT = 3;
 constexpr	char	CS_ROT =	4;
-constexpr	char	CS_ANIMAL_COLLISION = 5;
-constexpr	char	CS_NATURAL_COLLISION = 6;
-constexpr	char	CS_HOUSE_COLLISION = 7;
-constexpr	char	CS_HOUSING_INSTALL = 8;
-constexpr	int		CS_END =	9;
+constexpr	char	CS_COLLISION = 5;
+//constexpr	char	CS_ANIMAL_COLLISION = 5;
+//constexpr	char	CS_NATURAL_COLLISION = 6;
+//constexpr	char	CS_HOUSE_COLLISION = 7;
+constexpr	char	CS_HOUSING_INSTALL = 6;
+constexpr	char	CS_HOUSING_REMOVE = 7;
+constexpr	char	CS_ATTACK = 8;
+constexpr	char	CS_GET_ITEM = 9;
+constexpr	char	CS_REMOVE_ITEM = 10;
+constexpr	char	CS_END =	11;
 
 // Server -> Client Packet Protocol
 constexpr	char	SC_LOGIN_OK = 0;
@@ -50,19 +55,27 @@ constexpr	char	SC_STATUS_NPC = 14;
 constexpr	char	SC_ANIMATION_NPC = 15;
 // Natural
 constexpr	char	SC_PUT_NATURAL = 20;
-constexpr	char	SC_REMOVE_NATURAL = 21;
+constexpr	char	SC_DESTROY_NATURAL = 21;
 // Housing
 constexpr	char	SC_INSTALL_HOUSING = 25;
+constexpr	char	SC_REMOVE_HOUSING = 26;
 
 // etc
-constexpr	char	SC_WEATHER = 30;
-constexpr	char	SC_TIME = 31;
-constexpr	char	SC_END = 35;
+constexpr	char	SC_WEATHER = 35;
+constexpr	char	SC_TIME = 36;
+constexpr	char	SC_END = 40;
 
 // About Player
 constexpr float PLAYER_BETWEEN_RANGE = 3000.f;
 constexpr float MONSTER_BETWEEN_RANGE = 100.f;
 
+// enum 
+enum class PLAYER_ANIMATION_TYPE
+{
+	WALK, RUN, IDLE1, IDLE2, DIE, TAKE_WEAPON, ATTACK1, ATTACK2, ATTACK3, HIT1, HIT2, JUMP, END
+};
+
+enum class ANIMAL_ANIMATION_TYPE { WALK, RUN, IDLE, EAT, DIE, ATTACK };
 #pragma	pack(push, 1)
 // ___________________________________________________________________
 //						[ Sever -> Client ]
@@ -104,11 +117,8 @@ struct sc_status_player_packet{
 	USHORT id;
 
 	float	fHealth;
-	float	fStamina;
+	float	fThrist;
 	float	fHungry;
-	float	fSpeed;
-	Vec3	vLocalPos;
-	Vec3	vLocalRot;
 };
 
 struct sc_put_player_packet {
@@ -154,7 +164,7 @@ struct sc_animation_player_packet
 {
 	char size;
 	char type;
-	char animation;
+	UINT animation_uiType;
 	USHORT id;
 };
 
@@ -216,10 +226,43 @@ struct sc_install_housing_packet
 	char	size;
 	char	type;
 	USHORT	house_id;
+
 	UINT	housing_type;
+
 	Vec3	vLocalPos;
 	Vec3	vLocalRot;
 	Vec3	vLocalScale;
+
+	Vec3	m_vOffsetPos;
+	Vec3	m_vOffsetScale;
+};
+
+struct sc_remove_housing_packet
+{
+	char	size;
+	char	type;
+	USHORT	house_id;
+};
+
+// [ Natural ]
+struct sc_put_natural_packet
+{
+	char size;
+	char type;
+	USHORT natural_id;
+	float	fHealth;
+	bool	bDestroy;
+	Vec3	vLocalPos;
+	Vec3	vLocalScale;
+	Vec3	vOffsetPos;
+	Vec3	vOffsetScale;
+};
+
+struct sc_destroy_natural_packet
+{
+	char size;
+	char type;
+	USHORT natural_id;
 };
 
 // [ Etc ]
@@ -252,12 +295,10 @@ struct cs_move_packet {
 	char type;
 	USHORT id;
 
-	Vec3 vLocalPos;
 	bool bRun;
+	Vec3 vLocalPos;
 	Vec3 vWorldDir;
-	Vec3 vLocalRot;
 	float fHeight;
-	unsigned move_time;
 };
 
 struct cs_pos_packet {
@@ -276,7 +317,7 @@ struct cs_rot_packet {
 	char size;
 	char type;
 	USHORT id;
-	Vec2	vDrag;
+
 	Vec3	vRot;
 };
 
@@ -285,6 +326,14 @@ struct cs_chat_packet {
 	char type;
 	USHORT id;
 	char meesage[MAX_STR_LEN];
+};
+
+struct cs_collision_packet {
+	char	size;
+	char	type;
+	UINT	collision_uitype; // 0 : animal 1: natural 2: house
+	USHORT	collision_id;
+	bool	bRun;
 };
 
 struct cs_packet_chat {
@@ -299,30 +348,64 @@ struct cs_packet_logout {
 	USHORT id;
 };
 
-struct cs_collision_packet {
-	char	size;
-	char	type;
-	USHORT id;
-	bool	bRun;
+struct cs_attack_packet {
+	char size;
+	char type;
+	UINT attack_uiType;
+	USHORT attack_id;
 };
+//struct cs_collision_packet {
+//	char	size;
+//	char	type;
+//	USHORT id;
+//	bool	bRun;
+//};
 
 // [ Housing ] 
 struct cs_install_housing_packet
 {
 	char	size;
 	char	type;
+	USHORT	house_id;
+
 	UINT	housing_type;
+	
 	Vec3	vLocalPos;
 	Vec3	vLocalRot;
 	Vec3	vLocalScale;
+
+	Vec3	vOffsetPos;
+	Vec3	vOffsetScale;
 };
-// ___________________________________________________________________
-//						[ Sever -> Client ]
-// ___________________________________________________________________
-struct sc_monster_login_packet {
+
+struct cs_remove_housing_packet
+{
 	char	size;
 	char	type;
-	USHORT id;
+	USHORT	house_id;
+};
+
+struct cs_natural_attack_packet
+{
+	char	size;
+	char	type;
+	USHORT	natural_id;
+};
+
+struct cs_item_get_packet
+{
+	char	size;
+	char	type;
+	UINT	uiType;
+	UINT	uiIvenNum;
+};
+
+struct cs_item_remove_packet
+{
+	char	size;
+	char	type;
+	UINT	uiType;
+	UINT	uiInvenNum;
 };
 
 #pragma pack (pop)

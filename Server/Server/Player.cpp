@@ -119,13 +119,19 @@ void CPlayer::SetDamage(float & fDamage)
 void CPlayer::SetNumID(USHORT & numID)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::NUMID]);
-	m_uiID = numID;
+	m_usID = numID;
 }
 
 void CPlayer::SetWcID(wchar_t * wcID)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::WCID]);
 	wcscpy_s(m_wcID, wcID);
+}
+
+void CPlayer::SetDbID(int & dbID)
+{
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::DBID]);
+	m_db_ID = dbID;
 }
 
 void CPlayer::SetConnect(bool bConnect)
@@ -179,13 +185,19 @@ float & CPlayer::GetDamage()
 USHORT & CPlayer::GetNumID()
 {
 	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::NUMID]);
-	return m_uiID;
+	return m_usID;
 }
 
 wchar_t * CPlayer::GetWcID()
 {
 	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::WCID]);
 	return m_wcID;
+}
+
+int CPlayer::GetDbID()
+{
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::DBID]);
+	return m_db_ID;
 }
 
 bool CPlayer::GetConnect()

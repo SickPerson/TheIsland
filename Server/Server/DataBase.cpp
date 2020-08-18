@@ -3,18 +3,25 @@
 
 CDataBase::CDataBase()
 {
-	if (!ConnectDataBase()) {
-		std::cout << "DataBaseConnect Fail" << std::endl;
-	}
-	else {
-		m_ccqDBQueue.clear();
-		BindDataBaseFP();
-	}
+	Init();
 }
 
 CDataBase::~CDataBase()
 {
 	DisConnectDataBase();
+}
+
+void CDataBase::Init()
+{
+	if (!ConnectDataBase()) {
+		cout << "Database Coonect Fail" << endl;
+	}
+	else {
+		m_DatabaseEventQueue.clear();
+		m_SaveStateQueue.clear();
+		m_vUserData.clear();
+		BindDataBaseFP();
+	}
 }
 
 void CDataBase::HandleDiagnosticRecord(SQLHANDLE _hHandle, SQLSMALLINT _hType, RETCODE RetCode)
@@ -168,6 +175,21 @@ void CDataBase::RemoveItemProcess(DB_Event & event)
 {
 }
 
+void CDataBase::ChnageStateProcess(DB_Event & event)
+{
+}
+
+void CDataBase::ChangeInvenProcess(DB_Event & event)
+{
+}
+
+void CDataBase::PushEvent_Change_State(USHORT & player_Id)
+{
+	DB_Event ev;
+	ev.state = (UINT)DB_STATE_TYPE::CHANGE_STATE;
+
+}
+
 bool CDataBase::IsIDExist(wstring login_id)
 {
 	wstring execFunc = L"EXEC select_id " + login_id;
@@ -196,9 +218,9 @@ bool CDataBase::IsIDExist(wstring login_id)
 void CDataBase::AddUserInfo(DB_Event & _ev)
 {
 	wstring execFunc = L"EXEC insert_info";
-	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.ihp) + L", " + to_wstring(_ev.istamina) +
-		L", " + to_wstring(_ev.ihungry) + L", " + to_wstring(_ev.ithirst) + L", " +
-		to_wstring(_ev.fposx) + L", " + to_wstring(_ev.fposy) + L", " + to_wstring(_ev.fposz);
+	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.fHealth) + L", " +
+		L", " + to_wstring(_ev.fHungry) + L", " + to_wstring(_ev.fThirst) + L", " +
+		to_wstring(_ev.fX) + L", " + to_wstring(_ev.fY) + L", " + to_wstring(_ev.fZ);
 	execFunc += var;
 
 	SQLRETURN ret;
@@ -220,9 +242,9 @@ void CDataBase::AddUserInfo(DB_Event & _ev)
 void CDataBase::UpdateUserInfo(DB_Event & _ev)
 {
 	wstring execFunc = L"EXEC update_info ";
-	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.ihp) + L", " + to_wstring(_ev.istamina) +
-		L", " + to_wstring(_ev.ihungry) + L", " + to_wstring(_ev.ithirst) + L", " +
-		to_wstring(_ev.fposx) + L", " + to_wstring(_ev.fposy) + L", " + to_wstring(_ev.fposz);
+	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.fHealth) + L", " +
+		L", " + to_wstring(_ev.fHungry) + L", " + to_wstring(_ev.fThirst) + L", " +
+		to_wstring(_ev.fX) + L", " + to_wstring(_ev.fY) + L", " + to_wstring(_ev.fZ);
 	execFunc += var;
 
 	SQLRETURN ret;
@@ -244,7 +266,6 @@ DB_Event & CDataBase::GetUserInfo(wstring & login_id)
 	ret = SQLBindCol(m_hStmt, 1, SQL_C_LONG, &m_dUserNum, 100, &cbNum);
 	ret = SQLBindCol(m_hStmt, 2, SQL_C_WCHAR, &m_dUserId, MAX_STR_LEN + 1, &cbID);
 	ret = SQLBindCol(m_hStmt, 3, SQL_C_SHORT, &m_dUserHp, 100, &cbHp);
-	ret = SQLBindCol(m_hStmt, 4, SQL_C_SHORT, &m_dUserStamina, 100, &cbStamina);
 	ret = SQLBindCol(m_hStmt, 5, SQL_C_SHORT, &m_dUserHungry, 100, &cbHungry);
 	ret = SQLBindCol(m_hStmt, 6, SQL_C_SHORT, &m_dUserThirst, 100, &cbThirst);
 	ret = SQLBindCol(m_hStmt, 7, SQL_C_DOUBLE, &m_dUserX, 100, &cbX);
@@ -258,13 +279,12 @@ DB_Event & CDataBase::GetUserInfo(wstring & login_id)
 	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
 		ev.inum = m_dUserNum;
 		ev.sid = m_dUserId;
-		ev.ihp = m_dUserHp;
-		ev.istamina = m_dUserStamina;
-		ev.ihungry = m_dUserHungry;
-		ev.ithirst = m_dUserThirst;
-		ev.fposx = m_dUserX;
-		ev.fposy = m_dUserY;
-		ev.fposz = m_dUserZ;
+		ev.fHealth = m_dUserHp;
+		ev.fHungry = m_dUserHungry;
+		ev.fThirst = m_dUserThirst;
+		ev.fX = m_dUserX;
+		ev.fY = m_dUserY;
+		ev.fZ = m_dUserZ;
 	}
 	SQLCancel(m_hStmt);
 	return ev;

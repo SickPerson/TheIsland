@@ -19,65 +19,48 @@ CMonsterProcess::~CMonsterProcess()
 	}
 }
 
-void CMonsterProcess::AttackEvent(USHORT uiMonster, USHORT uiTarget)
+void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT uiTarget)
 {
-	if (CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetState() == OBJ_STATE_DIE) return;
+	UINT Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[Animal_Id]->GetState();
+	if (Animal_State == (UINT)ANIMAL_STATE_TYPE::DIE || 
+		Animal_State == (UINT)ANIMAL_STATE_TYPE::RESPAWN)
+		return;
 
 	concurrent_unordered_set<USHORT> login_list;
 	concurrent_unordered_set<USHORT> range_list;
 
 	CopyBeforeLoginList(login_list);
 
-	InRangePlayer(login_list, range_list, uiMonster);
+	InRangePlayer(login_list, range_list, Animal_Id);
 
-	// 타켓이 없을때
-	if (uiTarget == NO_TARGET) {
-		m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetState(OBJ_STATE_IDLE);
-		m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetTarget(NO_TARGET);
-
-		Update_Event ev;
-		ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
-		ev.m_ObjState = OBJ_STATE_TYPE::OBJ_STATE_IDLE;
-		ev.m_Do_Object = uiMonster;
-		ev.m_From_Object = NO_TARGET;
-		ev.wakeup_time = high_resolution_clock::now() + 1s;
-		CProcess::PushEventQueue(ev);
-	}
-	else // 타켓이 있을때
+	if (PlayerAndAnimal_CollisionSphere(uiTarget, Animal_Id, 0.2f))
 	{
 		float player_HP = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetHealth();
 		Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetLocalPos();
 		float player_AfterHP = player_HP;
 
-		Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetLocalPos();
-		float monster_Damage = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetDamage();
+		Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[Animal_Id]->GetLocalPos();
+		float monster_Damage = m_pMonsterPool->m_cumMonsterPool[Animal_Id]->GetDamage();
 		// 플레이어에게 데미지를 입힌다.
 		player_AfterHP -= monster_Damage;
-		
+
 		// 플레이어 체력이 0이 되었을때
-		if (player_AfterHP <= 0) 
+		if (player_AfterHP <= 0)
 		{
 			// 플레이어 처리 (플레이어 사망)
 			// 플레이어 사망 패킷 보내기
 			CPacketMgr::GetInst()->Send_Death_Player_Packet(uiTarget);
-
+			// 플레이어 사망 했다는 애니메이션 보내기
+			//CPacketMgr::GetInst()->Send_Animation_Player_Packet(uiTarget, )
 			// ANIMAL IDLE 상태로
-			m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetState(OBJ_STATE_IDLE);
-			m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetTarget(NO_TARGET);
-			Update_Event ev;
-			ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
-			ev.m_ObjState = OBJ_STATE_TYPE::OBJ_STATE_IDLE;
-			ev.m_Do_Object = uiMonster;
-			ev.m_From_Object = NO_TARGET;
-			ev.wakeup_time = high_resolution_clock::now() + 1s;
-			CProcess::PushEventQueue(ev);
-
-			//
+			PushEvent_Idle(Animal_Id);
+			
 			for (auto& au : range_list) {
 				bool isConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 				if (!isConnect) continue;
 				// Player Status 패킷 보내기
 				// Animation - 플레이어가 맞을때
+				//CPacketMgr::GetInst()->Send_Animation_Player_Packet(uiTarget, )
 			}
 		}
 		else { // 플레이어 체력이 0이 안되었을 경우
@@ -91,41 +74,39 @@ void CMonsterProcess::AttackEvent(USHORT uiMonster, USHORT uiTarget)
 			}
 		}
 	}
+	else
+	{
+		PushEvent_Idle(Animal_Id);
+	}
 }
 
-void CMonsterProcess::FollowEvent(USHORT uiID, USHORT uiTarget)
+void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 {
-	if (m_pMonsterPool->m_cumMonsterPool[uiID]->GetState() == OBJ_STATE_DIE) return;
+	UINT Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
+	if (Animal_State == (UINT)ANIMAL_STATE_TYPE::RESPAWN)
+		return;
 
 	concurrent_unordered_set<USHORT> before_loginList;
 	concurrent_unordered_set<USHORT> after_loginList;
+
 	concurrent_unordered_set<USHORT> before_rangeList;
 	concurrent_unordered_set<USHORT> after_rangeList;
 
-	USHORT monster_id = uiID + MAX_USER; // Player Login List에 넣을때는 MAX_USER를 + 해준다.
+	USHORT monster_id = AnimalId + MAX_USER; // Player Login List에 넣을때는 MAX_USER를 + 해준다.
 	
 	CopyBeforeLoginList(before_loginList);
-	InRangePlayer(before_loginList, before_rangeList, uiID);
+	InRangePlayer(before_loginList, before_rangeList, AnimalId);
 	
 	// 만약 타겟이 없거나 죽었다면
-	if (uiTarget == NO_TARGET || (uiTarget != NO_TARGET && m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetState() == OBJ_STATE_DIE))
+	if (uiTarget == NO_TARGET || (uiTarget != NO_TARGET && Animal_State == (UINT)ANIMAL_STATE_TYPE::DIE))
 	{
-		m_pMonsterPool->m_cumMonsterPool[uiID]->SetState(OBJ_STATE_IDLE);
-		m_pMonsterPool->m_cumMonsterPool[uiID]->SetTarget(NO_TARGET);
-		Update_Event ev;
-		ev.m_Do_Object = uiID;
-		ev.m_EventType = EV_MONSTER_UPDATE;
-		ev.m_From_Object = NO_TARGET;
-		ev.m_ObjState = OBJ_STATE_IDLE;
-		ev.wakeup_time = high_resolution_clock::now() + 16ms;
-		PushEventQueue(ev);
-		return;
+		PushEvent_Idle(AnimalId);
 	}
 	// 타켓이 존재한다면
 	// Monster Follow 계산
 	Vec3 target_pos = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetLocalPos();
-	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[uiID]->GetLocalPos();
-	float monster_speed = m_pMonsterPool->m_cumMonsterPool[uiID]->GetSpeed();
+	Vec3 monster_pos = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
+	float monster_speed = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetSpeed();
 
 	Vec3 vDir = XMVector3Normalize(target_pos - monster_pos);
 	vDir.y = 0.f;
@@ -134,11 +115,11 @@ void CMonsterProcess::FollowEvent(USHORT uiID, USHORT uiTarget)
 
 	Vec3 vRot = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetLocalRot();
 
-	m_pMonsterPool->m_cumMonsterPool[uiID]->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
-	m_pMonsterPool->m_cumMonsterPool[uiID]->SetLocalPos(monster_pos);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetLocalPos(monster_pos);
 
 	CopyBeforeLoginList(after_loginList);
-	InRangePlayer(after_loginList, after_rangeList, uiID);
+	InRangePlayer(after_loginList, after_rangeList, AnimalId);
 
 	for (auto& au : before_rangeList)
 	{
@@ -146,62 +127,31 @@ void CMonsterProcess::FollowEvent(USHORT uiID, USHORT uiTarget)
 		{
 			bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 			if (!bConnect) continue;
-			CPacketMgr::GetInst()->Send_Remove_Npc_Packet(au, uiID);
+			CPacketMgr::GetInst()->Send_Remove_Npc_Packet(au, AnimalId);
 		}
 		else
 		{
-			CPacketMgr::GetInst()->Send_Pos_Npc_Packet(au, uiID);
+			CPacketMgr::GetInst()->Send_Pos_Npc_Packet(au, AnimalId);
 		}
 	}
 
-	if (m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetState() == OBJ_STATE_DIE)
+	if (m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetState() == (UINT)ANIMAL_STATE_TYPE::DIE)
 	{
-		m_pMonsterPool->m_cumMonsterPool[uiID]->SetState(OBJ_STATE_IDLE);
-		m_pMonsterPool->m_cumMonsterPool[uiID]->SetTarget(NO_TARGET);
-		//
-		Update_Event ev;
-		ev.m_Do_Object = uiID;
-		ev.m_EventType = EV_MONSTER_UPDATE;
-		ev.m_From_Object = NO_TARGET;
-		ev.m_ObjState = OBJ_STATE_IDLE;
-		ev.wakeup_time = high_resolution_clock::now() + 1s;
-		PushEventQueue(ev);
+		PushEvent_Idle(AnimalId);
 	}
 	else
 	{
 		if (ObjectRangeCheck(monster_pos, target_pos, 100.f)) // 공격 범위
 		{
-			m_pMonsterPool->m_cumMonsterPool[uiID]->SetState(OBJ_STATE_ATTACK);
-			Update_Event ev;
-			ev.m_Do_Object = uiID;
-			ev.m_EventType = EV_MONSTER_UPDATE;
-			ev.m_From_Object = uiTarget;
-			ev.m_ObjState = OBJ_STATE_ATTACK;
-			ev.wakeup_time = high_resolution_clock::now() + 4s;
-			PushEventQueue(ev);
+			PushEvent_Attack(AnimalId, uiTarget);
 		}
 		else if (ObjectRangeCheck(monster_pos, target_pos, MONSTER_BETWEEN_RANGE))
 		{
-			m_pMonsterPool->m_cumMonsterPool[uiID]->SetState(OBJ_STATE_FOLLOW);
-			Update_Event ev;
-			ev.m_Do_Object = uiID;
-			ev.m_EventType = EV_MONSTER_UPDATE;
-			ev.m_From_Object = uiTarget;
-			ev.m_ObjState = OBJ_STATE_FOLLOW;
-			ev.wakeup_time = high_resolution_clock::now() + 16ms;
-			PushEventQueue(ev);
+			PushEvent_Follow(AnimalId, uiTarget);
 		}
 		else 
 		{
-			m_pMonsterPool->m_cumMonsterPool[uiID]->SetState(OBJ_STATE_IDLE);
-			m_pMonsterPool->m_cumMonsterPool[uiID]->SetTarget(NO_TARGET);
-			Update_Event ev;
-			ev.m_Do_Object = uiID;
-			ev.m_EventType = EV_MONSTER_UPDATE;
-			ev.m_From_Object = NO_TARGET;
-			ev.m_ObjState = OBJ_STATE_IDLE;
-			ev.wakeup_time = high_resolution_clock::now() + 16ms;
-			PushEventQueue(ev);
+			PushEvent_Idle(AnimalId);
 		}
 	}
 }
@@ -261,14 +211,7 @@ void CMonsterProcess::IdleEvent(USHORT monsterId)
 	// Animal의 Target이 없을 경우
 	if (NO_TARGET == target_id)
 	{
-		m_pMonsterPool->m_cumMonsterPool[monsterId]->SetState(OBJ_STATE_IDLE);
-		Update_Event ev;
-		ev.m_Do_Object = monsterId;
-		ev.m_EventType = EV_MONSTER_UPDATE;
-		ev.m_ObjState = OBJ_STATE_IDLE;
-		ev.m_From_Object = NO_TARGET;
-		ev.wakeup_time = high_resolution_clock::now() + 10s;
-		PushEventQueue(ev);
+		PushEvent_Idle(monsterId);
 	}
 	else if(target_id < MAX_USER)
 	{
@@ -277,28 +220,16 @@ void CMonsterProcess::IdleEvent(USHORT monsterId)
 		ev.m_EventType = EV_MONSTER_UPDATE;
 		if (B_WARLIKE == animal_type) // 선공
 		{
-			m_pMonsterPool->m_cumMonsterPool[monsterId]->SetState(OBJ_STATE_FOLLOW);
-	
-			ev.m_ObjState = OBJ_STATE_FOLLOW;
-			ev.m_From_Object = target_id;
-			ev.wakeup_time = high_resolution_clock::now() + 1s;
+			PushEvent_Follow(monsterId, target_id);
 		}
 		else if (B_PASSIVE == animal_type) // 비선공
 		{
-			m_pMonsterPool->m_cumMonsterPool[monsterId]->SetState(OBJ_STATE_IDLE);
-			
-			ev.m_ObjState = OBJ_STATE_IDLE;
-			ev.m_From_Object = NO_TARGET;
-			ev.wakeup_time = high_resolution_clock::now() + 1s;
+			PushEvent_Idle(monsterId);
 		}
 		else if (B_EVASION == animal_type) // 회피(도망)
 		{
-			m_pMonsterPool->m_cumMonsterPool[monsterId]->SetState(OBJ_STATE_EVASION);
-			ev.m_ObjState = OBJ_STATE_EVASION;
-			ev.m_From_Object = target_id;
-			ev.wakeup_time = high_resolution_clock::now() + 1s;
+			PushEvent_Evastion(monsterId, target_id);
 		}
-		PushEventQueue(ev);
 	}
 }
 
@@ -310,16 +241,7 @@ void CMonsterProcess::DieEvent(USHORT uiMonster)
 	CopyBeforeLoginList(login_list);
 	InRangePlayer(login_list, range_list, uiMonster);
 
-	// 몬스터 상태 DIE로 변환
-	m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetState(OBJ_STATE_DIE);
-	// 몬스터 리스폰 
-	Update_Event ev;
-	ev.m_Do_Object = uiMonster;
-	ev.m_EventType = EV_MONSTER_UPDATE;
-	ev.m_From_Object = NO_TARGET;
-	ev.m_ObjState = OBJ_STATE_RESPAWN;
-	ev.wakeup_time = high_resolution_clock::now() + 30s;
-	PushEventQueue(ev);
+	PushEvent_Respawn(uiMonster);
 
 	for (auto& au : range_list)
 	{
@@ -334,8 +256,6 @@ void CMonsterProcess::RespawnEvent(USHORT uiMonster)
 	concurrent_unordered_set<USHORT> login_list;
 	concurrent_unordered_set<USHORT> range_list;
 
-	//CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->ResPawn();
-
 	CopyBeforeLoginList(login_list);
 	InRangePlayer(login_list, range_list, uiMonster);
 
@@ -347,14 +267,7 @@ void CMonsterProcess::RespawnEvent(USHORT uiMonster)
 
 	Vec3 monster_pos = CProcess::m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetLocalPos();
 
-	Update_Event ev;
-	ev.m_Do_Object = uiMonster;
-	ev.m_From_Object = NO_TARGET;
-	ev.m_EventType = EV_MONSTER_UPDATE;
-	ev.m_ObjState = OBJ_STATE_IDLE;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
-
-	CProcess::PushEventQueue(ev);
+	PushEvent_Idle(uiMonster);
 
 	for (auto& au : range_list) {
 		bool isConnect = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
@@ -365,8 +278,10 @@ void CMonsterProcess::RespawnEvent(USHORT uiMonster)
 
 void CMonsterProcess::HealEvent(USHORT uiMonster)
 {
-	char monster_state = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetState();
-	if (monster_state == OBJ_STATE_ATTACK || monster_state == OBJ_STATE_FOLLOW || monster_state == OBJ_STATE_FOLLOW) return;
+	char Animal_State = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetState();
+	if (Animal_State == (UINT)ANIMAL_STATE_TYPE::ATTACK || 
+		Animal_State == (UINT)ANIMAL_STATE_TYPE::FOLLOW)
+		return;
 
 	concurrent_unordered_set<USHORT> login_list;
 	concurrent_unordered_set<USHORT> range_list;
@@ -403,7 +318,7 @@ void CMonsterProcess::HealEvent(USHORT uiMonster)
 			ev.m_Do_Object = uiMonster;
 			ev.m_EventType = EV_MONSTER_UPDATE;
 			ev.m_From_Object = NO_TARGET;
-			ev.m_ObjState = OBJ_STATE_HEAL;
+			ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::HEAL;
 			ev.wakeup_time = high_resolution_clock::now() + 1s;
 			PushEventQueue(ev);
 		}
@@ -414,6 +329,145 @@ void CMonsterProcess::HealEvent(USHORT uiMonster)
 			// Status 패킷 보내기
 		}
 	}
+}
+
+void CMonsterProcess::DamageEvent(USHORT AnimalId, USHORT playerId)
+{
+	float fHealth = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetHealth();
+	char cType = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetType();
+
+	if (fHealth > 0.f)
+	{
+		if (BEHAVIOR_TYPE::B_EVASION == cType)
+		{
+			Vec3 vMoveDir = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalDir(DIR_TYPE::FRONT);
+			m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetDir(vMoveDir);
+			Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+			Vec3 vAnimalPos = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
+
+			vMoveDir = XMVector3Normalize(vAnimalPos - vPlayerPos);
+			vMoveDir.y = 0.f;
+		}
+		else if (BEHAVIOR_TYPE::B_EVASION == cType)
+		{
+			m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(playerId);
+		}
+		else if (BEHAVIOR_TYPE::B_EVASION == cType)
+		{
+			m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(playerId);
+
+			Vec3 vMoveDir = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalDir(DIR_TYPE::FRONT);
+			m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetDir(vMoveDir);
+		}
+	}
+	else // 체력이 0 이하 일때
+	{
+		PushEvent_Die(AnimalId);
+	}
+}
+
+void CMonsterProcess::PushEvent_Attack(USHORT AnmimalId, USHORT PlayerId)
+{
+	m_pMonsterPool->m_cumMonsterPool[AnmimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::ATTACK);
+	m_pMonsterPool->m_cumMonsterPool[AnmimalId]->SetTarget(PlayerId);
+	Update_Event ev;
+	ev.m_Do_Object = AnmimalId;
+	ev.m_EventType = EV_MONSTER_UPDATE;
+	ev.m_From_Object = PlayerId;
+	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::ATTACK;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	PushEventQueue(ev);
+}
+
+void CMonsterProcess::PushEvent_Follow(USHORT AnimalId, USHORT PlayerId)
+{
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::FOLLOW);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(PlayerId);
+	Update_Event ev;
+	ev.m_Do_Object = AnimalId;
+	ev.m_EventType = EV_MONSTER_UPDATE;
+	ev.m_From_Object = PlayerId;
+	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::FOLLOW;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	PushEventQueue(ev);
+}
+
+void CMonsterProcess::PushEvent_Evastion(USHORT AnimalId, USHORT PlayerId)
+{
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::EVASION);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(PlayerId);
+	Update_Event ev;
+	ev.m_Do_Object = AnimalId;
+	ev.m_EventType = EV_MONSTER_UPDATE;
+	ev.m_From_Object = PlayerId;
+	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::EVASION;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	PushEventQueue(ev);
+}
+
+void CMonsterProcess::PushEvent_Idle(USHORT AnimalId)
+{
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::IDLE);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(NO_TARGET);
+	Update_Event ev;
+	ev.m_Do_Object = AnimalId;
+	ev.m_EventType = EV_MONSTER_UPDATE;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::IDLE;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	PushEventQueue(ev);
+}
+
+void CMonsterProcess::PushEvent_Die(USHORT AnimalId)
+{
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::DIE);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(NO_TARGET);
+	Update_Event ev;
+	ev.m_Do_Object = AnimalId;
+	ev.m_EventType = EV_MONSTER_UPDATE;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::DIE;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	PushEventQueue(ev);
+}
+
+void CMonsterProcess::PushEvent_Respawn(USHORT AnimalId)
+{
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::RESPAWN);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(NO_TARGET);
+	Update_Event ev;
+	ev.m_Do_Object = AnimalId;
+	ev.m_EventType = EV_MONSTER_UPDATE;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::RESPAWN;
+	ev.wakeup_time = high_resolution_clock::now() + 30s;
+	PushEventQueue(ev);
+}
+
+void CMonsterProcess::PushEvent_Heal(USHORT AnimalId)
+{
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::HEAL);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(NO_TARGET);
+	Update_Event ev;
+	ev.m_Do_Object = AnimalId;
+	ev.m_EventType = EV_MONSTER_UPDATE;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::HEAL;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	PushEventQueue(ev);
+}
+
+void CMonsterProcess::PushEvent_Damage(USHORT AnimalId, USHORT playerId)
+{
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::DAMAGE);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(playerId);
+	Update_Event ev;
+	ev.m_Do_Object = AnimalId;
+	ev.m_EventType = EV_MONSTER_UPDATE;
+	ev.m_From_Object = playerId;
+	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::DAMAGE;
+	ev.wakeup_time = high_resolution_clock::now();
+	PushEventQueue(ev);
 }
 
 void CMonsterProcess::InRangePlayer(concurrent_unordered_set<USHORT>& cusLogin, concurrent_unordered_set<USHORT>& cusList, USHORT uiMonster)
