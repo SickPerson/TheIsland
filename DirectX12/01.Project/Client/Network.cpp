@@ -475,6 +475,42 @@ void CNetwork::Send_Remove_Housing_Packet(USHORT house_id)
 	}
 }
 
+void CNetwork::Send_Get_Item_Packet(UINT uiItemType, UINT uiInvenNum)
+{
+	DWORD size, flag = 0;
+
+	cs_item_get_packet* item_get_packet = reinterpret_cast<cs_item_get_packet*>(m_cSendBuf);
+	item_get_packet->type = CS_GET_ITEM;
+	item_get_packet->uiType = uiItemType;
+	item_get_packet->uiInvenNum = uiInvenNum;
+
+	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0)
+	{
+		int err_no = WSAGetLastError();
+		Err_display("Err while sending packet - ", err_no);
+	}
+}
+
+void CNetwork::Send_Remove_Item_Packet(UINT uiItemType, UINT uiInvenNum)
+{
+	DWORD size, flag = 0;
+
+	cs_item_remove_packet* item_remove_packet = reinterpret_cast<cs_item_remove_packet*>(m_cSendBuf);
+	item_remove_packet->type = CS_GET_ITEM;
+	item_remove_packet->uiType = uiItemType;
+	item_remove_packet->uiInvenNum = uiInvenNum;
+
+	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0)
+	{
+		int err_no = WSAGetLastError();
+		Err_display("Err while sending packet - ", err_no);
+	}
+}
+
 // ============================== RECV ============================
 void CNetwork::Recv_Login_OK_Packet(char * packet)
 {
@@ -581,7 +617,44 @@ void CNetwork::Recv_Animation_Player_Packet(char * packet)
 
 	if (m_usID == player_id)
 	{
-		// 자기 자신 애니메이션 키값 변환 -> 클라이언트에서 진행
+		if (uiType == (UINT)PLAYER_ANIMATION_TYPE::WALK) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::RUN) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE1) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE2) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::DIE) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK1) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK2) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK3) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT1) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT2) {
+
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::JUMP) {
+
+		}
+		else
+			return;
 	}
 	else
 	{
@@ -740,6 +813,9 @@ void CNetwork::Recv_Remove_Housing_Packet(char * packet)
 
 void CNetwork::Recv_Add_Item_Packet(char * packet)
 {
+	sc_add_item_packet* add_item_packet = reinterpret_cast<sc_add_item_packet*>(packet);
+	UINT uiType = add_item_packet->uiItemType;
+	UINT uiInvenNum = add_item_packet->uiInven_num;
 }
 
 void CNetwork::Recv_Weather_Packet(char * packet)

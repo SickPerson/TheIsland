@@ -104,6 +104,9 @@ public: // Housing
 	void Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale, Vec3 vOffsetPos, Vec3 vOffsetScale);
 	void Send_Remove_Housing_Packet(USHORT house_id);
 
+public: // Item
+	void Send_Get_Item_Packet(UINT uiItemType, UINT uiInvenNum);
+	void Send_Remove_Item_Packet(UINT uiItemType, UINT uiInvenNum);
 
 	//void Send_Install_Housing_Packet(USHORT )
 public:

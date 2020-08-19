@@ -60,6 +60,9 @@ constexpr	char	SC_DESTROY_NATURAL = 21;
 constexpr	char	SC_INSTALL_HOUSING = 25;
 constexpr	char	SC_REMOVE_HOUSING = 26;
 
+// ITEM
+constexpr	char	SC_ADD_ITEM = 30;
+
 // etc
 constexpr	char	SC_WEATHER = 35;
 constexpr	char	SC_TIME = 36;
@@ -265,6 +268,15 @@ struct sc_destroy_natural_packet
 	USHORT natural_id;
 };
 
+// [ Item ]
+struct sc_add_item_packet
+{
+	char size;
+	char type;
+	UINT uiItemType;
+	UINT uiInven_num;
+};
+
 // [ Etc ]
 struct sc_weather_packet
 {
@@ -397,7 +409,7 @@ struct cs_item_get_packet
 	char	size;
 	char	type;
 	UINT	uiType;
-	UINT	uiIvenNum;
+	UINT	uiInvenNum;
 };
 
 struct cs_item_remove_packet
