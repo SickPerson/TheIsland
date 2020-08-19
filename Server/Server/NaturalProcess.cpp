@@ -20,45 +20,58 @@ CNaturalProcess::~CNaturalProcess()
 
 void CNaturalProcess::RespawnEvent(USHORT natural_id)
 {
+	bool bDestroy = m_pNaturalPool->m_cumNaturalPool[natural_id]->GetDestroy();
+	if (!bDestroy) return;
+
+	m_pNaturalPool->m_cumNaturalPool[natural_id]->SetDestroy(false);
+	
+	NATURAL_TYPE eType = m_pNaturalPool->m_cumNaturalPool[natural_id]->GetType();
+	
+	switch (eType)
+	{
+	case NATURAL_TREE:
+		m_pNaturalPool->m_cumNaturalPool[natural_id]->SetHealth(150.f);
+		break;
+	case NATURAL_STONE:
+		m_pNaturalPool->m_cumNaturalPool[natural_id]->SetHealth(150.f);
+		break;
+	case NATURAL_BUSH:
+	case NATURAL_NONE:
+		m_pNaturalPool->m_cumNaturalPool[natural_id]->SetHealth(1.f);
+		break;
+	default:
+		break;
+	}
 }
 
 void CNaturalProcess::DamageEvent(USHORT NaturalId, USHORT PlayerId)
 {
+	bool bDestroy = m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetDestroy();
+	if (bDestroy) return;
+
 	NATURAL_TYPE eType = m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetType();
 
 	if (eType == NATURAL_NONE)
 		return;
 
 	float fHealth = m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetHealth();
+	float fDamage = m_pPlayerPool->m_cumPlayerPool[PlayerId]->GetDamage();
+
+	fHealth -= fDamage;
+
+	m_pNaturalPool->m_cumNaturalPool[NaturalId]->SetHealth(fHealth);
 
 	if (fHealth <= 0.f)
 	{
-		PushEvent_Respawn(NaturalId);
-		//CPacketMgr::GetInst()->Send_Natural_Destroy_Packet(NaturalId);
+		concurrent_unordered_set<USHORT> list;
+		CProcess::CopyBeforeLoginList(list);
+		for (auto& au : list)
+		{
+			bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
+			if (!bConnect) continue;
+			CPacketMgr::GetInst()->Send_Natural_Destroy_Packet(au, NaturalId);
+		}
+
+		PushEvent_Natural_Respawn(NaturalId);
 	}
-}
-
-void CNaturalProcess::PushEvent_Respawn(USHORT natural_id)
-{
-	m_pNaturalPool->m_cumNaturalPool[natural_id]->SetDestroy(true);
-	m_pNaturalPool->m_cumNaturalPool[natural_id]->SetAngle(0.f);
-	//m_pNaturalPool->m_cumNaturalPool[natural_id]->SetTargetRot();
-	Update_Event ev;
-	ev.m_Do_Object = natural_id;
-	ev.m_EventType = EV_NATURAL_UPDATE;
-	ev.m_From_Object = NO_TARGET;
-	ev.m_ObjState = (UINT)NATURAL_UPDATE_TYPE::RESPAWN;
-	ev.wakeup_time = high_resolution_clock::now() + 10s;
-	PushEventQueue(ev);
-}
-
-void CNaturalProcess::PushEvent_Damage(USHORT NaturalId, USHORT PlayerId)
-{
-	Update_Event ev;
-	ev.m_Do_Object = NaturalId;
-	ev.m_EventType = EV_NATURAL_UPDATE;
-	ev.m_From_Object = PlayerId;
-	ev.m_ObjState = (UINT)NATURAL_UPDATE_TYPE::DAMAGE;
-	ev.wakeup_time = high_resolution_clock::now();
-	PushEventQueue(ev);
 }

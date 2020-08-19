@@ -14,7 +14,7 @@ private:
 	vector<shared_ptr<thread>>		m_vWorkerThread;
 	shared_ptr<thread>				m_pAcceptThread;
 	shared_ptr<thread>				m_pUpdateThread;
-	//shared_ptr<thread>				m_pDatabaseThread;
+	shared_ptr<thread>				m_pDatabaseThread;
 
 private:
 	HANDLE			m_hIocp;

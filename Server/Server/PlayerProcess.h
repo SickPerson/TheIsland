@@ -48,15 +48,6 @@ public:
 		m_fpPacketProcess[CS_COLLISION] = [&](USHORT playerId, char* packet) {
 			PlayerCollision(playerId, packet);
 		};
-		/*m_fpPacketProcess[CS_ANIMAL_COLLISION] = [&](USHORT playerId, char* packet) {
-			PlayerCollisionAnimal(playerId, packet);
-		};
-		m_fpPacketProcess[CS_NATURAL_COLLISION] = [&](USHORT playerId, char* packet) {
-			PlayerCollisionNatural(playerId, packet);
-		};
-		m_fpPacketProcess[CS_HOUSE_COLLISION] = [&](USHORT playerId, char* packet) {
-			PlayerCollisionHouse(playerId, packet);
-		};*/
 		m_fpPacketProcess[CS_HOUSING_INSTALL] = [&](USHORT playerId, char* packet) {
 			PlayerInstallHousing(playerId, packet);
 		};
@@ -83,9 +74,6 @@ public: // Collision
 	void PlayerCollisionAnimal(USHORT playerId, USHORT AnimalId, bool bRun);
 	void PlayerCollisionNatural(USHORT playerId, USHORT NaturalId, bool bRun);
 	void PlayerCollisionHouse(USHORT playerId, USHORT HouseId, float fHouseHeight);
-	//void PlayerCollisionAnimal(USHORT playerId, char* packet);
-	//void PlayerCollisionNatural(USHORT playerId, char* packet);
-	//void PlayerCollisionHouse(USHORT playerId, char* packet);
 	void PlayerInstallHousing(USHORT playerId, char* packet);
 	void PlayerRemoveHousing(USHORT playerId, char* packet);
 	void PlayerNaturalAttack(USHORT playerId, char* packet);

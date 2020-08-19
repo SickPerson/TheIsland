@@ -29,9 +29,5 @@ public:
 public:
 	void RespawnEvent(USHORT natural_id);
 	void DamageEvent(USHORT NaturalId, USHORT PlayerId);
-
-public:
-	void PushEvent_Respawn(USHORT natural_id);
-	void PushEvent_Damage(USHORT NaturalId, USHORT PlayerId);
 };
 

@@ -101,15 +101,6 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 	 //Player Init
 	CPacketMgr::Send_Login_OK_Packet(playerId);
 	Init_Player(playerId, login_packet->player_id);
-	/*if (!ExistLoginList(playerId))
-	{
-		InsertLoginList(playerId);
-		CPacketMgr::Send_Login_OK_Packet(playerId);
-	}
-	else {
-		CPacketMgr::Send_Login_Fail_Packet(playerId);
-		return;
-	}*/
 	
 	// Server -> Client에 초기 플레이어 값 패킷 전송
 	CPacketMgr::Send_Status_Player_Packet(playerId, playerId);
@@ -484,7 +475,7 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 		{
 			Vec3 other_pos = m_pPlayerPool->m_cumPlayerPool[au]->GetLocalPos();
 
-			if (ObjectRangeCheck(player_pos, other_pos, PLAYER_BETWEEN_RANGE))
+			if (ObjectRangeCheck(player_pos, other_pos, PLAYER_VIEW_RANGE))
 			{
 				CPacketMgr::Send_Put_Player_Packet(au, playerId);
 				CPacketMgr::Send_Put_Player_Packet(playerId, au);
@@ -497,7 +488,7 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 		//if (au.second->GetState() == OBJ_STATE_DIE) continue;
 		Vec3 monster_pos = au.second->GetLocalPos();
 
-		if (true == ObjectRangeCheck(player_pos, monster_pos, PLAYER_BETWEEN_RANGE))
+		if (true == ObjectRangeCheck(player_pos, monster_pos, PLAYER_VIEW_RANGE))
 		{
 			if (false == au.second->GetWakeUp())
 			{
@@ -551,7 +542,7 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 		if (au == playerId) continue;
 		if (false == CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetConnect()) continue;
 		Vec3 other_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetLocalPos();
-		if (ObjectRangeCheck(player_pos, other_pos, PLAYER_BETWEEN_RANGE)) {
+		if (ObjectRangeCheck(player_pos, other_pos, PLAYER_VIEW_RANGE)) {
 			afterList.insert(au);
 			continue;
 		}
@@ -559,12 +550,13 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 
 	//After List에 시야처리 리스트 추가 작업 [ Monster ]
 	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
+
 		// 만약 몬스터가 죽어있으면 continue;
 		//if (au.second->GetState() == OBJ_STATE_DIE) continue;
 		
 		Vec3 monster_pos = au.second->GetLocalPos();
 		// 만약 몬스터가 플레이어의 범위 내에 들어와 있다면 시야처리에 넣어준다.
-		if (ObjectRangeCheck(player_pos, monster_pos, PLAYER_BETWEEN_RANGE)) {
+		if (ObjectRangeCheck(player_pos, monster_pos, PLAYER_VIEW_RANGE)) {
 			afterList.insert(au.first + MAX_USER);
 			continue;
 		}

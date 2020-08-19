@@ -17,6 +17,7 @@ void CNatural::SetType(NATURAL_TYPE eType)
 	{
 	case NATURAL_TREE:
 		m_vOriginRot = Vec3(-3.141592654f / 2.f, 0.f, 0.f);
+		this->SetHealth(150.f);
 		m_fHealth = 150.f;
 		break;
 	case NATURAL_STONE:

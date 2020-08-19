@@ -40,7 +40,8 @@ public:
 	static void Send_Put_Natural_Packet(USHORT PlayerId, USHORT NaturalId);
 	static void Send_Natural_Destroy_Packet(USHORT PlayerId, USHORT NaturalId);
 
-public:
+public: // etc
 	static void Send_Weather_Packet(USHORT player_Id, bool bRain);
 	static void Send_Time_Packet(USHORT player_Id, float fTime);
+	static void Send_Disconnect_Server_Packet(USHORT player_Id);
 };

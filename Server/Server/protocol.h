@@ -4,8 +4,13 @@
 [NETWORK]
 -----------------------------------------*/
 constexpr	int				SERVER_PORT = 9000;
-constexpr	USHORT	MAX_USER	= 100;
-constexpr	USHORT	NO_TARGET = MAX_USER;
+constexpr	int	MAX_USER	= 100;
+constexpr	int	NO_TARGET = MAX_USER;
+constexpr	int	MAX_WARLIKE_COUNT = 10;
+constexpr	int	MAX_PASSIVE_COUNT = 20;
+constexpr	int	MAX_EVASION_COUNT = 20;
+//constexpr	int	MAX_ANIMAL = MAX_WARLIKE_COUNT + MAX_PASSIVE_COUNT + MAX_EVASION_COUNT;
+//constexpr	USHORT	MAX_ANIMAL = 50;
 constexpr	USHORT	ANIMAL_BEAR = 50;
 constexpr	USHORT	ANIMAL_BOAR = 50;
 constexpr	USHORT	ANIMAL_DEER = 100;
@@ -25,9 +30,6 @@ constexpr	char	CS_CHAT =	2;
 constexpr	char	CS_LOGOUT = 3;
 constexpr	char	CS_ROT =	4;
 constexpr	char	CS_COLLISION = 5;
-//constexpr	char	CS_ANIMAL_COLLISION = 5;
-//constexpr	char	CS_NATURAL_COLLISION = 6;
-//constexpr	char	CS_HOUSE_COLLISION = 7;
 constexpr	char	CS_HOUSING_INSTALL = 6;
 constexpr	char	CS_HOUSING_REMOVE = 7;
 constexpr	char	CS_ATTACK = 8;
@@ -66,11 +68,12 @@ constexpr	char	SC_ADD_ITEM = 30;
 // etc
 constexpr	char	SC_WEATHER = 35;
 constexpr	char	SC_TIME = 36;
+constexpr	char	SC_DISCONNECT_SERVER = 39;
 constexpr	char	SC_END = 40;
 
 // About Player
-constexpr float PLAYER_BETWEEN_RANGE = 3000.f;
-constexpr float MONSTER_BETWEEN_RANGE = 100.f;
+constexpr float PLAYER_VIEW_RANGE = 3000.f;
+constexpr float MONSTER_VIEW_RANGE = 300.f;
 
 // enum 
 enum class PLAYER_ANIMATION_TYPE
@@ -290,6 +293,11 @@ struct sc_time_packet
 	char size;
 	char type;
 	float fTime;
+};
+
+struct sc_disconnect_server_packet {
+	char	size;
+	char	tpye;
 };
 
 // ___________________________________________________________________

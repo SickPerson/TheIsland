@@ -31,24 +31,15 @@ public:
 	}
 
 public:
-	void AttackEvent(USHORT uiMonster, USHORT uiTarget);
-	void FollowEvent(USHORT uiMonster, USHORT uiTarget);
-	void EvastionEvent(USHORT uiMonster, USHORT uiTarget);
-	void IdleEvent(USHORT uiMonster);
-	void DieEvent(USHORT uiMonster);
-	void RespawnEvent(USHORT uiMonster);
-	void HealEvent(USHORT uiMonster);
+	void AttackEvent(USHORT AnimalId, USHORT uiTarget);
+	void FollowEvent(USHORT AnimalId, USHORT uiTarget);
+	void EvastionEvent(USHORT AnimalId, USHORT uiTarget);
+	void IdleEvent(USHORT AnimalId);
+	void DieEvent(USHORT AnimalId);
+	void RespawnEvent(USHORT AnimalId);
+	void HealEvent(USHORT AnimalId);
 	void DamageEvent(USHORT AnimalId, USHORT playerId);
 
-public:
-	void PushEvent_Attack(USHORT AnmimalId, USHORT PlayerId);
-	void PushEvent_Follow(USHORT AnimalId, USHORT PlayerId);
-	void PushEvent_Evastion(USHORT AnimalId, USHORT PlayerId);
-	void PushEvent_Idle(USHORT AnimalId);
-	void PushEvent_Die(USHORT AnimalId);
-	void PushEvent_Respawn(USHORT AnimalId);
-	void PushEvent_Heal(USHORT AnimalId);
-	void PushEvent_Damage(USHORT AnimalId, USHORT playerId);
 
 public:
 	void InRangePlayer(concurrent_unordered_set<USHORT>& cusLogin, concurrent_unordered_set<USHORT>& cusList, USHORT uiMonster);

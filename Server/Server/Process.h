@@ -39,9 +39,23 @@ public:
 	bool PlayerAndNatural_CollisionSphere(USHORT playerId, USHORT naturalId, float fOffset = 1.f);
 	bool PlayerAndHouse_Collision(USHORT playerId, USHORT houseId, UINT uiType);
 	bool PlayerAndHouse_Collision_Door(USHORT playerId, USHORT houseId, Vec3 vOffsetScale, Vec3 vOffsetPos);
+	
+	bool AnimalAndNatural_CollisionSphere(USHORT AnimalId, USHORT NaturalId, float fOffset = 1.f);
 	/*bool Animal_CollisionSphere(USHORT player_id, USHORT animal_id, float fOffset = 1.f);
 	bool Natural_CollisionHouse(USHORT player_id, USHORT animal_id);*/
 
+public: // Animal
+	void PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId);
+	void PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId);
+	void PushEvent_Animal_Evastion(USHORT AnimalId, USHORT PlayerId);
+	void PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId);
+	void PushEvent_Animal_Die(USHORT AnimalId, USHORT PlayerId);
+	void PushEvent_Animal_Respawn(USHORT AnimalId);
+	void PushEvnet_Animal_Damage(USHORT AnimalId, USHORT PlayerId);
+
+public: // Natural
+	void PushEvent_Natural_Respawn(USHORT NaturalId);
+	void PushEvent_Natural_Damage(USHORT NaturalId, USHORT PlayerId);
 public:
 	static void Weather_Event();
 	static void Time_Event();

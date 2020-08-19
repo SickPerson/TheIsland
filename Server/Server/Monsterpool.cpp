@@ -4,10 +4,11 @@ concurrent_unordered_map<USHORT, CMonster*> CMonsterpool::m_cumMonsterPool;
 
 CMonsterpool::CMonsterpool()
 {
-	CMonster*	Animal;
-
 	// MonsterPool √ ±‚»≠
 	m_cumMonsterPool.clear();
+
+	CMonster*	Animal;
+
 
 	for (int i = 0; i < MAX_ANIMAL; ++i)
 	{
