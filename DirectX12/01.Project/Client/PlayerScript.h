@@ -75,6 +75,8 @@ public:
 
 	bool GetEnable();
 
+	bool GetRun() { return m_bHoldShift; }
+
 	void Damage(float fDamage);
 	UINT PlayerPicking(bool bLeft = LEFT_CLICK);
 

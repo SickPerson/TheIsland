@@ -58,6 +58,9 @@
     <Filter Include="ComponentScript\Housing">
       <UniqueIdentifier>{3dbed70e-88a0-4a9c-9ab3-bbef192e1a8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ComponentScript\Human">
+      <UniqueIdentifier>{1ff445fc-083b-427a-890c-026af6f887b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -183,6 +186,9 @@
     <ClInclude Include="CheatMgr.h">
       <Filter>ComponentScript\Player</Filter>
     </ClInclude>
+    <ClInclude Include="HumanScript.h">
+      <Filter>ComponentScript\Human</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -283,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="CheatMgr.cpp">
       <Filter>ComponentScript\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="HumanScript.cpp">
+      <Filter>ComponentScript\Human</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

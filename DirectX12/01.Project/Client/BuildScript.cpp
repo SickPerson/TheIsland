@@ -8,7 +8,8 @@ CBuildScript::CBuildScript(HOUSING_TYPE eType, UINT iGrade) :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
 	m_bBuild(false),
 	m_eType(eType),
-	m_iGrade(iGrade)
+	m_iGrade(iGrade), 
+	m_iIndex(0)
 {
 	switch (eType)
 	{
@@ -411,7 +412,7 @@ bool CBuildScript::Build(bool bSendPacket)
 	Vec3 vScale = Transform()->GetLocalScale();
 
 	if(bSendPacket)
-		CNetwork::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale);
+		CNetwork::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale());
 
 	return true;
 }

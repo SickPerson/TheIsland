@@ -176,6 +176,7 @@
     <ClInclude Include="Housing.h" />
     <ClInclude Include="HousingMgr.h" />
     <ClInclude Include="HousingScript.h" />
+    <ClInclude Include="HumanScript.h" />
     <ClInclude Include="IngameScene.h" />
     <ClInclude Include="InputScript.h" />
     <ClInclude Include="InventoryScript.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="GameOverScript.cpp" />
     <ClCompile Include="HousingMgr.cpp" />
     <ClCompile Include="HousingScript.cpp" />
+    <ClCompile Include="HumanScript.cpp" />
     <ClCompile Include="IngameScene.cpp" />
     <ClCompile Include="InputScript.cpp" />
     <ClCompile Include="InventoryScript.cpp" />

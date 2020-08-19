@@ -39,6 +39,8 @@ class CAnimalScript :
 
 	CAnimalSpawner*	m_pSpawner;
 
+	UINT			m_iIndex;
+
 public:
 	CAnimalScript();
 	virtual ~CAnimalScript();
@@ -76,5 +78,8 @@ public:
 	void SetAnimalSpawner(CAnimalSpawner* pSpawner);
 
 	void SetAnimation( CAnimator3D* pAnimation );		// 항상 SetAnimalStatus()호출 후 호출하기
+
+	void SetIndex(UINT index) { m_iIndex = index; }
+	UINT GetIndex() { return m_iIndex; }
 };
 
