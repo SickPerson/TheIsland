@@ -619,40 +619,40 @@ void CNetwork::Recv_Animation_Player_Packet(char * packet)
 	if (m_usID == player_id)
 	{
 		if (uiType == (UINT)PLAYER_ANIMATION_TYPE::WALK) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Walk");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Walk");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::RUN) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Run");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Run");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE1) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Idle1");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Idle1");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE2) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Idle2");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Idle2");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::DIE) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Die");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Die");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"TakeWeapon");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"TakeWeapon");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK1) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack1");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Attack1");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK2) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack2");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Attack2");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK3) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack3");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Attack3");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT1) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Hit1");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Hit1");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT2) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Hit2");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Hit2");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::JUMP) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Jump");
+			m_pPlayer->Animator3D()->ChangeAnimation(L"Jump");
 		}
 		else
 			return;

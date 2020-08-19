@@ -136,12 +136,11 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
 	m_pPlayer->MeshRender()->SetDynamicShadow(true);
-	m_cumPlayer.insert(make_pair(0, m_pPlayer));
 
 	CNetwork::GetInst()->SetPlayerObj(m_pPlayer);
 	CCheatMgr::GetInst()->SetPlayer(m_pPlayer);
 
-	for (int i = 1; i < MAX_USER; ++i)
+	for (int i = 0; i < MAX_USER; ++i)
 	{
 		CGameObject* pOtherPlayer = pMeshData->Instantiate();
 		pOtherPlayer->SetName(L"Other Object");
