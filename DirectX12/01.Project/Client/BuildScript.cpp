@@ -384,28 +384,6 @@ bool CBuildScript::Build(bool bSendPacket)
 	if (m_bCollision)
 		return false;
 
-	//int test = 0;
-	for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
-	{
-		MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
-		//SetData(SHADER_PARAM::INT_3, &test);
-	}
-
-	if (m_eType == HOUSING_FOUNDATION)
-	{
-		CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData(HOUSING_FLOOR)->Instantiate();
-		pFloor->SetName(L"Foundation_Floor");
-		pFloor->FrustumCheck(false);
-		pFloor->Transform()->SetLocalPos(Vec3(0.f, 0.f, -14.f));
-		pFloor->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-		for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
-		{
-			pFloor->MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
-			//SetData(SHADER_PARAM::INT_3, &test);
-		}
-		GetObj()->AddChild(pFloor);
-	}
-
 	// Install_Housing packet Send
 	Vec3 vPos = Transform()->GetLocalPos();
 	Vec3 vRot = Transform()->GetLocalRot();
@@ -413,6 +391,30 @@ bool CBuildScript::Build(bool bSendPacket)
 
 	if(bSendPacket)
 		CNetwork::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale());
+	else
+	{
+		//int test = 0;
+		for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
+		{
+			MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
+			//SetData(SHADER_PARAM::INT_3, &test);
+		}
+
+		if (m_eType == HOUSING_FOUNDATION)
+		{
+			CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData(HOUSING_FLOOR)->Instantiate();
+			pFloor->SetName(L"Foundation_Floor");
+			pFloor->FrustumCheck(false);
+			pFloor->Transform()->SetLocalPos(Vec3(0.f, 0.f, -14.f));
+			pFloor->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+			for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
+			{
+				pFloor->MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
+				//SetData(SHADER_PARAM::INT_3, &test);
+			}
+			GetObj()->AddChild(pFloor);
+		}
+	}
 
 	return true;
 }
