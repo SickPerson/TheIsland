@@ -113,29 +113,28 @@ void CNetwork::Initialize()
 
 void CNetwork::StartServer()
 {
-	for (int i = 0; i < m_iNumWorkerThread; ++i) {
+	for (int i = 0; i < m_iNumWorkerThread; ++i)
 		m_vWorkerThread.push_back(std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } }));
-	}
-	cout << "WorkerThread Create" << endl;
-
 	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
-	cout << "AcceptThread Create" << endl;
-
 	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
-	cout << "UpdateThread Create" << endl;
-
-	/*m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
-	cout << "DatabaseThread Create" << endl;*/
-
+	m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
 	cout << "==============================" << endl;
-	cout << "∥       Server Start         ∥" << endl;
+	cout << "∥      Server Start          ∥" << endl;
 	cout << "==============================" << endl;
 }
 
 void CNetwork::CloseServer()
 {
-	/*m_pDatabaseThread->join();
-	cout << "DatabaseThread Close" << endl;*/
+	// 서버 종료 패킷 보내기
+	for (int i = 0; i < MAX_USER; ++i) {
+		bool bConnect = m_pPlayerProcess->m_pPlayerPool->m_cumPlayerPool[i]->GetConnect();
+		if (!bConnect) continue;
+		CPacketMgr::Send_Disconnect_Server_Packet(i);
+	}
+
+	// Thread Exit
+	m_pDatabaseThread->join();
+	cout << "DatabaseThread Close" << endl;
 	m_pUpdateThread->join();
 	cout << "UpdateThread Close" << std::endl;
 	m_pAcceptThread->join();
@@ -166,7 +165,7 @@ void CNetwork::CheckThisCputCount()
 	SYSTEM_INFO	si; // CPU 개수 확인용
 	GetSystemInfo(&si); // 시스템 정보를 받아온다.
 	m_iCpuCore = static_cast<int>(si.dwNumberOfProcessors);
-	m_iNumWorkerThread = static_cast<int>(m_iCpuCore * 2 - 2);
+	m_iNumWorkerThread = static_cast<int>(m_iCpuCore * 1.5f);
 	cout << "CPU Core Count: " << m_iCpuCore << "\tThread: " << m_iNumWorkerThread << endl;
 }
 
@@ -189,15 +188,16 @@ void CNetwork::WorkerThread()
 		{
 			int err_no = WSAGetLastError();
 			if (err_no != WSA_IO_PENDING){
-				std::cout << "[ Player: " << id << " ] Disconnect" << std::endl;
+				auto strID = CProcess::m_pPlayerPool->m_cumPlayerPool[id]->GetWcID();
+				std::cout << "[ Player: " << strID << " ] Disconnect" << std::endl;
 				m_pPlayerProcess->PlayerLogout(id);
 			}
 			continue;
 		}
-
 		if (num_byte == 0)
 		{
-			std::cout << "[ Player: " << id << " ] Disconnect" << std::endl;
+			auto strID = CProcess::m_pPlayerPool->m_cumPlayerPool[id]->GetWcID();
+			std::cout << "[ Player: " << strID << " ] Disconnect" << std::endl;
 			m_pPlayerProcess->PlayerLogout(id);
 			continue;
 		}

@@ -304,3 +304,11 @@ void CPacketMgr::Send_Time_Packet(USHORT player_Id, float fTime)
 	packet.fTime = fTime;
 	Send_Packet(player_Id, &packet);
 }
+
+void CPacketMgr::Send_Disconnect_Server_Packet(USHORT player_Id)
+{
+	sc_disconnect_server_packet packet;
+	packet.size = sizeof(sc_disconnect_server_packet);
+	packet.tpye = SC_DISCONNECT_SERVER;
+	Send_Packet(player_Id, &packet);
+}
