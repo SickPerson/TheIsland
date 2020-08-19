@@ -15,6 +15,8 @@
 
 #include "ArrowScript.h"
 
+#include "Network.h"
+
 #include <iostream>
 
 CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
@@ -242,6 +244,8 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 			if (!pObj->GetScript<CAnimalScript>()->GetAnimalDead())
 			{
 				pObj->GetScript<CAnimalScript>()->Damage(pHost, m_fDamage);
+
+				CNetwork::GetInst()->Send_Attack_Player_Packet(0, pObj->GetScript<CAnimalScript>()->GetIndex());
 			}
 			else
 			{
@@ -258,6 +262,8 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				if (m_eItemType == ITEM_MACHETTE)
 					iAmount = 3;
 				pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, 1);
+
+				CNetwork::GetInst()->Send_Attack_Player_Packet(0, pObj->GetScript<CAnimalScript>()->GetIndex());
 			}
 		}
 		// Environment Attack (Tree, Stone, Bush)
@@ -273,6 +279,7 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				}
 
 				pObj->GetScript<CNaturalScript>()->Damage(pHost, m_fDamage);
+				CNetwork::GetInst()->Send_Attack_Player_Packet(1, pObj->GetScript<CNaturalScript>()->GetIndex());
 
 				if (eType == NATURAL_TREE)
 				{

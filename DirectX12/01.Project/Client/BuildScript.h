@@ -10,6 +10,8 @@ class CBuildScript :
 
 	HOUSING_TYPE	m_eType;
 	UINT			m_iGrade;
+
+	UINT			m_iIndex;
 public:
 	CBuildScript(HOUSING_TYPE eType, UINT iGrade = 0);
 	virtual ~CBuildScript();
@@ -31,5 +33,8 @@ public:
 
 	HOUSING_TYPE GetHousingType();
 	Vec3 GetOffsetScale();
+
+	void SetIndex(UINT index) { m_iIndex = index; }
+	UINT GetIndex() { return m_iIndex; }
 };
 

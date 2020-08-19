@@ -34,6 +34,7 @@
 #include <Engine/TestScript.h>
 #include "InputScript.h"
 #include "AnimalScript.h"
+#include <Engine/Animator3D.h>
 
 #include <Engine/NaviMgr.h>
 #include <Engine/Layer.h>
@@ -618,40 +619,40 @@ void CNetwork::Recv_Animation_Player_Packet(char * packet)
 	if (m_usID == player_id)
 	{
 		if (uiType == (UINT)PLAYER_ANIMATION_TYPE::WALK) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Walk");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::RUN) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Run");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE1) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Idle1");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE2) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Idle2");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::DIE) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Die");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"TakeWeapon");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK1) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack1");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK2) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack2");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK3) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack3");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT1) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Hit1");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT2) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Hit2");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::JUMP) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Jump");
 		}
 		else
 			return;
@@ -659,40 +660,40 @@ void CNetwork::Recv_Animation_Player_Packet(char * packet)
 	else
 	{
 		if (uiType == (UINT)PLAYER_ANIMATION_TYPE::WALK) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Walk");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::RUN) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Run");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE1) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Idle1");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE2) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Idle2");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::DIE) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Die");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"TakeWeapon");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK1) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack1");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK2) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack2");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK3) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack3");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT1) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Hit1");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT2) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Hit2");
 		}
 		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::JUMP) {
-
+			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Jump");
 		}
 		else
 			return;
@@ -746,8 +747,10 @@ void CNetwork::Recv_Animation_Npc_Packet(char * packet)
 	UINT		uiType = animation_npc_packet->animation;
 
 	// 몬스터 애니메이션 키값 바꾸기
-	if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::WALK) {
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalAnimationUpdate(monster_id, uiType);
 
+	if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::WALK) {
+		
 	}
 	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::RUN) {
 
@@ -779,7 +782,11 @@ void CNetwork::Recv_Put_Natural_Packet(char * packet)
 	Vec3 vOffsetPos = put_natural_packet->vOffsetPos;
 	Vec3 vOffsetScale = put_natural_packet->vOffsetScale;
 
+	UINT uiType = 0;
+	Vec3 vLocalRot = Vec3(0.f, 0.f, 0.f);
+
 	// 추가
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->InstallNatural(uiType, natural_id, vLocalPos, vLocalRot, vLocalScale, vOffsetPos, vOffsetScale, fHealth, bDestroy);
 }
 
 void CNetwork::Recv_Destroy_Natural_Packet(char * packet)
@@ -788,6 +795,7 @@ void CNetwork::Recv_Destroy_Natural_Packet(char * packet)
 	USHORT natural_id = destroy_natural_packet->natural_id;
 
 	// 제거
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->DestroyNatural(natural_id);
 }
 
 void CNetwork::Recv_Install_Housing_Packet(char * packet)
@@ -800,7 +808,7 @@ void CNetwork::Recv_Install_Housing_Packet(char * packet)
 	Vec3 vScale = install_housing_packet->vLocalScale;
 
 	// INSTALL 전송
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->InstallHousing(type, vPos, vRot, vScale);
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->InstallHousing(type, house_id, vPos, vRot, vScale);
 }
 
 void CNetwork::Recv_Remove_Housing_Packet(char * packet)
@@ -809,6 +817,7 @@ void CNetwork::Recv_Remove_Housing_Packet(char * packet)
 	USHORT house_id = remove_housing_packet->house_id;
 
 	// REMOVE 
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->DestroyHousing(house_id);
 }
 
 void CNetwork::Recv_Add_Item_Packet(char * packet)

@@ -4,6 +4,8 @@
 #include "BuildScript.h"
 #include "AnimalScript.h"
 
+#include "Network.h"
+
 #include <Engine/NaviMgr.h>
 
 #include <iostream>
@@ -155,6 +157,8 @@ void CArrowScript::Collision(CGameObject * pOther)
 
 	if (pOther->GetLayerIdx() == CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->GetLayerIdx())
 	{
+		//CNetwork::GetInst()->Send_Attack_Player_Packet(0, pOther->GetScript<CAnimalScript>()->GetIndex());
+
 		tEvent tEv;
 		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
 		tEv.wParam = (DWORD_PTR)GetObj();

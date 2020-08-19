@@ -59,6 +59,9 @@
 #include <Engine/NaviMgr.h>
 
 #include "Network.h"
+#include "HumanScript.h"
+
+#include <Engine/Animator3D.h>
 
 CIngameScene::CIngameScene() 
 	: m_pChat(NULL)
@@ -133,15 +136,22 @@ void CIngameScene::Init()
 	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
 	m_pPlayer->MeshRender()->SetDynamicShadow(true);
+	m_cumPlayer.insert(make_pair(0, m_pPlayer));
 
 	CNetwork::GetInst()->SetPlayerObj(m_pPlayer);
 	CCheatMgr::GetInst()->SetPlayer(m_pPlayer);
 
-	for (int i = 0; i < MAX_USER; ++i)
+	for (int i = 1; i < MAX_USER; ++i)
 	{
 		CGameObject* pOtherPlayer = pMeshData->Instantiate();
 		pOtherPlayer->SetName(L"Other Object");
-		pOtherPlayer->FrustumCheck(false);
+
+		pOtherPlayer->AddComponent(new CHumanScript);
+		CHumanScript* pScript = pOtherPlayer->GetScript<CHumanScript>();
+		pScript->AnimationInfo(pOtherPlayer->Animator3D());
+
+		pOtherPlayer->MeshRender()->SetDynamicShadow(true);
+
 		pOtherPlayer->Transform()->SetLocalPos(Vec3(10000.f, 200.f, 10000.f));
 		pOtherPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 		m_cumPlayer.insert(make_pair(i, pOtherPlayer));
@@ -1135,6 +1145,7 @@ void CIngameScene::CreateNatural()
 	int iSize = 0;
 	fread( &iSize, sizeof( int ), 1, pFile );
 
+	int iIndex = 0;
 	for ( int i = 0; i < iSize; ++i )
 	{
 		CGameObject* pObject = nullptr;
@@ -1232,6 +1243,8 @@ void CIngameScene::CreateNatural()
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(4.f, 4.f, 4.f));
 		}
+		pObject->GetScript<CNaturalScript>()->SetIndex(iIndex++);
+
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		pScene->AddGameObject( L"Environment", pObject, false );
 	}
@@ -1241,6 +1254,8 @@ void CIngameScene::CreateNatural()
 
 void CIngameScene::CreateAnimalSpawner()
 {
+	return;
+
 	CGameObject* pSpawner = new CGameObject;
 	pSpawner->AddComponent(new CTransform);
 	pSpawner->AddComponent(new CAnimalSpawner(BEHAVIOR_TYPE::B_EVASION));
@@ -1446,6 +1461,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 
 		CAnimalScript* pAnimalScript = pObject->GetScript<CAnimalScript>();
 		pAnimalScript->SetAnimation(pObject->Animator3D());
+		pAnimalScript->SetIndex(uiId);
 
 		tEvent tEv;
 		tEv.eType = EVENT_TYPE::CREATE_OBJECT;
@@ -1456,6 +1472,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType)
 		float fHeight = CNaviMgr::GetInst()->GetY(pObject->Transform()->GetLocalPos());
 		pObject->Transform()->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
 		pObject->Transform()->SetLocalRot(vRot);
+
 		m_mapAnimals.insert(make_pair(uiId, pObject));
 	}
 	// 업데이트
@@ -1484,7 +1501,36 @@ void CIngameScene::AnimalDestory(USHORT uiId)
 	m_mapAnimals.erase(uiId);
 }
 
-void CIngameScene::InstallHousing(UINT uiType, Vec3 vPos, Vec3 vRot, Vec3 vScale)
+void CIngameScene::AnimalAnimationUpdate(USHORT uiId, UINT uiType)
+{
+	auto p = m_mapAnimals.find(uiId);
+	if (p == m_mapAnimals.end())
+	{
+		// 없는거
+		return;
+	}
+
+	if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::WALK) {
+		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation(L"Walk");
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::RUN) {
+		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation(L"Run");
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::IDLE) {
+		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation(L"Idle");
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::EAT) {
+		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation(L"Eat");
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::DIE) {
+		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation(L"Die");
+	}
+	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::ATTACK) {
+		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation(L"Attack");
+	}
+}
+
+void CIngameScene::InstallHousing(UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale)
 {
 	CGameObject* pObject = nullptr;
 
@@ -1508,13 +1554,19 @@ void CIngameScene::InstallHousing(UINT uiType, Vec3 vPos, Vec3 vRot, Vec3 vScale
 	pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
 	pObject->SetName(L"House");
-	pObject->Transform()->SetLocalPos(vPos);
+
+	Vec3 vNewPos = vPos;
+	vNewPos.y = CNaviMgr::GetInst()->GetY(vPos);
+
+	pObject->Transform()->SetLocalPos(vNewPos);
+
 	pObject->Transform()->SetLocalRot(vRot);
 	pObject->Transform()->SetLocalScale(vScale);
 
 	pObject->MeshRender()->SetDynamicShadow(true);
 
 	pObject->GetScript<CBuildScript>()->Init();
+	pObject->GetScript<CBuildScript>()->SetIndex(uiId);
 	pObject->GetScript<CBuildScript>()->MustBuild();
 
 	//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->AddGameObject(pObject);
@@ -1523,4 +1575,85 @@ void CIngameScene::InstallHousing(UINT uiType, Vec3 vPos, Vec3 vRot, Vec3 vScale
 	tEv.lParam = 6;
 	tEv.wParam = (DWORD_PTR)(pObject);
 	CEventMgr::GetInst()->AddEvent(tEv);
+}
+
+void CIngameScene::DestroyHousing(USHORT uiId)
+{
+	auto p = m_mapHousing.find(uiId);
+	if (p == m_mapHousing.end())
+	{
+		// 없는거 삭제하는 경우
+		return;
+	}
+
+	tEvent tEv;
+	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+	tEv.wParam = (DWORD_PTR)(m_mapHousing[uiId]);
+	CEventMgr::GetInst()->AddEvent(tEv);
+
+	m_mapHousing.erase(uiId);
+}
+
+void CIngameScene::InstallNatural(UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale, Vec3 vOffsetPos, Vec3 vOffsetScale, float fHealth, bool bDestroy)
+{
+	auto p = m_mapNatural.find(uiId);
+	if (p == m_mapNatural.end())
+	{
+		return;
+
+		// 생성하려면 MeshData 종류를 알아야 함
+
+		// 생성
+		//CGameObject* pObject = NULL;
+
+		//pObject->AddComponent(new CNaturalScript((NATURAL_TYPE)uiType));
+		//pObject->AddComponent(new CCollider2D);
+
+		//pObject->MeshRender()->SetDynamicShadow(true);
+
+		//tEvent tEv;
+		//tEv.eType = EVENT_TYPE::CREATE_OBJECT;
+		//tEv.lParam = 2;
+		//tEv.wParam = (DWORD_PTR)(pObject);
+		//CEventMgr::GetInst()->AddEvent(tEv);
+
+		//float fHeight = CNaviMgr::GetInst()->GetY(pObject->Transform()->GetLocalPos());
+		//pObject->Transform()->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
+		//pObject->Transform()->SetLocalRot(vRot);
+		//pObject->Transform()->SetLocalScale(vScale);
+
+		//m_mapNatural.insert(make_pair(uiId, pObject));
+	}
+	else
+	{
+		Vec3 vNewPos = vPos;
+		vNewPos.y = CNaviMgr::GetInst()->GetY(vPos);
+
+		m_mapNatural[uiId]->Transform()->SetLocalPos(vNewPos);
+		m_mapNatural[uiId]->Transform()->SetLocalRot(vRot);
+		m_mapNatural[uiId]->Transform()->SetLocalScale(vScale);
+
+		m_mapNatural[uiId]->Collider2D()->SetOffsetPos(vOffsetPos);
+		m_mapNatural[uiId]->Collider2D()->SetOffsetScale(vOffsetScale);
+
+		m_mapNatural[uiId]->GetScript<CNaturalScript>()->SetHealth(fHealth);
+		m_mapNatural[uiId]->GetScript<CNaturalScript>()->SetDestroy(bDestroy);
+	}
+}
+
+void CIngameScene::DestroyNatural(USHORT uiId)
+{
+	auto p = m_mapNatural.find(uiId);
+	if (p == m_mapNatural.end())
+	{
+		// 없는거 삭제하는 경우
+		return;
+	}
+
+	tEvent tEv;
+	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+	tEv.wParam = (DWORD_PTR)(m_mapNatural[uiId]);
+	CEventMgr::GetInst()->AddEvent(tEv);
+
+	m_mapNatural.erase(uiId);
 }

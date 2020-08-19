@@ -13,6 +13,8 @@
 
 #include <Engine/Animator3D.h>
 
+#include "Network.h"
+
 #include <iostream>
 
 CAnimalScript::CAnimalScript()
@@ -39,6 +41,7 @@ CAnimalScript::CAnimalScript()
 	, m_fIdleBehaviorTime(3.f)
 	, m_pSpawner(NULL)
 	, m_bAttack(false)
+	, m_iIndex(0)
 {
 
 }
@@ -299,6 +302,8 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 			{
 				if (CollisionSphere(m_vOffsetScale, _pOther)) // 화살에 맞음
 				{
+					CNetwork::GetInst()->Send_Attack_Player_Packet(0, m_iIndex);
+
 					float fDamage = _pOther->GetObj()->GetScript<CArrowScript>()->GetDamage();
 					Damage(_pOther->GetObj()->GetScript<CArrowScript>()->GetHost(), fDamage);
 					_pOther->GetObj()->GetScript<CArrowScript>()->Collision(GetObj());
