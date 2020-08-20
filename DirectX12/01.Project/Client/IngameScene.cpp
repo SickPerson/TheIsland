@@ -23,7 +23,6 @@
 #include <Engine/Light3D.h>
 #include <Engine/LandScape.h>
 #include <Engine/GridScript.h>
-#include <Engine/Animator3D.h>
 
 #include <Engine/ToolCamScript.h>
 #include <Engine/MonsterScript.h>
@@ -60,10 +59,6 @@
 
 #include "Network.h"
 #include "RainScript.h"
-#include "Housing.h"
-#include "HousingMgr.h"
-#include "BuildScript.h"
-#include "HumanScript.h"
 
 CIngameScene::CIngameScene() 
 	: m_pChat(NULL)
@@ -123,42 +118,23 @@ void CIngameScene::Init()
 
 	CGameObject* pPlayer = pMeshData->Instantiate();
 	// Script 설정
-	pPlayer->AddComponent( new CPlayerScript );
-	pPlayer->AddComponent( new CCollider2D );
+	pPlayer->AddComponent(new CPlayerScript);
+	pPlayer->AddComponent(new CCollider2D);
 
 	CPlayerScript* pPlayerScript = pPlayer->GetScript<CPlayerScript>();
 	pPlayerScript->AnimationInfo( pPlayer->Animator3D() );
-	pPlayer->Collider2D()->SetOffsetScale( Vec3( 150.f, 150.f, 150.f ) );
-	pPlayer->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+	pPlayer->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
+	pPlayer->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 
-	pPlayer->SetName( L"Player Object" );
-	pPlayer->FrustumCheck( false );
-	pPlayer->Transform()->SetLocalPos( Vec3( 18000.f, 200.f, 2000.f ) );
-	pPlayer->Transform()->SetLocalScale( Vec3( 1.5f, 1.5f, 1.5f ) );
+	pPlayer->SetName(L"Player Object");
+	pPlayer->FrustumCheck(false);
+	pPlayer->Transform()->SetLocalPos(Vec3(18000.f, 200.f, 2000.f));
+	pPlayer->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 	//pPlayer->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	m_pScene->FindLayer( L"Player" )->AddGameObject( pPlayer );
+	m_pScene->FindLayer(L"Player")->AddGameObject(pPlayer);
 	m_pPlayer = pPlayer;
-	m_pPlayer->MeshRender()->SetDynamicShadow( true );
-
-	CNetwork::GetInst()->SetPlayerObj( m_pPlayer );
-	CCheatMgr::GetInst()->SetPlayer( m_pPlayer );
-
-	for ( int i = 0; i < MAX_USER; ++i )
-	{
-		CGameObject* pOtherPlayer = pMeshData->Instantiate();
-		pOtherPlayer->SetName( L"Other Object" );
-
-		pOtherPlayer->AddComponent( new CHumanScript );
-		CHumanScript* pScript = pOtherPlayer->GetScript<CHumanScript>();
-		pScript->AnimationInfo( pOtherPlayer->Animator3D() );
-
-		pOtherPlayer->MeshRender()->SetDynamicShadow( true );
-
-		pOtherPlayer->Transform()->SetLocalPos( Vec3( 10000.f, 200.f, 10000.f ) );
-		pOtherPlayer->Transform()->SetLocalScale( Vec3( 1.5f, 1.5f, 1.5f ) );
-		m_cumPlayer.insert( make_pair( i, pOtherPlayer ) );
-	}
-	CNetwork::GetInst()->SetOtherPlayerObj( m_cumPlayer );
+	m_pPlayer->MeshRender()->SetDynamicShadow(true);
+	CCheatMgr::GetInst()->SetPlayer(m_pPlayer);
 
 	// ==================
 	// Camera Object 생성
@@ -230,7 +206,6 @@ void CIngameScene::Init()
 	// 3D Light Object 추가
 	// ====================
 	pObject = new CGameObject;
-	pObject->SetName( L"Sunshine" );
 	pObject->AddComponent( new CTransform );
 	pObject->AddComponent( new CLight3D );
 	pObject->AddComponent( new CSunshineScript );
@@ -295,7 +270,7 @@ void CIngameScene::Init()
 
 
 	CreateNatural();
-	//CreateAnimalSpawner();
+	CreateAnimalSpawner();
 	CreateShowFPS();
 
 	// ==========================
@@ -390,20 +365,20 @@ void CIngameScene::Init()
 	// CollisionMgr 충돌 그룹(Layer) 지정
 	// =================================
 	// Player Layer 와 Monster Layer 는 충돌 검사 진행
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Animal" );
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Environment" );
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"House" );
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Human");
-	//
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Animal", L"Environment" );
-	//
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"Animal" );
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"House" );
-	//
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Animal");
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Environment");
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"House");
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Human");
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Animal" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Environment" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"House" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Human");
+
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Animal", L"Environment" );
+
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"Animal" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"House" );
+
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Environment");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"House");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Human");
 
 	GiveStartItem();
 	ShowCursor(m_bShowCursor);
@@ -1372,378 +1347,4 @@ void CIngameScene::CreateShowFPS()
 	m_pFPSInfo->Font()->SetFontColor(Vec4(1.f, 0.5f, 0.f, 1.f));
 
 	m_pScene->FindLayer(L"Invisible")->AddGameObject(m_pFPSInfo);
-}
-
-
-void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType )
-{
-	auto p = m_mapAnimals.find( uiId );
-	if ( p == m_mapAnimals.end() )
-	{
-		// 생성
-		CGameObject* pObject = NULL;
-		switch ( ( BEHAVIOR_TYPE )uiType )
-		{
-		case B_WARLIKE:
-		{
-			// 곰
-			Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\bear.mdat", L"MeshData\\bear.mdat" );
-			pObject = pBearTex->Instantiate();
-			pObject->AddComponent( new CCollider2D );
-			pObject->AddComponent( new CAnimalScript );
-
-			{
-				tAnimalStatus tStatus;
-				tStatus.fHp = 200.f;
-				tStatus.fStamina = 100.f;
-				tStatus.fDamage = 20.f;
-				tStatus.fSpeed = 150.f;
-				tStatus.fBehaviorTime = 4.f;
-				tStatus.uiAnimalId = uiId;
-				tStatus.eType = BEHAVIOR_TYPE::B_WARLIKE;
-				tStatus.eKind = ANIMAL_TYPE::A_BEAR;
-
-				Vec3 vOffsetScale = Vec3( 2.f, 2.f, 2.f );
-
-				pObject->GetScript<CAnimalScript>()->SetAnimalStatus( tStatus );
-				pObject->GetScript<CAnimalScript>()->SetOffsetScale( vOffsetScale );
-			}
-
-			pObject->SetName( L"Bear" );
-
-			pObject->MeshRender()->SetDynamicShadow( true );
-
-			//pObject->Transform()->SetLocalPos(Vec3(1500.f, 20.f, 2000.f));
-			pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
-			pObject->Transform()->SetLocalScale( Vec3( 20.f, 20.f, 20.f ) );
-
-			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
-			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
-			pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
-
-			//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
-		}
-		break;
-		case B_PASSIVE:
-		{
-			bool iRandom = rand() % 2;
-			if ( iRandom )
-			{
-				Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat" );
-				pObject = pWolfTex->Instantiate();
-				pObject->AddComponent( new CCollider2D );
-				pObject->AddComponent( new CAnimalScript );
-
-				{
-					tAnimalStatus tStatus;
-					tStatus.fHp = 200.f;
-					tStatus.fStamina = 100.f;
-					tStatus.fDamage = 20.f;
-					tStatus.fSpeed = 200.f;
-					tStatus.fBehaviorTime = 4.f;
-					tStatus.uiAnimalId = uiId;
-					tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
-					tStatus.eKind = ANIMAL_TYPE::A_WOLF;
-
-					Vec3 vOffsetScale = Vec3( 2.f, 2.f, 2.f );
-
-					pObject->GetScript<CAnimalScript>()->SetAnimalStatus( tStatus );
-					pObject->GetScript<CAnimalScript>()->SetOffsetScale( vOffsetScale );
-				}
-
-				pObject->SetName( L"Wolf" );
-
-				pObject->MeshRender()->SetDynamicShadow( true );
-
-				//pObject->Transform()->SetLocalPos(Vec3(-0.f, 20.f, 4000.f));
-				pObject->Transform()->SetLocalRot( Vec3( 0.f, 0.f, 0.f ) );
-				pObject->Transform()->SetLocalScale( Vec3( 20.f, 20.f, 20.f ) );
-
-				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
-				pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
-				pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
-
-				//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
-			}
-			else
-			{
-				Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\boar.mdat", L"MeshData\\boar.mdat" );
-				pObject = pBoarTex->Instantiate();
-				pObject->AddComponent( new CCollider2D );
-				pObject->AddComponent( new CAnimalScript );
-
-				{
-					tAnimalStatus tStatus;
-					tStatus.fHp = 200.f;
-					tStatus.fStamina = 100.f;
-					tStatus.fDamage = 20.f;
-					tStatus.fSpeed = 150.f;
-					tStatus.fBehaviorTime = 4.f;
-					tStatus.uiAnimalId = uiId;
-					tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
-					tStatus.eKind = ANIMAL_TYPE::A_BOAR;
-
-					Vec3 vOffsetScale = Vec3( 60.f, 60.f, 60.f );
-
-					pObject->GetScript<CAnimalScript>()->SetAnimalStatus( tStatus );
-					pObject->GetScript<CAnimalScript>()->SetOffsetScale( vOffsetScale );
-				}
-
-				pObject->SetName( L"Boar" );
-
-				pObject->MeshRender()->SetDynamicShadow( true );
-
-				//pObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
-				pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
-				pObject->Transform()->SetLocalScale( Vec3( 1.f, 1.f, 1.f ) );
-
-				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
-				pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
-				pObject->Collider2D()->SetOffsetScale( Vec3( 600.f, 600.f, 600.f ) );
-
-				//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
-			}
-		}
-		break;
-		case B_EVASION:
-		{
-			Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\deer.mdat", L"MeshData\\deer.mdat" );
-			pObject = pDeerTex->Instantiate();
-			pObject->AddComponent( new CCollider2D );
-			pObject->AddComponent( new CAnimalScript );
-
-			{
-				tAnimalStatus tStatus;
-				tStatus.fHp = 100.f;
-				tStatus.fStamina = 100.f;
-				tStatus.fDamage = 0.f;
-				tStatus.fSpeed = 250.f;
-				tStatus.fBehaviorTime = 4.f;
-				tStatus.uiAnimalId = uiId;
-				tStatus.eType = BEHAVIOR_TYPE::B_EVASION;
-				tStatus.eKind = ANIMAL_TYPE::A_DEER;
-
-				Vec3 vOffsetScale = Vec3( 30.f, 30.f, 30.f );
-
-				pObject->GetScript<CAnimalScript>()->SetAnimalStatus( tStatus );
-				pObject->GetScript<CAnimalScript>()->SetOffsetScale( vOffsetScale );
-			}
-
-			pObject->SetName( L"Deer" );
-
-			pObject->MeshRender()->SetDynamicShadow( true );
-
-			//pObject->Transform()->SetLocalPos(Vec3(0.f, 20.f, 2000.f));
-			pObject->Transform()->SetLocalRot( Vec3( 0.f, 0.f, 0.f ) );
-			//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
-			pObject->Transform()->SetLocalScale( Vec3( 2.f, 2.f, 2.f ) );
-
-			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
-			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
-			pObject->Collider2D()->SetOffsetScale( Vec3( 300.f, 300.f, 300.f ) );
-
-			//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
-		}
-		break;
-		default:
-			break;
-		}
-
-		CAnimalScript* pAnimalScript = pObject->GetScript<CAnimalScript>();
-		pAnimalScript->SetAnimation( pObject->Animator3D() );
-		pAnimalScript->SetIndex( uiId );
-
-		tEvent tEv;
-		tEv.eType = EVENT_TYPE::CREATE_OBJECT;
-		tEv.lParam = 2;
-		tEv.wParam = ( DWORD_PTR )( pObject );
-		CEventMgr::GetInst()->AddEvent( tEv );
-
-		float fHeight = CNaviMgr::GetInst()->GetY( pObject->Transform()->GetLocalPos() );
-		pObject->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
-		pObject->Transform()->SetLocalRot( vRot );
-
-		m_mapAnimals.insert( make_pair( uiId, pObject ) );
-	}
-	// 업데이트
-	else
-	{
-		float fHeight = CNaviMgr::GetInst()->GetY( m_mapAnimals[uiId]->Transform()->GetLocalPos() );
-		m_mapAnimals[uiId]->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
-		m_mapAnimals[uiId]->Transform()->SetLocalRot( vRot );
-	}
-}
-
-void CIngameScene::AnimalDestory( USHORT uiId )
-{
-	auto p = m_mapAnimals.find( uiId );
-	if ( p == m_mapAnimals.end() )
-	{
-		// 없는거 삭제하는 경우
-		return;
-	}
-
-	tEvent tEv;
-	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-	tEv.wParam = ( DWORD_PTR )( m_mapAnimals[uiId] );
-	CEventMgr::GetInst()->AddEvent( tEv );
-
-	m_mapAnimals.erase( uiId );
-}
-
-void CIngameScene::AnimalAnimationUpdate( USHORT uiId, UINT uiType )
-{
-	auto p = m_mapAnimals.find( uiId );
-	if ( p == m_mapAnimals.end() )
-	{
-		// 없는거
-		return;
-	}
-
-	if ( uiType == ( UINT )ANIMAL_ANIMATION_TYPE::WALK ) {
-		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation( L"Walk" );
-	}
-	else if ( uiType == ( UINT )ANIMAL_ANIMATION_TYPE::RUN ) {
-		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation( L"Run" );
-	}
-	else if ( uiType == ( UINT )ANIMAL_ANIMATION_TYPE::IDLE ) {
-		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation( L"Idle" );
-	}
-	else if ( uiType == ( UINT )ANIMAL_ANIMATION_TYPE::EAT ) {
-		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation( L"Eat" );
-	}
-	else if ( uiType == ( UINT )ANIMAL_ANIMATION_TYPE::DIE ) {
-		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation( L"Die" );
-	}
-	else if ( uiType == ( UINT )ANIMAL_ANIMATION_TYPE::ATTACK ) {
-		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation( L"Attack" );
-	}
-}
-
-void CIngameScene::InstallHousing( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale )
-{
-	CGameObject* pObject = nullptr;
-
-	if ( ( HOUSING_TYPE )uiType != HOUSING_ETC )
-	{
-		pObject = CHousingMgr::GetInst()->GetHousingMeshData( ( HOUSING_TYPE )uiType )->Instantiate();
-	}
-	else
-	{
-		Ptr<CMeshData> pTex = CResMgr::GetInst()->Load<CMeshData>( L"Campfire.mdat", L"MeshData\\campfire.mdat" );
-		pObject = pTex->Instantiate();
-	}
-	pObject->AddComponent( new CBuildScript( ( HOUSING_TYPE )uiType ) );
-
-	pObject->AddComponent( new CCollider2D );
-	pObject->Collider2D()->SetOffsetScale( Vec3( 195.f, 195.f, 195.f ) );
-
-	if ( uiType >= HOUSING_WALL && uiType < HOUSING_FLOOR )
-		pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 0.f, 120.f ) );
-
-	pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
-
-	pObject->SetName( L"House" );
-
-	Vec3 vNewPos = vPos;
-	vNewPos.y = CNaviMgr::GetInst()->GetY( vPos );
-
-	pObject->Transform()->SetLocalPos( vNewPos );
-
-	pObject->Transform()->SetLocalRot( vRot );
-	pObject->Transform()->SetLocalScale( vScale );
-
-	pObject->MeshRender()->SetDynamicShadow( true );
-
-	pObject->GetScript<CBuildScript>()->Init();
-	pObject->GetScript<CBuildScript>()->SetIndex( uiId );
-	pObject->GetScript<CBuildScript>()->MustBuild();
-
-	//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"House")->AddGameObject(pObject);
-	tEvent tEv;
-	tEv.eType = EVENT_TYPE::CREATE_OBJECT;
-	tEv.lParam = 6;
-	tEv.wParam = ( DWORD_PTR )( pObject );
-	CEventMgr::GetInst()->AddEvent( tEv );
-}
-
-void CIngameScene::DestroyHousing( USHORT uiId )
-{
-	auto p = m_mapHousing.find( uiId );
-	if ( p == m_mapHousing.end() )
-	{
-		// 없는거 삭제하는 경우
-		return;
-	}
-
-	tEvent tEv;
-	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-	tEv.wParam = ( DWORD_PTR )( m_mapHousing[uiId] );
-	CEventMgr::GetInst()->AddEvent( tEv );
-
-	m_mapHousing.erase( uiId );
-}
-
-void CIngameScene::InstallNatural( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale, Vec3 vOffsetPos, Vec3 vOffsetScale, float fHealth, bool bDestroy )
-{
-	auto p = m_mapNatural.find( uiId );
-	if ( p == m_mapNatural.end() )
-	{
-		return;
-
-		// 생성하려면 MeshData 종류를 알아야 함
-
-		// 생성
-		//CGameObject* pObject = NULL;
-
-		//pObject->AddComponent(new CNaturalScript((NATURAL_TYPE)uiType));
-		//pObject->AddComponent(new CCollider2D);
-
-		//pObject->MeshRender()->SetDynamicShadow(true);
-
-		//tEvent tEv;
-		//tEv.eType = EVENT_TYPE::CREATE_OBJECT;
-		//tEv.lParam = 2;
-		//tEv.wParam = (DWORD_PTR)(pObject);
-		//CEventMgr::GetInst()->AddEvent(tEv);
-
-		//float fHeight = CNaviMgr::GetInst()->GetY(pObject->Transform()->GetLocalPos());
-		//pObject->Transform()->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
-		//pObject->Transform()->SetLocalRot(vRot);
-		//pObject->Transform()->SetLocalScale(vScale);
-
-		//m_mapNatural.insert(make_pair(uiId, pObject));
-	}
-	else
-	{
-		Vec3 vNewPos = vPos;
-		vNewPos.y = CNaviMgr::GetInst()->GetY( vPos );
-
-		m_mapNatural[uiId]->Transform()->SetLocalPos( vNewPos );
-		m_mapNatural[uiId]->Transform()->SetLocalRot( vRot );
-		m_mapNatural[uiId]->Transform()->SetLocalScale( vScale );
-
-		m_mapNatural[uiId]->Collider2D()->SetOffsetPos( vOffsetPos );
-		m_mapNatural[uiId]->Collider2D()->SetOffsetScale( vOffsetScale );
-
-		m_mapNatural[uiId]->GetScript<CNaturalScript>()->SetHealth( fHealth );
-		m_mapNatural[uiId]->GetScript<CNaturalScript>()->SetDestroy( bDestroy );
-	}
-}
-
-void CIngameScene::DestroyNatural( USHORT uiId )
-{
-	auto p = m_mapNatural.find( uiId );
-	if ( p == m_mapNatural.end() )
-	{
-		// 없는거 삭제하는 경우
-		return;
-	}
-
-	tEvent tEv;
-	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-	tEv.wParam = ( DWORD_PTR )( m_mapNatural[uiId] );
-	CEventMgr::GetInst()->AddEvent( tEv );
-
-	m_mapNatural.erase( uiId );
 }
