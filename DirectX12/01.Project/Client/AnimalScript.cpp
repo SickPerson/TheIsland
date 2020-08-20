@@ -302,7 +302,10 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 			{
 				if (CollisionSphere(m_vOffsetScale, _pOther)) // 화살에 맞음
 				{
-					CNetwork::GetInst()->Send_Attack_Player_Packet(0, m_iIndex);
+#ifdef NETWORK_ON
+					CNetwork::GetInst()->Send_Attack_Player_Packet( 0, m_iIndex );
+#else
+#endif
 
 					float fDamage = _pOther->GetObj()->GetScript<CArrowScript>()->GetDamage();
 					Damage(_pOther->GetObj()->GetScript<CArrowScript>()->GetHost(), fDamage);

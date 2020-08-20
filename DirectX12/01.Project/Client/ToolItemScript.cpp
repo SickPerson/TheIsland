@@ -53,11 +53,12 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 	case ITEM_BOW:
 		pTex = CResMgr::GetInst()->Load<CMeshData>(L"Arrow.mdat", L"MeshData\\arrow.mdat");
 		m_pObj = pTex->Instantiate();
+#ifdef CHECK_COLLISTION
 		m_pObj->AddComponent(new CCollider2D);
 
 		m_pObj->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
 		m_pObj->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-
+#endif
 		m_pObj->SetName(L"Arrow");
 		m_pObj->Transform()->SetLocalPos(Vec3(10000.f, 400.f, 10000.f));
 		//m_pObj->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -70,11 +71,12 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 		pTex = CResMgr::GetInst()->Load<CMeshData>(L"Campfire.mdat", L"MeshData\\campfire.mdat");
 		m_pObj = pTex->Instantiate();
 		m_pObj->AddComponent(new CBuildScript(HOUSING_ETC));
-		m_pObj->AddComponent(new CCollider2D);
+#ifdef CHECK_COLLISTION
+		m_pObj->AddComponent( new CCollider2D );
 
 		m_pObj->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
 		m_pObj->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-
+#endif
 		m_pObj->SetName(L"Campfire");
 		m_pObj->Transform()->SetLocalPos(Vec3(0.f, 10.f, 0.f));
 		m_pObj->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -172,11 +174,13 @@ void CToolItemScript::Update()
 			// Regen
 			Ptr<CMeshData> pTex = CResMgr::GetInst()->Load<CMeshData>(L"Arrow.mdat", L"MeshData\\arrow.mdat");
 			m_pObj = pTex->Instantiate();
-			m_pObj->AddComponent(new CCollider2D);
+
+#ifdef CHECK_COLLISTION
+			m_pObj->AddComponent( new CCollider2D );
 
 			m_pObj->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
 			m_pObj->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-
+#endif
 			m_pObj->SetName(L"Arrow");
 			m_pObj->Transform()->SetLocalPos(Vec3(10000.f, 400.f, 10000.f));
 			//m_pObj->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -245,7 +249,10 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 			{
 				pObj->GetScript<CAnimalScript>()->Damage(pHost, m_fDamage);
 
+#ifdef NETWORK_ON	
 				CNetwork::GetInst()->Send_Attack_Player_Packet(0, pObj->GetScript<CAnimalScript>()->GetIndex());
+#else
+#endif NETWORK_ON
 			}
 			else
 			{
@@ -263,7 +270,10 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 					iAmount = 3;
 				pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->AddItem(pItem, 1);
 
-				CNetwork::GetInst()->Send_Attack_Player_Packet(0, pObj->GetScript<CAnimalScript>()->GetIndex());
+#ifdef NETWORK_ON	
+				CNetwork::GetInst()->Send_Attack_Player_Packet( 0, pObj->GetScript<CAnimalScript>()->GetIndex() );
+#else
+#endif NETWORK_ON
 			}
 		}
 		// Environment Attack (Tree, Stone, Bush)
@@ -279,8 +289,10 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				}
 
 				pObj->GetScript<CNaturalScript>()->Damage(pHost, m_fDamage);
-				CNetwork::GetInst()->Send_Attack_Player_Packet(1, pObj->GetScript<CNaturalScript>()->GetIndex());
-
+#ifdef NETWORK_ON	
+				CNetwork::GetInst()->Send_Attack_Player_Packet( 1, pObj->GetScript<CNaturalScript>()->GetIndex() );
+#else
+#endif NETWORK_ON
 				if (eType == NATURAL_TREE)
 				{
 					int iAmount = 1;

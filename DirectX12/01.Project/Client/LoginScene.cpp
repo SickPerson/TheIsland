@@ -169,25 +169,30 @@ void CLoginScene::Update()
 	}*/
 	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
 	{
+#ifdef NETWORK_ON
 		string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
 		string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
 
 		wstring wStrID;
-		wStrID.assign(strID.begin(), strID.end());
+		wStrID.assign( strID.begin(), strID.end() );
 
-		if (CNetwork::GetInst()->ConnectServer(strIP))
+		if ( CNetwork::GetInst()->ConnectServer( strIP ) )
 		{
 			cout << "==================" << endl;
 			cout << "IP Connect Success" << endl;
 			cout << "==================" << endl;
 			NextScene();
-			CNetwork::GetInst()->Send_Login_Packet(wStrID);
+			CNetwork::GetInst()->Send_Login_Packet( wStrID );
 		}
 		else
 		{
 			cout << "d" << endl;
 			return;
 		}
+#else
+		NextScene();
+#endif
+		
 	}
 
 	if (KEY_TAB(KEY_TYPE::KEY_LBTN))

@@ -124,12 +124,15 @@ void CIngameScene::Init()
 	CGameObject* pPlayer = pMeshData->Instantiate();
 	// Script ¼³Á¤
 	pPlayer->AddComponent( new CPlayerScript );
+
+#ifdef CHECK_COLLISTION
 	pPlayer->AddComponent( new CCollider2D );
+	pPlayer->Collider2D()->SetOffsetScale( Vec3( 150.f, 150.f, 150.f ) );
+	pPlayer->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+#endif 
 
 	CPlayerScript* pPlayerScript = pPlayer->GetScript<CPlayerScript>();
 	pPlayerScript->AnimationInfo( pPlayer->Animator3D() );
-	pPlayer->Collider2D()->SetOffsetScale( Vec3( 150.f, 150.f, 150.f ) );
-	pPlayer->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
 
 	pPlayer->SetName( L"Player Object" );
 	pPlayer->FrustumCheck( false );
@@ -140,7 +143,11 @@ void CIngameScene::Init()
 	m_pPlayer = pPlayer;
 	m_pPlayer->MeshRender()->SetDynamicShadow( true );
 
+#ifdef NETWORK_ON
 	CNetwork::GetInst()->SetPlayerObj( m_pPlayer );
+#else
+#endif NETWORK_ON
+
 	CCheatMgr::GetInst()->SetPlayer( m_pPlayer );
 
 	for ( int i = 0; i < MAX_USER; ++i )
@@ -158,7 +165,11 @@ void CIngameScene::Init()
 		pOtherPlayer->Transform()->SetLocalScale( Vec3( 1.5f, 1.5f, 1.5f ) );
 		m_cumPlayer.insert( make_pair( i, pOtherPlayer ) );
 	}
+
+#ifdef NETWORK_ON
 	CNetwork::GetInst()->SetOtherPlayerObj( m_cumPlayer );
+#else
+#endif NETWORK_ON
 
 	// ==================
 	// Camera Object »ý¼º
@@ -1246,11 +1257,12 @@ void CIngameScene::CreateNatural()
 			pObject->AddComponent( new CNaturalScript( NATURAL_TREE ) );
 			pObject->GetScript<CNaturalScript>()->LoadFromScene( pFile );
 
-			pObject->AddComponent(new CCollider2D);
+#ifdef CHECK_COLLISTION
+			pObject->AddComponent( new CCollider2D );
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 60.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(1.7f, 1.7f, 1.7f));
-
+#endif
 		}
 
 		pObject->Transform()->LoadFromScene( pFile );
@@ -1272,11 +1284,14 @@ void CIngameScene::CreateNatural()
 		else if (str1 == "plainsgrass")
 		{
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
-			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+#ifdef CHECK_COLLISTION
+			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 0.f, 20.f ) );
 			pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 			//pObject->FrustumCheck(false);
+#endif
 		}
-		else if (str1 == "mountainsrocks01")
+#ifdef CHECK_COLLISTION
+		else if ( str1 == "mountainsrocks01" )
 		{
 			pObject->Collider2D()->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(350.f, 350.f, 350.f));
@@ -1316,6 +1331,7 @@ void CIngameScene::CreateNatural()
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(4.f, 4.f, 4.f));
 		}
+#endif
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 		pScene->AddGameObject( L"Environment", pObject, false );
 	}
@@ -1389,7 +1405,12 @@ void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType 
 			// °õ
 			Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\bear.mdat", L"MeshData\\bear.mdat" );
 			pObject = pBearTex->Instantiate();
+#ifdef CHECK_COLLISTION
 			pObject->AddComponent( new CCollider2D );
+			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
+			pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
+#endif
 			pObject->AddComponent( new CAnimalScript );
 
 			{
@@ -1417,10 +1438,6 @@ void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType 
 			pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
 			pObject->Transform()->SetLocalScale( Vec3( 20.f, 20.f, 20.f ) );
 
-			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
-			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
-			pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
-
 			//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 		}
 		break;
@@ -1431,7 +1448,12 @@ void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType 
 			{
 				Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat" );
 				pObject = pWolfTex->Instantiate();
+#ifdef CHECK_COLLISTION
 				pObject->AddComponent( new CCollider2D );
+				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+				pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
+				pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
+#endif
 				pObject->AddComponent( new CAnimalScript );
 
 				{
@@ -1459,17 +1481,18 @@ void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType 
 				pObject->Transform()->SetLocalRot( Vec3( 0.f, 0.f, 0.f ) );
 				pObject->Transform()->SetLocalScale( Vec3( 20.f, 20.f, 20.f ) );
 
-				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
-				pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
-				pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
-
 				//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 			}
 			else
 			{
 				Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\boar.mdat", L"MeshData\\boar.mdat" );
 				pObject = pBoarTex->Instantiate();
+#ifdef CHECK_COLLISTION
 				pObject->AddComponent( new CCollider2D );
+				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+				pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
+				pObject->Collider2D()->SetOffsetScale( Vec3( 600.f, 600.f, 600.f ) );
+#endif
 				pObject->AddComponent( new CAnimalScript );
 
 				{
@@ -1497,9 +1520,6 @@ void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType 
 				pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
 				pObject->Transform()->SetLocalScale( Vec3( 1.f, 1.f, 1.f ) );
 
-				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
-				pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
-				pObject->Collider2D()->SetOffsetScale( Vec3( 600.f, 600.f, 600.f ) );
 
 				//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 			}
@@ -1509,7 +1529,14 @@ void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType 
 		{
 			Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>( L"MeshData\\deer.mdat", L"MeshData\\deer.mdat" );
 			pObject = pDeerTex->Instantiate();
+#ifdef CHECK_COLLISTION
 			pObject->AddComponent( new CCollider2D );
+
+			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
+			pObject->Collider2D()->SetOffsetScale( Vec3( 300.f, 300.f, 300.f ) );
+
+#endif
 			pObject->AddComponent( new CAnimalScript );
 
 			{
@@ -1537,10 +1564,6 @@ void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType 
 			pObject->Transform()->SetLocalRot( Vec3( 0.f, 0.f, 0.f ) );
 			//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale( Vec3( 2.f, 2.f, 2.f ) );
-
-			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
-			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
-			pObject->Collider2D()->SetOffsetScale( Vec3( 300.f, 300.f, 300.f ) );
 
 			//CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Animal")->AddGameObject(pObject);
 		}
@@ -1635,6 +1658,7 @@ void CIngameScene::InstallHousing( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRo
 	}
 	pObject->AddComponent( new CBuildScript( ( HOUSING_TYPE )uiType ) );
 
+#ifdef CHECK_COLLISTION
 	pObject->AddComponent( new CCollider2D );
 	pObject->Collider2D()->SetOffsetScale( Vec3( 195.f, 195.f, 195.f ) );
 
@@ -1643,6 +1667,7 @@ void CIngameScene::InstallHousing( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRo
 
 	pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
 
+#endif
 	pObject->SetName( L"House" );
 
 	Vec3 vNewPos = vPos;

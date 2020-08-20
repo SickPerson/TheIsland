@@ -89,8 +89,12 @@ void CSceneMgr::Update()
 
 	m_pCurScene->FinalUpdate();
 	   
+#ifdef CHECK_COLLISTION
 	// 충돌 처리
 	CCollisionMgr::GetInst()->Update();
+#else
+#endif // CHECK_COLLISTION
+
 }
 
 void CSceneMgr::Update_tool()

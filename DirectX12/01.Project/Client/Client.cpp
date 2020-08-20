@@ -68,6 +68,10 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	// Network Run
 	//shared_ptr<thread>m_tNetworkThread = make_shared<thread>([]() {CNetwork::GetInst()->RecvPacket(); });
 
+#ifdef NETWORK_ON
+	CNetwork::GetInst()->Init();
+#endif NETWORK_ON // NETWORK_ON
+
 	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 	CLoginScene* pLoginScene = pScene->CreateSceneScript<CLoginScene>( L"LoginScene" );
 	//CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");

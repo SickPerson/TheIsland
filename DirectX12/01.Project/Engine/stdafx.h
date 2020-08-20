@@ -15,3 +15,5 @@
 
 #include <Windows.h>
 #include "global.h"
+
+//#define CHECK_COLLISTION

@@ -21,7 +21,7 @@ class CNaturalScript :
 
 	NATURAL_TYPE	m_eType;
 
-	bool			m_bDestory;
+	bool			m_bDestroy;;
 	bool			m_bRotate;
 
 	Vec3			m_vOrginRot;
@@ -29,6 +29,9 @@ class CNaturalScript :
 
 	CGameObject*	m_pParticleObj;
 	float			m_fParticleTime;
+
+	UINT		    m_iIndex;
+	
 public:
 	CNaturalScript(NATURAL_TYPE eType);
 	virtual ~CNaturalScript();
@@ -53,5 +56,8 @@ public:
 
 	void SetType( int iType );
 	void SetType( NATURAL_TYPE eType );
+
+	void SetIndex( UINT index ) { m_iIndex = index; }
+	UINT GetIndex() { return m_iIndex; }
 };
 

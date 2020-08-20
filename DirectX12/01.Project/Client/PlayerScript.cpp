@@ -313,7 +313,10 @@ void CPlayerScript::Update()
 			m_fHouseHeight = 0.f;
 			m_bEnable = true;
 
+#ifdef NETWORK_ON
 			CNetwork::GetInst()->Send_Move_Packet();
+#else
+#endif
 		}
 		else
 			m_bEnable = false;
@@ -385,8 +388,10 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 				bCollision = CollisionHouse(_pOther, _pOther->GetObj()->GetScript<CBuildScript>()->GetOffsetScale(), eType);
 				if (bCollision)
 				{
+#ifdef NETWORK_ON
 					CNetwork::GetInst()->Send_Collision_Player_Packet(2, _pOther->GetObj()->GetScript<CBuildScript>()->GetIndex(), m_bHoldShift);
-
+#else
+#endif NETWORK_ON
 					Vec3 vPos = Transform()->GetWorldPos();
 					Vec3 vBuildPos = _pOther->Transform()->GetLocalPos();
 
@@ -408,7 +413,10 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 		// 잔디는 충돌 x
 		if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Environment")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
 		{
-			CNetwork::GetInst()->Send_Collision_Player_Packet(1, _pOther->GetObj()->GetScript<CNaturalScript>()->GetIndex(), m_bHoldShift);
+#ifdef NETWORK_ON
+			CNetwork::GetInst()->Send_Collision_Player_Packet( 1, _pOther->GetObj()->GetScript<CNaturalScript>()->GetIndex(), m_bHoldShift );
+#else
+#endif NETWORK_ON
 
 			if (_pOther->GetObj()->GetScript<CNaturalScript>()->GetNaturalType() == NATURAL_BUSH)
 			{
@@ -442,7 +450,10 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 	}
 	else
 	{
-		CNetwork::GetInst()->Send_Collision_Player_Packet(0, _pOther->GetObj()->GetScript<CAnimalScript>()->GetIndex(), m_bHoldShift);
+#ifdef NETWORK_ON
+		CNetwork::GetInst()->Send_Collision_Player_Packet( 0, _pOther->GetObj()->GetScript<CAnimalScript>()->GetIndex(), m_bHoldShift );
+#else
+#endif NETWORK_ON
 
 		// 실제 동물의 크기와 부딪힌건지
 		Vec3 vOffsetScale = _pOther->GetObj()->GetScript<CAnimalScript>()->GetOffsetScale();

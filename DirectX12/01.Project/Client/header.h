@@ -1,11 +1,13 @@
 #pragma once
 #define _CRT_SECURE_NI_WARNINGS
 
+#ifdef DEBUG
 #ifdef UNICODE
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 #else
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 #endif
+#endif DEBUG
 
 #pragma comment(lib, "ws2_32.lib")
 

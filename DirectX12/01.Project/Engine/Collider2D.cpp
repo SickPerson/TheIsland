@@ -56,22 +56,26 @@ void CCollider2D::Update()
 
 void CCollider2D::FinalUpdate()
 {
-	if (!IsActive())
+#ifdef CHECK_COLLISITON
+	if ( !IsActive() )
 		return;
 
 	Vec3 vFinalPos = m_vOffsetPos;
 	vFinalPos = vFinalPos / Transform()->GetWorldScale(); // GetWorldScale() ·Î º¯°æ
 
-	Matrix matTranslation = XMMatrixTranslation(vFinalPos.x, vFinalPos.y, vFinalPos.z);
-	Matrix matScale = XMMatrixScaling(m_vOffsetScale.x, m_vOffsetScale.y, m_vOffsetScale.z);
+	Matrix matTranslation = XMMatrixTranslation( vFinalPos.x, vFinalPos.y, vFinalPos.z );
+	Matrix matScale = XMMatrixScaling( m_vOffsetScale.x, m_vOffsetScale.y, m_vOffsetScale.z );
 
 	m_matColWorld = matScale * matTranslation;
 	m_matColWorld *= Transform()->GetWorldMat();
+#else
+#endif CHECK_COLLISITON
 }
 
 void CCollider2D::Render()
 {
-	if (!IsActive())
+#ifdef CHECK_COLLISITON
+	if ( !IsActive() )
 		return;
 
 	static CConstantBuffer* pCB = CDevice::GetInst()->GetCB(CONST_REGISTER::b0);
@@ -83,6 +87,8 @@ void CCollider2D::Render()
 	m_pColMesh->Render();
 
 	memset(&m_matColWorld, 0, sizeof(Matrix));
+#else
+#endif CHECK_COLLISITON
 }
 
 void CCollider2D::SetCollider2DType(COLLIDER2D_TYPE _eType)

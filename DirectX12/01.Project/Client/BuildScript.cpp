@@ -388,33 +388,56 @@ bool CBuildScript::Build(bool bSendPacket)
 	Vec3 vPos = Transform()->GetLocalPos();
 	Vec3 vRot = Transform()->GetLocalRot();
 	Vec3 vScale = Transform()->GetLocalScale();
-
+#ifdef NETWORK_ON	
 	if(bSendPacket)
-		CNetwork::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale());
+		CNetwork::GetInst()->Send_Install_Housing_Packet( m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale() );
+
 	else
 	{
 		//int test = 0;
-		for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
+		for ( int i = 0; i < MeshRender()->GetMaterialCount(); ++i )
 		{
-			MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
+			MeshRender()->GetCloneMaterial( i )->SetShader( CResMgr::GetInst()->FindRes<CShader>( L"Std3DShader" ) );
 			//SetData(SHADER_PARAM::INT_3, &test);
 		}
 
-		if (m_eType == HOUSING_FOUNDATION)
+		if ( m_eType == HOUSING_FOUNDATION )
 		{
-			CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData(HOUSING_FLOOR)->Instantiate();
-			pFloor->SetName(L"Foundation_Floor");
-			pFloor->FrustumCheck(false);
-			pFloor->Transform()->SetLocalPos(Vec3(0.f, 0.f, -14.f));
-			pFloor->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-			for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
+			CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData( HOUSING_FLOOR )->Instantiate();
+			pFloor->SetName( L"Foundation_Floor" );
+			pFloor->FrustumCheck( false );
+			pFloor->Transform()->SetLocalPos( Vec3( 0.f, 0.f, -14.f ) );
+			pFloor->Transform()->SetLocalScale( Vec3( 1.f, 1.f, 1.f ) );
+			for ( int i = 0; i < MeshRender()->GetMaterialCount(); ++i )
 			{
-				pFloor->MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
+				pFloor->MeshRender()->GetCloneMaterial( i )->SetShader( CResMgr::GetInst()->FindRes<CShader>( L"Std3DShader" ) );
 				//SetData(SHADER_PARAM::INT_3, &test);
 			}
-			GetObj()->AddChild(pFloor);
+			GetObj()->AddChild( pFloor );
 		}
 	}
+#else
+	for ( int i = 0; i < MeshRender()->GetMaterialCount(); ++i )
+	{
+		MeshRender()->GetCloneMaterial( i )->SetShader( CResMgr::GetInst()->FindRes<CShader>( L"Std3DShader" ) );
+		//SetData(SHADER_PARAM::INT_3, &test);
+	}
+
+	if ( m_eType == HOUSING_FOUNDATION )
+	{
+		CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData( HOUSING_FLOOR )->Instantiate();
+		pFloor->SetName( L"Foundation_Floor" );
+		pFloor->FrustumCheck( false );
+		pFloor->Transform()->SetLocalPos( Vec3( 0.f, 0.f, -14.f ) );
+		pFloor->Transform()->SetLocalScale( Vec3( 1.f, 1.f, 1.f ) );
+		for ( int i = 0; i < MeshRender()->GetMaterialCount(); ++i )
+		{
+			pFloor->MeshRender()->GetCloneMaterial( i )->SetShader( CResMgr::GetInst()->FindRes<CShader>( L"Std3DShader" ) );
+			//SetData(SHADER_PARAM::INT_3, &test);
+		}
+		GetObj()->AddChild( pFloor );
+	}
+#endif
 
 	return true;
 }
@@ -436,14 +459,17 @@ bool CBuildScript::Upgrade()
 	pObject = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)m_eType, m_iGrade)->Instantiate();
 	pObject->AddComponent(new CBuildScript((HOUSING_TYPE)m_eType, m_iGrade));
 
-	pObject->AddComponent(new CCollider2D);
-	pObject->Collider2D()->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
+#ifdef CHECK_COLLISTION
+	pObject->AddComponent( new CCollider2D );
 
-	if (m_eType >= HOUSING_WALL && m_eType < HOUSING_FLOOR)
-		pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
+	pObject->Collider2D()->SetOffsetScale( Vec3( 195.f, 195.f, 195.f ) );
 
-	pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+	if ( m_eType >= HOUSING_WALL && m_eType < HOUSING_FLOOR )
+		pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 0.f, 120.f ) );
 
+	pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+
+#endif
 	pObject->SetName(L"House");
 
 	Vec3 vPos = Transform()->GetLocalPos();

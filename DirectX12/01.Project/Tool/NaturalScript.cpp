@@ -2,6 +2,8 @@
 #include "NaturalScript.h"
 
 #include <Engine/ParticleSystem.h>
+#include <Engine/MeshRender.h>
+#include <Engine/GameObject.h>
 
 #include <iostream>
 
@@ -9,10 +11,11 @@ CNaturalScript::CNaturalScript( NATURAL_TYPE eType ) :
 	CScript( ( UINT )SCRIPT_TYPE::WORLDSCRIPT ),
 	m_fTime( 0.f ),
 	m_eType( eType ),
-	m_bDestory( false ),
+	m_bDestroy( false ),
 	m_bRotate( false ),
 	m_pParticleObj( NULL ),
-	m_fAngle( 0.f )
+	m_fAngle( 0.f ), 
+	m_iIndex(0)
 {
 	switch ( eType )
 	{
@@ -54,7 +57,7 @@ void CNaturalScript::Update()
 		}
 	}
 
-	if ( !m_bDestory )
+	if ( !m_bDestroy)
 		return;
 
 
@@ -141,7 +144,7 @@ bool CNaturalScript::Damage( CGameObject* pObj, float fDamage )
 
 	if ( m_fHealth <= 0.f )
 	{
-		m_bDestory = true;
+		m_bDestroy = true;
 		m_fTime = NATURAL_RESPAWN_TIME;
 		m_fAngle = 0.f;
 		m_vTargetRot = pObj->Transform()->GetLocalRot();
@@ -194,7 +197,7 @@ bool CNaturalScript::Damage( CGameObject* pObj, float fDamage )
 
 bool CNaturalScript::GetDestroy()
 {
-	return m_bDestory;
+	return m_bDestroy;
 }
 
 NATURAL_TYPE CNaturalScript::GetNaturalType()
@@ -205,7 +208,7 @@ NATURAL_TYPE CNaturalScript::GetNaturalType()
 void CNaturalScript::Respawn()
 {
 	Transform()->SetLocalRot( m_vOrginRot );
-	m_bDestory = false;
+	m_bDestroy = false;
 	m_bRotate = false;
 
 	switch ( m_eType )
@@ -277,4 +280,68 @@ void CNaturalScript::SetType( NATURAL_TYPE eType )
 	default:
 		break;
 	}
+}
+
+void CNaturalScript::SetHealth(float fHealth)
+{
+	if (m_eType == NATURAL_NONE)
+		return;
+
+	m_fHealth = fHealth;
+
+	if (m_fHealth <= 0.f)
+	{
+		m_bDestroy = true;
+		m_fTime = NATURAL_RESPAWN_TIME;
+		m_fAngle = 0.f;
+
+		// m_vTargetRot = pObj->Transform()->GetLocalRot();
+
+		if (m_eType != NATURAL_TREE)
+		{
+			tEvent evt = {};
+			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+			evt.wParam = (DWORD_PTR)GetObj();
+			evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
+			CEventMgr::GetInst()->AddEvent(evt);
+			MeshRender()->SetDynamicShadow(false);
+		}
+	}
+
+	if (m_pParticleObj == NULL)
+	{
+		// ====================
+		// Particle Object »ý¼º
+		// ====================
+		m_pParticleObj = new CGameObject;
+		m_pParticleObj->SetName(L"Particle");
+		m_pParticleObj->AddComponent(new CTransform);
+		m_pParticleObj->AddComponent(new CParticleSystem);
+
+		m_pParticleObj->ParticleSystem()->SetStartColor(Vec4(1.f, 0.7f, 0.f, 1.f));
+		m_pParticleObj->ParticleSystem()->SetEndColor(Vec4(0.5f, 0.1f, 0.f, 0.6f));
+
+		m_pParticleObj->ParticleSystem()->SetStartSpeed(200.f);
+		m_pParticleObj->ParticleSystem()->SetEndSpeed(200.f);
+
+		Vec3 vPos = Transform()->GetWorldPos();
+		Vec3 vScale = Transform()->GetLocalScale();
+
+		m_pParticleObj->Transform()->SetLocalPos(Vec3(vPos.x, vPos.y + 20.f, vPos.z));
+		m_pParticleObj->Transform()->SetLocalScale(Vec3(10.f, 10.f, 10.f));
+
+		//GetObj()->AddChild( m_pParticleObj );
+
+		tEvent tEv;
+		tEv.eType = EVENT_TYPE::CREATE_OBJECT;
+		tEv.wParam = (DWORD_PTR)m_pParticleObj;
+		tEv.lParam = 3;
+		CEventMgr::GetInst()->AddEvent(tEv);
+	}
+	m_fParticleTime = 1.f;
+}
+
+void CNaturalScript::SetDestroy(bool bDestroy)
+{
+	m_bDestroy = bDestroy;
 }

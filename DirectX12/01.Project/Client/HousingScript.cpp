@@ -24,14 +24,15 @@ CHousingScript::CHousingScript(ITEM_TYPE eType, int iCount)
 		m_pObj[i] = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)i)->Instantiate();
 		m_pObj[i]->AddComponent(new CBuildScript((HOUSING_TYPE)i));
 		
-		m_pObj[i]->AddComponent(new CCollider2D);
+#ifdef CHECK_COLLISTION
+		m_pObj[i]->AddComponent( new CCollider2D );
 		m_pObj[i]->Collider2D()->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
 
 		if (i >= HOUSING_WALL && i < HOUSING_FLOOR)
 			m_pObj[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
 
 		m_pObj[i]->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-
+#endif
 		m_pObj[i]->SetName(L"House");
 		m_pObj[i]->Transform()->SetLocalPos(Vec3(0.f, 20.f, 0.f));
 		m_pObj[i]->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
@@ -107,11 +108,13 @@ UINT CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		m_pObj[m_eType] = CHousingMgr::GetInst()->GetHousingMeshData(m_eType)->Instantiate();
 		m_pObj[m_eType]->AddComponent(new CBuildScript(m_eType));
 
-		m_pObj[m_eType]->AddComponent(new CCollider2D);
+#ifdef CHECK_COLLISTION
+		m_pObj[m_eType]->AddComponent( new CCollider2D );
 		m_pObj[m_eType]->Collider2D()->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
 		if (m_eType >= HOUSING_WALL && m_eType < HOUSING_FLOOR)
 			m_pObj[m_eType]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
 		m_pObj[m_eType]->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+#endif
 
 		Vec3 vDir = pHost->Transform()->GetWorldDir(DIR_TYPE::FRONT);
 		Vec3 vPos = pHost->Transform()->GetLocalPos();

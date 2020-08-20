@@ -46,7 +46,7 @@ concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumAnimal;
 
 CNetwork::CNetwork()
 {
-	Init();
+	//Init();
 }
 
 CNetwork::~CNetwork()

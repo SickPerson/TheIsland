@@ -6,6 +6,7 @@
 #include <Engine/NaviMgr.h>
 
 #include <iostream>
+#include "../../../Server/Server/protocol.h"
 
 CAnimalSpawner::CAnimalSpawner(BEHAVIOR_TYPE eType) :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
@@ -72,7 +73,13 @@ void CAnimalSpawner::Respawn()
 			// °õ
 			Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
 			pObject = pBearTex->Instantiate();
-			pObject->AddComponent(new CCollider2D);
+#ifdef CHECK_COLLISTION
+			pObject->AddComponent( new CCollider2D );
+
+			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
+			pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
+#endif
 			pObject->AddComponent(new CAnimalScript);
 
 			{
@@ -96,10 +103,6 @@ void CAnimalSpawner::Respawn()
 			//pObject->Transform()->SetLocalPos(Vec3(1500.f, 20.f, 2000.f));
 			pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
-
-			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-			pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
 		}
 			break;
 		case B_PASSIVE:
@@ -109,7 +112,13 @@ void CAnimalSpawner::Respawn()
 			{
 				Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
 				pObject = pWolfTex->Instantiate();
-				pObject->AddComponent(new CCollider2D);
+#ifdef CHECK_COLLISTION
+				pObject->AddComponent( new CCollider2D );
+
+				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+				pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
+				pObject->Collider2D()->SetOffsetScale( Vec3( 30.f, 30.f, 30.f ) );
+#endif
 				pObject->AddComponent(new CAnimalScript);
 
 				{
@@ -133,16 +142,18 @@ void CAnimalSpawner::Respawn()
 				//pObject->Transform()->SetLocalPos(Vec3(-0.f, 20.f, 4000.f));
 				pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 				pObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
-
-				pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-				pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-				pObject->Collider2D()->SetOffsetScale(Vec3(30.f, 30.f, 30.f));
 			}
 			else
 			{
 				Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
 				pObject = pBoarTex->Instantiate();
-				pObject->AddComponent(new CCollider2D);
+#ifdef CHECK_COLLISTION
+				pObject->AddComponent( new CCollider2D );
+
+				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+				pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
+				pObject->Collider2D()->SetOffsetScale( Vec3( 600.f, 600.f, 600.f ) );
+#endif
 				pObject->AddComponent(new CAnimalScript);
 
 				{
@@ -166,10 +177,6 @@ void CAnimalSpawner::Respawn()
 				//pObject->Transform()->SetLocalPos(Vec3(-1500.f, 20.f, 3000.f));
 				pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 				pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-
-				pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-				pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-				pObject->Collider2D()->SetOffsetScale(Vec3(600.f, 600.f, 600.f));
 			}
 		}
 			break;
@@ -177,7 +184,13 @@ void CAnimalSpawner::Respawn()
 		{
 			Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
 			pObject = pDeerTex->Instantiate();
-			pObject->AddComponent(new CCollider2D);
+#ifdef CHECK_COLLISTION
+			pObject->AddComponent( new CCollider2D );
+
+			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
+			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 50.f, 0.f ) );
+			pObject->Collider2D()->SetOffsetScale( Vec3( 300.f, 300.f, 300.f ) );
+#endif
 			pObject->AddComponent(new CAnimalScript);
 
 			{
@@ -202,10 +215,6 @@ void CAnimalSpawner::Respawn()
 			pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 			//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
-
-			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
-			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
-			pObject->Collider2D()->SetOffsetScale(Vec3(300.f, 300.f, 300.f));
 
 		}
 			break;
