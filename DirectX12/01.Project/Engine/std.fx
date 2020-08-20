@@ -330,6 +330,17 @@ float4 PS_UI_Test( VS_OUTPUT _input ) : SV_Target
 	return color;
 }
 
+float4 PS_Rain(VS_OUTPUT _input) : SV_Target
+{
+	float4 color = g_tex_0.Sample( g_sam_0, _input.vUV );
+
+	color.w *= g_float_0;
+
+	if ( color.w == 0.f )
+		clip( -1 );
+
+	return color;
+}
 
 VS_OUTPUT VS_UI_Standard(VS_INPUT _input)
 {

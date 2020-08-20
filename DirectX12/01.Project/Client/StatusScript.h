@@ -12,7 +12,11 @@ class CStatusScript :
 
 	bool m_bGameOver;
 
+	bool m_bInvincible = false;
+
 	CGameObject* m_pArmor;
+
+	CGameObject* m_pScreenDamage;
 public:
 	CStatusScript();
 	virtual ~CStatusScript();
@@ -30,8 +34,12 @@ public:
 	void SetIncreaseHungry(float fAmount);
 	void SetIncreasefThirst(float fAmount);
 
+	void SetScreenDamage(CGameObject* pObject);
+
 	bool GetGameOver();
 
 	void EquipArmor(CGameObject* pArmor, float fArmor);
+
+	void Invincible(bool bOn = true);
 };
 

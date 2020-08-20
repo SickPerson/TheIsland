@@ -4,7 +4,10 @@
 #include "ItemScript.h"
 #include "PlayerScript.h"
 #include "InventoryScript.h"
+#include "StatusScript.h"
 #include "StuffScript.h"
+
+#include "AnimalSpawner.h"
 
 #include "SunshineScript.h"
 
@@ -29,6 +32,13 @@ void CCheatMgr::SetPlayer(CGameObject * pObject)
 void CCheatMgr::SetClock(CGameObject * pObject)
 {
 	m_pClock = pObject;
+}
+
+void CCheatMgr::SetSpawner(CGameObject * pObject1, CGameObject * pObject2, CGameObject * pObject3)
+{
+	m_pSpawner[0] = pObject1;
+	m_pSpawner[1] = pObject2;
+	m_pSpawner[2] = pObject3;
 }
 
 bool CCheatMgr::CheckCheat(string strText)
@@ -78,5 +88,48 @@ bool CCheatMgr::CheckCheat(string strText)
 		m_pClock->GetScript<CSunshineScript>()->SetDayCycle(60.f);
 		bResult = true;
 	}
+	else if (strText == "SummonAnimal")
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			m_pSpawner[i]->GetScript<CAnimalSpawner>()->Respawn();
+		}
+		bResult = true;
+	}
+	else if (strText == "SummonDeer")
+	{
+		m_pSpawner[0]->GetScript<CAnimalSpawner>()->Respawn();
+		bResult = true;
+	}
+	else if (strText == "SummonMaxAnimal")
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int count = 0; count < 50; ++count)
+			{
+				m_pSpawner[i]->GetScript<CAnimalSpawner>()->Respawn();
+			}
+		}
+		bResult = true;
+	}
+	else if (strText == "Invincible")
+	{
+		m_bInvincible = !m_bInvincible;
+		m_pPlayer->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->Invincible(m_bInvincible);
+		bResult = true;
+	}
+	
+	else if ( strText == "RainDropTrue" )
+	{
+		m_pClock->GetScript<CSunshineScript>()->SetRainDrop( true );
+		bResult = true;
+	}
+
+	else if ( strText == "RainDropFalse" )
+	{
+		m_pClock->GetScript<CSunshineScript>()->SetRainDrop( false );
+		bResult = true;
+	}
+
 	return bResult;
 }

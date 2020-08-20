@@ -66,7 +66,6 @@ void CLoginScene::Init()
 	pMainCam->SetName(L"MainCam");
 	pMainCam->AddComponent(new CTransform);
 	pMainCam->AddComponent(new CCamera);
-	pMainCam->AddComponent(new CToolCamScript);
 
 	pMainCam->Transform()->SetLocalPos(Vec3(0.f, 100.f, -2000.f));
 	//pMainCam->Transform()->SetLocalRot(Vec3(0.f, XM_PI, 0.f));
@@ -126,7 +125,10 @@ void CLoginScene::Init()
 	pObject->AddComponent(new CTransform);
 	pObject->AddComponent(new CMeshRender);
 
-	pObject->Transform()->SetLocalPos(Vec3(0.f, 270.f, 1.f));
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	Vec3 vPos = Vec3(0.f, vResolution.fHeight / 2.f - 120.f, 1.f);
+
+	pObject->Transform()->SetLocalPos(vPos);
 	pObject->Transform()->SetLocalScale(Vec3(800.f, 260.f, 1.f));
 
 	pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -152,6 +154,16 @@ void CLoginScene::Init()
 
 void CLoginScene::Update()
 {
+	if (KEY_TAB(KEY_TYPE::KEY_ESC))
+	{
+		for (UINT i = 0; i < MAX_LAYER; ++i)
+		{
+			CSceneMgr::GetInst()->GetCurScene()->GetLayer(i)->RemoveAll();
+		}
+		PostQuitMessage(0);
+		return;
+	}
+
 	/*if (CNetwork::GetInst()->GetLogin() && CNetwork::GetInst()->GetLoopStart()) {
 		NextScene();
 	}*/
@@ -373,12 +385,15 @@ void CLoginScene::CreateInputID()
 	m_pID->AddComponent(new CFont);
 	m_pID->FrustumCheck(false);
 
-	m_pID->Transform()->SetLocalPos(Vec3(0.f, -260.f, 1.f));
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	Vec3 vPos = Vec3(0.f, vResolution.fHeight / -2.f + 120.f, 1.f);
+
+	m_pID->Transform()->SetLocalPos(Vec3(0.f, vPos.y, 1.f));
 	m_pID->Transform()->SetLocalScale(Vec3(500.f, 60.f, 1.f));
 	m_pID->AddComponent(new CInputScript);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pID);
-	m_pID->GetScript<CInputScript>()->SetRect(Vec4(-250.f, -290.f, 250.f, -230.f));
+	m_pID->GetScript<CInputScript>()->SetRect(Vec4(-250.f, vPos.y - 30.f, 250.f, vPos.y + 30.f));
 	m_pID->GetScript<CInputScript>()->SetMaxCount(10);
 	m_pID->GetScript<CInputScript>()->SetEnable(true);
 	m_pID->Font()->SetString(" ");
@@ -391,7 +406,7 @@ void CLoginScene::CreateInputID()
 		pObject->AddComponent(new CMeshRender);
 		pObject->FrustumCheck(false);
 
-		pObject->Transform()->SetLocalPos(Vec3(-320.f, -260.f, 1.f));
+		pObject->Transform()->SetLocalPos(Vec3(-320.f, vPos.y, 1.f));
 		pObject->Transform()->SetLocalScale(Vec3(40.f, 60.f, 1.f));
 
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -425,7 +440,7 @@ void CLoginScene::CreateInputID()
 		pObject->AddComponent(new CMeshRender);
 		pObject->FrustumCheck(false);
 
-		pObject->Transform()->SetLocalPos(Vec3(-280.f, -260.f, 1.f));
+		pObject->Transform()->SetLocalPos(Vec3(-280.f, vPos.y, 1.f));
 		pObject->Transform()->SetLocalScale(Vec3(40.f, 60.f, 1.f));
 
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -465,12 +480,15 @@ void CLoginScene::CreateInputIP()
 	m_pIP->AddComponent(new CFont);
 	m_pIP->FrustumCheck(false);
 
-	m_pIP->Transform()->SetLocalPos(Vec3(0.f, -330.f, 1.f));
+	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
+	Vec3 vPos = Vec3(0.f, vResolution.fHeight / -2.f + 50.f, 1.f);
+
+	m_pIP->Transform()->SetLocalPos(Vec3(0.f, vPos.y, 1.f));
 	m_pIP->Transform()->SetLocalScale(Vec3(500.f, 40.f, 1.f));
 	m_pIP->AddComponent(new CInputScript);
 
 	m_pScene->FindLayer(L"UI")->AddGameObject(m_pIP);
-	m_pIP->GetScript<CInputScript>()->SetRect(Vec4(-250.f, -350.f, 250.f, -310.f));
+	m_pIP->GetScript<CInputScript>()->SetRect(Vec4(-250.f, vPos.y - 30.f, 250.f, vPos.y + 30.f));
 	m_pIP->GetScript<CInputScript>()->SetEnable(false);
 	m_pIP->Font()->SetString(" ");
 
@@ -482,7 +500,7 @@ void CLoginScene::CreateInputIP()
 		pObject->AddComponent(new CMeshRender);
 		pObject->FrustumCheck(false);
 
-		pObject->Transform()->SetLocalPos(Vec3(-320.f, -330.f, 1.f));
+		pObject->Transform()->SetLocalPos(Vec3(-320.f, vPos.y, 1.f));
 		pObject->Transform()->SetLocalScale(Vec3(40.f, 40.f, 1.f));
 
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));
@@ -516,7 +534,7 @@ void CLoginScene::CreateInputIP()
 		pObject->AddComponent(new CMeshRender);
 		pObject->FrustumCheck(false);
 
-		pObject->Transform()->SetLocalPos(Vec3(-280.f, -330.f, 1.f));
+		pObject->Transform()->SetLocalPos(Vec3(-280.f, vPos.y, 1.f));
 		pObject->Transform()->SetLocalScale(Vec3(40.f, 40.f, 1.f));
 
 		pObject->MeshRender()->SetMesh(CResMgr::GetInst()->FindRes<CMesh>(L"RectMesh"));

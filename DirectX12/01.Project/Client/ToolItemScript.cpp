@@ -257,7 +257,7 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				else if(random == 1)
 					pItem = new CStuffScript(ITEM_TYPE::ITEM_BONE);
 				else
-					pItem = new CUsableScript(ITEM_TYPE::ITEM_COOKMEAT);
+					pItem = new CUsableScript(ITEM_TYPE::ITEM_MEAT);
 
 				if (m_eItemType == ITEM_MACHETTE)
 					iAmount = 3;

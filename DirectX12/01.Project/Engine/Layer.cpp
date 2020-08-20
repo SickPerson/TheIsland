@@ -117,10 +117,13 @@ CGameObject * CLayer::GetMainCamera()
 
 CGameObject * CLayer::FindObject( const wstring & strKey )
 {
-	for ( UINT i = 0; i < m_vecLayerObj.size(); ++i )
+	vector<CGameObject*>::iterator iter = m_vecParentObj.begin();
+	for ( ; iter != m_vecParentObj.end(); ++iter )
 	{
-		if ( m_vecLayerObj[i]->GetName() == strKey )
-			return m_vecLayerObj[i];
+		if ( ( *iter )->GetName() == strKey )
+		{
+			return *iter;
+		}
 	}
 
 	return nullptr;
