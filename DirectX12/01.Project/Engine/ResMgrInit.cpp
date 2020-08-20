@@ -116,10 +116,26 @@ void CResMgr::CreateDefaultShader()
 	pShader->Create(SHADER_POV::FORWARD);
 
 	pShader->AddShaderParam(tShaderParam{ L"Test Value", SHADER_PARAM::INT_0 });
-	pShader->AddShaderParam(tShaderParam{ L"Test float", SHADER_PARAM::FLOAT_0 });
+	pShader->AddShaderParam( tShaderParam{ L"Test float", SHADER_PARAM::FLOAT_0 } );
 	pShader->AddShaderParam(tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 });
 
 	AddRes(L"IconShader", pShader);
+
+	// ====================
+	// RainDrop Shader
+	// ====================
+	pShader = new CShader;
+	pShader->CreateVertexShader( L"Shader\\std.fx", "VS_UI_Test", "vs_5_0" );
+	pShader->CreatePixelShader( L"Shader\\std.fx", "PS_Rain", "ps_5_0" );
+
+	// BlendState ¼³Á¤
+	pShader->SetBlendState( BLEND_TYPE::ALPHABLEND );
+	pShader->Create( SHADER_POV::FORWARD );
+
+	pShader->AddShaderParam( tShaderParam{ L"Test float", SHADER_PARAM::FLOAT_0 } );
+	pShader->AddShaderParam( tShaderParam{ L"Output Texture", SHADER_PARAM::TEX_0 } );
+
+	AddRes( L"RainDropShader", pShader );
 
 	// ============
 	// Player Shader
@@ -545,6 +561,11 @@ void CResMgr::CreateDefaultMaterial()
 	pMtrl->DisableFileSave();
 	pMtrl->SetShader(FindRes<CShader>(L"IconShader"));
 	AddRes(L"IconMtrl", pMtrl);
+
+	pMtrl = new CMaterial;
+	pMtrl->DisableFileSave();
+	pMtrl->SetShader( FindRes<CShader>( L"RainDropShader" ) );
+	AddRes( L"RainDropMtrl", pMtrl );
 
 	pMtrl = new CMaterial;
 	pMtrl->DisableFileSave();

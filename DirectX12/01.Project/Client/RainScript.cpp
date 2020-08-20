@@ -9,9 +9,12 @@
 
 #include <Engine/FPSCamScript.h>
 
+#include <iostream>
+
 CRainScript::CRainScript() : 
 	CScript((UINT )SCRIPT_TYPE::WORLDSCRIPT),
-	m_bActive(false)
+	m_bActive(false),
+	m_fAlpha(1.f)
 {
 }
 
@@ -23,14 +26,21 @@ void CRainScript::Update()
 {
 	CGameObject* pRain = CSceneMgr::GetInst()->GetCurScene()->GetLayer( 0 )->FindObject( L"Rain" );
 	
-	m_bActive = pRain->IsActive();
+	if ( !pRain )
+		m_bActive = false;
+	
+	else
+		m_bActive = pRain->IsActive();
 
 	CGameObject* pMainCam = CSceneMgr::GetInst()->GetCurScene()->GetLayer( 0 )->GetMainCamera();
 	Vec3 vCamRot = pMainCam->Transform()->GetLocalRot();
 
+	float vCamRotMinX = -XM_PI / 2.f;
+	float vCamRotMaxX = -XM_PI / 6.f;
+
 	if ( m_bActive )
 	{
-		if ( vCamRot.x <= -XM_PI / 5.f )
+		if ( vCamRot.x <= vCamRotMaxX )
 			MeshRender()->SetActive( true );
 
 		else
@@ -41,4 +51,13 @@ void CRainScript::Update()
 	{
 		MeshRender()->SetActive( false );
 	}
+
+	float vCamRotSub = vCamRot.x - vCamRotMaxX;
+	float fAlpha = ( vCamRot.x - vCamRotMinX ) / ( vCamRotMaxX - vCamRotMinX );
+
+	fAlpha = 1.f - fAlpha;
+
+	std::cout << fAlpha << std::endl;
+
+	MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::FLOAT_0, &fAlpha );
 }

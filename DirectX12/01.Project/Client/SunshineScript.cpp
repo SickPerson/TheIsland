@@ -65,7 +65,7 @@ void CSunshineScript::Update()
 
 			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
 			evt.wParam = ( DWORD_PTR )m_pRain;
-			evt.lParam = ( ( DWORD_PTR )1 << 16 | ( DWORD_PTR )true );
+			evt.lParam = ( ( DWORD_PTR )0 << 16 | ( DWORD_PTR )true );
 
 			CEventMgr::GetInst()->AddEvent( evt );
 		}

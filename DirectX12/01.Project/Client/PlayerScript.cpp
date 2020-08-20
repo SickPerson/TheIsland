@@ -279,7 +279,7 @@ void CPlayerScript::Update()
 
 			//std::cout << vDrag.x << std::endl;
 			// x -= 18, y -= 41
-			//vDrag.x += 18.f;
+			vDrag.x += 18.f;
 
 			if (vDrag.x != 0.f)
 			{

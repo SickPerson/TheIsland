@@ -315,13 +315,12 @@ void CIngameScene::Init()
 
 	pObject->FrustumCheck( false );
 	pObject->ParticleSystem()->SetKind( 1 );
-	pObject->ParticleSystem()->SetStartColor( Vec4( 0.7f, 0.8f, 1.f, 1.f ) );
-	pObject->ParticleSystem()->SetEndColor( Vec4( 0.f, 0.3f, 1.f, 1.f ) );
+	pObject->ParticleSystem()->SetStartColor( Vec4( 0.7f, 0.7f, 0.7f, 0.7f ) );
+	pObject->ParticleSystem()->SetEndColor( Vec4( 0.5f, 0.6f, 0.7f, 0.8f ) );
 	pObject->ParticleSystem()->SetStartScale( 10.f );
 	pObject->ParticleSystem()->SetEndScale( 20.f );
 	pObject->ParticleSystem()->SetStartSpeed( 200.f );
 	pObject->ParticleSystem()->SetEndSpeed( 200.f );
-	pObject->ParticleSystem()->SetEndScale( 20.f );
 	pObject->ParticleSystem()->SetTexture( L"Rain", L"Texture\\Particle\\HardRain.png" );
 	
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
@@ -330,7 +329,6 @@ void CIngameScene::Init()
 	//==========================
 	//비올 때 카메라에 빗물 생성
 	//==========================
-	//====================
 	Ptr<CTexture> pRainDrop = CResMgr::GetInst()->Load<CTexture>( L"RainDrop", L"Texture\\raindrop3.png" );
 	pObject = new CGameObject;
 	pObject->SetName( L"Particle" );
@@ -339,11 +337,10 @@ void CIngameScene::Init()
 	pObject->AddComponent( new CMeshRender );
 
 	pObject->MeshRender()->SetMesh( CResMgr::GetInst()->FindRes<CMesh>( L"RectMesh" ) );
-	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"IconMtrl" ) );
+	pObject->MeshRender()->SetMaterial( CResMgr::GetInst()->FindRes<CMaterial>( L"RainDropMtrl" ) );
 	pObject->Transform()->SetLocalPos( Vec3( 0.f, 0.f, 3000.f ) );
 	tResolution vResolution = CRenderMgr::GetInst()->GetResolution();
 	pObject->Transform()->SetLocalScale( Vec3( vResolution.fWidth, vResolution.fHeight, 1.f ) );
-	//pObject->Transform()->SetLocalRot( Vec3( -XM_PI / 2.f, 0.f, 0.f ) );
 
 	pObject->MeshRender()->GetCloneMaterial()->SetData( SHADER_PARAM::TEX_0, pRainDrop.GetPointer() );
 	m_pScene->FindLayer( L"UI" )->AddGameObject( pObject );

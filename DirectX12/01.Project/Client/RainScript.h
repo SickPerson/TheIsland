@@ -14,5 +14,7 @@ public:
 
 private:
 	bool m_bActive;
+
+	float m_fAlpha;
 };
 
