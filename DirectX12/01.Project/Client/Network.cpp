@@ -35,6 +35,7 @@
 #include "InputScript.h"
 #include "AnimalScript.h"
 #include <Engine/Animator3D.h>
+#include "SunshineScript.h"
 
 #include <Engine/NaviMgr.h>
 #include <Engine/Layer.h>
@@ -835,9 +836,14 @@ void CNetwork::Recv_Weather_Packet(char * packet)
 	// ¹Þ±â
 	//cout << bRain << endl;
 
-	CGameObject* pRainObj = pScene->GetLayer( 0 )->FindObject( L"Rain" );
-	if ( pRainObj )
-		pRainObj->SetActive( bRain );
+	CGameObject* pSunshineObject = pScene->GetLayer( 0 )->FindObject( L"Sunshine" );
+
+	if ( pSunshineObject )
+	{
+		CSunshineScript* pSunshineScript = pSunshineObject->GetScript<CSunshineScript>();
+		pSunshineScript->SetRainDrop( bRain );
+	}
+
 }
 
 void CNetwork::Recv_Time_Packet(char * packet)
