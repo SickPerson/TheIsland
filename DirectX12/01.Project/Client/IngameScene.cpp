@@ -327,16 +327,15 @@ void CIngameScene::Init()
 	//Particle Object »ı¼º
 	//====================
 	pObject = new CGameObject;
-	pObject->SetName( L"Particle" );
 	pObject->AddComponent( new CTransform );
 	pObject->AddComponent( new CParticleSystem );
 
 	pObject->FrustumCheck( false );
 	pObject->ParticleSystem()->SetKind( 1 );
-	pObject->ParticleSystem()->SetStartColor( Vec4( 0.7f, 0.8f, 1.f, 1.f ) );
-	pObject->ParticleSystem()->SetEndColor( Vec4( 0.f, 0.3f, 1.f, 1.f ) );
+	pObject->ParticleSystem()->SetStartColor( Vec4( 0.7f, 0.7f, 0.7f, 0.6f ) );
+	pObject->ParticleSystem()->SetEndColor( Vec4( 0.5f, 0.6f, 0.7f, 0.8f ) );
 	pObject->ParticleSystem()->SetStartScale( 10.f );
-	pObject->ParticleSystem()->SetEndScale( 20.f );
+	pObject->ParticleSystem()->SetEndScale( 10.f );
 	pObject->ParticleSystem()->SetTexture( L"Rain", L"Texture\\Particle\\HardRain.png" );
 	
 	pObject->SetName( L"Rain" );
