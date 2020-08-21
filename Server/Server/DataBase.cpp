@@ -185,8 +185,8 @@ void CDataBase::ChangeInvenProcess(DB_Event & event)
 
 void CDataBase::PushEvent_Change_State(USHORT & player_Id)
 {
-	DB_Event ev;
-	ev.state = (UINT)DB_STATE_TYPE::CHANGE_STATE;
+	/*DB_Event ev;
+	ev.state = (UINT)DB_STATE_TYPE::CHANGE_STATE;*/
 
 }
 

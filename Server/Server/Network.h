@@ -5,6 +5,7 @@ class CPlayerProcess;
 class CMonsterProcess;
 class CNaturalProcess;
 class CHousingProcess;
+class CEtcProcess;
 
 class CNetwork
 {
@@ -30,13 +31,10 @@ private:
 	CMonsterProcess*	m_pMonsterProcess;
 	CNaturalProcess*	m_pNaturalProcess;
 	CHousingProcess*	m_pHousingProcess;
+	CEtcProcess*		m_pEtcProcess;
 
 private:
 	volatile USHORT m_UserID;
-
-private:
-	high_resolution_clock::time_point serverTimer;
-	high_resolution_clock::time_point eventTimer;
 
 public:
 	void Initialize();
@@ -49,7 +47,9 @@ public:
 	void WorkerThread();
 	void AcceptThread();
 	void UpdateThread();
+#ifdef DB_ON
 	void DataBaseThread();
+#endif // DB_ON
 
 	void EndServer() { m_bRunningServer = false; }
 	bool GetServerState() { return m_bRunningServer; }

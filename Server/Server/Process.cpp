@@ -29,6 +29,11 @@ bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
 	return false;
 }
 
+bool CProcess::Animal_CollisionSphere(USHORT AnimalId, USHORT PlayerId, UINT uiColType, float fOffset)
+{
+	return false;
+}
+
 bool CProcess::PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId, float fOffset)
 {
 	Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
@@ -196,81 +201,106 @@ bool CProcess::AnimalAndNatural_CollisionSphere(USHORT AnimalId, USHORT NaturalI
 	return false;
 }
 
+void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
+{
+	UINT uiType = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetType();
+
+	if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
+	{
+		if (Animal_CollisionSphere(AnimalId, PlayerId, (UINT)OBJ_TYPE::OT_PLAYER, 0.2f))
+		{
+			PushEvent_Animal_Attack(AnimalId, PlayerId);
+		}
+		else
+		{
+			PushEvent_Animal_Follow(AnimalId, PlayerId);
+		}
+	}
+	else if (uiType == (UINT)BEHAVIOR_TYPE::B_PASSIVE)
+	{
+		PushEvent_Animal_Idle(AnimalId, NO_TARGET);
+	}
+	else if (uiType == (UINT)BEHAVIOR_TYPE::B_EVASION)
+	{
+		PushEvent_Animal_Evastion(AnimalId, PlayerId);
+	}
+}
+
 void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::ATTACK);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState(AUT_ATTACK);
 	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
-	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::ATTACK;
+	ev.m_eObjUpdate = AUT_ATTACK;
 	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::FOLLOW);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState(AUT_FOLLOW);
 	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
-	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::FOLLOW;
+	ev.m_eObjUpdate = AUT_FOLLOW;
 	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Evastion(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::EVASION);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState(AUT_EVASION);
 	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
-	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::EVASION;
+	ev.m_eObjUpdate = AUT_EVASION;
 	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::IDLE);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState(AUT_IDLE);
 	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(NO_TARGET);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
-	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::IDLE;
+	ev.m_eObjUpdate = AUT_IDLE;
 	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Die(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::DIE);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState(AUT_DIE);
 	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(NO_TARGET);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
-	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::DIE;
+	ev.m_eObjUpdate = AUT_DIE;
 	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Respawn(USHORT AnimalId)
 {
-	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::RESPAWN);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState(OBJ_STATE_TYPE::OST_DIE);
 	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(NO_TARGET);
 	BEHAVIOR_TYPE eType = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetType();
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
-	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::RESPAWN;
+	ev.m_eObjUpdate = AUT_RESPAWN;
 
 	if (eType == BEHAVIOR_TYPE::B_WARLIKE)
 		ev.wakeup_time = high_resolution_clock::now() + 60s;
@@ -283,13 +313,13 @@ void CProcess::PushEvent_Animal_Respawn(USHORT AnimalId)
 
 void CProcess::PushEvnet_Animal_Damage(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState((UINT)ANIMAL_UPDATE_TYPE::DAMAGE);
+	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetState(AUT_DAMAGE);
 	m_pMonsterPool->m_cumMonsterPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
-	ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::DAMAGE;
+	ev.m_eObjUpdate = AUT_DAMAGE;
 	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
@@ -302,7 +332,7 @@ void CProcess::PushEvent_Natural_Respawn(USHORT NaturalId)
 	ev.m_Do_Object = NaturalId;
 	ev.m_EventType = EV_NATURAL_UPDATE;
 	ev.m_From_Object = NO_TARGET;
-	ev.m_ObjState = (UINT)NATURAL_UPDATE_TYPE::RESPAWN;
+	ev.m_eObjUpdate = NUT_RESPAWN;
 	ev.wakeup_time = high_resolution_clock::now() + 10s;
 	PushEventQueue(ev);
 }
@@ -313,29 +343,29 @@ void CProcess::PushEvent_Natural_Damage(USHORT NaturalId, USHORT PlayerId)
 	ev.m_Do_Object = NaturalId;
 	ev.m_EventType = EV_NATURAL_UPDATE;
 	ev.m_From_Object = PlayerId;
-	ev.m_ObjState = (UINT)NATURAL_UPDATE_TYPE::DAMAGE;
+	ev.m_eObjUpdate = NUT_DAMAGE;
 	ev.wakeup_time = high_resolution_clock::now();
 	PushEventQueue(ev);
 }
 
-void CProcess::Weather_Event()
+void CProcess::PushEvent_Etc_Weather()
 {
-	bool bRain = rand() % 2;
-	for (auto& au : m_cusLoginList)
-	{
-		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
-		if (!bConnect) continue;
-		CPacketMgr::GetInst()->Send_Weather_Packet(au, bRain);
-	}
+	Update_Event ev;
+	ev.m_Do_Object = 9998;
+	ev.m_EventType = EV_ETC;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_eObjUpdate = EUT_WEATHER;
+	ev.wakeup_time = high_resolution_clock::now() + 30s;
+	PushEventQueue(ev);
 }
 
-void CProcess::Time_Event()
+void CProcess::PushEvent_Etc_Time()
 {
-	float fTime = CTimerMgr::GetInst()->GetTotalTime();
-	for (auto& au : m_cusLoginList)
-	{
-		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
-		if (!bConnect) continue;
-		CPacketMgr::GetInst()->Send_Time_Packet(au, fTime);
-	}
+	Update_Event ev;
+	ev.m_Do_Object = 9999;
+	ev.m_EventType = EV_ETC;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_eObjUpdate = EUT_TIMER;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	PushEventQueue(ev);
 }

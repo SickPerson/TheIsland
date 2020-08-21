@@ -11,7 +11,6 @@ public:
 public: // 로그인 관련 패킷
 	static void Send_Login_OK_Packet(USHORT playerId);
 	static void Send_Login_Fail_Packet(USHORT playerId);
-	static void Send_Login_Status_Packet(USHORT playerId);
 
 public: // Player 관련 패킷
 	static void Send_Put_Player_Packet(USHORT playerId, USHORT OtherId);
@@ -26,7 +25,6 @@ public: // Player 관련 패킷
 	static void Send_Animation_Player_Packet(USHORT playerId, UINT AnimationType);
 
 public: // Npc(Monster) 관련
-	static void Send_Wakeup_Npc_Packet(USHORT playerId, USHORT NpcId);
 	static void Send_Put_Npc_Packet(USHORT playerId, USHORT NpcId);
 	static void Send_Pos_Npc_Packet(USHORT playerId, USHORT NpcId);
 	static void Send_Remove_Npc_Packet(USHORT playerId, USHORT NpcId);

@@ -1,15 +1,52 @@
 #pragma once
 
-// Worker Thread Event
+// [ Worker Thread Event ]
 enum EVENT_TYPE {
 	EV_RECV,
 	EV_SEND,
 	EV_MONSTER_UPDATE,
 	EV_NATURAL_UPDATE,
 	EV_DB,
+	EV_ETC,
 	EV_END
 };
-
+// ------------------------
+// [ Update Type ]
+// - Animal
+enum ANIMAL_UPDATE_TYPE{
+	AUT_ATTACK,
+	AUT_FOLLOW,
+	AUT_EVASION,
+	AUT_IDLE,
+	AUT_DIE,
+	AUT_RESPAWN,
+	AUT_DAMAGE,
+	AUT_END
+};
+// - Natural
+enum NATURAL_UPDATE_TYPE
+{
+	NUT_RESPAWN,
+	NUT_DAMAGE,
+	NUT_END
+};
+// - Etc
+enum ETC_UPDATE_TYPE
+{
+	EUT_WEATHER,
+	EUT_TIMER,
+	EUT_END
+};
+// - DB
+enum DB_UPDATE_TYPE
+{
+	DUT_LOGIN,
+	DUT_LOGOUT,
+	DUT_GET_ITEM,
+	DUT_REMOVE_ITEM,
+	DUT_END
+};
+// ------------------------
 enum DATABASE_SAVE_TYPE {
 	DBS_LOGIN_SUCCESS,
 	DBS_LOGIN_FAIL,
@@ -18,63 +55,42 @@ enum DATABASE_SAVE_TYPE {
 	DBS_END
 };
 
-// DB Process Event
-enum class DB_STATE_TYPE
-{
-	LOGIN,
-	LOGOUT,
-	GET_ITEM,
-	REMOVE_ITEM,
-	CHANGE_STATE,
-	CHANGE_INVEN,
-	END
+// [ Object Type ]
+enum OBJ_TYPE{
+	OT_PLAYER,
+	OT_ANIMAL,
+	OT_NATURAL,
+	OT_HOUSE,
+	OT_END
 };
-
-// [About Animal]
-enum ANIMAL_TYPE { A_BEAR, A_BOAR, A_DEER, A_WOLF, A_END };
-enum BEHAVIOR_TYPE { B_WARLIKE, B_PASSIVE, B_EVASION, B_END };
-enum class ANIMAL_STATE_TYPE { ATTACK, FOLLOW, EVASION, IDLE, DIE, RESPAWN, HEAL, END };
-enum class ANIMAL_UPDATE_TYPE { ATTACK, FOLLOW, EVASION, IDLE, DIE, RESPAWN, HEAL, DAMAGE, END };
-// Natural
-enum NATURAL_TYPE {
-	NATURAL_TREE,
-	NATURAL_STONE,
-	NATURAL_BUSH,
-	NATURAL_NONE,
-	NATURAL_END
+// - Animal
+enum ANIMAL_TYPE{
+	A_BEAR,
+	A_BOAR,
+	A_WOLF,
+	A_DEER,
+	A_END
 };
-
-// Housing
+// - Natural
+enum NATURAL_TYPE{
+	N_TREE,
+	N_STONE,
+	N_BUSH,
+	N_NONE,
+	N_END
+};
+// - House
 enum HOUSING_TYPE {
-
 	HOUSING_FOUNDATION,
 	HOUSING_WALL,
 	HOUSING_DOOR,
 	HOUSING_WINDOW,
 	HOUSING_FLOOR,
-	HOUSING_END,
-	HOUSING_ETC
+	HOUSING_ETC,
+	HOUSING_END
 };
 
-
-
-enum class NATURAL_UPDATE_TYPE
-{
-	RESPAWN, DAMAGE, END
-};
-
-enum class PLAYER_STATE_TYPE {
-	IDLE, DIE, END
-};
-
-enum DIR_TYPE
-{
-	RIGHT,
-	UP,
-	FRONT,
-	END
-};
-
+// - Item
 enum ITEM_TYPE {
 	ITEM_NOTHING = 0,
 
@@ -129,4 +145,29 @@ enum ITEM_TYPE {
 	ITEM_HOUSING_END,				//======= ========
 
 	ITEM_END
+};
+// ------------------------
+// [ State Type ]
+enum OBJ_STATE_TYPE {
+	OST_LIVE,
+	OST_DIE,
+	OST_END
+};
+
+enum BEHAVIOR_TYPE {
+	B_WARLIKE, 
+	B_PASSIVE, 
+	B_EVASION, 
+	B_END
+};
+enum ANIMAL_STATE_TYPE {
+
+};
+// ------------------------
+enum DIR_TYPE
+{
+	RIGHT,
+	UP,
+	FRONT,
+	END
 };

@@ -7,6 +7,7 @@ CMonsterProcess::CMonsterProcess()
 {
 	if (!CProcess::m_pMonsterPool)
 		CProcess::m_pMonsterPool = new class CMonsterpool();
+	BindMonsterUpdate();
 }
 
 
@@ -21,9 +22,8 @@ CMonsterProcess::~CMonsterProcess()
 
 void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT uiTarget)
 {
-	UINT Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[Animal_Id]->GetState();
-	if (Animal_State == (UINT)ANIMAL_STATE_TYPE::DIE || Animal_State == (UINT)ANIMAL_STATE_TYPE::RESPAWN)
-		return;
+	char Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[Animal_Id]->GetState();
+	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
 	float fTarget_CurrHp = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetHealth();
 	float fTarget_AfterHp = fTarget_CurrHp;
@@ -50,9 +50,8 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT uiTarget)
 
 void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 {
-	UINT Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
-	if (Animal_State == (UINT)ANIMAL_STATE_TYPE::RESPAWN || Animal_State == (UINT)ANIMAL_STATE_TYPE::DIE)
-		return;
+	char Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
+	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
 	//UINT Target_State = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetState();
 	Vec3 vAnimalPos = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
@@ -99,9 +98,8 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 
 void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
 {
-	UINT Animal_State = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
-	if (Animal_State == (UINT)ANIMAL_STATE_TYPE::DIE || Animal_State == (UINT)ANIMAL_STATE_TYPE::RESPAWN)
-		return;
+	char Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
+	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
 	concurrent_unordered_set<USHORT> loginList;
 	concurrent_unordered_set<USHORT> rangeList;
@@ -140,8 +138,8 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
 
 void CMonsterProcess::IdleEvent(USHORT AnimalId)
 {
-	UINT Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
-	if (Animal_State == (UINT)ANIMAL_STATE_TYPE::RESPAWN || Animal_State == (UINT)ANIMAL_STATE_TYPE::DIE) return;
+	char Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
+	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 	
 	concurrent_unordered_set<USHORT> login_list;
 	concurrent_unordered_set<USHORT> range_list;
@@ -230,61 +228,6 @@ void CMonsterProcess::RespawnEvent(USHORT uiMonster)
 		bool isConnect = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!isConnect) continue;
 		CPacketMgr::GetInst()->Send_Put_Npc_Packet(au, uiMonster);
-	}
-}
-
-void CMonsterProcess::HealEvent(USHORT uiMonster)
-{
-	char Animal_State = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetState();
-	if (Animal_State == (UINT)ANIMAL_STATE_TYPE::ATTACK || 
-		Animal_State == (UINT)ANIMAL_STATE_TYPE::FOLLOW)
-		return;
-
-	concurrent_unordered_set<USHORT> login_list;
-	concurrent_unordered_set<USHORT> range_list;
-
-	USHORT monster_id = uiMonster + MAX_USER;
-
-	CopyBeforeLoginList(login_list);
-	InRangePlayer(login_list, range_list, monster_id);
-	float monster_hp = m_pMonsterPool->m_cumMonsterPool[uiMonster]->GetHealth();
-	float limit_hp = 100.f;
-
-	if (monster_hp < limit_hp)
-	{
-		float percent_hp = limit_hp * 0.01f;
-		monster_hp += percent_hp;
-	}
-	else if (monster_hp >= limit_hp)
-	{
-		monster_hp = limit_hp;
-	}
-	m_pMonsterPool->m_cumMonsterPool[uiMonster]->SetHealth(monster_hp);
-
-	// 몬스터 관련 넘겨줘야합니당
-	if (range_list.empty())
-	{
-		return;
-	}
-		//m_pMonsterPool->m_cumMonsterPool[uiMonster]->ResPawn();
-	else
-	{
-		if (monster_hp != limit_hp)
-		{
-			Update_Event ev;
-			ev.m_Do_Object = uiMonster;
-			ev.m_EventType = EV_MONSTER_UPDATE;
-			ev.m_From_Object = NO_TARGET;
-			ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::HEAL;
-			ev.wakeup_time = high_resolution_clock::now() + 1s;
-			PushEventQueue(ev);
-		}
-		for (auto& au : range_list)
-		{
-			bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
-			if (!bConnect) continue;
-			// Status 패킷 보내기
-		}
 	}
 }
 

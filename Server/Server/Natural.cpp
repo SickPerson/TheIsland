@@ -15,17 +15,17 @@ void CNatural::SetType(NATURAL_TYPE eType)
 	
 	switch (eType)
 	{
-	case NATURAL_TREE:
+	case N_TREE:
 		m_vOriginRot = Vec3(-3.141592654f / 2.f, 0.f, 0.f);
 		this->SetHealth(150.f);
 		m_fHealth = 150.f;
 		break;
-	case NATURAL_STONE:
+	case N_STONE:
 		m_vOriginRot = Vec3(-3.141592654f / 2.f, 0.f, 0.f);
 		m_fHealth = 150.f;
 		break;
-	case NATURAL_BUSH:
-	case NATURAL_NONE:
+	case N_BUSH:
+	case N_NONE:
 		m_vOriginRot = Vec3(-3.141592654f / 2.f, 0.f, 0.f);
 		m_fHealth = 1.f;
 		break;

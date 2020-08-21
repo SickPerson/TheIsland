@@ -53,10 +53,6 @@ void CPacketMgr::Send_Login_Fail_Packet(USHORT playerId)
 	Send_Packet(playerId, &packet);
 }
 
-void CPacketMgr::Send_Login_Status_Packet(USHORT playerId)
-{
-}
-
 void CPacketMgr::Send_Put_Player_Packet(USHORT playerId, USHORT OtherId)
 {
 	Vec3 vPos = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalPos();
@@ -85,7 +81,7 @@ void CPacketMgr::Send_Pos_Player_Packet(USHORT playerId, USHORT OtherId)
 
 	sc_pos_player_packet packet;
 	packet.size = sizeof(sc_pos_player_packet);
-	packet.type = SC_POS;
+	packet.type = SC_POS_PLAYER;
 	packet.id = OtherId;
 	packet.vPos = pos;
 	packet.vRot = rot;
@@ -114,7 +110,7 @@ void CPacketMgr::Send_Rot_Player_Packet(USHORT playerId, USHORT OtherId)
 {
 	sc_rot_player_packet packet;
 	packet.size = sizeof(sc_rot_player_packet);
-	packet.type = SC_ROT;
+	packet.type = SC_ROT_PLAYER;
 	packet.id = OtherId;
 	packet.vRot = CProcess::m_pPlayerPool->m_cumPlayerPool[OtherId]->GetLocalRot();
 	if(playerId != OtherId)
@@ -163,15 +159,6 @@ void CPacketMgr::Send_Animation_Player_Packet(USHORT playerId, UINT AnimationTyp
 		Send_Packet(playerId, &packet);
 }
 
-void CPacketMgr::Send_Wakeup_Npc_Packet(USHORT playerId, USHORT NpcId)
-{
-	sc_wake_up_packet packet;
-	packet.size = sizeof(sc_wake_up_packet);
-	packet.type = SC_WAKE_UP_NPC;
-	packet.id = NpcId;
-	Send_Packet(playerId, &packet);
-}
-
 void CPacketMgr::Send_Put_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 {
 	Vec3 pos = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalPos();
@@ -181,7 +168,7 @@ void CPacketMgr::Send_Put_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 	sc_put_npc_packet	packet;
 	packet.id = NpcID;
 	packet.size = sizeof(packet);
-	packet.type = SC_PUT_NPC;
+	packet.type = SC_PUT_ANIMAL;
 
 	packet.eType = eType;
 	packet.vPos = pos;
@@ -190,8 +177,8 @@ void CPacketMgr::Send_Put_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 
 	Send_Packet(PlayerID, &packet);
 
-	if(CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + MAX_USER))
-		CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->InsertList(NpcID + MAX_USER);
+	if(CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + BEGIN_ANIMAL))
+		CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->InsertList(NpcID + BEGIN_ANIMAL);
 }
 
 void CPacketMgr::Send_Pos_Npc_Packet(USHORT PlayerID, USHORT NpcID)
@@ -202,14 +189,14 @@ void CPacketMgr::Send_Pos_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 
 	sc_pos_npc_packet packet;
 	packet.size = sizeof(sc_pos_npc_packet);
-	packet.type = SC_POS_NPC;
+	packet.type = SC_POS_ANIMAL;
 	packet.id = NpcID;
 
 	packet.eType = eType;
 	packet.vPos = pos;
 	packet.vRot = rot;
 
-	if (0 != CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + MAX_USER))
+	if (0 != CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + BEGIN_ANIMAL))
 		CPacketMgr::Send_Packet(PlayerID, &packet);
 	else
 		CPacketMgr::Send_Put_Npc_Packet(PlayerID, NpcID);
@@ -219,19 +206,19 @@ void CPacketMgr::Send_Remove_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 {
 	sc_remove_player_packet packet;
 	packet.size = sizeof(packet);
-	packet.type = SC_REMOVE_NPC;
+	packet.type = SC_REMOVE_ANIMAL;
 	packet.id = NpcID;
 	Send_Packet(PlayerID, &packet);
 
-	if (CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + MAX_USER))
-		CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->DeleteList(NpcID + MAX_USER);
+	if (CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + BEGIN_ANIMAL))
+		CProcess::m_pPlayerPool->m_cumPlayerPool[PlayerID]->DeleteList(NpcID + BEGIN_ANIMAL);
 }
 
 void CPacketMgr::Send_Animation_Npc_Packet(USHORT playerId, USHORT NpcId, UINT AnimationType)
 {
 	sc_animation_player_packet packet;
 	packet.size = sizeof(sc_animation_npc_packet);
-	packet.type = SC_ANIMATION_NPC;
+	packet.type = SC_ANIMATION_ANIMAL;
 	packet.animation_uiType = AnimationType;
 	packet.id = NpcId;
 	Send_Packet(playerId, &packet);

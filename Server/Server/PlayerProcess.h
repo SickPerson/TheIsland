@@ -42,6 +42,9 @@ public:
 		m_fpPacketProcess[CS_LOGOUT] = [&](USHORT playerId, char* packet) {
 			PlayerLogout(playerId);
 		};
+		m_fpPacketProcess[CS_POS] = [&](USHORT playerId, char* packet) {
+			PlayerPos(playerId, packet);
+		};
 		m_fpPacketProcess[CS_ROT] = [&](USHORT playerId, char* packet) {
 			PlayerRot(playerId, packet);
 		};
@@ -66,10 +69,13 @@ public:
 	void PlayerMove(USHORT playerId, char* packet);
 	void PlayerChat(USHORT playerId, char* _packet);
 	void PlayerLogout(USHORT playerId);
+	void PlayerPos(USHORT playerId, char* packet);
 	void PlayerRot(USHORT playerId, char* packet);
 	void PlayerAttack(USHORT playerId, char* packet);
 
 public: // Collision
+	bool CollisionSphere(USHORT playerId, USHORT otherId, UINT uiColType, float fOffset = 1.f);
+
 	void PlayerCollision(USHORT playerId, char* packet);
 	void PlayerCollisionAnimal(USHORT playerId, USHORT AnimalId, bool bRun);
 	void PlayerCollisionNatural(USHORT playerId, USHORT NaturalId, bool bRun);

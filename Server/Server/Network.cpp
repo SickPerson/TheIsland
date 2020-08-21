@@ -4,6 +4,7 @@
 #include "MonsterProcess.h"
 #include "NaturalProcess.h"
 #include "HousingProcess.h"
+#include "EtcProcess.h"
 
 #include "PacketMgr.h"
 #include "TimerMgr.h"
@@ -20,13 +21,11 @@ CNetwork::CNetwork()
 	m_pMonsterProcess = nullptr;
 	m_pNaturalProcess = nullptr;
 	m_pHousingProcess = nullptr;
+	m_pEtcProcess = nullptr;
 	m_UserID = 0;
-	serverTimer = high_resolution_clock::now();
-	eventTimer = high_resolution_clock::now();
 	//------------------------------
 	//Initialize();
 	CheckThisCputCount();
-	CDataBase::GetInst();
 }
 
 CNetwork::~CNetwork()
@@ -64,6 +63,7 @@ void CNetwork::Initialize()
 	m_pMonsterProcess = new CMonsterProcess();
 	m_pNaturalProcess = new CNaturalProcess();
 	m_pHousingProcess = new CHousingProcess();
+	m_pEtcProcess = new CEtcProcess();
 
 	CTimerMgr::GetInst()->Reset();
 
@@ -117,7 +117,9 @@ void CNetwork::StartServer()
 		m_vWorkerThread.push_back(std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } }));
 	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
 	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
+#ifdef DB_ON
 	m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
+#endif // DB_ON
 	cout << "==============================" << endl;
 	cout << "бл      Server Start          бл" << endl;
 	cout << "==============================" << endl;
@@ -133,8 +135,10 @@ void CNetwork::CloseServer()
 	}
 
 	// Thread Exit
+#ifdef DB_ON
 	m_pDatabaseThread->join();
 	cout << "DatabaseThread Close" << endl;
+#endif // DB_ON
 	m_pUpdateThread->join();
 	cout << "UpdateThread Close" << std::endl;
 	m_pAcceptThread->join();
@@ -206,6 +210,7 @@ void CNetwork::WorkerThread()
 		case EV_RECV:
 		{
 			m_pPlayerProcess->RecvPacket(id, lpover_ex->m_MessageBuffer, num_byte);
+			delete lpover_ex;
 			break;
 		}
 		case EV_SEND:
@@ -233,6 +238,12 @@ void CNetwork::WorkerThread()
 		}
 		case EV_DB:
 		{
+			delete lpover_ex;
+			break;
+		}
+		case EV_ETC:
+		{
+			m_pEtcProcess->UpdateEtc(lpover_ex->m_Status);
 			delete lpover_ex;
 			break;
 		}
@@ -271,20 +282,9 @@ void CNetwork::UpdateThread()
 	}
 	while (m_bRunningServer)
 	{
-		CTimerMgr::GetInst()->Tick();
-		/*while (CProcess::EmptyEventQueue()) {
+		//CTimerMgr::GetInst()->Tick();
+		while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
-		}*/
-		if (high_resolution_clock::now() - serverTimer >= 1s)
-		{
-			CProcess::Time_Event();
-			serverTimer = high_resolution_clock::now();
-		}
-
-		if (high_resolution_clock::now() - eventTimer >= 30s)
-		{
-			CProcess::Weather_Event();
-			eventTimer = high_resolution_clock::now();
 		}
 
 		while (!CProcess::EmptyEventQueue())
@@ -295,7 +295,7 @@ void CNetwork::UpdateThread()
 				OVER_EX*	pOver_ex = new OVER_EX;
 				ZeroMemory(&pOver_ex->m_Overlapped, sizeof(WSAOVERLAPPED));
 				pOver_ex->m_Event = ev.m_EventType;
-				pOver_ex->m_Status = ev.m_ObjState;
+				pOver_ex->m_Status = ev.m_eObjUpdate;
 				pOver_ex->m_usOtherID = ev.m_From_Object;
 				PostQueuedCompletionStatus(m_hIocp, 1, ev.m_Do_Object, &pOver_ex->m_Overlapped);
 			}
@@ -305,6 +305,7 @@ void CNetwork::UpdateThread()
 	}
 }
 
+#ifdef DB_ON
 void CNetwork::DataBaseThread()
 {
 	while (m_bRunningServer)
@@ -320,6 +321,7 @@ void CNetwork::DataBaseThread()
 		}
 	}
 }
+#endif // DB_ON
 
 void CNetwork::Err_quit(const char* msg, int err_no)
 {

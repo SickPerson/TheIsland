@@ -128,7 +128,6 @@ void CNetwork::RunRecvThread()
 {
 	// Network Run
 	m_tNetworkThread = make_shared<thread>([]() {CNetwork::GetInst()->RecvPacket(); });
-
 }
 
 bool CNetwork::CreateEventSelect()
@@ -247,11 +246,11 @@ void CNetwork::ProcessPacket(char* packet)
 		Recv_Remove_Player_Packet(packet);
 		break;
 	}
-	case SC_POS: {
+	case SC_POS_PLAYER: {
 		Recv_Pos_Player_Packet(packet);
 		break;
 	}
-	case SC_ROT: {
+	case SC_ROT_PLAYER: {
 		break;
 	}
 	case SC_CHAT: {
@@ -259,18 +258,18 @@ void CNetwork::ProcessPacket(char* packet)
 		break;
 	}
 	// NPC, MONSTER 관련
-	case SC_PUT_NPC: {
-		Recv_Put_Npc_Packet(packet);
+	case SC_PUT_ANIMAL: {
+		Recv_Put_Animal_Packet(packet);
 		break;
 	}
-	case SC_POS_NPC:
+	case SC_POS_ANIMAL:
 	{
-		Recv_Pos_Npc_Packet(packet);
+		Recv_Pos_Animal_Packet(packet);
 		break;
 	}
-	case SC_REMOVE_NPC:
+	case SC_REMOVE_ANIMAL:
 	{
-		Recv_Remove_Npc_Packet(packet);
+		Recv_Remove_Animal_Packet(packet);
 		break;
 	}
 	// Natural
@@ -519,12 +518,12 @@ void CNetwork::Recv_Login_OK_Packet(char * packet)
 	pScene = CSceneMgr::GetInst()->GetCurScene();
 	sc_login_ok_packet* login_packet = reinterpret_cast<sc_login_ok_packet*>(packet);
 	m_usID = login_packet->id;
-	//pScene->FindLayer(L"Player")->AddGameObject(m_pPlayer);
+	dynamic_cast<CLoginScene*>(pScene->GetSceneScript())->NextScene();
 }
 
 void CNetwork::Recv_Login_Fail_Packet(char * packet)
 {
-	SetLogin(false);
+
 }
 
 void CNetwork::Recv_Status_Player_Packet(char * packet)
@@ -535,14 +534,7 @@ void CNetwork::Recv_Status_Player_Packet(char * packet)
 	float fHungry = status_player_packet->fHungry;
 	float fThrist = status_player_packet->fThrist;
 
-	if (m_usID == player_id)
-	{
-		// 추가
-	}
-	else
-	{
-		return;
-	}
+	// 추가
 }
 
 void CNetwork::Recv_Put_Player_Packet(char * packet)
@@ -710,7 +702,7 @@ void CNetwork::Recv_WakeUp_Npc_Packet(char * packet)
 	m_cumAnimal[monster_id]->GetScript<CAnimalScript>()->SetWakeUp(true);
 }
 
-void CNetwork::Recv_Put_Npc_Packet(char * packet)
+void CNetwork::Recv_Put_Animal_Packet(char * packet)
 {
 	sc_put_npc_packet* put_npc_packet = reinterpret_cast<sc_put_npc_packet*>(packet);
 	USHORT monster_id = put_npc_packet->id;
@@ -722,7 +714,7 @@ void CNetwork::Recv_Put_Npc_Packet(char * packet)
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
 }
 
-void CNetwork::Recv_Remove_Npc_Packet(char * packet)
+void CNetwork::Recv_Remove_Animal_Packet(char * packet)
 {
 	sc_remove_npc_packet* remove_npc_packet = reinterpret_cast<sc_remove_npc_packet*>(packet);
 	USHORT monster_id = remove_npc_packet->id;
@@ -730,7 +722,7 @@ void CNetwork::Recv_Remove_Npc_Packet(char * packet)
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalDestory(monster_id);
 }
 
-void CNetwork::Recv_Pos_Npc_Packet(char * packet)
+void CNetwork::Recv_Pos_Animal_Packet(char * packet)
 {
 	sc_pos_npc_packet* pos_npc_packet = reinterpret_cast<sc_pos_npc_packet*>(packet);
 	unsigned int monster_id = pos_npc_packet->id;
@@ -741,7 +733,7 @@ void CNetwork::Recv_Pos_Npc_Packet(char * packet)
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
 }
 
-void CNetwork::Recv_Animation_Npc_Packet(char * packet)
+void CNetwork::Recv_Animation_Animal_Packet(char * packet)
 {
 	sc_animation_npc_packet* animation_npc_packet = reinterpret_cast<sc_animation_npc_packet*>(packet);
 	unsigned int monster_id = animation_npc_packet->id;
@@ -749,27 +741,6 @@ void CNetwork::Recv_Animation_Npc_Packet(char * packet)
 
 	// 몬스터 애니메이션 키값 바꾸기
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalAnimationUpdate(monster_id, uiType);
-
-	if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::WALK) {
-		
-	}
-	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::RUN) {
-
-	}
-	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::IDLE) {
-
-	}
-	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::EAT) {
-
-	}
-	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::DIE) {
-
-	}
-	else if (uiType == (UINT)ANIMAL_ANIMATION_TYPE::ATTACK) {
-
-	}
-	else
-		return;
 }
 
 void CNetwork::Recv_Put_Natural_Packet(char * packet)

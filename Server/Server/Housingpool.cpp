@@ -22,14 +22,14 @@ CHousingpool::~CHousingpool()
 	m_cumHousingPool.clear();
 }
 
-void CHousingpool::Install_House(CHousing * pHouse, USHORT usHouseNum)
+void CHousingpool::Install_House(CHousing * pHouse, USHORT usHouseIndex)
 {
-	lock_guard<recursive_mutex>	lock(m_rmHousingPoolMutex);
-	m_cumHousingPool.insert(make_pair(usHouseNum, pHouse));
+	lock_guard<recursive_mutex>	lock(m_rmHousingPoolMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::INSERT]);
+	m_cumHousingPool.insert(make_pair(usHouseIndex, pHouse));
 }
 
-void CHousingpool::Remove_House(USHORT usHouseNum)
+void CHousingpool::Remove_House(USHORT usHouseIndex)
 {
-	lock_guard<recursive_mutex>	lock(m_rmHousingPoolMutex);
-	m_cumHousingPool.unsafe_erase(usHouseNum);
+	lock_guard<recursive_mutex>	lock(m_rmHousingPoolMutex[(UINT)HOUSINGPOOL_LOCK_TYPE::REMOVE]);
+	m_cumHousingPool.unsafe_erase(usHouseIndex);
 }

@@ -12,6 +12,7 @@ enum class NATURAL_LOCK_TYPE
 	ANGLE,
 	END
 };
+
 class CNatural:
 	public CObject
 {

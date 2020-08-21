@@ -14,6 +14,7 @@ CNaturalpool::CNaturalpool()
 	int iSize = 0;
 	fread(&iSize, sizeof(int), 1, pFile);
 
+	cout << "Natural Number : " << iSize << endl;
 	for (int i = 0; i < iSize; ++i)
 	{
 		CNatural* pNatural = new CNatural();
@@ -55,18 +56,12 @@ CNaturalpool::CNaturalpool()
 	
 		if (str1 == "sprucea" || str1 == "sprucec")
 		{
-			//pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
 		}
 		else if (str1 == "spruceb")
 		{
-			//pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 1);
 		}
 		else if (str1 == "plainsgrass")
 		{
-			//pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
-			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
-			//pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
-			//pObject->FrustumCheck(false);
 			pNatural->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
 			pNatural->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 		}

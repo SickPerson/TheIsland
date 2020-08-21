@@ -8,14 +8,14 @@ public:
 	virtual ~CNaturalProcess();
 
 private:
-	function<void(USHORT, USHORT)> m_fpNaturalUpdate[(UINT)NATURAL_UPDATE_TYPE::END];
+	function<void(USHORT, USHORT)> m_fpNaturalUpdate[NUT_END];
 
 public:
 	void BindNaturalUpdate() {
-		m_fpNaturalUpdate[(UINT)NATURAL_UPDATE_TYPE::RESPAWN] = [&](USHORT NaturalId, USHORT PlayerId) {
+		m_fpNaturalUpdate[NUT_RESPAWN] = [&](USHORT NaturalId, USHORT PlayerId) {
 			RespawnEvent(NaturalId);
 		};
-		m_fpNaturalUpdate[(UINT)NATURAL_UPDATE_TYPE::DAMAGE] = [&](USHORT NaturalId, USHORT PlayerId) {
+		m_fpNaturalUpdate[NUT_DAMAGE] = [&](USHORT NaturalId, USHORT PlayerId) {
 			DamageEvent(NaturalId, PlayerId);
 		};
 	}

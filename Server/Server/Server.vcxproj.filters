@@ -79,11 +79,14 @@
     <Filter Include="04. Object\02. Static\02. Housing\Housingpool">
       <UniqueIdentifier>{0538de17-821f-4059-83ca-0548bec68673}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Process\04. NaturalProcess">
-      <UniqueIdentifier>{5423735c-6c5f-43ea-8bd5-12c8403d5971}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Process\04. HousingProcess">
       <UniqueIdentifier>{81ded5e7-5462-4385-96e4-04b22c866f78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Process\05. NaturalProcess">
+      <UniqueIdentifier>{5423735c-6c5f-43ea-8bd5-12c8403d5971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Process\99. EtcProcess">
+      <UniqueIdentifier>{48b670c1-af14-40b4-86cc-59abf6579ef0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -145,10 +148,13 @@
       <Filter>04. Object\02. Static\01. Natural</Filter>
     </ClCompile>
     <ClCompile Include="NaturalProcess.cpp">
-      <Filter>03. Process\04. NaturalProcess</Filter>
+      <Filter>03. Process\05. NaturalProcess</Filter>
     </ClCompile>
     <ClCompile Include="HousingProcess.cpp">
       <Filter>03. Process\04. HousingProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="EtcProcess.cpp">
+      <Filter>03. Process\99. EtcProcess</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -220,10 +226,13 @@
       <Filter>04. Object\02. Static\01. Natural</Filter>
     </ClInclude>
     <ClInclude Include="NaturalProcess.h">
-      <Filter>03. Process\04. NaturalProcess</Filter>
+      <Filter>03. Process\05. NaturalProcess</Filter>
     </ClInclude>
     <ClInclude Include="HousingProcess.h">
       <Filter>03. Process\04. HousingProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="EtcProcess.h">
+      <Filter>03. Process\99. EtcProcess</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

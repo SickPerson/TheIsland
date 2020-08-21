@@ -22,7 +22,7 @@ private:
 	concurrent_queue<DB_Event>m_DatabaseEventQueue;
 	concurrent_queue<DB_Event>m_SaveStateQueue;
 
-	std::function<void(DB_Event&)>m_fpDataBaseProcess[(UINT)DB_STATE_TYPE::END];
+	std::function<void(DB_Event&)>m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_END];
 	vector<User_Data> m_vUserData;
 
 public:
@@ -44,12 +44,12 @@ public:
 public:
 	void BindDataBaseFP()
 	{
-		m_fpDataBaseProcess[(UINT)DB_STATE_TYPE::LOGIN] = [&](DB_Event& event) {LogInProcess(event); };
-		m_fpDataBaseProcess[(UINT)DB_STATE_TYPE::LOGOUT] = [&](DB_Event& event) {LogOutProcess(event); };
-		m_fpDataBaseProcess[(UINT)DB_STATE_TYPE::GET_ITEM] = [&](DB_Event& event) {GetItemProcess(event); };
-		m_fpDataBaseProcess[(UINT)DB_STATE_TYPE::REMOVE_ITEM] = [&](DB_Event& event) {RemoveItemProcess(event); };
-		m_fpDataBaseProcess[(UINT)DB_STATE_TYPE::CHANGE_STATE] = [&](DB_Event& event) {ChnageStateProcess(event); };
-		m_fpDataBaseProcess[(UINT)DB_STATE_TYPE::CHANGE_INVEN] = [&](DB_Event& event) {ChangeInvenProcess(event); };
+		m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_LOGIN] = [&](DB_Event& event) {LogInProcess(event); };
+		m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_LOGOUT] = [&](DB_Event& event) {LogOutProcess(event); };
+		m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_GET_ITEM] = [&](DB_Event& event) {GetItemProcess(event); };
+		m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_REMOVE_ITEM] = [&](DB_Event& event) {RemoveItemProcess(event); };
+		//m_fpDataBaseProcess[DB_UPDATE_TYPE::CHANGE_STATE] = [&](DB_Event& event) {ChnageStateProcess(event); };
+		//m_fpDataBaseProcess[DB_UPDATE_TYPE::CHANGE_INVEN] = [&](DB_Event& event) {ChangeInvenProcess(event); };
 	}
 	bool EmptyDatabaseEventQueue() { return m_DatabaseEventQueue.empty(); }
 	void PushDatabaseEventQueue(DB_Event& ev) { m_DatabaseEventQueue.push(ev); }

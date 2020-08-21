@@ -170,24 +170,36 @@ void CLoginScene::Update()
 	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
 	{
 #ifdef NETWORK_ON
-		string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
-		string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
-
-		wstring wStrID;
-		wStrID.assign( strID.begin(), strID.end() );
-
-		if ( CNetwork::GetInst()->ConnectServer( strIP ) )
+		if (!m_bIP_Success)
 		{
-			cout << "==================" << endl;
-			cout << "IP Connect Success" << endl;
-			cout << "==================" << endl;
-			NextScene();
-			CNetwork::GetInst()->Send_Login_Packet( wStrID );
+			string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
+			string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
+
+			wstring wStrID;
+			wStrID.assign(strID.begin(), strID.end());
+
+			if (CNetwork::GetInst()->ConnectServer(strIP))
+			{
+				cout << "==================" << endl;
+				cout << "IP Connect Success" << endl;
+				cout << "==================" << endl;
+				CNetwork::GetInst()->Send_Login_Packet(wStrID);
+				m_bIP_Success = true;
+			}
+			else
+			{
+				cout << "==================" << endl;
+				cout << "IP Connect Failed" << endl;
+				cout << "==================" << endl;
+				return;
+			}
 		}
 		else
 		{
-			cout << "d" << endl;
-			return;
+			string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
+			wstring wStrID;
+			wStrID.assign(strID.begin(), strID.end());
+			CNetwork::GetInst()->Send_Login_Packet(wStrID);
 		}
 #else
 		NextScene();

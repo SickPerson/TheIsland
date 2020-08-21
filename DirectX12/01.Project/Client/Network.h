@@ -121,10 +121,10 @@ public:
 
 public:
 	void Recv_WakeUp_Npc_Packet(char* packet);
-	void Recv_Put_Npc_Packet(char* packet);
-	void Recv_Remove_Npc_Packet(char* packet);
-	void Recv_Pos_Npc_Packet(char* packet);
-	void Recv_Animation_Npc_Packet(char* packet);
+	void Recv_Put_Animal_Packet(char* packet);
+	void Recv_Remove_Animal_Packet(char* packet);
+	void Recv_Pos_Animal_Packet(char* packet);
+	void Recv_Animation_Animal_Packet(char* packet);
 
 public: // Natural
 	void Recv_Put_Natural_Packet(char* packet);

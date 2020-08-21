@@ -36,6 +36,12 @@ void CObject::SetLocalRot(Vec3 vRot)
 	m_vLocalRot = vRot;
 }
 
+void CObject::SetLocalDir(DIR_TYPE uiDir, Vec3 vDir)
+{
+	unique_lock<shared_mutex> lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::LOCAL_DIR]);
+	m_vLocalDir[(UINT)uiDir] = vDir;
+}
+
 void CObject::SetLocalScale(float & fScaleX, float & fScaleY, float & fScaleZ)
 {
 	unique_lock<shared_mutex>lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::LOCAL_SCALE]);
@@ -48,10 +54,10 @@ void CObject::SetLocalScale(Vec3 vScale)
 	m_vLocalScale = vScale;
 }
 
-void CObject::SetState(UINT uiState)
+void CObject::SetState(char uiState)
 {
 	unique_lock<shared_mutex>lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::STATE]);
-	m_uiState = uiState;
+	m_eState = uiState;
 }
 
 void CObject::SetOffsetPos(Vec3 vPos)
@@ -80,7 +86,7 @@ const Vec3 CObject::GetLocalRot()
 
 const Vec3 & CObject::GetLocalDir(DIR_TYPE _eType)
 {
-	shared_lock<shared_mutex> lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::SOCAL_DIR]);
+	shared_lock<shared_mutex> lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::LOCAL_DIR]);
 	return m_vLocalDir[(UINT)_eType];
 	// TODO: 여기에 반환 구문을 삽입합니다.
 }
@@ -91,10 +97,10 @@ const Vec3 CObject::GetLocalScale()
 	return m_vLocalScale;
 }
 
-const UINT CObject::GetState()
+const char CObject::GetState()
 {
 	shared_lock<shared_mutex>lock(m_ObjMutex[(UINT)OBJ_LOCK_TYPE::STATE]);
-	return m_uiState;
+	return m_eState;
 }
 
 const Vec3 CObject::GetOffsetPos()

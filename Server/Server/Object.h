@@ -5,7 +5,7 @@ enum class OBJ_LOCK_TYPE {
 	LOCAL_POS,
 	LOCAL_SCALE,
 	LOCAL_ROT,
-	SOCAL_DIR,
+	LOCAL_DIR,
 	OFFSET_POS,
 	OFFSET_SCALE,
 	STATE,
@@ -15,7 +15,7 @@ enum class OBJ_LOCK_TYPE {
 class CObject
 {
 private:
-	UINT	m_uiState;
+	char	m_eState;
 	Vec3	m_vLocalPos;
 	Vec3	m_vLocalScale;
 	Vec3	m_vLocalRot;
@@ -36,9 +36,10 @@ public:
 	void SetLocalPos(Vec3 vPos);
 	void SetLocalRot(float& fRotX, float& fRotY, float& fRotZ);
 	void SetLocalRot(Vec3 vRot);
+	void SetLocalDir(DIR_TYPE uiDir, Vec3 vDir);
 	void SetLocalScale(float& fScaleX, float& fScaleY, float& fScaleZ);
 	void SetLocalScale(Vec3 vScale);
-	void SetState(UINT uiState);
+	void SetState(char eState);
 	void SetOffsetPos(Vec3 vPos);
 	void SetOffsetScale(Vec3 vScale);
 
@@ -47,7 +48,7 @@ public:
 	const Vec3	GetLocalScale();
 	const Vec3	GetLocalRot();
 	const Vec3& GetLocalDir(DIR_TYPE _eType);
-	const UINT	GetState();
+	const char	GetState();
 
 	const Vec3	GetOffsetPos();
 	const Vec3	GetOffsetScale();

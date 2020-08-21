@@ -6,6 +6,7 @@ CNaturalProcess::CNaturalProcess()
 {
 	if (!CProcess::m_pNaturalPool)
 		CProcess::m_pNaturalPool = new class CNaturalpool();
+	BindNaturalUpdate();
 }
 
 
@@ -29,14 +30,14 @@ void CNaturalProcess::RespawnEvent(USHORT natural_id)
 	
 	switch (eType)
 	{
-	case NATURAL_TREE:
+	case N_TREE:
 		m_pNaturalPool->m_cumNaturalPool[natural_id]->SetHealth(150.f);
 		break;
-	case NATURAL_STONE:
+	case N_STONE:
 		m_pNaturalPool->m_cumNaturalPool[natural_id]->SetHealth(150.f);
 		break;
-	case NATURAL_BUSH:
-	case NATURAL_NONE:
+	case N_BUSH:
+	case N_NONE:
 		m_pNaturalPool->m_cumNaturalPool[natural_id]->SetHealth(1.f);
 		break;
 	default:
@@ -51,7 +52,7 @@ void CNaturalProcess::DamageEvent(USHORT NaturalId, USHORT PlayerId)
 
 	NATURAL_TYPE eType = m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetType();
 
-	if (eType == NATURAL_NONE)
+	if (eType == N_NONE)
 		return;
 
 	float fHealth = m_pNaturalPool->m_cumNaturalPool[NaturalId]->GetHealth();

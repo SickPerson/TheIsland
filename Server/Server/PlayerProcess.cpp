@@ -100,6 +100,7 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 	// NO DB
 	 //Player Init
 	CPacketMgr::Send_Login_OK_Packet(playerId);
+	cout << login_packet->player_id << ": 접속 하였습니다. " << endl;
 	Init_Player(playerId, login_packet->player_id);
 	
 	// Server -> Client에 초기 플레이어 값 패킷 전송
@@ -154,21 +155,38 @@ void CPlayerProcess::PlayerLogout(USHORT playerId)
 		CPacketMgr::Send_Remove_Player_Packet(au, playerId);
 }
 
+void CPlayerProcess::PlayerPos(USHORT playerId, char * packet)
+{
+	cs_pos_packet* pos_packet = reinterpret_cast<cs_pos_packet*>(packet);
+
+	Vec3 vPrePos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	Vec3 vCurrPos = pos_packet->vLocalPos;
+
+	if (ObjectRangeCheck(vPrePos, vCurrPos, 10.f)) {
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vCurrPos);
+		UpdateViewList(playerId);
+	}
+	else
+		return;
+}
+
 void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
 {
 	cs_rot_packet* rot_packet = reinterpret_cast<cs_rot_packet*>(packet);
-	USHORT id = rot_packet->id;
-	Vec3 vRot = rot_packet->vRot;
+	Vec3 vPreRot = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalRot();
+	Vec3 vCurrRot = rot_packet->vRot;
 
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(vRot);
+	if (vPreRot != vCurrRot) {
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(vCurrRot);
 
-	concurrent_unordered_set<USHORT> viewList;
+		concurrent_unordered_set<USHORT> viewList;
 
-	m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(viewList);
+		m_pPlayerPool->m_cumPlayerPool[playerId]->CopyBefore(viewList);
 
-	for (auto& au : viewList)
-	{
-		CPacketMgr::Send_Rot_Player_Packet(au, playerId);
+		for (auto& player : viewList)
+		{
+			CPacketMgr::Send_Rot_Player_Packet(player, playerId);
+		}
 	}
 }
 
@@ -180,13 +198,13 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 
 	if ((UINT)ATTACK_TYPE::ANIMAL == uiType)
 	{
-		m_pMonsterPool->m_cumMonsterPool[attack_id]->SetState((UINT)ANIMAL_UPDATE_TYPE::DAMAGE);
+		m_pMonsterPool->m_cumMonsterPool[attack_id]->SetState(AUT_DAMAGE);
 		m_pMonsterPool->m_cumMonsterPool[attack_id]->SetTarget(playerId);
 		Update_Event ev;
 		ev.m_Do_Object = attack_id;
 		ev.m_EventType = EV_MONSTER_UPDATE;
 		ev.m_From_Object = playerId;
-		ev.m_ObjState = (UINT)ANIMAL_UPDATE_TYPE::DAMAGE;
+		ev.m_eObjUpdate = AUT_DAMAGE;
 		ev.wakeup_time = high_resolution_clock::now();
 		PushEventQueue(ev);
 	}
@@ -196,10 +214,15 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 		ev.m_Do_Object = attack_id;
 		ev.m_EventType = EV_NATURAL_UPDATE;
 		ev.m_From_Object = playerId;
-		ev.m_ObjState = (UINT)NATURAL_UPDATE_TYPE::DAMAGE;
+		ev.m_eObjUpdate = NUT_DAMAGE;
 		ev.wakeup_time = high_resolution_clock::now();
 		PushEventQueue(ev);
 	}
+}
+
+bool CPlayerProcess::CollisionSphere(USHORT playerId, USHORT otherId, UINT uiColType, float fOffset)
+{
+	return false;
 }
 
 void CPlayerProcess::PlayerCollision(USHORT playerId, char * packet)
@@ -483,24 +506,22 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 		}
 	}
 
-	// [ Add Monster List ]
+	// [ Add Animal List ]
 	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
-		//if (au.second->GetState() == OBJ_STATE_DIE) continue;
-		Vec3 monster_pos = au.second->GetLocalPos();
+		char eType = au.second->GetState();
+		if (eType == OBJ_STATE_TYPE::OST_DIE) continue;
 
-		if (true == ObjectRangeCheck(player_pos, monster_pos, PLAYER_VIEW_RANGE))
+		Vec3 vAnimal_Pos = au.second->GetLocalPos();
+
+		if (ObjectRangeCheck(player_pos, vAnimal_Pos, PLAYER_VIEW_RANGE))
 		{
-			if (false == au.second->GetWakeUp())
+			if (ObjectRangeCheck(player_pos, vAnimal_Pos, ANIMAL_VIEW_RANGE))
 			{
-				CPacketMgr::Send_Wakeup_Npc_Packet(playerId, au.first);
-
-				Update_Event ev;
-				ev.m_Do_Object = au.first;
-				ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
-				ev.m_From_Object = NO_TARGET;
-				//ev.m_ObjState = OBJ_STATE_IDLE;
-				ev.wakeup_time = high_resolution_clock::now() + 1s;
-				PushEventQueue(ev);
+				PushEvent_Animal_Behavior(au.first, playerId);
+			}
+			else
+			{
+				PushEvent_Animal_Idle(au.first, playerId);
 			}
 			CPacketMgr::Send_Put_Npc_Packet(playerId, au.first);
 		}
@@ -525,102 +546,116 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 
 void CPlayerProcess::UpdateViewList(USHORT playerId)
 {
-	concurrent_unordered_set<USHORT> loginList; // 현재 로그인 리스트
-	concurrent_unordered_set<USHORT> beforeList; // 수정 전 리스트
-	concurrent_unordered_set<USHORT> afterList; // 수정 후 리스트
+	// [ Initalize ]
+	concurrent_unordered_set<USHORT>	loginList;
+	concurrent_unordered_set<USHORT>	beforeViewList;
+	concurrent_unordered_set<USHORT>	afterViewList;
 
-	// 동접자 리스트를 받아옵니다.
 	CopyBeforeLoginList(loginList);
-	// 현재 플레이어의 시야처리 내의 리스트를 받아옵니다.
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(beforeList);
-	// 현재 플레이어 위치를 받아옵니다.
-	Vec3 player_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	m_pPlayerPool->m_cumPlayerPool[playerId]->CopyBefore(beforeViewList);
 
-	// After List에 시야처리 리스트 추가 작업 [ Player ] 
-	for (auto& au : loginList) 
+	Vec3 vPlayer_Pos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+
+	// [ Update Player List ]
+
+	// - Player ViewList Update
+	for (auto& player : loginList)
 	{
-		if (au == playerId) continue;
-		if (false == CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetConnect()) continue;
-		Vec3 other_pos = CProcess::m_pPlayerPool->m_cumPlayerPool[au]->GetLocalPos();
-		if (ObjectRangeCheck(player_pos, other_pos, PLAYER_VIEW_RANGE)) {
-			afterList.insert(au);
-			continue;
+		if (player == playerId) continue;
+		bool bConnect = m_pPlayerPool->m_cumPlayerPool[player]->GetConnect();
+		if (!bConnect) continue;
+		Vec3 vOther_Pos = m_pPlayerPool->m_cumPlayerPool[player]->GetLocalPos();
+		if (ObjectRangeCheck(vPlayer_Pos, vOther_Pos, PLAYER_VIEW_RANGE)) {
+			afterViewList.insert(player);
+		}
+
+	}
+	// [ Update Animal List ]
+
+	// - Animal ViewList Update
+	for (auto& animal : m_pMonsterPool->m_cumMonsterPool)
+	{
+		char eType = animal.second->GetState();
+		if (eType == OBJ_STATE_TYPE::OST_DIE) continue;
+		Vec3 vOther_Pos = animal.second->GetLocalPos();
+		if (ObjectRangeCheck(vPlayer_Pos, vOther_Pos, PLAYER_VIEW_RANGE))
+		{
+			afterViewList.insert(animal.first + BEGIN_ANIMAL);
 		}
 	}
 
-	//After List에 시야처리 리스트 추가 작업 [ Monster ]
-	for (auto& au : m_pMonsterPool->m_cumMonsterPool) {
-
-		// 만약 몬스터가 죽어있으면 continue;
-		//if (au.second->GetState() == OBJ_STATE_DIE) continue;
-		
-		Vec3 monster_pos = au.second->GetLocalPos();
-		// 만약 몬스터가 플레이어의 범위 내에 들어와 있다면 시야처리에 넣어준다.
-		if (ObjectRangeCheck(player_pos, monster_pos, PLAYER_VIEW_RANGE)) {
-			afterList.insert(au.first + MAX_USER);
-			continue;
-		}
-	}
-
+	// - Player Pos Send
 	CPacketMgr::Send_Pos_Player_Packet(playerId, playerId);
 
-	for (auto& au : afterList) {
-		if (0 == beforeList.count(au)) // ViewList 업데이트 전에 존재하지 않았던 경우
+	// [ Before ViewList Obejct Remove ]
+	for (auto& before : beforeViewList)
+	{
+		if (0 == afterViewList.count(before)) // 업데이트된 ViewList에 존재하지 않을 경우
 		{
-			if (au < MAX_USER) // Player
+			if (before < MAX_USER) // Object가 플레이어일 경우
 			{
-				CPacketMgr::GetInst()->Send_Put_Player_Packet(playerId, au);
-				CPacketMgr::GetInst()->Send_Put_Player_Packet(au, playerId);
+				CPacketMgr::Send_Remove_Player_Packet(playerId, before);
+				CPacketMgr::Send_Remove_Player_Packet(before, playerId);
 			}
-			else // Animal
+			else if (before < END_ANIMAL) // Object가 동물일 경우
 			{
-				USHORT monster_id = au - MAX_USER;
-				if (false == m_pMonsterPool->m_cumMonsterPool[monster_id]->GetWakeUp())
-				{
-					Update_Event ev;
-					ev.m_Do_Object = monster_id;
-					ev.m_EventType = EVENT_TYPE::EV_MONSTER_UPDATE;
-					ev.m_From_Object = NO_TARGET;
-					//ev.m_ObjState = OBJ_STATE_IDLE;
-					ev.wakeup_time = high_resolution_clock::now() + 1s;
-					PushEventQueue(ev);
-				}
-				else {
-					char monster_type = m_pMonsterPool->m_cumMonsterPool[monster_id]->GetType();
-					Update_Event ev;
-					ev.m_Do_Object = monster_id;
-					ev.m_EventType = EV_MONSTER_UPDATE;
-					ev.m_From_Object = playerId;
-					//if (B_WARLIKE == monster_type)
-					//	//ev.m_ObjState = OBJ_STATE_FOLLOW;
-					//else if (B_PASSIVE == monster_type)
-					//	//ev.m_ObjState = OBJ_STATE_IDLE;
-					//else if (B_EVASION == monster_type)
-					//	//ev.m_ObjState = OBJ_STATE_EVASION;
-					ev.wakeup_time = high_resolution_clock::now() + 1s;
-					PushEventQueue(ev);
-				}
-				CPacketMgr::GetInst()->Send_Put_Npc_Packet(playerId, au - MAX_USER);
-			}
-		}
-		else // VIewList 업데이트 전에 존재했을 경우
-		{
-			CPacketMgr::GetInst()->Send_Pos_Player_Packet(playerId, au);
-			CPacketMgr::GetInst()->Send_Pos_Player_Packet(au, playerId);
-		}
-	}
-
-	for (auto& au : beforeList) {
-		if (0 == afterList.count(au)) // ViewList 업데이트 후에도 존재할 경우,
-		{
-			if (au < MAX_USER)
-			{
-				CPacketMgr::Send_Remove_Player_Packet(playerId, au);
-				CPacketMgr::Send_Remove_Player_Packet(au, playerId);
+				USHORT usAnimal = before - MAX_USER;
+				CPacketMgr::Send_Remove_Npc_Packet(playerId, before);
 			}
 			else
 			{
-				CPacketMgr::Send_Remove_Npc_Packet(playerId, au - MAX_USER);
+				cout << before << ": 잘못된 Index 입니다." << endl;
+				continue;
+			}
+		}
+	}
+
+	// [ After ViewList Object Update ]
+	for (auto& after : afterViewList)
+	{
+		if (0 == beforeViewList.count(after)) // New ViewList 인 경우
+		{
+			if (after < MAX_USER)
+			{
+				CPacketMgr::Send_Put_Player_Packet(playerId, after);
+				CPacketMgr::Send_Put_Player_Packet(after, playerId);
+			}
+			else if (after < END_ANIMAL)
+			{
+				USHORT usAnimal = after - BEGIN_ANIMAL;
+				Vec3 vAnimal_Pos = m_pMonsterPool->m_cumMonsterPool[usAnimal]->GetLocalPos();
+
+				if (ObjectRangeCheck(vPlayer_Pos, vAnimal_Pos, ANIMAL_VIEW_RANGE))
+				{
+					PushEvent_Animal_Behavior(usAnimal, playerId);
+				}
+				else
+				{
+					PushEvent_Animal_Idle(usAnimal, playerId);
+				}
+				CPacketMgr::Send_Put_Npc_Packet(playerId, usAnimal);
+			}
+		}
+		else // 기존의 ViewList 인 경우
+		{
+			if (after < MAX_USER)
+			{
+				CPacketMgr::Send_Pos_Player_Packet(after, playerId);
+			}
+			else if (after < END_ANIMAL)
+			{
+				USHORT usAnimal = after - BEGIN_ANIMAL;
+				Vec3 vAnimal_Pos = m_pMonsterPool->m_cumMonsterPool[usAnimal]->GetLocalPos();
+
+				if (ObjectRangeCheck(vPlayer_Pos, vAnimal_Pos, ANIMAL_VIEW_RANGE))
+				{
+					PushEvent_Animal_Behavior(usAnimal, playerId);
+				}
+			}
+			else
+			{
+				cout << after << ": 잘못된 Index 입니다." << endl;
+				continue;
 			}
 		}
 	}

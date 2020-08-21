@@ -13,24 +13,15 @@ typedef struct Over_ex
 	USHORT	m_usOtherID;
 }OVER_EX, POVER_EX;
 
-struct User_info {
-	SOCKET				socket;
-	OVER_EX				over;
-	USHORT		id;
-	DirectX::XMFLOAT3	pos;
-	set<USHORT>	near_id;
-	mutex				near_lock;
-};
-
 /*_____________________________________________
-			[Timer Event]
+			[Update Event]
 _______________________________________________*/
 struct Update_Event {
 	std::chrono::high_resolution_clock::time_point wakeup_time;
 	EVENT_TYPE		m_EventType;
-	UINT	m_ObjState;
-	USHORT m_Do_Object;
-	USHORT m_From_Object;
+	char			m_eObjUpdate;
+	USHORT			m_Do_Object;
+	USHORT			m_From_Object;
 
 	constexpr bool operator <(const Update_Event& _left) const
 	{
@@ -53,39 +44,6 @@ typedef struct DB_Event {
 	float fX;
 	float fY;
 	float fZ;
-};
-
-/*_____________________________________________
-			[Object Struct]
-_______________________________________________*/
-struct Object {
-	int iHp;
-	int iStamina;
-	int iHungry;
-	int iThirst;
-
-	float fPosX;
-	float fPosY;
-	float fPosZ;
-
-	float fRotX;
-	float fRotY;
-	float fRotZ;
-
-	chrono::high_resolution_clock::time_point m_tStartTime;
-};
-
-/*_____________________________________________
-			[Monster Event]
-_______________________________________________*/
-struct Monster_Event {
-	DirectX::XMFLOAT3 m_xmf3ToTarget;
-	float m_fRotate;
-	char	m_eState;
-	Monster_Event() {}
-	Monster_Event(DirectX::XMFLOAT3 xmf3ToTarget, float fRotate, UINT eState) {
-		m_xmf3ToTarget = xmf3ToTarget; m_fRotate = fRotate; m_eState = eState;
-	}
 };
 
 struct UserData {

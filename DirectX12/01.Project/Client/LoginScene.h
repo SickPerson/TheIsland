@@ -36,8 +36,10 @@ private:
 	Vec4				m_vFontBackColor;
 
 	bool				m_bIP_Success = false;
-	bool				m_bNextScene = false;
+	bool				m_bLoginSuccess = false;
 
+public:
+	void SetNextScene(bool bLoginSuccess) { m_bLoginSuccess = bLoginSuccess; };
 public:
 	CGameObject* GetIDObj();
 	CGameObject* GetPasswordObj();

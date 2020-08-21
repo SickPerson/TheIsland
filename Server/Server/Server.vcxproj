@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="EtcProcess.h" />
     <ClInclude Include="HousingProcess.h" />
     <ClInclude Include="Natural.h" />
     <ClInclude Include="Housing.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EtcProcess.cpp" />
     <ClCompile Include="HousingProcess.cpp" />
     <ClCompile Include="Natural.cpp" />
     <ClCompile Include="Housing.cpp" />
