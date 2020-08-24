@@ -34,3 +34,6 @@
 
 
 #include <Engine/global.h>
+
+
+#define NETWORK_ON
