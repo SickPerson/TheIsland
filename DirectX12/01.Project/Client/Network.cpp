@@ -55,11 +55,46 @@ CNetwork::CNetwork():
 
 	m_in_packet_size = 0;
 	m_saved_packet_size = 0;
+
+	BindfpPacket();
 }
 
 CNetwork::~CNetwork()
 {
 	DisConnect();
+}
+
+void CNetwork::BindfpPacket()
+{
+	// - Login
+	m_fpPacketProcess[SC_LOGIN_OK] = [&](char* packet) {Recv_Login_OK_Packet(packet); };
+	m_fpPacketProcess[SC_LOGIN_FAIL] = [&](char* packet) {Recv_Login_Fail_Packet(packet); };
+	m_fpPacketProcess[SC_DISCONNECT_SERVER] = [&](char* packet) {Recv_Disconnect_Server_Packet(packet); };
+	// - Player
+	m_fpPacketProcess[SC_STATUS_PLAYER] = [&](char* packet) {Recv_Status_Player_Packet(packet); };
+	m_fpPacketProcess[SC_PUT_PLAYER] = [&](char* packet) {};
+	m_fpPacketProcess[SC_POS_PLAYER] = [&](char* packet) {};
+	m_fpPacketProcess[SC_ROT_PLAYER] = [&](char* packet) {};
+	m_fpPacketProcess[SC_REMOVE_PLAYER] = [&](char* packet) {};
+	m_fpPacketProcess[SC_CHAT] = [&](char* packet) {};
+	m_fpPacketProcess[SC_ANIMATION_PLAYER] = [&](char* packet) {};
+	// - Animal
+	m_fpPacketProcess[SC_PUT_ANIMAL] = [&](char* packet) {};
+	m_fpPacketProcess[SC_POS_ANIMAL] = [&](char* packet) {};
+	m_fpPacketProcess[SC_REMOVE_ANIMAL] = [&](char* packet) {};
+	m_fpPacketProcess[SC_ANIMATION_ANIMAL] = [&](char* packet) {};
+	// - Natural
+	m_fpPacketProcess[SC_PUT_NATURAL] = [&](char* packet) {};
+	m_fpPacketProcess[SC_DESTROY_NATURAL] = [&](char* packet) {};
+	// - House
+	m_fpPacketProcess[SC_INSTALL_HOUSE] = [&](char* packet) {};
+	m_fpPacketProcess[SC_REMOVE_HOUSE] = [&](char* packet) {};
+	// - Item
+	m_fpPacketProcess[SC_ADD_ITEM] = [&](char* packet) {};
+	m_fpPacketProcess[SC_REMOVE_ITEM] = [&](char* packet) {};
+	// - Etc
+	m_fpPacketProcess[SC_WEATHER] = [&](char* packet) {};
+	m_fpPacketProcess[SC_TIME] = [&](char* packet) {};
 }
 
 void CNetwork::Err_quit(const char * msg, int err_no)
@@ -211,86 +246,86 @@ void CNetwork::RecvPacket()
 void CNetwork::ProcessPacket(char* packet)
 {
 	m_fpPacketProcess[packet[1]](packet);
-	switch (packet[1])
-	{
-	case SC_LOGIN_OK:
-	{
-		Recv_Login_OK_Packet(packet);
-		break;
-	}
-	case SC_LOGIN_FAIL:
-	{
-		break;
-	}
-	case SC_STATUS_PLAYER:
-	{
-		Recv_Status_Player_Packet(packet);
-		break;
-	}
-	case SC_PUT_PLAYER: {
-		Recv_Put_Player_Packet(packet);
-		break;
-	}
-	case SC_REMOVE_PLAYER: {
-		Recv_Remove_Player_Packet(packet);
-		break;
-	}
-	case SC_POS_PLAYER: {
-		Recv_Pos_Player_Packet(packet);
-		break;
-	}
-	case SC_ROT_PLAYER: {
-		break;
-	}
-	case SC_CHAT: {
-		Recv_Chat_Packet(packet);
-		break;
-	}
-	// NPC, MONSTER 관련
-	case SC_PUT_ANIMAL: {
-		Recv_Put_Animal_Packet(packet);
-		break;
-	}
-	case SC_POS_ANIMAL:
-	{
-		Recv_Pos_Animal_Packet(packet);
-		break;
-	}
-	case SC_REMOVE_ANIMAL:
-	{
-		Recv_Remove_Animal_Packet(packet);
-		break;
-	}
-	// Natural
-	case SC_PUT_NATURAL:
-	{
-		Recv_Put_Natural_Packet(packet);
-		break;
-	}
-	case SC_DESTROY_NATURAL:
-	{
-		Recv_Destroy_Natural_Packet(packet);
-		break;
-	}
-	// Housing
-	case SC_INSTALL_HOUSE:
-	{
-		Recv_Install_Housing_Packet(packet);
-		break;
-	}
-	
-	// etc
-	case SC_WEATHER:
-	{
-		Recv_Weather_Packet(packet);
-		break;
-	}
-	case SC_TIME:
-	{
-		Recv_Time_Packet(packet);
-		break;
-	}
-	}
+	//switch (packet[1])
+	//{
+	//case SC_LOGIN_OK:
+	//{
+	//	Recv_Login_OK_Packet(packet);
+	//	break;
+	//}
+	//case SC_LOGIN_FAIL:
+	//{
+	//	break;
+	//}
+	//case SC_STATUS_PLAYER:
+	//{
+	//	Recv_Status_Player_Packet(packet);
+	//	break;
+	//}
+	//case SC_PUT_PLAYER: {
+	//	Recv_Put_Player_Packet(packet);
+	//	break;
+	//}
+	//case SC_REMOVE_PLAYER: {
+	//	Recv_Remove_Player_Packet(packet);
+	//	break;
+	//}
+	//case SC_POS_PLAYER: {
+	//	Recv_Pos_Player_Packet(packet);
+	//	break;
+	//}
+	//case SC_ROT_PLAYER: {
+	//	break;
+	//}
+	//case SC_CHAT: {
+	//	Recv_Chat_Packet(packet);
+	//	break;
+	//}
+	//// NPC, MONSTER 관련
+	//case SC_PUT_ANIMAL: {
+	//	Recv_Put_Animal_Packet(packet);
+	//	break;
+	//}
+	//case SC_POS_ANIMAL:
+	//{
+	//	Recv_Pos_Animal_Packet(packet);
+	//	break;
+	//}
+	//case SC_REMOVE_ANIMAL:
+	//{
+	//	Recv_Remove_Animal_Packet(packet);
+	//	break;
+	//}
+	//// Natural
+	//case SC_PUT_NATURAL:
+	//{
+	//	Recv_Put_Natural_Packet(packet);
+	//	break;
+	//}
+	//case SC_DESTROY_NATURAL:
+	//{
+	//	Recv_Destroy_Natural_Packet(packet);
+	//	break;
+	//}
+	//// Housing
+	//case SC_INSTALL_HOUSE:
+	//{
+	//	Recv_Install_Housing_Packet(packet);
+	//	break;
+	//}
+	//
+	//// etc
+	//case SC_WEATHER:
+	//{
+	//	Recv_Weather_Packet(packet);
+	//	break;
+	//}
+	//case SC_TIME:
+	//{
+	//	Recv_Time_Packet(packet);
+	//	break;
+	//}
+	//}
 }
 
 void CNetwork::Send_Login_Packet(wstring playerID)
@@ -525,11 +560,25 @@ void CNetwork::Recv_Login_OK_Packet(char * packet)
 	sc_login_ok_packet* login_packet = reinterpret_cast<sc_login_ok_packet*>(packet);
 	m_usID = login_packet->id;
 	dynamic_cast<CLoginScene*>(pScene->GetSceneScript())->NextScene();
+	cout << "Login Success" << endl;
 }
 
 void CNetwork::Recv_Login_Fail_Packet(char * packet)
 {
+	sc_login_fail_packet* login_packet = reinterpret_cast<sc_login_fail_packet*>(packet);
+	cout << "Login Failed" << endl;
+}
 
+void CNetwork::Recv_Disconnect_Server_Packet(char * packet)
+{
+	sc_disconnect_server_packet* disconnect_server_packet = reinterpret_cast<sc_disconnect_server_packet*>(packet);
+	cout << "Server Exit" << endl;
+	for (UINT i = 0; i < MAX_LAYER; ++i)
+	{
+		CSceneMgr::GetInst()->GetCurScene()->GetLayer(i)->RemoveAll();
+	}
+	PostQuitMessage(0);
+	return;
 }
 
 void CNetwork::Recv_Status_Player_Packet(char * packet)
