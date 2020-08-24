@@ -106,6 +106,9 @@
     <Filter Include="06. GameObject\Component\Font">
       <UniqueIdentifier>{4b6071b6-b6e0-43a4-b7d6-75d369098c53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameObject\Component\Animation\3D\BoneSocket">
+      <UniqueIdentifier>{4672a2c7-1575-47f3-8e99-c6d6a46a173a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -291,6 +294,9 @@
     <ClInclude Include="Mouse.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="BoneSocket.h">
+      <Filter>06. GameObject\Component\Animation\3D\BoneSocket</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -463,6 +469,9 @@
     </ClCompile>
     <ClCompile Include="Mouse.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BoneSocket.cpp">
+      <Filter>06. GameObject\Component\Animation\3D\BoneSocket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
