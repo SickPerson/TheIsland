@@ -89,6 +89,8 @@ public: // Collision
 	void PlayerNaturalAttack(USHORT playerId, char* packet);
 
 public:
+
+public:
 	void InitViewList(USHORT playerId);
 	void UpdateViewList(USHORT playerId);
 };

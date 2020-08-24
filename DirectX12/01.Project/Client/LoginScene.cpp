@@ -173,11 +173,11 @@ void CLoginScene::Update()
 		if (!m_bIP_Success)
 		{
 			string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
-			string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
-
+			string strIP = "127.0.0.1";
+			//string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
+			cout << "gigi" << endl;
 			wstring wStrID;
 			wStrID.assign(strID.begin(), strID.end());
-
 			if (CNetwork::GetInst()->ConnectServer(strIP))
 			{
 				cout << "==================" << endl;
@@ -202,9 +202,8 @@ void CLoginScene::Update()
 			CNetwork::GetInst()->Send_Login_Packet(wStrID);
 		}
 #else
-		NextScene();
+		//NextScene();
 #endif
-		
 	}
 
 	if (KEY_TAB(KEY_TYPE::KEY_LBTN))

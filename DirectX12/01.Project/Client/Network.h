@@ -83,8 +83,12 @@ public: // Item
 
 	//void Send_Install_Housing_Packet(USHORT )
 public:
+	// - Login
 	void Recv_Login_OK_Packet(char* packet);
 	void Recv_Login_Fail_Packet(char* packet);
+	void Recv_Disconnect_Server_Packet(char* packet);
+
+	// - Player
 	void Recv_Status_Player_Packet(char* packet);
 	void Recv_Put_Player_Packet(char* packet);
 	void Recv_Remove_Player_Packet(char* packet);

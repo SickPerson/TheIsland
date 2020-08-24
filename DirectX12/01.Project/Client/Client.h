@@ -2,4 +2,4 @@
 
 #include "resource.h"
 
-//#define NETWORK_ON
+#define NETWORK_ON
