@@ -65,43 +65,39 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 {
 	cs_login_packet*	login_packet = reinterpret_cast<cs_login_packet*>(packet);
 	
-	// Database USE
-	//wstring wname = login_packet->player_id;
-	//if (CDataBase::GetInst()->IsIDExist(wname))
-	//{
-	//	DB_Event UserInfo = CDataBase::GetInst()->GetUserInfo(wname);
-	//	Vec3 vPos = Vec3(UserInfo.fX, UserInfo.fY, UserInfo.fZ);
-	//	{
-	//		tPlayerStatus tStatus;
-	//		tStatus.fHealth = UserInfo.fHealth;
-	//		tStatus.fHungry = UserInfo.fHungry;
-	//		tStatus.fThirst = UserInfo.fThirst;
-	//		tStatus.fSpeed = 200.f;
-	//		tStatus.fDamage = 20.f;
+#ifdef DB_ON
+	// USE DB
+	wstring wName = login_packet->player_id;
+	if (CDataBase::GetInst()->IsIDExist(wName)) {
+		DB_Event UserInfo = CDataBase::GetInst()->GetUserInfo(wName);
+		Vec3 vPos = Vec3(UserInfo.x, UserInfo.y, UserInfo.z);
+		{
+		
+			tPlayerStatus tStatus;
+			tStatus.fHealth = UserInfo.fHealth;
+			tStatus.fHungry = UserInfo.fHungry;
+			tStatus.fThirst = UserInfo.fThirst;
+			tStatus.fSpeed = 200.f;
+			DatabtStatus.fDamage = 20.f;
+			m_pPlayerPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
+		}
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetDbID(UserInfo.inum);
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetNumID(playerId);
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetWcID(login_packet->player_id);
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vPos);
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+		m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(true);
 
-	//		m_pPlayerPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
-	//	}
-	//	m_pPlayerPool->m_cumPlayerPool[playerId]->SetDbID(UserInfo.inum);
-	//	m_pPlayerPool->m_cumPlayerPool[playerId]->SetNumID(playerId);
-	//	m_pPlayerPool->m_cumPlayerPool[playerId]->SetWcID(login_packet->player_id);
-	//	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vPos);
-	//	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
-	//	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-	//	m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(true);
-
-	//	CPacketMgr::Send_Login_OK_Packet(playerId);
-	//}
-	//else
-	//{
-	//	// Player Init
-	//	Init_Player(playerId, login_packet->player_id);
-	//}
-
+		CPacketMgr::Send_Login_OK_Packet(playerId);
+	}
+#else
 	// NO DB
 	 //Player Init
 	CPacketMgr::Send_Login_OK_Packet(playerId);
 	cout << login_packet->player_id << ": 접속 하였습니다. " << endl;
 	Init_Player(playerId, login_packet->player_id);
+#endif // DB_ON
 	
 	// Server -> Client에 초기 플레이어 값 패킷 전송
 	CPacketMgr::Send_Status_Player_Packet(playerId, playerId);
@@ -217,6 +213,21 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 		ev.m_eObjUpdate = NUT_DAMAGE;
 		ev.wakeup_time = high_resolution_clock::now();
 		PushEventQueue(ev);
+	}
+}
+
+void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
+{
+	cs_animation_packet* animation_packet = reinterpret_cast<cs_animation_packet*>(packet);
+
+	UINT uiType = animation_packet->uiType;
+
+	concurrent_unordered_set<USHORT>	viewList;
+	m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(viewList);
+	for (auto& other : viewList) {
+		bool bConnect = m_pPlayerPool->m_cumPlayerPool[other]->GetConnect();
+		if (!bConnect) continue;
+		CPacketMgr::Send_Animation_Player_Packet(other, uiType);
 	}
 }
 

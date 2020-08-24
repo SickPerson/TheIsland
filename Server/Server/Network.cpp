@@ -115,10 +115,14 @@ void CNetwork::StartServer()
 {
 	for (int i = 0; i < m_iNumWorkerThread; ++i)
 		m_vWorkerThread.push_back(std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->WorkerThread(); } }));
+	cout << "Worker Thread Create" << endl;
 	m_pAcceptThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->AcceptThread(); } });
+	cout << "Accept Thread Create" << endl;
 	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
+	cout << "Update Thread Create" << endl;
 #ifdef DB_ON
 	m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
+	cout << "DataBase Thread Create" << endl;
 #endif // DB_ON
 	cout << "==============================" << endl;
 	cout << "бл      Server Start          бл" << endl;
@@ -138,7 +142,7 @@ void CNetwork::CloseServer()
 #ifdef DB_ON
 	m_pDatabaseThread->join();
 	cout << "DatabaseThread Close" << endl;
-#endif // DB_ON
+#endif
 	m_pUpdateThread->join();
 	cout << "UpdateThread Close" << std::endl;
 	m_pAcceptThread->join();

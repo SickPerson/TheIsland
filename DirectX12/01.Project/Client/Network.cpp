@@ -44,9 +44,17 @@ unsigned int CNetwork::m_usID = 0;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumPlayer;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumAnimal;
 
-CNetwork::CNetwork()
+CNetwork::CNetwork():
+	m_bClientClose(false)
 {
-	//Init();
+	m_SendWsaBuf.buf = m_cSendBuf;
+	m_SendWsaBuf.len = BUF_SIZE;
+
+	m_RecvWsaBuf.buf = m_cRecvbuf;
+	m_RecvWsaBuf.len = BUF_SIZE;
+
+	m_in_packet_size = 0;
+	m_saved_packet_size = 0;
 }
 
 CNetwork::~CNetwork()
@@ -73,24 +81,6 @@ void CNetwork::Err_display(const char * msg, int err_no)
 	wcout << L"¿¡·¯ " << lpMsgBuf << endl;
 	while (true);
 	LocalFree(lpMsgBuf);
-}
-
-void CNetwork::Init()
-{
-	for (auto i = 0; i < LT_END; ++i)
-		m_bLoginState[i] = false;
-	m_bPushKey = false;
-	m_bClientClose = false;
-	m_bCollision = false;
-
-	m_SendWsaBuf.buf = m_cSendBuf;
-	m_SendWsaBuf.len = BUF_SIZE;
-
-	m_RecvWsaBuf.buf = m_cRecvbuf;
-	m_RecvWsaBuf.len = BUF_SIZE;
-
-	m_in_packet_size = 0;
-	m_saved_packet_size = 0;
 }
 
 bool CNetwork::ConnectServer(string ipAddr)
@@ -220,11 +210,11 @@ void CNetwork::RecvPacket()
 
 void CNetwork::ProcessPacket(char* packet)
 {
+	m_fpPacketProcess[packet[1]](packet);
 	switch (packet[1])
 	{
 	case SC_LOGIN_OK:
 	{
-		SetLogin(true);
 		Recv_Login_OK_Packet(packet);
 		break;
 	}
@@ -238,7 +228,6 @@ void CNetwork::ProcessPacket(char* packet)
 		break;
 	}
 	case SC_PUT_PLAYER: {
-		SetLoopStart(true);
 		Recv_Put_Player_Packet(packet);
 		break;
 	}
@@ -284,7 +273,7 @@ void CNetwork::ProcessPacket(char* packet)
 		break;
 	}
 	// Housing
-	case SC_INSTALL_HOUSING:
+	case SC_INSTALL_HOUSE:
 	{
 		Recv_Install_Housing_Packet(packet);
 		break;
@@ -435,6 +424,23 @@ void CNetwork::Send_Attack_Player_Packet(UINT attack_type, USHORT attack_Id)
 		int err_no = WSAGetLastError();
 		Err_display("Err while sending packet - ", err_no);
 	}
+}
+
+void CNetwork::Send_Animation_Player_Packet(UINT uiAnimationType)
+{
+	DWORD size, flag = 0;
+	cs_animation_packet* animation_packet = reinterpret_cast<cs_animation_packet*>(m_cSendBuf);
+	animation_packet->size = sizeof(cs_animation_packet);
+	animation_packet->type = CS_ANIMATION;
+	animation_packet->uiType = uiAnimationType;
+
+	int retval = WSASend(m_sock, &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0) {
+		int err_no = WSAGetLastError();
+		Err_display("Err while sending packet - ", err_no);
+	}
+
 }
 
 void CNetwork::Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale, Vec3 vOffsetPos, Vec3 vOffsetScale)

@@ -34,16 +34,17 @@ public:
 public:
 	bool ObjectRangeCheck(Vec3& vFirst, Vec3& vSecond, float fDistance);
 
-public:
-	bool Animal_CollisionSphere(USHORT AnimalId, USHORT PlayerId, UINT uiColType, float fOffset = 1.f);
+public: // - Collision
+	// - Player
 	bool PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId, float fOffset = 1.f);
 	bool PlayerAndNatural_CollisionSphere(USHORT playerId, USHORT naturalId, float fOffset = 1.f);
-	bool PlayerAndHouse_Collision(USHORT playerId, USHORT houseId, UINT uiType);
+	bool PlayerAndHouse_Collision(USHORT playerId, USHORT houseId, char eType);
 	bool PlayerAndHouse_Collision_Door(USHORT playerId, USHORT houseId, Vec3 vOffsetScale, Vec3 vOffsetPos);
-	
+	// - Animal
+	bool AnimalAndPlayer_CollisionSphere(USHORT AnimalId, USHORT PlayerId, float fOffset = 1.f);
 	bool AnimalAndNatural_CollisionSphere(USHORT AnimalId, USHORT NaturalId, float fOffset = 1.f);
-	/*bool Animal_CollisionSphere(USHORT player_id, USHORT animal_id, float fOffset = 1.f);
-	bool Natural_CollisionHouse(USHORT player_id, USHORT animal_id);*/
+	bool AnimalAndHouse_Collision(USHORT AnimalId, USHORT HouseId, float fOffset = 1.f);
+	bool AnimalAndHouse_Collision_Door(USHORT AnimalId, USHORT HouseId, Vec3 vOffsetScale, Vec3 vOffsetPos);
 
 public: // Animal
 	void PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId);
@@ -58,7 +59,10 @@ public: // Animal
 public: // Natural
 	void PushEvent_Natural_Respawn(USHORT NaturalId);
 	void PushEvent_Natural_Damage(USHORT NaturalId, USHORT PlayerId);
-public:
+
+public: // Etc
+	void PushEvent_Etc_Player_Collision();
+	void PushEvent_Etc_Animal_Collision();
 	void PushEvent_Etc_Weather();
 	void PushEvent_Etc_Time();
 

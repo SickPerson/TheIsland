@@ -31,11 +31,12 @@ private:
 
 	shared_ptr<thread>m_tNetworkThread;
 
-	volatile bool m_bLoginState[LT_END];
-	bool m_bPushKey;
+private:
+	function<void(char*)> m_fpPacketProcess[SC_END];
 	bool m_bClientClose;
-	bool m_bCollision;
 
+private:
+	void BindfpPacket();
 public:
 	CScene* pScene;
 	static unsigned int m_usID;
@@ -49,7 +50,6 @@ public:
 	static void Err_quit(const char* msg, int err_no);
 	static void Err_display(const char* msg, int err_no);
 public:
-	void Init();
 	bool ConnectServer(string ipAddr);
 	void RunRecvThread();
 	bool CreateEventSelect();
@@ -57,34 +57,6 @@ public:
 	void DisConnect();
 	void RecvPacket();
 	void ProcessPacket(char* _packet);
-
-public:
-	void SetLogin(bool _bLogin)
-	{
-		lock_guard<recursive_mutex> lock(m_rmLoginStateLock[LT_LOGIN_SUCCESS]);
-		m_bLoginState[LT_LOGIN_SUCCESS] = _bLogin;
-	}
-	void SetLoopStart(bool _bStart)
-	{
-		lock_guard<recursive_mutex> lock(m_rmLoginStateLock[LT_LOOP_START]);
-		m_bLoginState[LT_LOOP_START] = _bStart;
-	}
-	void SetLoginSend(bool _bSend)
-	{
-		lock_guard<recursive_mutex> lock(m_rmLoginStateLock[LT_LOGIN_PACKET_SEND]);
-		m_bLoginState[LT_LOGIN_PACKET_SEND] = _bSend;
-	}
-	void SetPushKey(bool _bPush) { m_bPushKey = _bPush; }
-	void SetClientClose(bool _bClientClose) { m_bClientClose = _bClientClose; }
-	void SetCollision(bool _bCollision) { m_bCollision = _bCollision; }
-
-public:
-	bool GetLogin() { lock_guard<recursive_mutex>lock(m_rmLoginStateLock[LT_LOGIN_SUCCESS]); return m_bLoginState[LT_LOGIN_SUCCESS]; }
-	bool GetLoopStart() { lock_guard<recursive_mutex>lock(m_rmLoginStateLock[LT_LOOP_START]); return m_bLoginState[LT_LOOP_START]; }
-	bool GetLoginSend() { lock_guard<recursive_mutex>lock(m_rmLoginStateLock[LT_LOGIN_PACKET_SEND]); return m_bLoginState[LT_LOGIN_PACKET_SEND]; }
-	bool GetPushKey() { return m_bPushKey; }
-	bool GetClientClose() { return m_bClientClose; }
-	bool GetCollision() { return m_bCollision; }
 
 public:
 	void Send_Login_Packet(wstring playerID);
@@ -95,6 +67,7 @@ public:
 	void Send_Chat_Packet(string message);
 	void Send_Collision_Player_Packet(UINT Collision_type, USHORT Collision_Id, bool bRun);
 	void Send_Attack_Player_Packet(UINT attack_type, USHORT attack_Id);
+	void Send_Animation_Player_Packet(UINT eAnimationType);
 	/*void Send_Collision_Natural_Packet(unsigned short naturalId, bool bRun);
 	void Send_Collision_House_Packet(USHORT houseId, bool bRun);
 	void Send_Collision_Animal_Packet(USHORT animalId, bool bRun);*/

@@ -229,7 +229,7 @@ void CPacketMgr::Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id
 	sc_install_housing_packet packet;
 
 	packet.size = sizeof(sc_install_housing_packet);
-	packet.type = SC_INSTALL_HOUSING;
+	packet.type = SC_INSTALL_HOUSE;
 	packet.house_id = housing_Id;
 
 	packet.housing_type =	CProcess::m_pHousingPool->m_cumHousingPool[housing_Id]->GetType();
@@ -244,7 +244,7 @@ void CPacketMgr::Send_Remove_Housing_Packet(USHORT player_Id, USHORT housing_Id)
 	sc_remove_housing_packet packet;
 
 	packet.size = sizeof(sc_remove_housing_packet);
-	packet.type = SC_REMOVE_HOUSING;
+	packet.type = SC_REMOVE_HOUSE;
 	packet.house_id = housing_Id;
 	Send_Packet(player_Id, &packet);
 }

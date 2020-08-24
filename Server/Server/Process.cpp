@@ -29,11 +29,6 @@ bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
 	return false;
 }
 
-bool CProcess::Animal_CollisionSphere(USHORT AnimalId, USHORT PlayerId, UINT uiColType, float fOffset)
-{
-	return false;
-}
-
 bool CProcess::PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId, float fOffset)
 {
 	Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
@@ -43,7 +38,7 @@ bool CProcess::PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId,
 	Vec3 vAnimalScale = m_pPlayerPool->m_cumPlayerPool[animalId]->GetLocalScale();
 
 	Vec3 vPlayerColScale = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalScale() * fOffset;
-	Vec3 vAnimalColScale = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalScale();
+	Vec3 vAnimalColScale = m_pPlayerPool->m_cumPlayerPool[animalId]->GetLocalScale();
 
 	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vAnimalPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
 	fDist = sqrtf(fDist);
@@ -74,7 +69,7 @@ bool CProcess::PlayerAndNatural_CollisionSphere(USHORT playerId, USHORT naturalI
 	return true;
 }
 
-bool CProcess::PlayerAndHouse_Collision(USHORT playerId, USHORT houseId, UINT uiType)
+bool CProcess::PlayerAndHouse_Collision(USHORT playerId, USHORT houseId, char eType)
 {
 	Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 	Vec3 vHousePos = m_pHousingPool->m_cumHousingPool[houseId]->GetLocalPos();
@@ -85,10 +80,10 @@ bool CProcess::PlayerAndHouse_Collision(USHORT playerId, USHORT houseId, UINT ui
 	Vec3 vPlayerColScale = Vec3(20.f, 60.f, 20.f);
 	Vec3 vHouseColScale = Vec3(1.f, 1.f, 1.f);
 
-	HOUSING_TYPE eType = (HOUSING_TYPE)uiType;
+	HOUSING_TYPE Type = (HOUSING_TYPE)eType;
 
 	Vec3 vHouseOffsetScale = m_pHousingPool->m_cumHousingPool[houseId]->GetOffsetScale();
-	switch (eType)
+	switch (Type)
 	{
 	case HOUSING_FOUNDATION:
 		
@@ -196,18 +191,48 @@ bool CProcess::PlayerAndHouse_Collision_Door(USHORT playerId, USHORT houseId, Ve
 	return true;
 }
 
+bool CProcess::AnimalAndPlayer_CollisionSphere(USHORT AnimalId, USHORT PlayerId, float fOffset)
+{
+	Vec3 vPlayerPos = m_pPlayerPool->m_cumPlayerPool[PlayerId]->GetLocalPos();
+	Vec3 vAnimalPos = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
+
+	Vec3 vPlayerScale = m_pPlayerPool->m_cumPlayerPool[PlayerId]->GetLocalScale();
+	Vec3 vAnimalScale = m_pPlayerPool->m_cumPlayerPool[AnimalId]->GetLocalScale();
+
+	Vec3 vPlayerColScale = m_pPlayerPool->m_cumPlayerPool[PlayerId]->GetLocalScale() * fOffset;
+	Vec3 vAnimalColScale = m_pPlayerPool->m_cumPlayerPool[AnimalId]->GetLocalScale();
+
+	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vAnimalPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
+	fDist = sqrtf(fDist);
+
+	if (fDist > fabsf(vPlayerScale.x * vPlayerColScale.x) + fabsf(vAnimalScale.x * vAnimalScale.x))
+		return false;
+
+	return true;
+}
+
 bool CProcess::AnimalAndNatural_CollisionSphere(USHORT AnimalId, USHORT NaturalId, float fOffset)
+{
+	return false;
+}
+
+bool CProcess::AnimalAndHouse_Collision(USHORT AnimalId, USHORT HouseId, float fOffset)
+{
+	return false;
+}
+
+bool CProcess::AnimalAndHouse_Collision_Door(USHORT AnimalId, USHORT HouseId, Vec3 vOffsetScale, Vec3 vOffsetPos)
 {
 	return false;
 }
 
 void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
 {
-	UINT uiType = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetType();
+	/*UINT uiType = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetType();
 
 	if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
 	{
-		if (Animal_CollisionSphere(AnimalId, PlayerId, (UINT)OBJ_TYPE::OT_PLAYER, 0.2f))
+		if (AnimalAndPlayer_CollisionSphere(AnimalId, PlayerId, (UINT)OBJ_TYPE::OT_PLAYER, 0.2f))
 		{
 			PushEvent_Animal_Attack(AnimalId, PlayerId);
 		}
@@ -223,7 +248,7 @@ void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
 	else if (uiType == (UINT)BEHAVIOR_TYPE::B_EVASION)
 	{
 		PushEvent_Animal_Evastion(AnimalId, PlayerId);
-	}
+	}*/
 }
 
 void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)
@@ -345,6 +370,28 @@ void CProcess::PushEvent_Natural_Damage(USHORT NaturalId, USHORT PlayerId)
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = NUT_DAMAGE;
 	ev.wakeup_time = high_resolution_clock::now();
+	PushEventQueue(ev);
+}
+
+void CProcess::PushEvent_Etc_Player_Collision()
+{
+	Update_Event ev;
+	ev.m_Do_Object = 9996;
+	ev.m_EventType = EV_ETC;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_eObjUpdate = EUT_PLAYER_COLLISION;
+	ev.wakeup_time = high_resolution_clock::now() + 50ms;
+	PushEventQueue(ev);
+}
+
+void CProcess::PushEvent_Etc_Animal_Collision()
+{
+	Update_Event ev;
+	ev.m_Do_Object = 9997;
+	ev.m_EventType = EV_ETC;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_eObjUpdate = EUT_ANIMAL_COLLISION;
+	ev.wakeup_time = high_resolution_clock::now() + 50ms;
 	PushEventQueue(ev);
 }
 

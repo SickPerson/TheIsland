@@ -60,18 +60,22 @@ public:
 		m_fpPacketProcess[CS_ATTACK] = [&](USHORT playerId, char* packet) {
 			PlayerAttack(playerId, packet);
 		};
+		m_fpPacketProcess[CS_ANIMATION] = [&](USHORT playerId, char* packet) {
+			PlayerAnimation(playerId, packet);
+		};
 	}
 
 	void AcceptClient(const SOCKET& sSocket, USHORT playerId);
 	void RecvPacket(USHORT playerId, char* packet, DWORD bytesize);
 
-	void PlayerLogin(USHORT playerId, char* packet); // No DB
+	void PlayerLogin(USHORT playerId, char* packet);
 	void PlayerMove(USHORT playerId, char* packet);
 	void PlayerChat(USHORT playerId, char* _packet);
 	void PlayerLogout(USHORT playerId);
 	void PlayerPos(USHORT playerId, char* packet);
 	void PlayerRot(USHORT playerId, char* packet);
 	void PlayerAttack(USHORT playerId, char* packet);
+	void PlayerAnimation(USHORT playerId, char* packet);
 
 public: // Collision
 	bool CollisionSphere(USHORT playerId, USHORT otherId, UINT uiColType, float fOffset = 1.f);
