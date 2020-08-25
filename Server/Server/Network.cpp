@@ -214,7 +214,7 @@ void CNetwork::WorkerThread()
 		case EV_RECV:
 		{
 			m_pPlayerProcess->RecvPacket(id, lpover_ex->m_MessageBuffer, num_byte);
-			delete lpover_ex;
+			//delete lpover_ex;
 			break;
 		}
 		case EV_SEND:

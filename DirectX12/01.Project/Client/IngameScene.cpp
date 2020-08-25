@@ -466,7 +466,7 @@ void CIngameScene::Update()
 			{
 				
 				string str = m_pChat->GetScript<CInputScript>()->GetString();
-				CPacketMgr::Send_Chat_Packet(str);
+				CPacketMgr::GetInst()->Send_Chat_Packet(str);
 				//string strPlayerName = "Player";
 				//m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
 				m_pChat->GetScript<CInputScript>()->SetEnable(false);

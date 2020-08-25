@@ -8,11 +8,9 @@
 #include <Engine/NaviMgr.h>
 
 CGameObject*	CPacketMgr::m_pPlayer;
-WSABUF			CPacketMgr::m_SendWsaBuf;
-char			CPacketMgr::m_cSendBuf[BUF_SIZE];
 CPacketMgr::CPacketMgr()
 {
-	ZeroMemory(m_cSendBuf, sizeof(m_cSendBuf));
+	//ZeroMemory(m_cSendBuf, sizeof(m_cSendBuf));
 	m_SendWsaBuf.buf = m_cSendBuf;
 	m_SendWsaBuf.len = BUF_SIZE;
 }

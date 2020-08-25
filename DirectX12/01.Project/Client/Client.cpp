@@ -21,8 +21,6 @@
 
 #define MAX_LOADSTRING 100
 
-#define WM_SOCKET	WM_USER + 1
-
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
@@ -62,6 +60,9 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 		return 0;
 	}
 
+#ifdef NETWORK_ON
+	CNetwork::GetInst()->Init(g_hWnd);
+#endif // NETWORK_ON
 	CHousingMgr::GetInst()->Init();
 	CCheatMgr::GetInst()->Init();
 
@@ -93,7 +94,7 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 
 		// Game Running
 		CCore::GetInst()->Progress();
-		CNetwork::GetInst()->RecvPacket();
+		//CNetwork::GetInst()->RecvPacket();
 	}
 
 	return ( int )msg.wParam;

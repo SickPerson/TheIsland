@@ -391,7 +391,7 @@ bool CBuildScript::Build(bool bSendPacket)
 	Vec3 vScale = Transform()->GetLocalScale();
 #ifdef NETWORK_ON	
 	if (bSendPacket)
-		CPacketMgr::Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale());
+		CPacketMgr::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale());
 		//CNetwork::GetInst()->Send_Install_Housing_Packet( m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale() );
 
 	else

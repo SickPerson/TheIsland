@@ -29,9 +29,13 @@ public:
 	static CGameObject*	m_pPlayer;
 	static CGameObject*	m_pChat;
 
+	HWND	m_hWnd;
+
 	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
 	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumAnimal;
 
+public:
+	void Init(HWND hWnd);
 public:
 	SOCKET&	GetSocket() { return m_sock; }
 public:
@@ -79,6 +83,7 @@ public: //etc
 	void Recv_Time_Packet(char* packet);
 
 public:
+	void SetHwnd(HWND hWnd) { m_hWnd = hWnd; }
 	void SetChatObj(CGameObject* pObj) { m_pChat = pObj; }
 	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }
 	void SetOtherPlayerObj(concurrent_unordered_map<unsigned int, CGameObject*> pObjs) { m_cumPlayer = pObjs; }

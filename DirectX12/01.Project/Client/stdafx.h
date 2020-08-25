@@ -37,3 +37,5 @@
 
 
 #define NETWORK_ON
+
+#define WM_SOCKET	WM_USER + 1

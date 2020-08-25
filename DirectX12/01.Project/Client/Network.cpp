@@ -46,16 +46,9 @@ CGameObject*	CNetwork::m_pChat;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumPlayer;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumAnimal;
 
-CNetwork::CNetwork():
-	m_bClientClose(true)
+CNetwork::CNetwork()
 {
-	m_RecvWsaBuf.buf = m_cRecvbuf;
-	m_RecvWsaBuf.len = BUF_SIZE;
-
-	m_in_packet_size = 0;
-	m_saved_packet_size = 0;
-
-	BindfpPacket();
+	
 }
 
 CNetwork::~CNetwork()
@@ -94,6 +87,17 @@ void CNetwork::BindfpPacket()
 	// - Etc
 	m_fpPacketProcess[SC_WEATHER] = [&](char* packet) {};
 	m_fpPacketProcess[SC_TIME] = [&](char* packet) {};
+}
+
+void CNetwork::Init(HWND hWnd)
+{
+	m_bClientClose = true;
+	m_RecvWsaBuf.buf = m_cRecvbuf;
+	m_RecvWsaBuf.len = BUF_SIZE;
+	m_in_packet_size = 0;
+	m_saved_packet_size = 0;
+	SetHwnd(hWnd);
+	BindfpPacket();
 }
 
 void CNetwork::Err_quit(const char * msg, int err_no)
@@ -138,6 +142,7 @@ bool CNetwork::ConnectServer(string ipAddr)
 		//Err_display("socket err", err_no);
 		return false;
 	}
+	WSAAsyncSelect(m_sock, m_hWnd, WM_SOCKET, FD_CLOSE | FD_READ);
 	m_bClientClose = false;
 	return true;
 }
@@ -248,6 +253,7 @@ void CNetwork::Recv_Login_OK_Packet(char * packet)
 	pScene = CSceneMgr::GetInst()->GetCurScene();
 	sc_login_ok_packet* login_packet = reinterpret_cast<sc_login_ok_packet*>(packet);
 	m_usID = login_packet->id;
+	//dynamic_cast<CLoginScene*>(pScene->GetSceneScript())->SetNextScene(true);
 	dynamic_cast<CLoginScene*>(pScene->GetSceneScript())->NextScene();
 	cout << "Login Success" << endl;
 }
