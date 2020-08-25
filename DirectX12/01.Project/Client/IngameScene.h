@@ -53,6 +53,10 @@ public:
 
 	void CreateShowFPS();
 
+	void PlayerUpdate(USHORT usId, Vec3 vPos, Vec3 vRot);
+	void PlayerDestroy(USHORT usId);
+	void PlayerAnimationUpdate(USHORT usId, UINT uiType);
+
 	void AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType );
 	void AnimalDestory( USHORT uiId );
 	void AnimalAnimationUpdate( USHORT uiId, UINT uiType );

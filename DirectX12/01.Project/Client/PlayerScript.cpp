@@ -371,7 +371,6 @@ void CPlayerScript::Update()
 
 #ifdef NETWORK_ON
 			CPacketMgr::GetInst()->Send_Pos_Player_Packet();
-			//CPacketMgr::Send_Pos_Player_Packet();
 #else
 #endif
 		}

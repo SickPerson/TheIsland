@@ -102,7 +102,7 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 	// Server -> Client에 초기 플레이어 값 패킷 전송
 	CPacketMgr::Send_Status_Player_Packet(playerId, playerId);
 
-	//InitViewList(playerId);
+	InitViewList(playerId);
 }
 
 void CPlayerProcess::PlayerMove(USHORT playerId, char * packet)

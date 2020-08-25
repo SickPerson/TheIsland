@@ -185,7 +185,7 @@ void CNetwork::WorkerThread()
 	while (m_bRunningServer) {
 		OVER_EX*	lpover_ex;
 
-		BOOL	is_error = GetQueuedCompletionStatus(m_hIocp, &num_byte, p_key,
+		bool	is_error = GetQueuedCompletionStatus(m_hIocp, &num_byte, p_key,
 			reinterpret_cast<LPWSAOVERLAPPED *>(&lpover_ex), INFINITE);
 
 		USHORT id = static_cast<unsigned>(key64);

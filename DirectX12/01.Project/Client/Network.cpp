@@ -253,7 +253,6 @@ void CNetwork::Recv_Login_OK_Packet(char * packet)
 	pScene = CSceneMgr::GetInst()->GetCurScene();
 	sc_login_ok_packet* login_packet = reinterpret_cast<sc_login_ok_packet*>(packet);
 	m_usID = login_packet->id;
-	//dynamic_cast<CLoginScene*>(pScene->GetSceneScript())->SetNextScene(true);
 	dynamic_cast<CLoginScene*>(pScene->GetSceneScript())->NextScene();
 	cout << "Login Success" << endl;
 }
@@ -290,19 +289,12 @@ void CNetwork::Recv_Status_Player_Packet(char * packet)
 void CNetwork::Recv_Put_Player_Packet(char * packet)
 {
 	sc_put_player_packet* put_player_packet = reinterpret_cast<sc_put_player_packet*>(packet);
-	unsigned int player_id = put_player_packet->id;
+	USHORT player_id = put_player_packet->id;
 
 	Vec3 vPos = put_player_packet->vPos;
 	Vec3 vRot = put_player_packet->vRot;
 
-	if (m_usID == player_id) {
-		m_pPlayer->Transform()->SetLocalPos(vPos);
-	}
-	else {
-		m_cumPlayer[player_id]->Transform()->SetLocalPos(vPos);
-		m_cumPlayer[player_id]->Transform()->SetLocalRot(vRot);
-		pScene->FindLayer(L"Human")->AddGameObject(CNetwork::m_cumPlayer[player_id]);
-	}
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerUpdate(player_id, vPos, vRot);
 }
 
 void CNetwork::Recv_Remove_Player_Packet(char * packet)
@@ -310,17 +302,7 @@ void CNetwork::Recv_Remove_Player_Packet(char * packet)
 	sc_remove_player_packet* remove_player_packet = reinterpret_cast<sc_remove_player_packet*>(packet);
 	unsigned int player_id = remove_player_packet->id;
 
-	tEvent tEv;
-	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-
-	if (m_usID == player_id) {
-		tEv.wParam = (DWORD_PTR)m_pPlayer;
-		CEventMgr::GetInst()->AddEvent(tEv);
-	}
-	else {
-		tEv.wParam = (DWORD_PTR)m_cumPlayer[player_id];
-		CEventMgr::GetInst()->AddEvent(tEv);
-	}
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerDestroy(player_id);
 }
 
 void CNetwork::Recv_Pos_Player_Packet(char * packet)
@@ -329,14 +311,8 @@ void CNetwork::Recv_Pos_Player_Packet(char * packet)
 	unsigned int player_id = pos_packet->id;
 	Vec3 vPos = pos_packet->vPos;
 	Vec3 vRot = pos_packet->vRot;
-	if (m_usID == player_id) {
-		m_pPlayer->Transform()->SetLocalPos(vPos);
-		//m_pPlayer->Transform()->SetLocalRot(vRot);
-	}
-	else {
-		m_cumPlayer[player_id]->Transform()->SetLocalPos(vPos);
-		m_cumPlayer[player_id]->Transform()->SetLocalRot(vRot);
-	}
+
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerUpdate(player_id, vPos, vRot);
 }
 
 void CNetwork::Recv_Chat_Packet(char * packet)
@@ -359,51 +335,7 @@ void CNetwork::Recv_Animation_Player_Packet(char * packet)
 	USHORT player_id = animation_player_packet->id;
 	UINT uiType = animation_player_packet->animation_uiType;
 
-	if (m_usID == player_id)
-	{
-		return;
-	}
-	else
-	{
-		if (uiType == (UINT)PLAYER_ANIMATION_TYPE::WALK) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Walk");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::RUN) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Run");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE1) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Idle1");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE2) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Idle2");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::DIE) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Die");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"TakeWeapon");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK1) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack1");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK2) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack2");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK3) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Attack3");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT1) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Hit1");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT2) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Hit2");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::JUMP) {
-			m_cumPlayer[player_id]->Animator3D()->ChangeAnimation(L"Jump");
-		}
-		else
-			return;
-	}
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerAnimationUpdate(player_id, uiType);
 }
 
 void CNetwork::Recv_WakeUp_Npc_Packet(char * packet)
@@ -535,5 +467,5 @@ void CNetwork::Recv_Time_Packet(char * packet)
 	sc_time_packet* time_packet = reinterpret_cast<sc_time_packet*>(packet);
 	float fTime = time_packet->fTime;
 
-	cout << fTime << endl;
+	//cout << fTime << endl;
 }

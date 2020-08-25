@@ -1394,6 +1394,98 @@ void CIngameScene::CreateShowFPS()
 	m_pScene->FindLayer(L"Invisible")->AddGameObject(m_pFPSInfo);
 }
 
+void CIngameScene::PlayerUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
+{
+	if (CNetwork::m_usID == usId) {
+		m_pPlayer->Transform()->SetLocalPos(vPos);
+		//m_pPlayer->Transform()->SetLocalRot(vRot);
+	}
+	else {
+		auto p = m_mapPlayers.find(usId);
+		if (p == m_mapPlayers.end()) {
+			CGameObject* pObject = NULL;
+			pObject->Transform()->SetLocalPos(vPos);
+			pObject->Transform()->SetLocalRot(vRot);
+			m_pScene->FindLayer(L"Human")->AddGameObject(pObject);
+			m_mapPlayers.insert(make_pair(usId, pObject));
+		}
+		else {
+			float fHeight = CNaviMgr::GetInst()->GetY(m_mapPlayers[usId]->Transform()->GetLocalPos());
+			m_mapPlayers[usId]->Transform()->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
+			m_mapPlayers[usId]->Transform()->SetLocalRot(vRot);
+		}
+	}
+}
+
+void CIngameScene::PlayerDestroy(USHORT usId)
+{
+	if (usId == CNetwork::m_usID)
+		return;
+	auto p = m_mapPlayers.find(usId);
+	if (p == m_mapPlayers.end())
+	{
+		// 없는거 삭제하는 경우
+		return;
+	}
+	else {
+		tEvent tEv;
+		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+		tEv.wParam = (DWORD_PTR)(m_mapPlayers[usId]);
+		CEventMgr::GetInst()->AddEvent(tEv);
+		m_mapPlayers.erase(usId);
+	}
+}
+
+void CIngameScene::PlayerAnimationUpdate(USHORT usId, UINT uiType)
+{
+	auto p = m_mapAnimals.find(usId);
+	if (p == m_mapAnimals.end())
+	{
+		// 없는거
+		return;
+	}
+	else {
+		if (uiType == (UINT)PLAYER_ANIMATION_TYPE::WALK) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Walk");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::RUN) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Run");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE1) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle1");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE2) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle2");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::DIE) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Die");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"TakeWeapon");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK1) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack1");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK2) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack2");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK3) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack3");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT1) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit1");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT2) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit2");
+		}
+		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::JUMP) {
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Jump");
+		}
+		else
+			return;
+	}
+}
+
 
 void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType )
 {

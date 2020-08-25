@@ -174,6 +174,7 @@ void CLoginScene::Update()
 	}*/
 	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
 	{
+#ifdef NETWORK_ON
 		if (!m_bIP_Success)
 		{
 			string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
@@ -188,7 +189,6 @@ void CLoginScene::Update()
 				cout << "IP Connect Success" << endl;
 				cout << "==================" << endl;
 				CPacketMgr::GetInst()->Send_Login_Packet(wStrID);
-				//CNetwork::GetInst()->Send_Login_Packet(wStrID);
 				m_bIP_Success = true;
 			}
 			else
@@ -206,10 +206,8 @@ void CLoginScene::Update()
 			wStrID.assign(strID.begin(), strID.end());
 			CPacketMgr::GetInst()->Send_Login_Packet(wStrID);
 		}
-#ifdef NETWORK_ON
-		
 #else
-		//NextScene();
+		NextScene();
 #endif
 	}
 
