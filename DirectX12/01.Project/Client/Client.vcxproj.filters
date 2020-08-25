@@ -58,6 +58,9 @@
     <Filter Include="ComponentScript\Housing">
       <UniqueIdentifier>{3dbed70e-88a0-4a9c-9ab3-bbef192e1a8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network\PacketMgr">
+      <UniqueIdentifier>{e1e40de6-1b8d-4069-a760-32ebaceacbb4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -189,6 +192,12 @@
     <ClInclude Include="RainScript.h">
       <Filter>ComponentScript\Environment</Filter>
     </ClInclude>
+    <ClInclude Include="HumanScript.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketMgr.h">
+      <Filter>Network\PacketMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -295,6 +304,12 @@
     </ClCompile>
     <ClCompile Include="RainScript.cpp">
       <Filter>ComponentScript\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="HumanScript.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketMgr.cpp">
+      <Filter>Network\PacketMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

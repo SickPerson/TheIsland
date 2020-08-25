@@ -319,7 +319,6 @@ struct cs_login_packet {
 struct cs_move_packet {
 	char size;
 	char type;
-	USHORT id;
 
 	bool bRun;
 	Vec3 vLocalPos;

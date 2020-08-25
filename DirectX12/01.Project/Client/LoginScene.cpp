@@ -27,6 +27,7 @@
 #include <Engine/RenderMgr.h>
 
 #include "Network.h"
+#include "PacketMgr.h"
 #include "ConstStringScript.h"
 
 #include <Engine/Light3D.h>
@@ -182,7 +183,8 @@ void CLoginScene::Update()
 				cout << "==================" << endl;
 				cout << "IP Connect Success" << endl;
 				cout << "==================" << endl;
-				CNetwork::GetInst()->Send_Login_Packet(wStrID);
+				CPacketMgr::Send_Login_Packet(wStrID);
+				//CNetwork::GetInst()->Send_Login_Packet(wStrID);
 				m_bIP_Success = true;
 			}
 			else
@@ -198,7 +200,7 @@ void CLoginScene::Update()
 			string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
 			wstring wStrID;
 			wStrID.assign(strID.begin(), strID.end());
-			CNetwork::GetInst()->Send_Login_Packet(wStrID);
+			CPacketMgr::Send_Login_Packet(wStrID);
 		}
 #ifdef NETWORK_ON
 		

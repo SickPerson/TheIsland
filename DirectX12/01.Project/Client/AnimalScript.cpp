@@ -14,6 +14,7 @@
 #include <Engine/Animator3D.h>
 
 #include "Network.h"
+#include "PacketMgr.h"
 
 #include <iostream>
 
@@ -303,7 +304,7 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 				if (CollisionSphere(m_vOffsetScale, _pOther)) // 화살에 맞음
 				{
 #ifdef NETWORK_ON
-					CNetwork::GetInst()->Send_Attack_Player_Packet( 0, m_iIndex );
+					CPacketMgr::Send_Attack_Player_Packet(0, m_iIndex);
 #else
 #endif
 

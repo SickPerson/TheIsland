@@ -3,6 +3,7 @@
 #include "HousingMgr.h"
 #include "NaturalScript.h"
 #include "Network.h"
+#include "PacketMgr.h"
 
 CBuildScript::CBuildScript(HOUSING_TYPE eType, UINT iGrade) :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
@@ -389,8 +390,9 @@ bool CBuildScript::Build(bool bSendPacket)
 	Vec3 vRot = Transform()->GetLocalRot();
 	Vec3 vScale = Transform()->GetLocalScale();
 #ifdef NETWORK_ON	
-	if(bSendPacket)
-		CNetwork::GetInst()->Send_Install_Housing_Packet( m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale() );
+	if (bSendPacket)
+		CPacketMgr::Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale());
+		//CNetwork::GetInst()->Send_Install_Housing_Packet( m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale() );
 
 	else
 	{

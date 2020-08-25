@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include "Network.h"
+#include "PacketMgr.h"
 
 CPlayerScript::CPlayerScript()
 	: CScript((UINT)SCRIPT_TYPE::PLAYERSCRIPT)
@@ -88,7 +89,8 @@ void CPlayerScript::EnableItem(int num)
 	{
 		Animator3D()->ChangeAnimation(L"TakeWeapon");
 #ifdef NETWORK_ON
-		CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON);
+		CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON);
+		//CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON);
 #endif // NETWORK_ON
 	}
 }
@@ -153,21 +155,24 @@ void CPlayerScript::Update()
 					{
 						Animator3D()->ChangeAnimation(L"Attack1");
 #ifdef NETWORK_ON
-						CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK1);
+						CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK1);
+						//CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK1);
 #endif // NETWORK_ON
 					}
 					else if (type == 1)
 					{
 						Animator3D()->ChangeAnimation(L"Attack2");
 #ifdef NETWORK_ON
-						CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK2);
+						CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK2);
+						//CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK2);
 #endif // NETWORK_ON
 					}
 					else
 					{
 						Animator3D()->ChangeAnimation(L"Attack3");
 #ifdef NETWORK_ON
-						CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK3);
+						CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK3);
+						//CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK3);
 #endif // NETWORK_ON
 					}
 				}
@@ -182,21 +187,24 @@ void CPlayerScript::Update()
 					{
 						Animator3D()->ChangeAnimation(L"Attack1");
 #ifdef NETWORK_ON
-						CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK1);
+						CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK1);
+						//CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK1);
 #endif // NETWORK_ON
 					}
 					else if (type == 1)
 					{
 						Animator3D()->ChangeAnimation(L"Attack2");
 #ifdef NETWORK_ON
-						CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK2);
+						CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK2);
+						//CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK2);
 #endif // NETWORK_ON
 					}
 					else
 					{
 						Animator3D()->ChangeAnimation(L"Attack3");
 #ifdef NETWORK_ON
-						CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK3);
+						CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK3);
+						//CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::ATTACK3);
 #endif // NETWORK_ON
 					}
 				}
@@ -213,7 +221,8 @@ void CPlayerScript::Update()
 				m_bHoldShift = true;
 				Animator3D()->ChangeAnimation( L"Run" );
 #ifdef NETWORK_ON
-				CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::RUN);
+				CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::RUN);
+				//CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::RUN);
 #endif // NETWORK_ON
 			}
 
@@ -222,7 +231,8 @@ void CPlayerScript::Update()
 				m_bHoldShift = false;
 				Animator3D()->ChangeAnimation( L"Idle2" );
 #ifdef NETWORK_ON
-				CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::IDLE2);
+				CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::IDLE2);
+				//CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::IDLE2);
 #endif // NETWORK_ON
 			}
 
@@ -242,7 +252,7 @@ void CPlayerScript::Update()
 				if (!m_bHoldShift) {
 					Animator3D()->ChangeAnimation(L"Walk");
 #ifdef NETWORK_ON
-					CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
+					CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
 #endif // NETWORK_ON
 				}
 			}
@@ -262,7 +272,7 @@ void CPlayerScript::Update()
 				if (!m_bHoldShift) {
 					Animator3D()->ChangeAnimation(L"Walk");
 #ifdef NETWORK_ON
-					CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
+					CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
 #endif // NETWORK_ON
 				}
 			}
@@ -282,7 +292,7 @@ void CPlayerScript::Update()
 				if (!m_bHoldShift) {
 					Animator3D()->ChangeAnimation(L"Walk");
 #ifdef NETWORK_ON
-					CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
+					CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
 #endif // NETWORK_ON
 				}
 			}
@@ -302,7 +312,7 @@ void CPlayerScript::Update()
 				if (!m_bHoldShift) {
 					Animator3D()->ChangeAnimation(L"Walk");
 #ifdef NETWORK_ON
-					CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
+					CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
 #endif // NETWORK_ON
 				}
 			}
@@ -311,7 +321,7 @@ void CPlayerScript::Update()
 			{
 				Animator3D()->ChangeAnimation( L"Idle2" );
 #ifdef NETWORK_ON
-				CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::IDLE2);
+				CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::IDLE2);
 #endif // NETWORK_ON
 			}
 
@@ -360,7 +370,7 @@ void CPlayerScript::Update()
 			m_bEnable = true;
 
 #ifdef NETWORK_ON
-			CNetwork::GetInst()->Send_Move_Packet();
+			CPacketMgr::Send_Pos_Player_Packet();
 #else
 #endif
 		}
@@ -435,7 +445,7 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 				if (bCollision)
 				{
 #ifdef NETWORK_ON
-					CNetwork::GetInst()->Send_Collision_Player_Packet(2, _pOther->GetObj()->GetScript<CBuildScript>()->GetIndex(), m_bHoldShift);
+					//CNetwork::GetInst()->Send_Collision_Player_Packet(2, _pOther->GetObj()->GetScript<CBuildScript>()->GetIndex(), m_bHoldShift);
 #else
 #endif NETWORK_ON
 					Vec3 vPos = Transform()->GetWorldPos();
@@ -460,7 +470,7 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 		if (CSceneMgr::GetInst()->GetCurScene()->FindLayer(L"Environment")->GetLayerIdx() == _pOther->GetObj()->GetLayerIdx())
 		{
 #ifdef NETWORK_ON
-			CNetwork::GetInst()->Send_Collision_Player_Packet( 1, _pOther->GetObj()->GetScript<CNaturalScript>()->GetIndex(), m_bHoldShift );
+			//CNetwork::GetInst()->Send_Collision_Player_Packet( 1, _pOther->GetObj()->GetScript<CNaturalScript>()->GetIndex(), m_bHoldShift );
 #else
 #endif NETWORK_ON
 
@@ -497,7 +507,7 @@ void CPlayerScript::OnCollision(CCollider2D * _pOther)
 	else
 	{
 #ifdef NETWORK_ON
-		CNetwork::GetInst()->Send_Collision_Player_Packet( 0, _pOther->GetObj()->GetScript<CAnimalScript>()->GetIndex(), m_bHoldShift );
+		//CNetwork::GetInst()->Send_Collision_Player_Packet( 0, _pOther->GetObj()->GetScript<CAnimalScript>()->GetIndex(), m_bHoldShift );
 #else
 #endif NETWORK_ON
 
@@ -562,7 +572,7 @@ void CPlayerScript::Damage(float fDamage)
 		{
 			Animator3D()->ChangeAnimation(L"Die");
 #ifdef NETWORK_ON
-			CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::DIE);
+			CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::DIE);
 #endif // NETWORK_ON
 		}
 		else
@@ -572,14 +582,14 @@ void CPlayerScript::Damage(float fDamage)
 			{
 				Animator3D()->ChangeAnimation(L"Hit1");
 #ifdef NETWORK_ON
-				CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::HIT1);
+				CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::HIT1);
 #endif // NETWORK_ON
 			}
 			else
 			{
 				Animator3D()->ChangeAnimation(L"Hit2");
 #ifdef NETWORK_ON
-				CNetwork::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::HIT2);
+				CPacketMgr::Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::HIT2);
 #endif // NETWORK_ON
 			}
 		}

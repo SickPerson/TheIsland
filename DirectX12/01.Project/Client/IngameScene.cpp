@@ -58,6 +58,7 @@
 
 #include <Engine/NaviMgr.h>
 
+#include "PacketMgr.h"
 #include "Network.h"
 #include "RainScript.h"
 #include "Housing.h"
@@ -144,6 +145,7 @@ void CIngameScene::Init()
 	m_pPlayer->MeshRender()->SetDynamicShadow( true );
 
 #ifdef NETWORK_ON
+	CPacketMgr::GetInst()->SetPlayerObj(m_pPlayer);
 	CNetwork::GetInst()->SetPlayerObj( m_pPlayer );
 #else
 #endif NETWORK_ON
@@ -464,7 +466,7 @@ void CIngameScene::Update()
 			{
 				
 				string str = m_pChat->GetScript<CInputScript>()->GetString();
-				CNetwork::GetInst()->Send_Chat_Packet(str);
+				CPacketMgr::Send_Chat_Packet(str);
 				//string strPlayerName = "Player";
 				//m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
 				m_pChat->GetScript<CInputScript>()->SetEnable(false);

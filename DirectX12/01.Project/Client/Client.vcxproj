@@ -187,6 +187,7 @@
     <ClInclude Include="LoginScene.h" />
     <ClInclude Include="NaturalScript.h" />
     <ClInclude Include="Network.h" />
+    <ClInclude Include="PacketMgr.h" />
     <ClInclude Include="PlayerCamScript.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="QuickSlotScript.h" />
@@ -227,6 +228,7 @@
     <ClCompile Include="LoginScene.cpp" />
     <ClCompile Include="NaturalScript.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="PacketMgr.cpp" />
     <ClCompile Include="PlayerCamScript.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="QuickSlotScript.cpp" />
