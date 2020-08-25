@@ -80,13 +80,13 @@ CIngameScene::~CIngameScene()
 void CIngameScene::Init()
 {
 	// MeshData ·Îµå
-	Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
-	Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
-	Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
-	Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
-	Ptr<CMeshData> pTreeATex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucea.mdat", L"MeshData\\sprucea.mdat");
-	Ptr<CMeshData> pTreeBTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\spruceb.mdat", L"MeshData\\spruceb.mdat");
-	Ptr<CMeshData> pTreeCTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucec.mdat", L"MeshData\\sprucec.mdat");
+	//Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
+	//Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
+	//Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
+	//Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
+	//Ptr<CMeshData> pTreeATex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucea.mdat", L"MeshData\\sprucea.mdat");
+	//Ptr<CMeshData> pTreeBTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\spruceb.mdat", L"MeshData\\spruceb.mdat");
+	//Ptr<CMeshData> pTreeCTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\sprucec.mdat", L"MeshData\\sprucec.mdat");
 
 	CGameObject * pTestObject = nullptr;
 	  
