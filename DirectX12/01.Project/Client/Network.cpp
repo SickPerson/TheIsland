@@ -45,7 +45,7 @@ concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumPlayer;
 concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumAnimal;
 
 CNetwork::CNetwork():
-	m_bClientClose(false)
+	m_bClientClose(true)
 {
 	m_SendWsaBuf.buf = m_cSendBuf;
 	m_SendWsaBuf.len = BUF_SIZE;
@@ -61,7 +61,7 @@ CNetwork::CNetwork():
 
 CNetwork::~CNetwork()
 {
-	DisConnect();
+	//DisConnect();
 }
 
 void CNetwork::BindfpPacket()
@@ -72,11 +72,11 @@ void CNetwork::BindfpPacket()
 	m_fpPacketProcess[SC_DISCONNECT_SERVER] = [&](char* packet) {Recv_Disconnect_Server_Packet(packet); };
 	// - Player
 	m_fpPacketProcess[SC_STATUS_PLAYER] = [&](char* packet) {Recv_Status_Player_Packet(packet); };
-	m_fpPacketProcess[SC_PUT_PLAYER] = [&](char* packet) {};
-	m_fpPacketProcess[SC_POS_PLAYER] = [&](char* packet) {};
-	m_fpPacketProcess[SC_ROT_PLAYER] = [&](char* packet) {};
-	m_fpPacketProcess[SC_REMOVE_PLAYER] = [&](char* packet) {};
-	m_fpPacketProcess[SC_CHAT] = [&](char* packet) {};
+	m_fpPacketProcess[SC_PUT_PLAYER] = [&](char* packet) {Recv_Put_Player_Packet(packet); };
+	m_fpPacketProcess[SC_POS_PLAYER] = [&](char* packet) {Recv_Pos_Player_Packet(packet); };
+	m_fpPacketProcess[SC_ROT_PLAYER] = [&](char* packet) {Recv_Put_Player_Packet(packet); };
+	m_fpPacketProcess[SC_REMOVE_PLAYER] = [&](char* packet) {Recv_Remove_Player_Packet(packet); };
+	m_fpPacketProcess[SC_CHAT] = [&](char* packet) {Recv_Chat_Packet(packet); };
 	m_fpPacketProcess[SC_ANIMATION_PLAYER] = [&](char* packet) {};
 	// - Animal
 	m_fpPacketProcess[SC_PUT_ANIMAL] = [&](char* packet) {};
@@ -139,14 +139,16 @@ bool CNetwork::ConnectServer(string ipAddr)
 		//Err_display("socket err", err_no);
 		return false;
 	}
-
-	// IP 주소로 연결되었을 경우
-	if (CreateEventSelect()) {
-		RunRecvThread();
-		return true;
-	}
-	else
-		return false;
+	m_bClientClose = false;
+	return true;
+	//// IP 주소로 연결되었을 경우
+	//if (CreateEventSelect()) {
+	//	m_bClientClose = false;
+	//	//RunRecvThread();
+	//	return true;
+	//}
+	//else
+	//	return false;
 }
 
 void CNetwork::RunRecvThread()
@@ -155,36 +157,63 @@ void CNetwork::RunRecvThread()
 	m_tNetworkThread = make_shared<thread>([]() {CNetwork::GetInst()->RecvPacket(); });
 }
 
-bool CNetwork::CreateEventSelect()
-{
-	m_hEvent = WSACreateEvent();
-
-	int retval = WSAEventSelect(m_sock, m_hEvent, FD_READ || FD_CLOSE);
-	if (retval != SOCKET_ERROR) {
-		cout << "CreateSelectEvent Success" << endl;
-		return true;
-	}
-	else {
-		int err_no = WSAGetLastError();
-		Err_display("CreateSelectEvent err", err_no);
-		return false;
-	}
-}
+//bool CNetwork::CreateEventSelect()
+//{
+//	m_hEvent = WSACreateEvent();
+//
+//	int retval = WSAEventSelect(m_sock, m_hEvent, FD_READ || FD_CLOSE);
+//	if (retval != SOCKET_ERROR) {
+//		cout << "CreateSelectEvent Success" << endl;
+//		return true;
+//	}
+//	else {
+//		int err_no = WSAGetLastError();
+//		Err_display("CreateSelectEvent err", err_no);
+//		return false;
+//	}
+//}
 
 void CNetwork::DisConnect()
 {
 	m_tNetworkThread->join();
 
 	closesocket(m_sock);
-	WSACloseEvent(m_hEvent);
+	//WSACloseEvent(m_hEvent);
 	WSACleanup();
 	cout << "DisConnect" << endl;
 }
 
 void CNetwork::RecvPacket()
 {
-	cout << "Network Run" << endl;
-	while (!m_bClientClose)
+	if (!m_bClientClose) {
+		DWORD iobyte, ioflag = 0;
+
+		int ret = WSARecv(m_sock, &m_RecvWsaBuf, 1, &iobyte, &ioflag, NULL, NULL);
+		if (ret) {
+			int err_no = WSAGetLastError();
+			Err_display("Recv Error", err_no);
+		}
+
+		BYTE *ptr = reinterpret_cast<BYTE*>(m_cRecvbuf);
+
+		while (0 != iobyte) {
+			if (0 == m_in_packet_size) m_in_packet_size = ptr[0];
+			if (iobyte + m_saved_packet_size >= m_in_packet_size) {
+				memcpy(m_cPacketBuf + m_saved_packet_size, ptr, m_in_packet_size - m_saved_packet_size);
+				ProcessPacket(m_cPacketBuf);
+				ptr += m_in_packet_size - m_saved_packet_size;
+				iobyte -= m_in_packet_size - m_saved_packet_size;
+				m_in_packet_size = 0;
+				m_saved_packet_size = 0;
+			}
+			else {
+				memcpy(m_cPacketBuf + m_saved_packet_size, ptr, iobyte);
+				m_saved_packet_size += iobyte;
+				iobyte = 0;
+			}
+		}
+	}
+	/*while (!m_bClientClose)
 	{
 		m_iIndex = WSAWaitForMultipleEvents(1, &m_hEvent, FALSE, WSA_INFINITE, FALSE);
 
@@ -239,7 +268,7 @@ void CNetwork::RecvPacket()
 			m_bClientClose = true;
 			break;
 		}
-	}
+	}*/
 	//cout << "Network Close" << endl;
 }
 

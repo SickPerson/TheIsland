@@ -462,11 +462,13 @@ void CIngameScene::Update()
 		{
 			if (m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive()) 
 			{
+				
 				string str = m_pChat->GetScript<CInputScript>()->GetString();
-				string strPlayerName = "Player";
-				m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
+				CNetwork::GetInst()->Send_Chat_Packet(str);
+				//string strPlayerName = "Player";
+				//m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
 				m_pChat->GetScript<CInputScript>()->SetEnable(false);
-				m_pChat->GetScript<CInputScript>()->Clear();
+				//m_pChat->GetScript<CInputScript>()->Clear();
 			}
 			else if(!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 				m_pChat->GetScript<CInputScript>()->SetEnable(true);

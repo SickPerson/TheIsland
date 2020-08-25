@@ -52,7 +52,7 @@ public:
 public:
 	bool ConnectServer(string ipAddr);
 	void RunRecvThread();
-	bool CreateEventSelect();
+	//bool CreateEventSelect();
 
 	void DisConnect();
 	void RecvPacket();
