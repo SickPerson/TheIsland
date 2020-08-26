@@ -63,6 +63,9 @@ public:
 		m_fpPacketProcess[CS_ANIMATION] = [&](USHORT playerId, char* packet) {
 			PlayerAnimation(playerId, packet);
 		};
+		m_fpPacketProcess[CS_USE_ITEM] = [&](USHORT playerId, char* packet) {
+			PlayerUseItem(playerId, packet);
+		};
 	}
 
 	void AcceptClient(const SOCKET& sSocket, USHORT playerId);
@@ -76,6 +79,7 @@ public:
 	void PlayerRot(USHORT playerId, char* packet);
 	void PlayerAttack(USHORT playerId, char* packet);
 	void PlayerAnimation(USHORT playerId, char* packet);
+	void PlayerUseItem(USHORT playerId, char* packet);
 
 public: // Collision
 	bool CollisionSphere(USHORT playerId, USHORT otherId, UINT uiColType, float fOffset = 1.f);

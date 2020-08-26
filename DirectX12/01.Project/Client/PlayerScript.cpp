@@ -368,14 +368,15 @@ void CPlayerScript::Update()
 			SetCursorPos(vCenter.x, vCenter.y);
 			m_fHouseHeight = 0.f;
 			m_bEnable = true;
-
-#ifdef NETWORK_ON
-			CPacketMgr::GetInst()->Send_Pos_Player_Packet();
-#else
-#endif
 		}
 		else
 			m_bEnable = false;
+
+#ifdef NETWORK_ON
+			CPacketMgr::GetInst()->Send_Pos_Player_Packet();
+			CPacketMgr::GetInst()->Send_Rot_player_Packet();
+#else
+#endif
 	}
 	else
 	{

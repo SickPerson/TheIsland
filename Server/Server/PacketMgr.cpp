@@ -163,7 +163,7 @@ void CPacketMgr::Send_Put_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 {
 	Vec3 pos = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalPos();
 	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
-	UINT eType = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetType();
+	char eType = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetKind();
 
 	sc_put_npc_packet	packet;
 	packet.id = NpcID;
@@ -185,7 +185,7 @@ void CPacketMgr::Send_Pos_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 {
 	Vec3 pos = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalPos();
 	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
-	UINT eType = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetType();
+	char eType = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetKind();
 
 	sc_pos_npc_packet packet;
 	packet.size = sizeof(sc_pos_npc_packet);

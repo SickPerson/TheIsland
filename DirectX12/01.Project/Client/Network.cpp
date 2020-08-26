@@ -69,18 +69,18 @@ void CNetwork::BindfpPacket()
 	m_fpPacketProcess[SC_ROT_PLAYER] = [&](char* packet) {Recv_Put_Player_Packet(packet); };
 	m_fpPacketProcess[SC_REMOVE_PLAYER] = [&](char* packet) {Recv_Remove_Player_Packet(packet); };
 	m_fpPacketProcess[SC_CHAT] = [&](char* packet) {Recv_Chat_Packet(packet); };
-	m_fpPacketProcess[SC_ANIMATION_PLAYER] = [&](char* packet) {};
+	m_fpPacketProcess[SC_ANIMATION_PLAYER] = [&](char* packet) {Recv_Animation_Player_Packet(packet); };
 	// - Animal
-	m_fpPacketProcess[SC_PUT_ANIMAL] = [&](char* packet) {};
-	m_fpPacketProcess[SC_POS_ANIMAL] = [&](char* packet) {};
-	m_fpPacketProcess[SC_REMOVE_ANIMAL] = [&](char* packet) {};
-	m_fpPacketProcess[SC_ANIMATION_ANIMAL] = [&](char* packet) {};
+	m_fpPacketProcess[SC_PUT_ANIMAL] = [&](char* packet) {Recv_Put_Animal_Packet(packet); };
+	m_fpPacketProcess[SC_POS_ANIMAL] = [&](char* packet) {Recv_Pos_Animal_Packet(packet); };
+	m_fpPacketProcess[SC_REMOVE_ANIMAL] = [&](char* packet) {Recv_Remove_Animal_Packet(packet); };
+	m_fpPacketProcess[SC_ANIMATION_ANIMAL] = [&](char* packet) {Recv_Animation_Animal_Packet(packet); };
 	// - Natural
-	m_fpPacketProcess[SC_PUT_NATURAL] = [&](char* packet) {};
-	m_fpPacketProcess[SC_DESTROY_NATURAL] = [&](char* packet) {};
+	m_fpPacketProcess[SC_PUT_NATURAL] = [&](char* packet) {Recv_Put_Natural_Packet(packet); };
+	m_fpPacketProcess[SC_DESTROY_NATURAL] = [&](char* packet) {Recv_Destroy_Natural_Packet(packet); };
 	// - House
-	m_fpPacketProcess[SC_INSTALL_HOUSE] = [&](char* packet) {};
-	m_fpPacketProcess[SC_REMOVE_HOUSE] = [&](char* packet) {};
+	m_fpPacketProcess[SC_INSTALL_HOUSE] = [&](char* packet) {Recv_Install_Housing_Packet(packet); };
+	m_fpPacketProcess[SC_REMOVE_HOUSE] = [&](char* packet) {Recv_Remove_Housing_Packet(packet); };
 	// - Item
 	m_fpPacketProcess[SC_ADD_ITEM] = [&](char* packet) {};
 	m_fpPacketProcess[SC_REMOVE_ITEM] = [&](char* packet) {};
@@ -283,7 +283,7 @@ void CNetwork::Recv_Status_Player_Packet(char * packet)
 	float fHungry = status_player_packet->fHungry;
 	float fThrist = status_player_packet->fThrist;
 
-	// 추가
+	//dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerStatusUpdate(fHealth, fHungry, fThrist);
 }
 
 void CNetwork::Recv_Put_Player_Packet(char * packet)
@@ -323,7 +323,6 @@ void CNetwork::Recv_Chat_Packet(char * packet)
 	string name;
 	name.assign(wname.begin(), wname.end());
 	string Msg(chat_packet->meesage);
-	cout << "[" << name << "]" << Msg << endl;
 	m_pChat->GetScript<CChatScript>()->AddChat(name, Msg);
 	m_pChat->GetScript<CInputScript>()->SetEnable(false);
 	m_pChat->GetScript<CInputScript>()->Clear();
@@ -448,9 +447,6 @@ void CNetwork::Recv_Weather_Packet(char * packet)
 {
 	sc_weather_packet* weather_packet = reinterpret_cast<sc_weather_packet*>(packet);
 	bool bRain = weather_packet->bRain;
-
-	// 받기
-	//cout << bRain << endl;
 
 	CGameObject* pSunshineObject = pScene->GetLayer( 0 )->FindObject( L"Sunshine" );
 

@@ -210,10 +210,7 @@ void CAnimalSpawner::Respawn()
 			}
 
 			pObject->SetName(L"Deer");
-
-			//pObject->Transform()->SetLocalPos(Vec3(0.f, 20.f, 2000.f));
 			pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
-			//pTestObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
 
 		}

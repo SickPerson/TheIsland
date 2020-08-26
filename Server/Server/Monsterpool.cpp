@@ -7,6 +7,12 @@ CMonsterpool::CMonsterpool()
 	// MonsterPool ÃÊ±âÈ­
 	m_cumMonsterPool.clear();
 
+	Vec3 Evastion_Pawner = Vec3(10000.f, 0.f, 10000.f);
+	Vec3 Warlike_Pawner = Vec3(8100.f, 0.f, 16200.f);
+	Vec3 Passive_Pawner = Vec3(6900.f, 0.f, 5285.f);
+
+	float fRadius;
+
 	CMonster*	Animal;
 
 
@@ -28,6 +34,18 @@ CMonsterpool::CMonsterpool()
 
 			Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
 			Animal->SetOffsetScale(vOffsetScale);
+
+			fRadius = 2000.f;
+
+			float fDistance = (float)(rand() % (int)fRadius + 1);
+			float fDegree = (float)(rand() % 360);
+			float fRadian = fDegree / 100.f * 3.141592654f;
+
+			Vec3 vPos = Warlike_Pawner;
+			vPos.x += cos(fRadian) * fDistance;
+			vPos.z += sin(fRadian) * fDistance;
+
+			Animal->SetLocalPos(vPos);
 		}
 		else if (i < ANIMAL_BEAR + ANIMAL_BOAR)
 		{
@@ -43,6 +61,18 @@ CMonsterpool::CMonsterpool()
 
 			Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
 			Animal->SetOffsetScale(vOffsetScale);
+
+			fRadius = 2000.f;
+
+			float fDistance = (float)(rand() % (int)fRadius + 1);
+			float fDegree = (float)(rand() % 360);
+			float fRadian = fDegree / 100.f * 3.141592654f;
+
+			Vec3 vPos = Warlike_Pawner;
+			vPos.x += cos(fRadian) * fDistance;
+			vPos.z += sin(fRadian) * fDistance;
+
+			Animal->SetLocalPos(vPos);
 		}
 		else if (i < ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER)
 		{
@@ -58,6 +88,18 @@ CMonsterpool::CMonsterpool()
 
 			Vec3 vOffsetScale = Vec3(30.f, 30.f, 30.f);
 			Animal->SetOffsetScale(vOffsetScale);
+
+			fRadius = 8000.f;
+
+			float fDistance = (float)(rand() % (int)fRadius + 1);
+			float fDegree = (float)(rand() % 360);
+			float fRadian = fDegree / 100.f * 3.141592654f;
+
+			Vec3 vPos = Evastion_Pawner;
+			vPos.x += cos(fRadian) * fDistance;
+			vPos.z += sin(fRadian) * fDistance;
+
+			Animal->SetLocalPos(vPos);
 		}
 		else if (i < ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER + ANIMAL_WOLF)
 		{
@@ -73,12 +115,19 @@ CMonsterpool::CMonsterpool()
 
 			Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
 			Animal->SetOffsetScale(vOffsetScale);
+
+			fRadius = 2000.f;
+
+			float fDistance = (float)(rand() % (int)fRadius + 1);
+			float fDegree = (float)(rand() % 360);
+			float fRadian = fDegree / 100.f * 3.141592654f;
+
+			Vec3 vPos = Passive_Pawner;
+			vPos.x += cos(fRadian) * fDistance;
+			vPos.z += sin(fRadian) * fDistance;
+
+			Animal->SetLocalPos(vPos);
 		}
-		random_device rd;
-		default_random_engine dre(rd());
-		uniform_real_distribution<float> urd{ 10000.f, 20000.f };
-		
-		Animal->SetLocalPos(Vec3(urd(dre), 20.f, urd(dre)));
 		Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_cumMonsterPool.insert(make_pair(i, Animal));
 	}

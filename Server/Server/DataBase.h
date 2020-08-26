@@ -46,6 +46,7 @@ public:
 	{
 		m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_LOGIN] = [&](DB_Event& event) {LogInProcess(event); };
 		m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_LOGOUT] = [&](DB_Event& event) {LogOutProcess(event); };
+		//m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_USER_SAVE] = [&](DB_Event& dbevent) {UserSaveProcess(dbevent); };
 		m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_GET_ITEM] = [&](DB_Event& event) {GetItemProcess(event); };
 		m_fpDataBaseProcess[DB_UPDATE_TYPE::DUT_REMOVE_ITEM] = [&](DB_Event& event) {RemoveItemProcess(event); };
 		//m_fpDataBaseProcess[DB_UPDATE_TYPE::CHANGE_STATE] = [&](DB_Event& event) {ChnageStateProcess(event); };
@@ -58,6 +59,7 @@ public:
 public:
 	void PushEvent_Login();
 	void PushEvent_LogOut();
+	void PushEvent_DB_SaveProcess();
 	void PushEvent_Get_Item();
 	void PushEvent_Remove_Item();
 	void PushEvent_Change_State(USHORT& player_Id);

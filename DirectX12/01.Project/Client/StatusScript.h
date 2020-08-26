@@ -34,6 +34,10 @@ public:
 	void SetIncreaseHungry(float fAmount);
 	void SetIncreasefThirst(float fAmount);
 
+	void SetHealth(float fHealth);
+	void SetHungry(float fHungry);
+	void SetThirst(float fThirst);
+
 	void SetScreenDamage(CGameObject* pObject);
 
 	bool GetGameOver();
