@@ -20,6 +20,10 @@ constexpr	int	MAX_STR_LEN = 15;
 constexpr	int MAX_MSG_LEN = 50;
 constexpr	int MAX_QUICK_SLOT = 5;
 
+constexpr	float	WARLIKE_SPAWN_RADIUS = 2000.f;
+constexpr	float	PASSIVE_SPAWN_RADIUS = 2000.f;
+constexpr	float	EVASION_SPAWN_RADIUS = 8000.f;
+
 //char SERVERIP[20] = "127.0.0.1";
 
 // Client -> Server Packet Protocol
@@ -78,7 +82,7 @@ enum SC_PACKET_TYPE {
 	SC_END
 };
 // About Player
-constexpr float PLAYER_VIEW_RANGE = 3000.f;
+constexpr float PLAYER_VIEW_RANGE = 10000.f;
 constexpr float ANIMAL_VIEW_RANGE = 300.f;
 
 // enum class
@@ -191,7 +195,7 @@ struct sc_put_npc_packet {
 	char type;
 	USHORT id;
 
-	UINT	eType;
+	char	eType;
 	Vec3	vPos;
 	Vec3	vRot;
 };
@@ -201,7 +205,7 @@ struct sc_pos_npc_packet{
 	char type;
 	USHORT id;
 
-	UINT eType;
+	char eType;
 	Vec3 vPos;
 	Vec3 vRot;
 };

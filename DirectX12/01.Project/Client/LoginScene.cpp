@@ -178,9 +178,7 @@ void CLoginScene::Update()
 		if (!m_bIP_Success)
 		{
 			string strID = m_pID->GetScript<CInputScript>()->GetString(); // ID
-			string strIP = "127.0.0.1";
-			//string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
-			cout << "gigi" << endl;
+			string strIP = m_pIP->GetScript<CInputScript>()->GetString(); // IP
 			wstring wStrID;
 			wStrID.assign(strID.begin(), strID.end());
 			if (CNetwork::GetInst()->ConnectServer(strIP))

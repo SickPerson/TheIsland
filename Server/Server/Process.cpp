@@ -416,3 +416,20 @@ void CProcess::PushEvent_Etc_Time()
 	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
+
+void CProcess::PushEvent_DB_UserSave()
+{
+	for (auto& player : m_pPlayerPool->m_cumPlayerPool) {
+		bool bConnect = player.second->GetConnect();
+		if (!bConnect) continue;
+		DB_Event ev;
+		ev.state = EV_DB;
+		ev.fHealth = player.second->GetHealth();
+		ev.fHungry = player.second->GetHungry();
+		ev.fThirst = player.second->GetThirst();
+		Vec3 vPos = player.second->GetLocalPos();
+		ev.fX = vPos.x;
+		ev.fY = vPos.y;
+		ev.fZ = vPos.z;
+	}
+}

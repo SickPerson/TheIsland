@@ -33,6 +33,10 @@ struct Update_Event {
 			[DataBase Event]
 _______________________________________________*/
 typedef struct DB_Event {
+	std::chrono::high_resolution_clock::time_point wakeup_time;
+	EVENT_TYPE	m_EventType;
+	char		m_eDbUpdate;
+
 	UINT state; // DataBase_TYPE
 	int inum; // ID �õ尪
 	wstring sid; // ID

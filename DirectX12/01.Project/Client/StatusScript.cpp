@@ -113,6 +113,21 @@ void CStatusScript::SetIncreasefThirst(float fAmount)
 		m_fThirst = 100.f;
 }
 
+void CStatusScript::SetHealth(float fHealth)
+{
+	m_fHealth = fHealth;
+}
+
+void CStatusScript::SetHungry(float fHungry)
+{
+	m_fHungry = fHungry;
+}
+
+void CStatusScript::SetThirst(float fThirst)
+{
+	m_fThirst = fThirst;
+}
+
 void CStatusScript::SetScreenDamage(CGameObject * pObject)
 {
 	m_pScreenDamage = pObject;

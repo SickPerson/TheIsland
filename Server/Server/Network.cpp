@@ -286,7 +286,7 @@ void CNetwork::UpdateThread()
 	}
 	while (m_bRunningServer)
 	{
-		//CTimerMgr::GetInst()->Tick();
+		CTimerMgr::GetInst()->Tick();
 		while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
 		}

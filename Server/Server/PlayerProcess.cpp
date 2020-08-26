@@ -38,7 +38,7 @@ void CPlayerProcess::Init_Player(USHORT playerId, wchar_t* wcId)
 	}
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetNumID(playerId);
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetWcID(wcId);
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(10000.f, 200.f, 10000.f));
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(18000.f, 200.f, 2000.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(true);
@@ -101,7 +101,8 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 	
 	// Server -> Client에 초기 플레이어 값 패킷 전송
 	CPacketMgr::Send_Status_Player_Packet(playerId, playerId);
-
+	if(!ExistLoginList(playerId))
+		InsertLoginList(playerId);
 	InitViewList(playerId);
 }
 
@@ -158,12 +159,14 @@ void CPlayerProcess::PlayerPos(USHORT playerId, char * packet)
 	Vec3 vPrePos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 	Vec3 vCurrPos = pos_packet->vLocalPos;
 
-	if (ObjectRangeCheck(vPrePos, vCurrPos, 10.f)) {
+	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vCurrPos);
+	UpdateViewList(playerId);
+	/*if (ObjectRangeCheck(vPrePos, vCurrPos, 10.f)) {
 		m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vCurrPos);
 		UpdateViewList(playerId);
 	}
 	else
-		return;
+		return;*/
 }
 
 void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
@@ -188,6 +191,7 @@ void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
 
 void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 {
+	cout << "Attack" << endl;
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(packet);
 	UINT	uiType = attack_packet->attack_uiType;
 	USHORT	attack_id = attack_packet->attack_id;
@@ -229,6 +233,10 @@ void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
 		if (!bConnect) continue;
 		CPacketMgr::Send_Animation_Player_Packet(other, uiType);
 	}
+}
+
+void CPlayerProcess::PlayerUseItem(USHORT playerId, char * packet)
+{
 }
 
 bool CPlayerProcess::CollisionSphere(USHORT playerId, USHORT otherId, UINT uiColType, float fOffset)
@@ -436,8 +444,10 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 	House->SetLocalPos(vLocalPos);
 	House->SetLocalRot(vLocalRot);
 	House->SetLocalScale(vLocalScale);
-	House->SetOffsetPos(vOffsetPos);
-	House->SetOffsetScale(vOffsetScale);
+
+	if(uiType >= HOUSING_WALL && uiType < HOUSING_FLOOR)
+		House->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
+	House->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
 	m_pHousingPool->Install_House(House, house_id);
 	
 	concurrent_unordered_set<USHORT> loginList;
@@ -511,6 +521,7 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 
 			if (ObjectRangeCheck(player_pos, other_pos, PLAYER_VIEW_RANGE))
 			{
+				cout << au << endl;
 				CPacketMgr::Send_Put_Player_Packet(au, playerId);
 				CPacketMgr::Send_Put_Player_Packet(playerId, au);
 			}
@@ -524,16 +535,22 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 
 		Vec3 vAnimal_Pos = au.second->GetLocalPos();
 
-		if (ObjectRangeCheck(player_pos, vAnimal_Pos, PLAYER_VIEW_RANGE))
+		if (!au.second->GetWakeUp())
 		{
-			if (ObjectRangeCheck(player_pos, vAnimal_Pos, ANIMAL_VIEW_RANGE))
+			if (ObjectRangeCheck(player_pos, vAnimal_Pos, PLAYER_VIEW_RANGE))
 			{
-				PushEvent_Animal_Behavior(au.first, playerId);
+				if (ObjectRangeCheck(player_pos, vAnimal_Pos, ANIMAL_VIEW_RANGE))
+				{
+					PushEvent_Animal_Behavior(au.first, playerId);
+				}
+				else
+				{
+					PushEvent_Animal_Idle(au.first, playerId);
+				}
+				CPacketMgr::Send_Put_Npc_Packet(playerId, au.first);
 			}
-			else
-			{
-				PushEvent_Animal_Idle(au.first, playerId);
-			}
+		}
+		else {
 			CPacketMgr::Send_Put_Npc_Packet(playerId, au.first);
 		}
 	}
@@ -662,6 +679,7 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 				{
 					PushEvent_Animal_Behavior(usAnimal, playerId);
 				}
+				CPacketMgr::Send_Pos_Npc_Packet(playerId, usAnimal);
 			}
 			else
 			{
