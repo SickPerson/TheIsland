@@ -1678,7 +1678,7 @@ void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType 
 		tEv.wParam = ( DWORD_PTR )( pObject );
 		CEventMgr::GetInst()->AddEvent( tEv );
 
-		float fHeight = CNaviMgr::GetInst()->GetY( pObject->Transform()->GetLocalPos() );
+		float fHeight = CNaviMgr::GetInst()->GetY( vPos );
 		pObject->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
 		pObject->Transform()->SetLocalRot( vRot );
 
@@ -1687,7 +1687,7 @@ void CIngameScene::AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, UINT uiType 
 	// 업데이트
 	else
 	{
-		float fHeight = CNaviMgr::GetInst()->GetY( m_mapAnimals[uiId]->Transform()->GetLocalPos() );
+		float fHeight = CNaviMgr::GetInst()->GetY( vPos );
 		m_mapAnimals[uiId]->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
 		m_mapAnimals[uiId]->Transform()->SetLocalRot( vRot );
 	}
