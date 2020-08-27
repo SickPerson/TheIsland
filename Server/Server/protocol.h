@@ -10,7 +10,7 @@ constexpr	int	BEGIN_ANIMAL = MAX_USER;
 constexpr	int	ANIMAL_BEAR = 50;
 constexpr	int	ANIMAL_BOAR = 50;
 constexpr	int	ANIMAL_DEER = 100;
-constexpr	int	ANIMAL_WOLF = 100;
+constexpr	int	ANIMAL_WOLF = 40;
 constexpr	int	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER + ANIMAL_WOLF;
 constexpr	int	END_ANIMAL = MAX_USER + MAX_ANIMAL;
 constexpr	int	BEGIN_NATURAL = END_ANIMAL;
@@ -82,7 +82,7 @@ enum SC_PACKET_TYPE {
 	SC_END
 };
 // About Player
-constexpr float PLAYER_VIEW_RANGE = 10000.f;
+constexpr float PLAYER_VIEW_RANGE = 5000.f;
 constexpr float ANIMAL_VIEW_RANGE = 300.f;
 
 // enum class
@@ -180,8 +180,8 @@ struct sc_animation_player_packet
 {
 	char size;
 	char type;
-	UINT animation_uiType;
 	USHORT id;
+	UINT animation_uiType;
 };
 
 // NPC

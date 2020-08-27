@@ -25,6 +25,16 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT uiTarget)
 	char Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[Animal_Id]->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
+	concurrent_unordered_set<USHORT> loginList;
+
+	CopyBeforeLoginList(loginList);
+
+	USHORT AnimalID = Animal_Id + BEGIN_ANIMAL;
+	for (auto& player : loginList) {
+		if (m_pPlayerPool->m_cumPlayerPool[player]->ExistList(AnimalID))
+			CPacketMgr::Send_Animation_Npc_Packet(player, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::ATTACK);
+	}
+
 	float fTarget_CurrHp = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetHealth();
 	float fTarget_AfterHp = fTarget_CurrHp;
 
@@ -53,6 +63,16 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 	char Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
+	/*concurrent_unordered_set<USHORT> loginList;
+
+	CopyBeforeLoginList(loginList);*/
+
+	/*USHORT AnimalID = AnimalId + BEGIN_ANIMAL;
+	for (auto& player : loginList) {
+		if (m_pPlayerPool->m_cumPlayerPool[player]->ExistList(AnimalID))
+			CPacketMgr::Send_Animation_Npc_Packet(player, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
+	}*/
+
 	//UINT Target_State = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetState();
 	Vec3 vAnimalPos = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetLocalPos();
 	Vec3 vTargetPos = m_pPlayerPool->m_cumPlayerPool[uiTarget]->GetLocalPos();
@@ -75,6 +95,7 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 	for (auto& au : loginList)
 	{
 		CPacketMgr::Send_Pos_Npc_Packet(au, AnimalId);
+		CPacketMgr::Send_Animation_Npc_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
 	}
 
 	if (PlayerAndAnimal_CollisionSphere(uiTarget, AnimalId, 0.2f))
@@ -101,6 +122,16 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
 	char Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
+	/*concurrent_unordered_set<USHORT> loginList;
+
+	CopyBeforeLoginList(loginList);*/
+
+	/*USHORT AnimalID = AnimalId + BEGIN_ANIMAL;
+	for (auto& player : loginList) {
+		if (m_pPlayerPool->m_cumPlayerPool[player]->ExistList(AnimalID))
+			CPacketMgr::Send_Animation_Npc_Packet(player, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
+	}*/
+
 	concurrent_unordered_set<USHORT> loginList;
 	concurrent_unordered_set<USHORT> rangeList;
 
@@ -118,6 +149,7 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
 		bool bConnect = m_pPlayerPool->m_cumPlayerPool[au]->GetConnect();
 		if (!bConnect) continue;
 		CPacketMgr::Send_Pos_Npc_Packet(au, AnimalId);
+		CPacketMgr::Send_Animation_Npc_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
 	}
 
 	InRangePlayer(loginList, rangeList, AnimalId);
@@ -140,6 +172,16 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 {
 	char Animal_State = CProcess::m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
+
+	concurrent_unordered_set<USHORT> loginList;
+
+	CopyBeforeLoginList(loginList);
+
+	USHORT AnimalID = AnimalId + BEGIN_ANIMAL;
+	for (auto& player : loginList) {
+		if (m_pPlayerPool->m_cumPlayerPool[player]->ExistList(AnimalID))
+			CPacketMgr::Send_Animation_Npc_Packet(player, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::IDLE);
+	}
 	
 	concurrent_unordered_set<USHORT> login_list;
 	concurrent_unordered_set<USHORT> range_list;

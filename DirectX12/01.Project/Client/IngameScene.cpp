@@ -1382,12 +1382,12 @@ void CIngameScene::PlayerUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 		if (p == m_mapPlayers.end()) {
 			Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\islandplayer.mdat", L"MeshData\\islandplayer.mdat");
 			CGameObject* pObject = pMeshData->Instantiate();
+			pObject->AddComponent(new CHumanScript);
 			CHumanScript* pScript = pObject->GetScript<CHumanScript>();
 			pScript->AnimationInfo(pObject->Animator3D());
 			SetName(L"Other Object");
 			pObject->FrustumCheck(false);
 
-			pObject->AddComponent(new CHumanScript);
 
 
 			pObject->MeshRender()->SetDynamicShadow(true);
@@ -1398,7 +1398,6 @@ void CIngameScene::PlayerUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 			pObject->Transform()->SetLocalRot(vRot);
 			pObject->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 
-			cout << vNewPos.x << ", " << vNewPos.y << ", " << vNewPos.z << endl;
 			m_pScene->FindLayer(L"Human")->AddGameObject(pObject);
 			m_mapPlayers.insert(make_pair(usId, pObject));
 		}
@@ -1438,51 +1437,54 @@ void CIngameScene::PlayerDestroy(USHORT usId)
 
 void CIngameScene::PlayerAnimationUpdate(USHORT usId, UINT uiType)
 {
+	cout << usId << " | " << uiType << endl;
+
 	auto p = m_mapAnimals.find(usId);
 	if (p == m_mapAnimals.end())
 	{
 		// ¾ø´Â°Å
 		return;
 	}
-	else {
-		if (uiType == (UINT)PLAYER_ANIMATION_TYPE::WALK) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Walk");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::RUN) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Run");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE1) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle1");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::IDLE2) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle2");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::DIE) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Die");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"TakeWeapon");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK1) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack1");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK2) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack2");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::ATTACK3) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack3");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT1) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit1");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::HIT2) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit2");
-		}
-		else if (uiType == (UINT)PLAYER_ANIMATION_TYPE::JUMP) {
-			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Jump");
-		}
-		else
-			return;
+	if (usId == CNetwork::m_usID)
+		return;
+
+	switch (uiType) {
+	case (UINT)PLAYER_ANIMATION_TYPE::WALK:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Walk");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::RUN:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Run");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::IDLE1:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle1");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::IDLE2:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle2");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::DIE:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Die");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"TakeWeapon");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::ATTACK1:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack1");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::ATTACK2:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack2");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::ATTACK3:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack3");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::HIT1:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit1");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::HIT2:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit2");
+		break;
+	case (UINT)PLAYER_ANIMATION_TYPE::JUMP:
+		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Jump");
+		break;
 	}
 }
 

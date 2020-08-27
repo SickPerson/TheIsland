@@ -228,11 +228,11 @@ bool CProcess::AnimalAndHouse_Collision_Door(USHORT AnimalId, USHORT HouseId, Ve
 
 void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
 {
-	/*UINT uiType = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetType();
+	UINT uiType = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetType();
 
 	if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
 	{
-		if (AnimalAndPlayer_CollisionSphere(AnimalId, PlayerId, (UINT)OBJ_TYPE::OT_PLAYER, 0.2f))
+		if (AnimalAndPlayer_CollisionSphere(AnimalId, PlayerId, 0.2f))
 		{
 			PushEvent_Animal_Attack(AnimalId, PlayerId);
 		}
@@ -248,7 +248,7 @@ void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
 	else if (uiType == (UINT)BEHAVIOR_TYPE::B_EVASION)
 	{
 		PushEvent_Animal_Evastion(AnimalId, PlayerId);
-	}*/
+	}
 }
 
 void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)

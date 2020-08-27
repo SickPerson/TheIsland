@@ -66,11 +66,6 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 	CHousingMgr::GetInst()->Init();
 	CCheatMgr::GetInst()->Init();
 
-	// Network Init
-	//CNetwork::GetInst();
-	// Network Run
-	//shared_ptr<thread>m_tNetworkThread = make_shared<thread>([]() {CNetwork::GetInst()->RecvPacket(); });
-
 	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
 	CLoginScene* pLoginScene = pScene->CreateSceneScript<CLoginScene>( L"LoginScene" );
 	//CIngameScene* pGameScene = pScene->CreateSceneScript<CIngameScene>(L"GameScene");
@@ -94,7 +89,6 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 
 		// Game Running
 		CCore::GetInst()->Progress();
-		//CNetwork::GetInst()->RecvPacket();
 	}
 
 	return ( int )msg.wParam;

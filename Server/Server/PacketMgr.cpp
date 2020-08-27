@@ -85,7 +85,6 @@ void CPacketMgr::Send_Pos_Player_Packet(USHORT playerId, USHORT OtherId)
 	packet.id = OtherId;
 	packet.vPos = pos;
 	packet.vRot = rot;
-	cout << "Send Pos" << endl;
 	if (0 != CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->ExistList(OtherId) && playerId != OtherId)
 		Send_Packet(playerId, &packet);
 	else
@@ -144,19 +143,15 @@ void CPacketMgr::Send_Death_Player_Packet(USHORT playerId)
 
 }
 
-void CPacketMgr::Send_Animation_Player_Packet(USHORT playerId, UINT AnimationType)
+void CPacketMgr::Send_Animation_Player_Packet(USHORT playerId, USHORT actId, UINT AnimationType)
 {
-	concurrent_unordered_set<USHORT> list;
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(list);
-	list.insert(playerId);
-	
 	sc_animation_player_packet packet;
-	packet.size = sizeof(sc_animation_npc_packet);
+	packet.size = sizeof(sc_animation_player_packet);
 	packet.type = SC_ANIMATION_PLAYER;
-	packet.animation_uiType = AnimationType;
-	packet.id = playerId;
-	for(auto& au : list)
-		Send_Packet(playerId, &packet);
+	packet.animation_uiType = (UINT)AnimationType;
+	packet.id = actId;
+	cout << packet.animation_uiType << endl;
+	Send_Packet(playerId, &packet);
 }
 
 void CPacketMgr::Send_Put_Npc_Packet(USHORT PlayerID, USHORT NpcID)
@@ -165,7 +160,6 @@ void CPacketMgr::Send_Put_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
 	char eType = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetKind();
 
-	cout << "SEND ANLMAL : " << pos.x << " | " << pos.y << " | " << pos.z << endl;
 	sc_put_npc_packet	packet;
 	packet.id = NpcID;
 	packet.size = sizeof(packet);
@@ -188,7 +182,6 @@ void CPacketMgr::Send_Pos_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
 	char eType = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetKind();
 
-	cout << "SEND ANLMAL : " << pos.x << " | " << pos.y << " | " << pos.z << endl;
 	sc_pos_npc_packet packet;
 	packet.size = sizeof(sc_pos_npc_packet);
 	packet.type = SC_POS_ANIMAL;

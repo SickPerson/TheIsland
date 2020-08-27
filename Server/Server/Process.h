@@ -125,7 +125,7 @@ public:
 	{
 		if (m_cpqEventQueue.try_pop(_ev))
 		{
-			if (_ev.wakeup_time < std::chrono::high_resolution_clock::now())
+			if (_ev.wakeup_time > std::chrono::high_resolution_clock::now())
 			{
 				PushEventQueue(_ev);
 				return false;

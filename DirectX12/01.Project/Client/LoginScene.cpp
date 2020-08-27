@@ -165,13 +165,6 @@ void CLoginScene::Update()
 		return;
 	}
 
-	/*if (CNetwork::GetInst()->GetLogin() && CNetwork::GetInst()->GetLoopStart()) {
-		NextScene();
-	}*/
-	/*if (m_bLoginSuccess) {
-		
-		m_bLoginSuccess = false;
-	}*/
 	if (KEY_TAB(KEY_TYPE::KEY_ENTER))
 	{
 #ifdef NETWORK_ON

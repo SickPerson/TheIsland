@@ -22,7 +22,7 @@ public: // Player 관련 패킷
 	static void Send_Death_Player_Packet(USHORT playerId);
 
 	// Player Animation
-	static void Send_Animation_Player_Packet(USHORT playerId, UINT AnimationType);
+	static void Send_Animation_Player_Packet(USHORT playerId, USHORT actId, UINT AnimationType);
 
 public: // Npc(Monster) 관련
 	static void Send_Put_Npc_Packet(USHORT playerId, USHORT NpcId);

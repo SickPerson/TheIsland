@@ -334,6 +334,7 @@ void CNetwork::Recv_Animation_Player_Packet(char * packet)
 	USHORT player_id = animation_player_packet->id;
 	UINT uiType = animation_player_packet->animation_uiType;
 
+	cout << player_id << " | " << uiType << endl;
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerAnimationUpdate(player_id, uiType);
 }
 

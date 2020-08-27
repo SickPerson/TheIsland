@@ -212,7 +212,6 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 
 void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
 {
-	cout << "Animation Packet Recv" << endl;
 	cs_animation_packet* animation_packet = reinterpret_cast<cs_animation_packet*>(packet);
 
 	UINT uiType = animation_packet->uiType;
@@ -220,9 +219,11 @@ void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
 	concurrent_unordered_set<USHORT>	viewList;
 	m_pPlayerPool->m_cumPlayerPool[playerId]->CopyPlayerList(viewList);
 	for (auto& other : viewList) {
+		if (other == playerId) continue;
 		bool bConnect = m_pPlayerPool->m_cumPlayerPool[other]->GetConnect();
 		if (!bConnect) continue;
-		CPacketMgr::Send_Animation_Player_Packet(other, uiType);
+		if(other < MAX_USER)
+			CPacketMgr::Send_Animation_Player_Packet(other, playerId, uiType);
 	}
 }
 
@@ -498,7 +499,6 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 	// Player ViewList Update
 	Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 
-	cout << player_pos.x << " | " << player_pos.y << " | " << player_pos.z << endl;
 	concurrent_unordered_set<USHORT> list;
 	CopyBeforeLoginList(list);
 
@@ -526,11 +526,9 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 
 		Vec3 vAnimal_Pos = au.second->GetLocalPos();
 
-		if (!au.second->GetWakeUp())
+		if (!au.second->GetWakeUp() && ObjectRangeCheck(player_pos, vAnimal_Pos, PLAYER_VIEW_RANGE))
 		{
 			au.second->SetWakeUp(true);
-			if (ObjectRangeCheck(player_pos, vAnimal_Pos, PLAYER_VIEW_RANGE))
-			{
 				if (ObjectRangeCheck(player_pos, vAnimal_Pos, ANIMAL_VIEW_RANGE))
 				{
 					PushEvent_Animal_Behavior(au.first, playerId);
@@ -540,7 +538,6 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 					PushEvent_Animal_Idle(au.first, playerId);
 				}
 				CPacketMgr::Send_Put_Npc_Packet(playerId, au.first);
-			}
 		}
 		else {
 			CPacketMgr::Send_Put_Npc_Packet(playerId, au.first);

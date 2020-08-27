@@ -126,7 +126,6 @@ CMonsterpool::CMonsterpool()
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
 			Animal->SetLocalPos(vPos);
-			cout << vPos.x << " | " << vPos.y << " | " << vPos.z << endl;
 		}
 		Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_cumMonsterPool.insert(make_pair(i, Animal));
