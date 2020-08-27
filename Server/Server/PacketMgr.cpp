@@ -85,7 +85,7 @@ void CPacketMgr::Send_Pos_Player_Packet(USHORT playerId, USHORT OtherId)
 	packet.id = OtherId;
 	packet.vPos = pos;
 	packet.vRot = rot;
-
+	cout << "Send Pos" << endl;
 	if (0 != CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->ExistList(OtherId) && playerId != OtherId)
 		Send_Packet(playerId, &packet);
 	else

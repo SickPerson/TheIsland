@@ -219,17 +219,17 @@ void CPlayerScript::Update()
 			{
 				fSpeed *= 5.f;
 				m_bHoldShift = true;
-				Animator3D()->ChangeAnimation( L"Run" );
+				Animator3D()->ChangeAnimation(L"Run");
 #ifdef NETWORK_ON
 				CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::RUN);
 				//CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::RUN);
 #endif // NETWORK_ON
 			}
 
-			if ( KEY_AWAY( KEY_TYPE::KEY_LSHIFT ) )
+			if (KEY_AWAY(KEY_TYPE::KEY_LSHIFT))
 			{
 				m_bHoldShift = false;
-				Animator3D()->ChangeAnimation( L"Idle2" );
+				Animator3D()->ChangeAnimation(L"Idle2");
 #ifdef NETWORK_ON
 				CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::IDLE2);
 				//CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::IDLE2);
@@ -252,7 +252,9 @@ void CPlayerScript::Update()
 				if (!m_bHoldShift) {
 					Animator3D()->ChangeAnimation(L"Walk");
 #ifdef NETWORK_ON
+					CPacketMgr::GetInst()->Send_Pos_Player_Packet();
 					CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
+					CPacketMgr::GetInst()->Send_Rot_player_Packet();
 #endif // NETWORK_ON
 				}
 			}
@@ -272,7 +274,9 @@ void CPlayerScript::Update()
 				if (!m_bHoldShift) {
 					Animator3D()->ChangeAnimation(L"Walk");
 #ifdef NETWORK_ON
+					CPacketMgr::GetInst()->Send_Pos_Player_Packet();
 					CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
+					CPacketMgr::GetInst()->Send_Rot_player_Packet();
 #endif // NETWORK_ON
 				}
 			}
@@ -292,7 +296,9 @@ void CPlayerScript::Update()
 				if (!m_bHoldShift) {
 					Animator3D()->ChangeAnimation(L"Walk");
 #ifdef NETWORK_ON
+					CPacketMgr::GetInst()->Send_Pos_Player_Packet();
 					CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
+					CPacketMgr::GetInst()->Send_Rot_player_Packet();
 #endif // NETWORK_ON
 				}
 			}
@@ -312,14 +318,16 @@ void CPlayerScript::Update()
 				if (!m_bHoldShift) {
 					Animator3D()->ChangeAnimation(L"Walk");
 #ifdef NETWORK_ON
+					CPacketMgr::GetInst()->Send_Pos_Player_Packet();
 					CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
+					CPacketMgr::GetInst()->Send_Rot_player_Packet();
 #endif // NETWORK_ON
 				}
 			}
 
-			if ( KEY_AWAY( KEY_TYPE::KEY_W ) || KEY_AWAY( KEY_TYPE::KEY_A ) || KEY_AWAY( KEY_TYPE::KEY_S ) || KEY_AWAY( KEY_TYPE::KEY_D ) )
+			if (KEY_AWAY(KEY_TYPE::KEY_W) || KEY_AWAY(KEY_TYPE::KEY_A) || KEY_AWAY(KEY_TYPE::KEY_S) || KEY_AWAY(KEY_TYPE::KEY_D))
 			{
-				Animator3D()->ChangeAnimation( L"Idle2" );
+				Animator3D()->ChangeAnimation(L"Idle2");
 #ifdef NETWORK_ON
 				CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::IDLE2);
 #endif // NETWORK_ON
@@ -363,20 +371,13 @@ void CPlayerScript::Update()
 				m_fDownSpeed = 0.f;
 			}
 
-			Transform()->SetLocalPos( Vec3(vPos.x, vOriginPos.y, vPos.z) );
-
+			Transform()->SetLocalPos(Vec3(vPos.x, vOriginPos.y, vPos.z));
 			SetCursorPos(vCenter.x, vCenter.y);
 			m_fHouseHeight = 0.f;
 			m_bEnable = true;
 		}
 		else
 			m_bEnable = false;
-
-#ifdef NETWORK_ON
-			CPacketMgr::GetInst()->Send_Pos_Player_Packet();
-			CPacketMgr::GetInst()->Send_Rot_player_Packet();
-#else
-#endif
 	}
 	else
 	{

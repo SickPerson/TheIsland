@@ -15,11 +15,11 @@ CMonsterpool::CMonsterpool()
 
 	CMonster*	Animal;
 
-
 	for (int i = 0; i < MAX_ANIMAL; ++i)
 	{
 		Animal = new CMonster();
 		Animal->SetWakeUp(false);
+		Animal->SetState(OBJ_STATE_TYPE::OST_LIVE);
 		if (i < ANIMAL_BEAR)
 		{
 			tAnimalStatus tStatus;
@@ -125,7 +125,6 @@ CMonsterpool::CMonsterpool()
 			Vec3 vPos = Passive_Pawner;
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
-
 			Animal->SetLocalPos(vPos);
 		}
 		Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));

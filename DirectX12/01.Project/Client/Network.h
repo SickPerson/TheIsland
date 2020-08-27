@@ -58,6 +58,7 @@ public:
 	void Recv_Put_Player_Packet(char* packet);
 	void Recv_Remove_Player_Packet(char* packet);
 	void Recv_Pos_Player_Packet(char* packet);
+	void Recv_Rot_Player_packet(char* packet);
 	void Recv_Chat_Packet(char* packet);
 	void Recv_Animation_Player_Packet(char* packet);
 

@@ -45,13 +45,24 @@ void CEtcProcess::Player_Collision_Event()
 			}
 		}
 		// - Natural Collision
-		/*for (auto& natural : m_pNaturalPool->m_cumNaturalPool) {
+		for (auto& natural : m_pNaturalPool->m_cumNaturalPool) {
 			bool bDestroy = natural.second->GetDestroy();
 			if (bDestroy) continue;
+			char eType = natural.second->GetType();
+			if (eType == NATURAL_TYPE::N_BUSH) continue;
 			if (PlayerAndNatural_CollisionSphere(player, natural.first, 0.2f)){
+				Vec3 vPos = m_pPlayerPool->m_cumPlayerPool[player]->GetLocalPos();
+				Vec3 vOtherPos = natural.second->GetLocalPos();
 
+				float fSpeed = m_pPlayerPool->m_cumPlayerPool[player]->GetSpeed();
+				Vec3 vDir = XMVector3Normalize(vPos - vOtherPos);
+				vDir.y = 0.f;
+				vPos += vDir * fSpeed * 0.05f * 5.f;
+
+				m_pPlayerPool->m_cumPlayerPool[player]->SetLocalPos(vPos);
+				CPacketMgr::Send_Pos_Player_Packet(player, player);
 			}
-		}*/
+		}
 		// - House Collision
 		/*for (auto& house : m_pHousingPool->m_cumHousingPool) {
 			bool bInstall = house.second->GetInstall();

@@ -65,7 +65,7 @@ void CArrowScript::Update()
 
 	//m_vDir.Normalize(m_vDir);\
 
-	std::cout << m_vRot.x << std::endl;
+	//std::cout << m_vRot.x << std::endl;
 
 
 	vPos += m_vDir * m_fSpeed * DT;

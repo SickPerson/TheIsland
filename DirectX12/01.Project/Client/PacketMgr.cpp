@@ -10,7 +10,6 @@
 CGameObject*	CPacketMgr::m_pPlayer;
 CPacketMgr::CPacketMgr()
 {
-	packet_time = chrono::high_resolution_clock::now() + 16ms;
 	//ZeroMemory(m_cSendBuf, sizeof(m_cSendBuf));
 	m_SendWsaBuf.buf = m_cSendBuf;
 	m_SendWsaBuf.len = BUF_SIZE;
@@ -83,13 +82,22 @@ void CPacketMgr::Send_Chat_Packet(string message)
 
 void CPacketMgr::Send_Logout_Packet()
 {
+	cs_logout_packet*	packet = reinterpret_cast<cs_logout_packet*>(m_cSendBuf);
+	packet->size = sizeof(cs_logout_packet);
+	packet->type = CS_LOGOUT;
+
+	DWORD	size{ 0 }, flag{ 0 };
+	m_SendWsaBuf.len = sizeof(cs_logout_packet);
+	int ret = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (ret != 0) {
+		int err_no = WSAGetLastError();
+		CNetwork::Err_display("Err while sending packet - ", err_no);
+	}
 }
 
 void CPacketMgr::Send_Pos_Player_Packet()
 {
-	if (packet_time <= chrono::high_resolution_clock::now()) {
-		return;
-	}
 	cs_pos_packet* packet = reinterpret_cast<cs_pos_packet*>(m_cSendBuf);
 	packet->size = sizeof(cs_pos_packet);
 	packet->type = CS_POS;
@@ -103,14 +111,11 @@ void CPacketMgr::Send_Pos_Player_Packet()
 		int err_no = WSAGetLastError();
 		CNetwork::Err_display("Err while sending packet - ", err_no);
 	}
-	packet_time = chrono::high_resolution_clock::now() + 16ms;
 }
 
 void CPacketMgr::Send_Rot_player_Packet()
 {
-	if (packet_time <= chrono::high_resolution_clock::now()) {
-		return;
-	}
+	cout << "ROT PACKET" << endl;
 	cs_rot_packet* packet = reinterpret_cast<cs_rot_packet*>(m_cSendBuf);
 	packet->size = sizeof(cs_rot_packet);
 	packet->type = CS_ROT;
@@ -124,14 +129,11 @@ void CPacketMgr::Send_Rot_player_Packet()
 		int err_no = WSAGetLastError();
 		CNetwork::Err_display("Err while sending packet - ", err_no);
 	}
-	packet_time = chrono::high_resolution_clock::now() + 16ms;
 }
 
 void CPacketMgr::Send_Collision_Player_Packet(UINT ColuiType, USHORT ColId, bool bRun)
 {
-	if (packet_time <= chrono::high_resolution_clock::now()) {
-		return;
-	}
+	cout << "COLLISION" << endl;
 	cs_collision_packet* packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
 	packet->size = sizeof(cs_collision_packet);
 	packet->type = CS_COLLISION;
@@ -209,6 +211,7 @@ void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId)
 
 void CPacketMgr::Send_Animation_Player_Packet(UINT uiAnimationType)
 {
+	cout << "Animation PACKET" << endl;
 	cs_animation_packet* animation_packet = reinterpret_cast<cs_animation_packet*>(m_cSendBuf);
 	animation_packet->size = sizeof(cs_animation_packet);
 	animation_packet->type = CS_ANIMATION;
@@ -221,5 +224,22 @@ void CPacketMgr::Send_Animation_Player_Packet(UINT uiAnimationType)
 	if (retval != 0) {
 		int err_no = WSAGetLastError();
 		CNetwork::Err_display("Err while sending packet - ", err_no);
+	}
+}
+
+void CPacketMgr::Send_Use_Item_Packet(char eType)
+{
+	cs_use_item_packet* use_item_packet = reinterpret_cast<cs_use_item_packet*>(m_cSendBuf);
+	use_item_packet->size = sizeof(cs_use_item_packet);
+	use_item_packet->type = CS_USE_ITEM;
+	use_item_packet->eType = eType;
+
+	DWORD	size{ 0 }, flag{ 0 };
+	m_SendWsaBuf.len = sizeof(cs_use_item_packet);
+	int retval = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0) {
+		int err_no = WSAGetLastError();
+		CNetwork::Err_display("Err while sending pakcet - ", err_no);
 	}
 }

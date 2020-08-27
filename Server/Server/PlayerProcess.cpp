@@ -40,7 +40,7 @@ void CPlayerProcess::Init_Player(USHORT playerId, wchar_t* wcId)
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetWcID(wcId);
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(18000.f, 200.f, 2000.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
-	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+	//m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetConnect(true);
 }
 
@@ -100,7 +100,8 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 #endif // DB_ON
 	
 	// Server -> Client에 초기 플레이어 값 패킷 전송
-	CPacketMgr::Send_Status_Player_Packet(playerId, playerId);
+	//CPacketMgr::Send_Status_Player_Packet(playerId, playerId);
+	//CPacketMgr::Send_Pos_Player_Packet(playerId, playerId);
 	if(!ExistLoginList(playerId))
 		InsertLoginList(playerId);
 	InitViewList(playerId);
@@ -113,24 +114,22 @@ void CPlayerProcess::PlayerMove(USHORT playerId, char * packet)
 
 	Vec3 vLocalPos = move_packet->vLocalPos;
 
-	//Vec3 vLocalRot = move_packet->vLocalRot;
-	//bool bRun = move_packet->bRun;
-	//Vec3 vWorldDir = move_packet->vWorldDir;
+	bool bRun = move_packet->bRun;
+	Vec3 vWorldDir = move_packet->vWorldDir;
 
-	//Vec3 vPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	//Vec3 vOriginPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	//float fSpeed = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
-	//float fHeight = move_packet->fHeight;
-	//// Walk or Run
-	//if (bRun)
-	//{
-	//	fSpeed *= 5.f;
-	//}
-	//vPos += vWorldDir * fSpeed * CTimerMgr::GetInst()->GetDeltaTime();
+	Vec3 vPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	Vec3 vOriginPos = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	float fSpeed = CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->GetSpeed();
+	float fHeight = move_packet->fHeight;
+	// Walk or Run
+	if (bRun)
+	{
+		fSpeed *= 5.f;
+	}
+	vPos += vWorldDir * fSpeed * 0.05f;
 
-	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vLocalPos);
-	//CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalRot(vLocalRot);
-	//CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
+	//CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vLocalPos);
+	CProcess::m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
 
 	UpdateViewList(playerId);
 }
@@ -156,7 +155,7 @@ void CPlayerProcess::PlayerPos(USHORT playerId, char * packet)
 {
 	cs_pos_packet* pos_packet = reinterpret_cast<cs_pos_packet*>(packet);
 
-	Vec3 vPrePos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	//Vec3 vPrePos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 	Vec3 vCurrPos = pos_packet->vLocalPos;
 
 	m_pPlayerPool->m_cumPlayerPool[playerId]->SetLocalPos(vCurrPos);
@@ -191,7 +190,6 @@ void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
 
 void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 {
-	cout << "Attack" << endl;
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(packet);
 	UINT	uiType = attack_packet->attack_uiType;
 	USHORT	attack_id = attack_packet->attack_id;
@@ -222,6 +220,7 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 
 void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
 {
+	cout << "Animation Packet Recv" << endl;
 	cs_animation_packet* animation_packet = reinterpret_cast<cs_animation_packet*>(packet);
 
 	UINT uiType = animation_packet->uiType;
@@ -507,6 +506,7 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 	// Player ViewList Update
 	Vec3 player_pos = m_pPlayerPool->m_cumPlayerPool[playerId]->GetLocalPos();
 
+	cout << player_pos.x << " | " << player_pos.y << " | " << player_pos.z << endl;
 	concurrent_unordered_set<USHORT> list;
 	CopyBeforeLoginList(list);
 
@@ -521,7 +521,6 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 
 			if (ObjectRangeCheck(player_pos, other_pos, PLAYER_VIEW_RANGE))
 			{
-				cout << au << endl;
 				CPacketMgr::Send_Put_Player_Packet(au, playerId);
 				CPacketMgr::Send_Put_Player_Packet(playerId, au);
 			}
@@ -537,6 +536,7 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 
 		if (!au.second->GetWakeUp())
 		{
+			au.second->SetWakeUp(true);
 			if (ObjectRangeCheck(player_pos, vAnimal_Pos, PLAYER_VIEW_RANGE))
 			{
 				if (ObjectRangeCheck(player_pos, vAnimal_Pos, ANIMAL_VIEW_RANGE))

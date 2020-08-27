@@ -1376,8 +1376,6 @@ void CIngameScene::CreateShowFPS()
 void CIngameScene::PlayerUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 {
 	if (CNetwork::m_usID == usId) {
-		m_pPlayer->Transform()->SetLocalPos(vPos);
-		//m_pPlayer->Transform()->SetLocalRot(vRot);
 	}
 	else {
 		auto p = m_mapPlayers.find(usId);
@@ -1398,6 +1396,7 @@ void CIngameScene::PlayerUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 			vNewPos.y = CNaviMgr::GetInst()->GetY(vPos);
 			pObject->Transform()->SetLocalPos(vNewPos);
 			pObject->Transform()->SetLocalRot(vRot);
+			pObject->Transform()->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 
 			cout << vNewPos.x << ", " << vNewPos.y << ", " << vNewPos.z << endl;
 			m_pScene->FindLayer(L"Human")->AddGameObject(pObject);
@@ -1662,7 +1661,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 		pObject->Transform()->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
 		pObject->Transform()->SetLocalRot(vRot);
 		//m_pScene->FindLayer(L"Human")->AddGameObject(pObject);
-
+		cout << "Animal Pos: " << vPos.x << fHeight << vPos.y << endl;
 		m_mapAnimals.insert(make_pair(uiId, pObject));
 	}
 	// 업데이트

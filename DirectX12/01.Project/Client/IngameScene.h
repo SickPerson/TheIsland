@@ -29,10 +29,6 @@ class CIngameScene :
 	map<UINT, CGameObject*> m_mapNatural;
 
 public:
-	concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
-	concurrent_unordered_map<unsigned int, CGameObject*> m_cumAnimal;
-
-public:
 	CIngameScene();
 	virtual ~CIngameScene();
 

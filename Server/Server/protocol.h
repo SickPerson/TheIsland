@@ -11,7 +11,7 @@ constexpr	int	ANIMAL_BEAR = 50;
 constexpr	int	ANIMAL_BOAR = 50;
 constexpr	int	ANIMAL_DEER = 100;
 constexpr	int	ANIMAL_WOLF = 100;
-constexpr	int	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER;
+constexpr	int	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER + ANIMAL_WOLF;
 constexpr	int	END_ANIMAL = MAX_USER + MAX_ANIMAL;
 constexpr	int	BEGIN_NATURAL = END_ANIMAL;
 
@@ -20,9 +20,9 @@ constexpr	int	MAX_STR_LEN = 15;
 constexpr	int MAX_MSG_LEN = 50;
 constexpr	int MAX_QUICK_SLOT = 5;
 
-constexpr	float	WARLIKE_SPAWN_RADIUS = 2000.f;
-constexpr	float	PASSIVE_SPAWN_RADIUS = 2000.f;
-constexpr	float	EVASION_SPAWN_RADIUS = 8000.f;
+constexpr	float	Warlike_Spawn_radius = 2000.f;
+constexpr	float	Passive_Spawn_radius = 2000.f;
+constexpr	float	Evasion_Spawn_radius = 8000.f;
 
 //char SERVERIP[20] = "127.0.0.1";
 
@@ -320,6 +320,11 @@ struct cs_login_packet {
 	wchar_t			player_id[MAX_STR_LEN];	
 };
 
+struct cs_logout_packet {
+	char	size;
+	char	type;
+};
+
 struct cs_move_packet {
 	char size;
 	char type;
@@ -433,6 +438,12 @@ struct cs_animation_packet {
 	char	size;
 	char	type;
 	UINT	uiType;
+};
+
+struct cs_use_item_packet {
+	char	size;
+	char	type;
+	char	eType;
 };
 
 #pragma pack (pop)

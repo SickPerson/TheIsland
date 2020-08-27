@@ -57,7 +57,7 @@ void CRainScript::Update()
 
 	fAlpha = 1.f - fAlpha;
 
-	std::cout << fAlpha << std::endl;
+	//std::cout << fAlpha << std::endl;
 
 	MeshRender()->GetSharedMaterial()->SetData( SHADER_PARAM::FLOAT_0, &fAlpha );
 }
