@@ -1657,17 +1657,15 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 		tEv.wParam = (DWORD_PTR)(pObject);
 		CEventMgr::GetInst()->AddEvent(tEv);
 
-		float fHeight = CNaviMgr::GetInst()->GetY(pObject->Transform()->GetLocalPos());
-		pObject->Transform()->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
-		pObject->Transform()->SetLocalRot(vRot);
-		//m_pScene->FindLayer(L"Human")->AddGameObject(pObject);
-		cout << "Animal Pos: " << vPos.x << fHeight << vPos.y << endl;
+		float fHeight = CNaviMgr::GetInst()->GetY( vPos );
+		pObject->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
+		pObject->Transform()->SetLocalRot( vRot );
 		m_mapAnimals.insert(make_pair(uiId, pObject));
 	}
 	// 업데이트
 	else
 	{
-		float fHeight = CNaviMgr::GetInst()->GetY( m_mapAnimals[uiId]->Transform()->GetLocalPos() );
+		float fHeight = CNaviMgr::GetInst()->GetY( vPos );
 		m_mapAnimals[uiId]->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
 		m_mapAnimals[uiId]->Transform()->SetLocalRot( vRot );
 	}
