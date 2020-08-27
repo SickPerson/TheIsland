@@ -1845,3 +1845,10 @@ void CIngameScene::DestroyNatural( USHORT uiId )
 
 	m_mapNatural.erase( uiId );
 }
+
+void CIngameScene::ChatUpdate(string name, string Msg)
+{
+	m_pChat->GetScript<CChatScript>()->AddChat(name, Msg);
+	m_pChat->GetScript<CInputScript>()->SetEnable(false);
+	m_pChat->GetScript<CInputScript>()->Clear();
+}

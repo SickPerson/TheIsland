@@ -165,6 +165,7 @@ void CPacketMgr::Send_Put_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
 	char eType = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetKind();
 
+	cout << "SEND ANLMAL : " << pos.x << " | " << pos.y << " | " << pos.z << endl;
 	sc_put_npc_packet	packet;
 	packet.id = NpcID;
 	packet.size = sizeof(packet);
@@ -187,6 +188,7 @@ void CPacketMgr::Send_Pos_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 	Vec3 rot = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetLocalRot();
 	char eType = CProcess::m_pMonsterPool->m_cumMonsterPool[NpcID]->GetKind();
 
+	cout << "SEND ANLMAL : " << pos.x << " | " << pos.y << " | " << pos.z << endl;
 	sc_pos_npc_packet packet;
 	packet.size = sizeof(sc_pos_npc_packet);
 	packet.type = SC_POS_ANIMAL;

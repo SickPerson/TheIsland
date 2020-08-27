@@ -323,9 +323,9 @@ void CNetwork::Recv_Chat_Packet(char * packet)
 	string name;
 	name.assign(wname.begin(), wname.end());
 	string Msg(chat_packet->meesage);
-	m_pChat->GetScript<CChatScript>()->AddChat(name, Msg);
-	m_pChat->GetScript<CInputScript>()->SetEnable(false);
-	m_pChat->GetScript<CInputScript>()->Clear();
+
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->ChatUpdate(name, Msg);
+	
 }
 
 void CNetwork::Recv_Animation_Player_Packet(char * packet)
@@ -355,6 +355,8 @@ void CNetwork::Recv_Put_Animal_Packet(char * packet)
 	Vec3 vPos = put_npc_packet->vPos;
 	Vec3 vRot = put_npc_packet->vRot;
 
+	cout << "POS : " << vPos.x << " | " << vPos.y << " | " << vPos.z << endl;
+
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
 }
 
@@ -373,6 +375,8 @@ void CNetwork::Recv_Pos_Animal_Packet(char * packet)
 	UINT eType = pos_npc_packet->eType;
 	Vec3 vPos = pos_npc_packet->vPos;
 	Vec3 vRot = pos_npc_packet->vRot;
+
+	cout << "POS : " << vPos.x << " | " << vPos.y << " | " << vPos.z << endl;
 
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
 }
