@@ -1651,11 +1651,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 		pAnimalScript->SetAnimation(pObject->Animator3D());
 		pAnimalScript->SetIndex(uiId);
 
-		tEvent tEv;
-		tEv.eType = EVENT_TYPE::CREATE_OBJECT;
-		tEv.lParam = 2;
-		tEv.wParam = (DWORD_PTR)(pObject);
-		CEventMgr::GetInst()->AddEvent(tEv);
+		m_pScene->FindLayer(L"Animal")->AddGameObject(pObject);
 
 		float fHeight = CNaviMgr::GetInst()->GetY( vPos );
 		pObject->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
@@ -1758,11 +1754,7 @@ void CIngameScene::InstallHousing( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRo
 	pObject->GetScript<CBuildScript>()->SetIndex( uiId );
 	pObject->GetScript<CBuildScript>()->MustBuild();
 
-	tEvent tEv;
-	tEv.eType = EVENT_TYPE::CREATE_OBJECT;
-	tEv.lParam = 6;
-	tEv.wParam = ( DWORD_PTR )( pObject );
-	CEventMgr::GetInst()->AddEvent( tEv );
+	m_pScene->FindLayer(L"House")->AddGameObject(pObject);
 }
 
 void CIngameScene::DestroyHousing( USHORT uiId )
