@@ -27,6 +27,7 @@ public:
 	}
 
 public:
+	void Damage(USHORT Natural_Id, float fDamage);
 	void RespawnEvent(USHORT natural_id);
 	void DamageEvent(USHORT NaturalId, USHORT PlayerId);
 };

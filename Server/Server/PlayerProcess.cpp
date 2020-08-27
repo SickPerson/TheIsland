@@ -196,15 +196,7 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 
 	if ((UINT)ATTACK_TYPE::ANIMAL == uiType)
 	{
-		m_pMonsterPool->m_cumMonsterPool[attack_id]->SetState(AUT_DAMAGE);
-		m_pMonsterPool->m_cumMonsterPool[attack_id]->SetTarget(playerId);
-		Update_Event ev;
-		ev.m_Do_Object = attack_id;
-		ev.m_EventType = EV_MONSTER_UPDATE;
-		ev.m_From_Object = playerId;
-		ev.m_eObjUpdate = AUT_DAMAGE;
-		ev.wakeup_time = high_resolution_clock::now();
-		PushEventQueue(ev);
+		PushEvnet_Animal_Damage(attack_id, playerId);
 	}
 	else if ((UINT)ATTACK_TYPE::NATURAL == uiType)
 	{

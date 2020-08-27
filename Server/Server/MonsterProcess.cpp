@@ -236,6 +236,7 @@ void CMonsterProcess::DamageEvent(USHORT AnimalId, USHORT playerId)
 	float fHealth = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetHealth();
 	char cType = m_pMonsterPool->m_cumMonsterPool[AnimalId]->GetType();
 
+
 	if (fHealth > 0.f)
 	{
 		if (BEHAVIOR_TYPE::B_EVASION == cType)
