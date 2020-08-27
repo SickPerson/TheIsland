@@ -17,7 +17,7 @@ public:
 		m_fpMonsterUpdate[AUT_ATTACK] = [&](USHORT uiMonster, USHORT uiTarget) {this->AttackEvent(uiMonster, uiTarget); };
 		m_fpMonsterUpdate[AUT_FOLLOW] = [&](USHORT uiMonster, USHORT uiTarget) {this->FollowEvent(uiMonster, uiTarget); };
 		m_fpMonsterUpdate[AUT_EVASION] = [&](USHORT uiMonster, USHORT uiTarget) {EvastionEvent(uiMonster, uiTarget); };
-		m_fpMonsterUpdate[AUT_IDLE] = [&](USHORT uiMonster, USHORT uiTarget) {this->IdleEvent(uiTarget); };
+		m_fpMonsterUpdate[AUT_IDLE] = [&](USHORT uiMonster, USHORT uiTarget) {this->IdleEvent(uiMonster); };
 		m_fpMonsterUpdate[AUT_DIE] = [&](USHORT uiMonster, USHORT uiTarget) {this->DieEvent(uiMonster); };
 		m_fpMonsterUpdate[AUT_DAMAGE] = [&](USHORT AnimalId, USHORT playerId) {DamageEvent(AnimalId, playerId); };
 	}

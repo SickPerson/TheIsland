@@ -228,12 +228,12 @@ struct sc_status_npc_packet
 	float fDamage;
 
 };
-struct sc_animation_npc_packet
+struct sc_animation_animal_packet
 {
 	char size;
 	char type;
-	char animation;
 	USHORT id;
+	UINT	uiType;
 };
 
 // [ Housing ]

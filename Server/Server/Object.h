@@ -17,8 +17,8 @@ private:
 	shared_mutex m_ObjMutex;
 
 public:
-	CObject();
-	~CObject();
+	explicit CObject();
+	virtual ~CObject();
 
 public:
 	void SetLocalPos(float& fPosX, float& fPosY, float& fPosZ);

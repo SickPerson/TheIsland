@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 
+#include "Object.h"
 #include "Player.h"
 #include "Monster.h"
 #include "Housing.h"
@@ -28,10 +29,10 @@ private:
 	void Release_HousingPool();
 
 public:
-	concurrent_unordered_map<USHORT, CPlayer*> m_cumPlayerPool;
-	concurrent_unordered_map<USHORT, CMonster*> m_cumAnimalPool;
-	concurrent_unordered_map<USHORT, CNatural*> m_cumNaturalPool;
-	concurrent_unordered_map<USHORT, CHousing*> m_cumHousingPool;
+	static concurrent_unordered_map<USHORT, CPlayer*> m_cumPlayerPool;
+	static concurrent_unordered_map<USHORT, CMonster*> m_cumAnimalPool;
+	static concurrent_unordered_map<USHORT, CNatural*> m_cumNaturalPool;
+	static concurrent_unordered_map<USHORT, CHousing*> m_cumHousingPool;
 
 	void Install_House(CHousing* pHouse, USHORT usIndex);
 	void Remove_House(USHORT usIndex);

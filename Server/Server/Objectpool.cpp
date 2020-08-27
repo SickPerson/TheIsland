@@ -1,5 +1,10 @@
 #include "Objectpool.h"
 
+concurrent_unordered_map<USHORT, CPlayer*> CObjectpool::m_cumPlayerPool;
+concurrent_unordered_map<USHORT, CMonster*> CObjectpool::m_cumAnimalPool;
+concurrent_unordered_map<USHORT, CNatural*> CObjectpool::m_cumNaturalPool;
+concurrent_unordered_map<USHORT, CHousing*> CObjectpool::m_cumHousingPool;
+
 CObjectpool::CObjectpool()
 {
 	Initalize();
@@ -29,28 +34,23 @@ void CObjectpool::Release()
 
 void CObjectpool::Init_PlayerPool()
 {
-	m_cumPlayerPool.clear();
-
 	for (int i = 0; i < MAX_USER; ++i)
-		m_cumPlayerPool.insert(make_pair(i, new CPlayer()));
+		m_cumPlayerPool.insert(make_pair(i, new class CPlayer()));
+
+	cout << " dddd " << endl;
 }
 
 void CObjectpool::Init_AnimalPool()
 {
-	// MonsterPool ÃÊ±âÈ­
-	m_cumAnimalPool.clear();
-
 	Vec3 Evastion_Pawner = Vec3(10000.f, 0.f, 10000.f);
 	Vec3 Warlike_Pawner = Vec3(8100.f, 0.f, 16200.f);
 	Vec3 Passive_Pawner = Vec3(6900.f, 0.f, 5285.f);
 
 	float fRadius;
 
-	CMonster*	Animal;
-
 	for (int i = 0; i < MAX_ANIMAL; ++i)
 	{
-		Animal = new CMonster();
+		CMonster* Animal = new class CMonster();
 		Animal->SetWakeUp(false);
 		Animal->SetState(OBJ_STATE_TYPE::OST_LIVE);
 		if (i < ANIMAL_BEAR)
@@ -164,6 +164,7 @@ void CObjectpool::Init_AnimalPool()
 		Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_cumAnimalPool.insert(make_pair(i, Animal));
 	}
+	cout << "ddd" << endl;
 }
 
 void CObjectpool::Init_NaturalPool()

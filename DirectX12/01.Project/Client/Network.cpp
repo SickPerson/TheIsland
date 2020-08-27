@@ -377,17 +377,16 @@ void CNetwork::Recv_Pos_Animal_Packet(char * packet)
 	Vec3 vPos = pos_npc_packet->vPos;
 	Vec3 vRot = pos_npc_packet->vRot;
 
-	cout << "POS : " << vPos.x << " | " << vPos.y << " | " << vPos.z << endl;
-
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
 }
 
 void CNetwork::Recv_Animation_Animal_Packet(char * packet)
 {
-	sc_animation_npc_packet* animation_npc_packet = reinterpret_cast<sc_animation_npc_packet*>(packet);
+	sc_animation_animal_packet* animation_npc_packet = reinterpret_cast<sc_animation_animal_packet*>(packet);
 	unsigned int monster_id = animation_npc_packet->id;
-	UINT		uiType = animation_npc_packet->animation;
+	UINT		uiType = animation_npc_packet->uiType;
 
+	cout << "Recv Animatipn Animal : " << monster_id << " | "<< uiType << endl;
 	// 몬스터 애니메이션 키값 바꾸기
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalAnimationUpdate(monster_id, uiType);
 }

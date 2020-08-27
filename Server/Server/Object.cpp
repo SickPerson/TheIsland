@@ -1,6 +1,5 @@
 #include "Object.h"
 
-
 CObject::CObject() :
 	m_vLocalPos(Vec3(0.f, 0.f, 0.f)),
 	m_vLocalRot(Vec3(0.f, 0.f, 0.f)),

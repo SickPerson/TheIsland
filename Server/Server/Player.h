@@ -10,7 +10,7 @@ enum class PLAYER_LOCK_TYPE
 class CPlayer : public CObject
 {
 public:
-	CPlayer();
+	explicit CPlayer();
 	virtual ~CPlayer();
 
 private:

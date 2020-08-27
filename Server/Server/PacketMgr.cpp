@@ -211,11 +211,11 @@ void CPacketMgr::Send_Remove_Npc_Packet(USHORT PlayerID, USHORT NpcID)
 
 void CPacketMgr::Send_Animation_Npc_Packet(USHORT playerId, USHORT NpcId, UINT AnimationType)
 {
-	sc_animation_player_packet packet;
-	packet.size = sizeof(sc_animation_npc_packet);
+	sc_animation_animal_packet packet;
+	packet.size = sizeof(sc_animation_animal_packet);
 	packet.type = SC_ANIMATION_ANIMAL;
-	packet.animation_uiType = AnimationType;
 	packet.id = NpcId;
+	packet.uiType = AnimationType;
 	Send_Packet(playerId, &packet);
 }
 
