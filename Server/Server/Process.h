@@ -1,9 +1,6 @@
 #pragma once
 #include "stdafx.h"
-#include "Playerpool.h"
-#include "Monsterpool.h"
-#include "Naturalpool.h"
-#include "Housingpool.h"
+#include "Objectpool.h"
 
 class CProcess
 {
@@ -23,14 +20,14 @@ public:
 
 public:
 	static USHORT	m_houseNum;
-	static CPlayerpool*	m_pPlayerPool;
-	static CMonsterpool* m_pMonsterPool;
-	static CNaturalpool* m_pNaturalPool;
-	static CHousingpool* m_pHousingPool;
+	static CObjectpool*	m_pObjectPool;
 
 	static concurrent_unordered_set<USHORT>	m_cusLoginList; // 로그인 리스트
 	static concurrent_priority_queue<Update_Event>	m_cpqEventQueue; // 이벤트 큐(Timer 이벤트)
 
+public:
+	static void Initalize();
+	static void Release();
 public:
 	bool ObjectRangeCheck(Vec3& vFirst, Vec3& vSecond, float fDistance);
 

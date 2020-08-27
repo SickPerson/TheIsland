@@ -1,7 +1,8 @@
 #pragma once
 #include "Process.h"
 
-class CMonsterProcess : public CProcess
+class CMonsterProcess : 
+	public CProcess
 {
 public:
 	explicit CMonsterProcess();

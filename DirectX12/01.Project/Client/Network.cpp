@@ -468,5 +468,5 @@ void CNetwork::Recv_Time_Packet(char * packet)
 	sc_time_packet* time_packet = reinterpret_cast<sc_time_packet*>(packet);
 	float fTime = time_packet->fTime;
 
-	//cout << fTime << endl;
+	cout << fTime << endl;
 }

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Network.h"
+
 #include "PlayerProcess.h"
 #include "MonsterProcess.h"
 #include "NaturalProcess.h"
@@ -9,20 +10,13 @@
 #include "PacketMgr.h"
 #include "TimerMgr.h"
 #include "DataBase.h"
-#include "Player.h"
 
 CNetwork::CNetwork()
 {
 	m_ListenSock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	m_bRunningServer = true;
 
-	// [ Process Init ]
-	m_pPlayerProcess = nullptr;
-	m_pMonsterProcess = nullptr;
-	m_pNaturalProcess = nullptr;
-	m_pHousingProcess = nullptr;
-	m_pEtcProcess = nullptr;
-	m_UserID = 0;
+	
 	//------------------------------
 	//Initialize();
 	CheckThisCputCount();
@@ -30,6 +24,8 @@ CNetwork::CNetwork()
 
 CNetwork::~CNetwork()
 {
+	Release_Process();
+	CProcess::Release();
 	CloseServer();
 }
 
@@ -49,6 +45,40 @@ void CNetwork::GetServerIpAddress()
 	cout << "Server IP Address: " << ipaddr << endl;
 }
 
+void CNetwork::Init_Process()
+{
+	// [ Process Init ]
+	m_pPlayerProcess = new CPlayerProcess();
+	m_pAnimalProcess = new CMonsterProcess();
+	m_pNaturalProcess = new CNaturalProcess();
+	m_pHousingProcess = new CHousingProcess();
+	m_pEtcProcess = new CEtcProcess();
+}
+
+void CNetwork::Release_Process()
+{
+	if (m_pAnimalProcess) {
+		delete m_pAnimalProcess;
+		m_pAnimalProcess = nullptr;
+	}
+	if (m_pAnimalProcess) {
+		delete m_pAnimalProcess;
+		m_pAnimalProcess = nullptr;
+	}
+	if (m_pHousingProcess) {
+		delete m_pHousingProcess;
+		m_pHousingProcess = nullptr;
+	}
+	if (m_pNaturalProcess) {
+		delete m_pNaturalProcess;
+		m_pNaturalProcess = nullptr;
+	}
+	if (m_pEtcProcess) {
+		delete m_pEtcProcess;
+		m_pEtcProcess = nullptr;
+	}
+}
+
 HANDLE CNetwork::GetIocp()
 {
 	return m_hIocp;
@@ -56,15 +86,9 @@ HANDLE CNetwork::GetIocp()
 
 void CNetwork::Initialize()
 {
-	CProcess::InitBeforeStart();
-
-	// [ Process Init ] 
-	m_pPlayerProcess = new CPlayerProcess();
-	m_pMonsterProcess = new CMonsterProcess();
-	m_pNaturalProcess = new CNaturalProcess();
-	m_pHousingProcess = new CHousingProcess();
-	m_pEtcProcess = new CEtcProcess();
-
+	m_UserID = 0;
+	CProcess::Initalize();
+	Init_Process();
 	CTimerMgr::GetInst()->Reset();
 
 	// ==========================================
@@ -132,11 +156,11 @@ void CNetwork::StartServer()
 void CNetwork::CloseServer()
 {
 	// 서버 종료 패킷 보내기
-	for (int i = 0; i < MAX_USER; ++i) {
-		bool bConnect = m_pPlayerProcess->m_pPlayerPool->m_cumPlayerPool[i]->GetConnect();
+	/*for (int i = 0; i < MAX_USER; ++i) {
+		bool bConnect = m_pProcess->m_pObjectPool->m_cumPlayerPool[i]->GetConnect();
 		if (!bConnect) continue;
 		CPacketMgr::Send_Disconnect_Server_Packet(i);
-	}
+	}*/
 
 	// Thread Exit
 #ifdef DB_ON
@@ -196,16 +220,17 @@ void CNetwork::WorkerThread()
 		{
 			int err_no = WSAGetLastError();
 			if (err_no != WSA_IO_PENDING){
-				auto strID = CProcess::m_pPlayerPool->m_cumPlayerPool[id]->GetWcID();
-				std::cout << "[ Player: " << strID << " ] Disconnect" << std::endl;
+				/*wstring strID = CProcess::m_pObjectPool->m_cumPlayerPool[id]->GetWcID();
+			
+				std::cout << "[ Player: " << strID << " ] Disconnect" << std::endl;*/
 				m_pPlayerProcess->PlayerLogout(id);
 			}
 			continue;
 		}
 		if (num_byte == 0)
 		{
-			auto strID = CProcess::m_pPlayerPool->m_cumPlayerPool[id]->GetWcID();
-			std::cout << "[ Player: " << strID << " ] Disconnect" << std::endl;
+			/*auto strID = CProcess::m_pPlayerPool->m_cumPlayerPool[id]->GetWcID();
+			std::cout << "[ Player: " << strID << " ] Disconnect" << std::endl;*/
 			m_pPlayerProcess->PlayerLogout(id);
 			continue;
 		}
@@ -230,7 +255,7 @@ void CNetwork::WorkerThread()
 		}
 		case EV_MONSTER_UPDATE:
 		{
-			m_pMonsterProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_usOtherID);
+			m_pAnimalProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_usOtherID);
 			delete lpover_ex;
 			break;
 		}
@@ -303,8 +328,6 @@ void CNetwork::UpdateThread()
 				pOver_ex->m_usOtherID = ev.m_From_Object;
 				PostQueuedCompletionStatus(m_hIocp, 1, ev.m_Do_Object, &pOver_ex->m_Overlapped);
 			}
-			else
-				break;
 		}
 	}
 }

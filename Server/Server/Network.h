@@ -30,7 +30,7 @@ private:
 
 private:
 	CPlayerProcess*		m_pPlayerProcess;
-	CMonsterProcess*	m_pMonsterProcess;
+	CMonsterProcess*	m_pAnimalProcess;
 	CNaturalProcess*	m_pNaturalProcess;
 	CHousingProcess*	m_pHousingProcess;
 	CEtcProcess*		m_pEtcProcess;
@@ -56,6 +56,10 @@ public:
 	void EndServer() { m_bRunningServer = false; }
 	bool GetServerState() { return m_bRunningServer; }
 	void GetServerIpAddress();
+
+public:
+	void Init_Process();
+	void Release_Process();
 
 public:
 	HANDLE GetIocp();

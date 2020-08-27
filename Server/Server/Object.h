@@ -1,17 +1,6 @@
 #pragma once
 #include "stdafx.h"
 
-enum class OBJ_LOCK_TYPE {
-	LOCAL_POS,
-	LOCAL_SCALE,
-	LOCAL_ROT,
-	LOCAL_DIR,
-	OFFSET_POS,
-	OFFSET_SCALE,
-	STATE,
-	END
-};
-
 class CObject
 {
 private:
@@ -25,7 +14,7 @@ private:
 	Vec3	m_vOffsetPos;
 	Vec3	m_vOffsetScale;
 
-	shared_mutex m_ObjMutex[(UINT)OBJ_LOCK_TYPE::END];
+	shared_mutex m_ObjMutex;
 
 public:
 	CObject();

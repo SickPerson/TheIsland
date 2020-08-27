@@ -143,23 +143,18 @@
     <ClInclude Include="HousingProcess.h" />
     <ClInclude Include="Natural.h" />
     <ClInclude Include="Housing.h" />
-    <ClInclude Include="Housingpool.h" />
     <ClInclude Include="MonsterProcess.h" />
     <ClInclude Include="DataBase.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="Monster.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Monsterpool.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Naturalpool.h" />
     <ClInclude Include="NaturalProcess.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Objectpool.h" />
     <ClInclude Include="PacketMgr.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Playerpool.h" />
     <ClInclude Include="PlayerProcess.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="protocol.h" />
@@ -175,23 +170,18 @@
     <ClCompile Include="HousingProcess.cpp" />
     <ClCompile Include="Natural.cpp" />
     <ClCompile Include="Housing.cpp" />
-    <ClCompile Include="Housingpool.cpp" />
     <ClCompile Include="MonsterProcess.cpp" />
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Monster.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Monsterpool.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Naturalpool.cpp" />
     <ClCompile Include="NaturalProcess.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Objectpool.cpp" />
     <ClCompile Include="PacketMgr.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Playerpool.cpp" />
     <ClCompile Include="PlayerProcess.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
