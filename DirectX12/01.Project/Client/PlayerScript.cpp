@@ -20,6 +20,10 @@
 #include <Engine/NaviMgr.h>
 #include <Engine/Animator3D.h>
 
+#include <Engine/BoneSocket.h>
+#include <Engine/SceneMgr.h>
+#include <Engine/Scene.h>
+
 #include <iostream>
 #include "Network.h"
 
@@ -37,6 +41,7 @@ CPlayerScript::CPlayerScript()
 	, m_fAttackCoolTime(PLAYER_ATTACK_COOLTIME)
 	, m_fDownSpeed(0.f)
 	, m_bHoldShift(false)
+	, m_pSocket(NULL)
 {
 	m_vCollisionObj.reserve(5);
 }
@@ -117,6 +122,15 @@ bool CPlayerScript::GetEnable()
 
 void CPlayerScript::Awake()
 {
+	m_pSocket = new CGameObject;
+	m_pSocket->SetName( L"HandBone" );
+	m_pSocket->AddComponent( new CTransform );
+	m_pSocket->AddComponent( new CBoneSocket );
+	
+	CBoneSocket* pBoneScript = m_pSocket->GetScript<CBoneSocket>();
+	pBoneScript->SetTarget( GetObj(), );
+	CSceneMgr::GetInst()->GetCurScene()->GetLayer( 0 )->AddGameObject( m_pSocket );
+
 }
 
 void CPlayerScript::Update()

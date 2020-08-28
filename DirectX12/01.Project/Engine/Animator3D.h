@@ -78,6 +78,8 @@ public:
 	void SetDefaultKey( const wstring& strKey );			// 이걸 설정해줘야만 처음 클립이 뭔지 암.
 	void Restart(const wstring& strKey = L"");				// 파라미터에 아무것도 안넣으면 기본적으로 디폴트 애니메이션으로 재시작함
 
+	tMTBone FindBone( const wstring& strKey );
+
 private:
 	void Check_Mesh( Ptr<CMesh> pMesh );
 

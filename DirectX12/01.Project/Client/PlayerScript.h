@@ -27,6 +27,8 @@ private:
 
 	vector<CGameObject*> m_vCollisionObj;
 
+	CGameObject* m_pSocket;
+
 	bool		m_bEnable;
 
 	bool		m_bInvincible;

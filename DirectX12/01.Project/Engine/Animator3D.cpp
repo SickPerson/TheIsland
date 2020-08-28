@@ -138,6 +138,18 @@ void CAnimator3D::Restart( const wstring& strKey )
 		m_strCurAniKey = strKey;
 }
 
+tMTBone CAnimator3D::FindBone( const wstring & strKey )
+{
+	for ( size_t i = 0; i < m_pVecBones->size(); ++i )
+	{
+		if ( m_pVecBones->at(i).strBoneName == strKey)
+		{
+			return m_pVecBones->at( i );
+		}
+	}
+	return tMTBone{};
+}
+
 void CAnimator3D::Check_Mesh( Ptr<CMesh> pMesh )
 {
 	UINT iBoneCount = pMesh->GetBoneCount();
