@@ -272,7 +272,18 @@ void CNetwork::WorkerThread()
 		}
 		case EV_ETC:
 		{
-			m_pEtcProcess->UpdateEtc(lpover_ex->m_Status);
+			switch (lpover_ex->m_Status)
+			{
+			case EUT_ROT:
+				m_pEtcProcess->Player_Rot_Event();
+				break;
+			case EUT_WEATHER:
+				m_pEtcProcess->WeatherEvent();
+				break;
+			case EUT_TIMER:
+				m_pEtcProcess->TimerEvent();
+				break;
+			}
 			delete lpover_ex;
 			break;
 		}

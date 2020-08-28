@@ -85,8 +85,8 @@ void CNetwork::BindfpPacket()
 	m_fpPacketProcess[SC_ADD_ITEM] = [&](char* packet) {};
 	m_fpPacketProcess[SC_REMOVE_ITEM] = [&](char* packet) {};
 	// - Etc
-	m_fpPacketProcess[SC_WEATHER] = [&](char* packet) {};
-	m_fpPacketProcess[SC_TIME] = [&](char* packet) {};
+	m_fpPacketProcess[SC_WEATHER] = [&](char* packet) {Recv_Weather_Packet(packet); };
+	m_fpPacketProcess[SC_TIME] = [&](char* packet) {Recv_Time_Packet(packet); };
 }
 
 void CNetwork::Init(HWND hWnd)

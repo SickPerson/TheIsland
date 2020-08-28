@@ -10,7 +10,7 @@ public:
 private:
 	function<void()> m_fpEtcUpdate[EUT_END];
 
-private:
+public:
 	void BindEtcUpdate() {
 		m_fpEtcUpdate[EUT_PLAYER_COLLISION] = [&]() {Player_Collision_Event(); };
 		m_fpEtcUpdate[EUT_ANIMAL_COLLISION] = [&]() {Animal_Collision_Event(); };

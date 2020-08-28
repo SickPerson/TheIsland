@@ -124,7 +124,7 @@ void CEtcProcess::WeatherEvent()
 
 void CEtcProcess::TimerEvent()
 {
-	cout << "Timer" << endl;
+	CTimerMgr::GetInst()->Tick();
 	float fTime = CTimerMgr::GetInst()->GetTotalTime();
 
 	concurrent_unordered_set<USHORT> loginList;
