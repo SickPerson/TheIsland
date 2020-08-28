@@ -50,6 +50,7 @@ public:
 	void CreateShowFPS();
 
 	void PlayerUpdate(USHORT usId, Vec3 vPos, Vec3 vRot);
+	void PlayerRotUpdate(USHORT usId, Vec3 vRot);
 	void PlayerStatusUpdate(float fHealth, float fHungry, float fThirst);
 	void PlayerDestroy(USHORT usId);
 	void PlayerAnimationUpdate(USHORT usId, UINT uiType);

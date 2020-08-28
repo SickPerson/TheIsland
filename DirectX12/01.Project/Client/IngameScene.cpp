@@ -1409,6 +1409,17 @@ void CIngameScene::PlayerUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 	}
 }
 
+void CIngameScene::PlayerRotUpdate(USHORT usId, Vec3 vRot)
+{
+	if (usId == CNetwork::m_usID) {
+		return;
+	}
+	auto p = m_mapPlayers.find(usId);
+	if (p == m_mapPlayers.end()) {
+		m_mapPlayers[usId]->Transform()->SetLocalRot(vRot);
+	}
+}
+
 void CIngameScene::PlayerStatusUpdate(float fHealth, float fHungry, float fThirst)
 {
 	m_pPlayer->GetScript<CStatusScript>()->SetHealth(fHealth);

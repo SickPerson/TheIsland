@@ -315,6 +315,15 @@ void CNetwork::Recv_Pos_Player_Packet(char * packet)
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerUpdate(player_id, vPos, vRot);
 }
 
+void CNetwork::Recv_Rot_Player_packet(char * packet)
+{
+	sc_rot_player_packet*	rot_packet = reinterpret_cast<sc_rot_player_packet*>(packet);
+	USHORT id = rot_packet->id;
+	Vec3 vRot = rot_packet->vRot;
+
+	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerRotUpdate(id, vRot);
+}
+
 void CNetwork::Recv_Chat_Packet(char * packet)
 {
 	sc_chat_packet* chat_packet = reinterpret_cast<sc_chat_packet*>(packet);
@@ -356,8 +365,6 @@ void CNetwork::Recv_Put_Animal_Packet(char * packet)
 	Vec3 vPos = put_npc_packet->vPos;
 	Vec3 vRot = put_npc_packet->vRot;
 
-	cout << "POS : " << vPos.x << " | " << vPos.y << " | " << vPos.z << endl;
-
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
 }
 
@@ -386,8 +393,6 @@ void CNetwork::Recv_Animation_Animal_Packet(char * packet)
 	unsigned int monster_id = animation_npc_packet->id;
 	UINT		uiType = animation_npc_packet->uiType;
 
-	cout << "Recv Animatipn Animal : " << monster_id << " | "<< uiType << endl;
-	// 몬스터 애니메이션 키값 바꾸기
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalAnimationUpdate(monster_id, uiType);
 }
 

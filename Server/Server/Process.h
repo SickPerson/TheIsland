@@ -60,6 +60,7 @@ public: // Natural
 public: // Etc
 	void PushEvent_Etc_Player_Collision();
 	void PushEvent_Etc_Animal_Collision();
+	void PushEvent_Rot();
 	void PushEvent_Etc_Weather();
 	void PushEvent_Etc_Time();
 

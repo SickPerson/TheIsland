@@ -37,6 +37,8 @@ private:
 
 	bool		m_bHoldShift;
 
+	float		m_fRotTime;
+
 public:
 	virtual void Awake();	
 	virtual void Update();

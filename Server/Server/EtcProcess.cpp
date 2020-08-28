@@ -6,6 +6,7 @@
 CEtcProcess::CEtcProcess()
 {
 	BindEtcUpdate();
+	PushEvent_Rot();
 	PushEvent_Etc_Weather();
 	PushEvent_Etc_Time();
 }
@@ -86,6 +87,22 @@ void CEtcProcess::Animal_Collision_Event()
 		// - Natural Collision
 		// - House Collision
 	}
+}
+
+void CEtcProcess::Player_Rot_Event()
+{
+	for (auto& player : m_pObjectPool->m_cumPlayerPool) {
+		bool bConnect = player.second->GetConnect();
+		if (!bConnect) continue;
+		concurrent_unordered_set<USHORT>	ViewList;
+		player.second->CopyPlayerList(ViewList);
+		
+		for (auto& list : ViewList) {
+			CPacketMgr::Send_Rot_Player_Packet(list, player.first);
+		}
+	}
+
+	PushEvent_Rot();
 }
 
 void CEtcProcess::WeatherEvent()

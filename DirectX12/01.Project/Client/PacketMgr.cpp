@@ -115,7 +115,6 @@ void CPacketMgr::Send_Pos_Player_Packet()
 
 void CPacketMgr::Send_Rot_player_Packet()
 {
-	cout << "ROT PACKET" << endl;
 	cs_rot_packet* packet = reinterpret_cast<cs_rot_packet*>(m_cSendBuf);
 	packet->size = sizeof(cs_rot_packet);
 	packet->type = CS_ROT;
@@ -133,7 +132,6 @@ void CPacketMgr::Send_Rot_player_Packet()
 
 void CPacketMgr::Send_Collision_Player_Packet(UINT ColuiType, USHORT ColId, bool bRun)
 {
-	cout << "COLLISION" << endl;
 	cs_collision_packet* packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
 	packet->size = sizeof(cs_collision_packet);
 	packet->type = CS_COLLISION;
@@ -192,7 +190,6 @@ void CPacketMgr::Send_Remove_Housing_Packet(USHORT houseId)
 
 void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId)
 {
-	cout << attackType << ". " << attackId << "attack : " << endl;
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(m_cSendBuf);
 
 	attack_packet->type = CS_ATTACK;
@@ -211,7 +208,6 @@ void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId)
 
 void CPacketMgr::Send_Animation_Player_Packet(UINT uiAnimationType)
 {
-	cout << "Animation PACKET" << endl;
 	cs_animation_packet* animation_packet = reinterpret_cast<cs_animation_packet*>(m_cSendBuf);
 	animation_packet->size = sizeof(cs_animation_packet);
 	animation_packet->type = CS_ANIMATION;

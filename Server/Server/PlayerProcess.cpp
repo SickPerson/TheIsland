@@ -170,14 +170,14 @@ void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
 	if (vPreRot != vCurrRot) {
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalRot(vCurrRot);
 
-		concurrent_unordered_set<USHORT> viewList;
+		/*concurrent_unordered_set<USHORT> viewList;
 
 		m_pObjectPool->m_cumPlayerPool[playerId]->CopyBefore(viewList);
 
 		for (auto& player : viewList)
 		{
 			CPacketMgr::Send_Rot_Player_Packet(player, playerId);
-		}
+		}*/
 	}
 }
 

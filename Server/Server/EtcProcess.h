@@ -14,6 +14,7 @@ private:
 	void BindEtcUpdate() {
 		m_fpEtcUpdate[EUT_PLAYER_COLLISION] = [&]() {Player_Collision_Event(); };
 		m_fpEtcUpdate[EUT_ANIMAL_COLLISION] = [&]() {Animal_Collision_Event(); };
+		m_fpEtcUpdate[EUT_ROT] = [&]() {Player_Rot_Event(); };
 		m_fpEtcUpdate[EUT_WEATHER] = [&]() {WeatherEvent(); };
 		m_fpEtcUpdate[EUT_TIMER] = [&]() {TimerEvent(); };
 	}
@@ -25,6 +26,7 @@ public:
 public:
 	void Player_Collision_Event();
 	void Animal_Collision_Event();
+	void Player_Rot_Event();
 	void WeatherEvent();
 	void TimerEvent();
 };

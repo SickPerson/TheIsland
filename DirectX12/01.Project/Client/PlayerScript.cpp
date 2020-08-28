@@ -38,6 +38,7 @@ CPlayerScript::CPlayerScript()
 	, m_fAttackCoolTime(PLAYER_ATTACK_COOLTIME)
 	, m_fDownSpeed(0.f)
 	, m_bHoldShift(false)
+	, m_fRotTime(1.f)
 {
 	m_vCollisionObj.reserve(5);
 }
@@ -254,7 +255,7 @@ void CPlayerScript::Update()
 #ifdef NETWORK_ON
 					CPacketMgr::GetInst()->Send_Pos_Player_Packet();
 					CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
-					CPacketMgr::GetInst()->Send_Rot_player_Packet();
+					//CPacketMgr::GetInst()->Send_Rot_player_Packet();
 #endif // NETWORK_ON
 				}
 			}
@@ -276,7 +277,7 @@ void CPlayerScript::Update()
 #ifdef NETWORK_ON
 					CPacketMgr::GetInst()->Send_Pos_Player_Packet();
 					CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
-					CPacketMgr::GetInst()->Send_Rot_player_Packet();
+					//CPacketMgr::GetInst()->Send_Rot_player_Packet();
 #endif // NETWORK_ON
 				}
 			}
@@ -298,7 +299,7 @@ void CPlayerScript::Update()
 #ifdef NETWORK_ON
 					CPacketMgr::GetInst()->Send_Pos_Player_Packet();
 					CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
-					CPacketMgr::GetInst()->Send_Rot_player_Packet();
+					//CPacketMgr::GetInst()->Send_Rot_player_Packet();
 #endif // NETWORK_ON
 				}
 			}
@@ -320,7 +321,7 @@ void CPlayerScript::Update()
 #ifdef NETWORK_ON
 					CPacketMgr::GetInst()->Send_Pos_Player_Packet();
 					CPacketMgr::GetInst()->Send_Animation_Player_Packet((UINT)PLAYER_ANIMATION_TYPE::WALK);
-					CPacketMgr::GetInst()->Send_Rot_player_Packet();
+					//CPacketMgr::GetInst()->Send_Rot_player_Packet();
 #endif // NETWORK_ON
 				}
 			}
@@ -426,6 +427,12 @@ void CPlayerScript::Update()
 		Transform()->SetLocalPos( vPos );
 
 		m_bEnable = true;
+	}
+
+	m_fRotTime -= DT;
+	if (m_fRotTime < 0.f) {
+		CPacketMgr::GetInst()->Send_Rot_player_Packet();
+		m_fRotTime = 3.f;
 	}
 }
 

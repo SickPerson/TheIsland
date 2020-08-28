@@ -410,6 +410,17 @@ void CProcess::PushEvent_Etc_Animal_Collision()
 	PushEventQueue(ev);
 }
 
+void CProcess::PushEvent_Rot()
+{
+	Update_Event ev;
+	ev.m_Do_Object = 9997;
+	ev.m_EventType = EV_ETC;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_eObjUpdate = EUT_ROT;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	PushEventQueue(ev);
+}
+
 void CProcess::PushEvent_Etc_Weather()
 {
 	Update_Event ev;
