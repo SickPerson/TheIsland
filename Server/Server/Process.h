@@ -23,6 +23,7 @@ public:
 	static CObjectpool*	m_pObjectPool;
 
 	static concurrent_unordered_set<USHORT>	m_cusLoginList; // 로그인 리스트
+
 	static concurrent_priority_queue<Update_Event>	m_cpqEventQueue; // 이벤트 큐(Timer 이벤트)
 
 public:
@@ -97,8 +98,8 @@ public:
 	}
 	void InsertLoginList(USHORT& login_Id)
 	{
-		lock_guard<recursive_mutex>	lock(m_rmProcessMutex);
 		m_cusLoginList.insert(login_Id);
+		cout << "현재 총 접속 인원" << m_cusLoginList.size() << endl;
 	}
 	bool ExistLoginList(USHORT& login_Id)
 	{

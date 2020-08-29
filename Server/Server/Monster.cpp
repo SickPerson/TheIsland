@@ -13,7 +13,7 @@ CMonster::~CMonster()
 
 void CMonster::SetAnimalStatus(tAnimalStatus & animalStatus)
 {
-	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::STATUS]);
+	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	m_tStatus.eKind = animalStatus.eKind;
 	m_tStatus.eType = animalStatus.eType;
 	m_tStatus.fDamage = animalStatus.fDamage;
@@ -24,102 +24,102 @@ void CMonster::SetAnimalStatus(tAnimalStatus & animalStatus)
 
 void CMonster::SetHealth(float & fHealth)
 {
-	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::HP]);
+	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	m_tStatus.fHealth = fHealth;
 }
 
 void CMonster::SetSpeed(float & fSpeed)
 {
-	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::SPEED]);
+	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	m_tStatus.fSpeed = fSpeed;
 }
 
 void CMonster::SetDamage(float & fDamage)
 {
-	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::DAMAGE]);
+	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	m_tStatus.fDamage = fDamage;
 }
 
 void CMonster::SetType(BEHAVIOR_TYPE & eType)
 {
-	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::BEHAVIOR_TYPE]);
+	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	m_tStatus.eType = eType;
 }
 
 void CMonster::SetKind(ANIMAL_TYPE & eKind)
 {
-	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::KIND]);
+	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	m_tStatus.eKind = eKind;
 }
 
 void CMonster::SetTarget(USHORT playerId)
 {
-	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::TARGET]);
+	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	m_uiTarget = playerId;
 }
 
 void CMonster::SetWakeUp(bool bWakeUp)
 {
-	unique_lock<shared_mutex>lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::WAKEUP]);
+	unique_lock<shared_mutex>lock(m_smAnimalSharedMutex);
 	m_bWakeUp = bWakeUp;
 }
 
 void CMonster::SetDir(Vec3 & vDir)
 {
-	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::DIR]);
+	unique_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	m_vMoveDir = vDir;
 }
 
-tAnimalStatus & CMonster::GetAnimalStatus()
+const tAnimalStatus & CMonster::GetAnimalStatus()
 {
-	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::STATUS]);
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_tStatus;
 }
 
-float & CMonster::GetHealth()
+const float & CMonster::GetHealth()
 {
-	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::HP]);
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_tStatus.fHealth;
 }
 
-float & CMonster::GetSpeed()
+const float & CMonster::GetSpeed()
 {
-	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::SPEED]);
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_tStatus.fHealth;
 }
 
-float & CMonster::GetDamage()
+const float & CMonster::GetDamage()
 {
-	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::DAMAGE]);
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_tStatus.fDamage;
 }
 
-BEHAVIOR_TYPE & CMonster::GetType()
+const BEHAVIOR_TYPE & CMonster::GetType()
 {
-	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::BEHAVIOR_TYPE]);
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_tStatus.eType;
 }
 
-ANIMAL_TYPE & CMonster::GetKind()
+const ANIMAL_TYPE & CMonster::GetKind()
 {
-	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::KIND]);
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_tStatus.eKind;
 }
 
-USHORT & CMonster::GetTarget()
+const USHORT & CMonster::GetTarget()
 {
-	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::TARGET]);
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_uiTarget;
 }
 
-bool & CMonster::GetWakeUp()
+const bool & CMonster::GetWakeUp()
 {
-	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::WAKEUP]);
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_bWakeUp;
 }
 
-Vec3 & CMonster::GetDir()
+const Vec3 & CMonster::GetDir()
 {
-	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::DIR]);
+	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_vMoveDir;
 }

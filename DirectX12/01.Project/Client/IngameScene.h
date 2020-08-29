@@ -55,7 +55,7 @@ public:
 	void PlayerDestroy(USHORT usId);
 	void PlayerAnimationUpdate(USHORT usId, UINT uiType);
 
-	void AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot, char eType );
+	void AnimalUpdate( USHORT uiId, Vec3 vPos, Vec3 vRot);
 	void AnimalDestory( USHORT uiId );
 	void AnimalAnimationUpdate( USHORT uiId, UINT uiType );
 

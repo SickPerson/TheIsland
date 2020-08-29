@@ -15,10 +15,6 @@ CNetwork::CNetwork()
 {
 	m_ListenSock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	m_bRunningServer = true;
-
-	
-	//------------------------------
-	//Initialize();
 	CheckThisCputCount();
 }
 
@@ -84,9 +80,19 @@ HANDLE CNetwork::GetIocp()
 	return m_hIocp;
 }
 
+USHORT CNetwork::GetUserID()
+{
+	for (USHORT i = 0; i < MAX_USER; ++i) {
+		bool bConnect = CProcess::m_pObjectPool->m_cumPlayerPool[i]->GetConnect();
+		if (bConnect)  continue;
+		return i;
+	}
+	return MAX_USER;
+}
+
 void CNetwork::Initialize()
 {
-	m_UserID = 0;
+	//m_UserID = 0;
 	CProcess::Initalize();
 	Init_Process();
 	CTimerMgr::GetInst()->Reset();
@@ -220,9 +226,6 @@ void CNetwork::WorkerThread()
 		{
 			int err_no = WSAGetLastError();
 			if (err_no != WSA_IO_PENDING){
-				/*wstring strID = CProcess::m_pObjectPool->m_cumPlayerPool[id]->GetWcID();
-			
-				std::cout << "[ Player: " << strID << " ] Disconnect" << std::endl;*/
 				m_pPlayerProcess->PlayerLogout(id);
 			}
 			continue;
@@ -275,7 +278,7 @@ void CNetwork::WorkerThread()
 			switch (lpover_ex->m_Status)
 			{
 			case EUT_ROT:
-				m_pEtcProcess->Player_Rot_Event();
+				m_pEtcProcess->Rot_Event();
 				break;
 			case EUT_WEATHER:
 				m_pEtcProcess->WeatherEvent();
@@ -299,30 +302,34 @@ void CNetwork::WorkerThread()
 void CNetwork::AcceptThread()
 {
 	while (m_bRunningServer) {
-		auto client_sock = WSAAccept(m_ListenSock, (struct sockaddr*)&m_clientAddr, &m_addrLen, NULL, NULL);
+		auto client_sock = WSAAccept(m_ListenSock, 
+			(struct sockaddr*)&m_clientAddr, &m_addrLen, NULL, NULL);
 
 		if (client_sock == INVALID_SOCKET) {
 			int err_no = WSAGetLastError();
-			Err_display("ACCEPT INVALID_SOCKET!", err_no);
+			Err_display("ACCEPT INVALID_SOCKET - ", err_no);
 			break;
 		}
-		CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_sock), m_hIocp, m_UserID, 0);
-		//cout << "현재 인원: " << m_usUserID + 1 << endl;
-		//cout << "접속 : " << inet_ntoa(m_clientAddr.sin_addr) << '\t' << ntohs(m_clientAddr.sin_port) << endl;
-		m_pPlayerProcess->AcceptClient(client_sock, m_UserID);
-		++m_UserID;
+
+		USHORT id = CProcess::m_pObjectPool->GetLoginID();
+		if (id == MAX_USER) {
+			CPacketMgr::Send_Full_Server_Packet(client_sock);
+		}
+
+		CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_sock), m_hIocp, id, 0);
+		cout << "접속 : " << inet_ntoa(m_clientAddr.sin_addr) << '\t' 
+			<< ntohs(m_clientAddr.sin_port) << endl;
+		m_pPlayerProcess->AcceptClient(client_sock, id);
 	}
 }
 
-void CNetwork::UpdateThread()
+void CNetwork::UpdateThread() // 일정 시간이 지날때마다 업데이트를 해주라는 함수 부분
 {
-	// 일정 시간이 지날때마다 업데이트를 해주라는 함수 부분
 	if (CTimerMgr::GetInst()) {
 		CTimerMgr::GetInst()->Start();
 	}
 	while (m_bRunningServer)
 	{
-		CTimerMgr::GetInst()->Tick();
 		while (CProcess::EmptyEventQueue()) {
 			this_thread::sleep_for(10ms);
 		}

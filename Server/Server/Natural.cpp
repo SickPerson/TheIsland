@@ -10,14 +10,13 @@ CNatural::~CNatural()
 
 void CNatural::SetType(NATURAL_TYPE eType)
 {
-	unique_lock<shared_mutex> lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::TYPE]);
+	unique_lock<shared_mutex> lock(m_smNaturalSharedMutex);
 	m_eType = eType;
 	
 	switch (eType)
 	{
 	case N_TREE:
 		m_vOriginRot = Vec3(-3.141592654f / 2.f, 0.f, 0.f);
-		this->SetHealth(150.f);
 		m_fHealth = 150.f;
 		break;
 	case N_STONE:
@@ -36,66 +35,66 @@ void CNatural::SetType(NATURAL_TYPE eType)
 
 void CNatural::SetHealth(float fHealth)
 {
-	unique_lock<shared_mutex> lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::HEALTH]);
+	unique_lock<shared_mutex> lock(m_smNaturalSharedMutex);
 	m_fHealth = fHealth;
 }
 
 void CNatural::SetDestroy(bool bDestroy)
 {
-	unique_lock<shared_mutex> lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::DESTROY]);
+	unique_lock<shared_mutex> lock(m_smNaturalSharedMutex);
 	m_bDestroy = bDestroy;
 }
 
 void CNatural::SetOriginRot(Vec3 vOriginRot)
 {
-	unique_lock<shared_mutex>	lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::ORIGIN_ROT]);
+	unique_lock<shared_mutex>	lock(m_smNaturalSharedMutex);
 	m_vOriginRot = vOriginRot;
 }
 
 void CNatural::SetTargetRot(Vec3 vTargetRot)
 {
-	unique_lock<shared_mutex>	lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::TARGET_ROT]);
+	unique_lock<shared_mutex>	lock(m_smNaturalSharedMutex);
 	m_vTargetRot = vTargetRot;
 }
 
 void CNatural::SetAngle(float fAngle)
 {
-	unique_lock<shared_mutex>	lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::ANGLE]);
+	unique_lock<shared_mutex>	lock(m_smNaturalSharedMutex);
 	m_fAngle = fAngle;
 }
 
-NATURAL_TYPE & CNatural::GetType()
+const NATURAL_TYPE & CNatural::GetType()
 {
-	shared_lock<shared_mutex> lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::TYPE]);
+	shared_lock<shared_mutex> lock(m_smNaturalSharedMutex);
 	return m_eType;
 }
 
-float & CNatural::GetHealth()
+const float & CNatural::GetHealth()
 {
-	shared_lock<shared_mutex> lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::HEALTH]);
+	shared_lock<shared_mutex> lock(m_smNaturalSharedMutex);
 	return m_fHealth;
 }
 
-bool & CNatural::GetDestroy()
+const bool & CNatural::GetDestroy()
 {
-	shared_lock<shared_mutex> lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::DESTROY]);
+	shared_lock<shared_mutex> lock(m_smNaturalSharedMutex);
 	return m_bDestroy;
 }
 
-Vec3 & CNatural::GetOriginRot()
+const Vec3 & CNatural::GetOriginRot()
 {
-	shared_lock<shared_mutex>	lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::ORIGIN_ROT]);
+	shared_lock<shared_mutex>	lock(m_smNaturalSharedMutex);
 	return m_vOriginRot;
 }
 
-Vec3 & CNatural::GetTargetRot()
+const Vec3 & CNatural::GetTargetRot()
 {
-	shared_lock<shared_mutex>	lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::TARGET_ROT]);
+	shared_lock<shared_mutex>	lock(m_smNaturalSharedMutex);
 	return m_vTargetRot;
 }
 
-float & CNatural::GetAngle()
+const float & CNatural::GetAngle()
 {
-	shared_lock<shared_mutex>	lock(m_smNaturalSharedMutex[(UINT)NATURAL_LOCK_TYPE::ANGLE]);
+	shared_lock<shared_mutex>	lock(m_smNaturalSharedMutex);
 	return m_fAngle;
 }

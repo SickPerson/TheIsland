@@ -58,23 +58,17 @@ CNetwork::~CNetwork()
 
 void CNetwork::BindfpPacket()
 {
+	// - Common
+	m_fpPacketProcess[SC_POS] = [&](char* packet) {Recv_Pos_Packet(packet); };
+	m_fpPacketProcess[SC_REMOVE] = [&](char* packet) {Recv_Remove_Packet(packet); };
+	m_fpPacketProcess[SC_ANIMATION] = [&](char* packet) {Recv_Animation_Packet(packet); };
 	// - Login
 	m_fpPacketProcess[SC_LOGIN_OK] = [&](char* packet) {Recv_Login_OK_Packet(packet); };
 	m_fpPacketProcess[SC_LOGIN_FAIL] = [&](char* packet) {Recv_Login_Fail_Packet(packet); };
 	m_fpPacketProcess[SC_DISCONNECT_SERVER] = [&](char* packet) {Recv_Disconnect_Server_Packet(packet); };
 	// - Player
 	m_fpPacketProcess[SC_STATUS_PLAYER] = [&](char* packet) {Recv_Status_Player_Packet(packet); };
-	m_fpPacketProcess[SC_PUT_PLAYER] = [&](char* packet) {Recv_Put_Player_Packet(packet); };
-	m_fpPacketProcess[SC_POS_PLAYER] = [&](char* packet) {Recv_Pos_Player_Packet(packet); };
-	m_fpPacketProcess[SC_ROT_PLAYER] = [&](char* packet) {Recv_Put_Player_Packet(packet); };
-	m_fpPacketProcess[SC_REMOVE_PLAYER] = [&](char* packet) {Recv_Remove_Player_Packet(packet); };
 	m_fpPacketProcess[SC_CHAT] = [&](char* packet) {Recv_Chat_Packet(packet); };
-	m_fpPacketProcess[SC_ANIMATION_PLAYER] = [&](char* packet) {Recv_Animation_Player_Packet(packet); };
-	// - Animal
-	m_fpPacketProcess[SC_PUT_ANIMAL] = [&](char* packet) {Recv_Put_Animal_Packet(packet); };
-	m_fpPacketProcess[SC_POS_ANIMAL] = [&](char* packet) {Recv_Pos_Animal_Packet(packet); };
-	m_fpPacketProcess[SC_REMOVE_ANIMAL] = [&](char* packet) {Recv_Remove_Animal_Packet(packet); };
-	m_fpPacketProcess[SC_ANIMATION_ANIMAL] = [&](char* packet) {Recv_Animation_Animal_Packet(packet); };
 	// - Natural
 	m_fpPacketProcess[SC_PUT_NATURAL] = [&](char* packet) {Recv_Put_Natural_Packet(packet); };
 	m_fpPacketProcess[SC_DESTROY_NATURAL] = [&](char* packet) {Recv_Destroy_Natural_Packet(packet); };
@@ -91,6 +85,7 @@ void CNetwork::BindfpPacket()
 
 void CNetwork::Init(HWND hWnd)
 {
+	m_bLogin = false;
 	m_bClientClose = true;
 	m_RecvWsaBuf.buf = m_cRecvbuf;
 	m_RecvWsaBuf.len = BUF_SIZE;
@@ -184,68 +179,49 @@ void CNetwork::RecvPacket()
 			}
 		}
 	}
-	/*while (!m_bClientClose)
-	{
-		m_iIndex = WSAWaitForMultipleEvents(1, &m_hEvent, FALSE, WSA_INFINITE, FALSE);
-
-		if ((m_iIndex == WSA_WAIT_FAILED) || (m_iIndex == WSA_WAIT_TIMEOUT)) {
-			int err_no = WSAGetLastError();
-			Err_display("WSAWaitForMultipleEvents Err", err_no);
-			break;
-		}
-		int retval = WSAEnumNetworkEvents(m_sock, m_hEvent, &m_weEvent);
-		if (retval == SOCKET_ERROR) {
-			int err_no = WSAGetLastError();
-			Err_display("WSAEnumNetworkEvents Err", err_no);
-			break;
-		}
-
-		if (m_weEvent.lNetworkEvents & FD_READ) {
-			if (m_weEvent.iErrorCode[FD_READ_BIT] != 0) {
-				int err_no = GetLastError();
-				Err_display("m_weEvent.iErrorCode Err", err_no);
-				break;
-			}
-			DWORD	size, flag = 0;
-			int ret = WSARecv(m_sock, &m_RecvWsaBuf, 1, &size, &flag, NULL, NULL);
-			if (ret == SOCKET_ERROR) {
-				int err_no = GetLastError();
-				Err_display("WSARecv SOCKET_ERROR", err_no);
-				break;
-			}
-
-			BYTE* packet = reinterpret_cast<BYTE*>(m_cRecvbuf);
-
-			while (size != 0) {
-				if (0 == m_in_packet_size) m_in_packet_size = packet[0];
-				if (size + m_saved_packet_size >= m_in_packet_size) {
-					memcpy(m_cPacketBuf + m_saved_packet_size, packet, m_in_packet_size - m_saved_packet_size);
-					ProcessPacket(m_cPacketBuf);
-					packet += m_in_packet_size - m_saved_packet_size;
-					size -= m_in_packet_size - m_saved_packet_size;
-					m_in_packet_size = 0;
-					m_saved_packet_size = 0;
-				}
-				else {
-					memcpy(m_cPacketBuf + m_saved_packet_size, packet, size);
-					m_saved_packet_size += size;
-					size = 0;
-				}
-			}
-		}
-		if (m_weEvent.lNetworkEvents & FD_CLOSE)
-		{
-			cout << "FD_CLOSE" << endl;
-			m_bClientClose = true;
-			break;
-		}
-	}*/
-	//cout << "Network Close" << endl;
 }
 
 void CNetwork::ProcessPacket(char* packet)
 {
 	m_fpPacketProcess[packet[1]](packet);
+}
+void CNetwork::Recv_Pos_Packet(char * packet)
+{
+	sc_pos_packet* pos_packet = reinterpret_cast<sc_pos_packet*>(packet);
+	USHORT usId = pos_packet->usId;
+	Vec3 vPos = pos_packet->vPos;
+	Vec3 vRot = pos_packet->vRot;
+
+	if(usId < MAX_USER)
+		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerUpdate(usId, vPos, vRot);
+	else if(usId < END_ANIMAL)
+		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(usId, vPos, vRot);
+}
+void CNetwork::Recv_Rot_packet(char * packet)
+{
+	sc_rot_packet* rot_packet = reinterpret_cast<sc_rot_packet*>(packet);
+
+}
+void CNetwork::Recv_Remove_Packet(char * packet)
+{
+	sc_remove_packet* remove_packet = reinterpret_cast<sc_remove_packet*>(packet);
+	USHORT usId = remove_packet->usId;
+
+	if(usId < MAX_USER)
+		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerDestroy(usId);
+	else if(usId < END_ANIMAL)
+		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalDestory(usId);
+}
+void CNetwork::Recv_Animation_Packet(char * packet)
+{
+	sc_animation_packet* animation_packet = reinterpret_cast<sc_animation_packet*>(packet);
+	USHORT id = animation_packet->usId;
+	UINT uiType = animation_packet->uiType;
+
+	if (id < MAX_USER)
+		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerAnimationUpdate(id, uiType);
+	else
+		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalAnimationUpdate(id, uiType);
 }
 // ============================== RECV ============================
 void CNetwork::Recv_Login_OK_Packet(char * packet)
@@ -253,7 +229,10 @@ void CNetwork::Recv_Login_OK_Packet(char * packet)
 	pScene = CSceneMgr::GetInst()->GetCurScene();
 	sc_login_ok_packet* login_packet = reinterpret_cast<sc_login_ok_packet*>(packet);
 	m_usID = login_packet->id;
-	dynamic_cast<CLoginScene*>(pScene->GetSceneScript())->NextScene();
+	if (!m_bLogin) {
+		dynamic_cast<CLoginScene*>(pScene->GetSceneScript())->NextScene();
+		m_bLogin = true;
+	}
 	cout << "Login Success" << endl;
 }
 
@@ -286,35 +265,6 @@ void CNetwork::Recv_Status_Player_Packet(char * packet)
 	//dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerStatusUpdate(fHealth, fHungry, fThrist);
 }
 
-void CNetwork::Recv_Put_Player_Packet(char * packet)
-{
-	sc_put_player_packet* put_player_packet = reinterpret_cast<sc_put_player_packet*>(packet);
-	USHORT player_id = put_player_packet->id;
-
-	Vec3 vPos = put_player_packet->vPos;
-	Vec3 vRot = put_player_packet->vRot;
-
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerUpdate(player_id, vPos, vRot);
-}
-
-void CNetwork::Recv_Remove_Player_Packet(char * packet)
-{
-	sc_remove_player_packet* remove_player_packet = reinterpret_cast<sc_remove_player_packet*>(packet);
-	unsigned int player_id = remove_player_packet->id;
-
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerDestroy(player_id);
-}
-
-void CNetwork::Recv_Pos_Player_Packet(char * packet)
-{
-	sc_pos_player_packet*	pos_packet = reinterpret_cast<sc_pos_player_packet*>(packet);
-	unsigned int player_id = pos_packet->id;
-	Vec3 vPos = pos_packet->vPos;
-	Vec3 vRot = pos_packet->vRot;
-
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerUpdate(player_id, vPos, vRot);
-}
-
 void CNetwork::Recv_Rot_Player_packet(char * packet)
 {
 	sc_rot_player_packet*	rot_packet = reinterpret_cast<sc_rot_player_packet*>(packet);
@@ -328,72 +278,11 @@ void CNetwork::Recv_Chat_Packet(char * packet)
 {
 	sc_chat_packet* chat_packet = reinterpret_cast<sc_chat_packet*>(packet);
 
-	wstring wname = chat_packet->wcid;
-	string name;
-	name.assign(wname.begin(), wname.end());
+	string name = chat_packet->ID;
 	string Msg(chat_packet->meesage);
 
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->ChatUpdate(name, Msg);
 	
-}
-
-void CNetwork::Recv_Animation_Player_Packet(char * packet)
-{
-	sc_animation_player_packet* animation_player_packet = reinterpret_cast<sc_animation_player_packet*>(packet);
-	USHORT player_id = animation_player_packet->id;
-	UINT uiType = animation_player_packet->animation_uiType;
-
-	cout << player_id << " | " << uiType << endl;
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerAnimationUpdate(player_id, uiType);
-}
-
-void CNetwork::Recv_WakeUp_Npc_Packet(char * packet)
-{
-	sc_wake_up_packet* wakeup_npc_packet = reinterpret_cast<sc_wake_up_packet*>(packet);
-
-	unsigned int monster_id = wakeup_npc_packet->id;
-
-	m_cumAnimal[monster_id]->GetScript<CAnimalScript>()->SetWakeUp(true);
-}
-
-void CNetwork::Recv_Put_Animal_Packet(char * packet)
-{
-	sc_put_npc_packet* put_npc_packet = reinterpret_cast<sc_put_npc_packet*>(packet);
-	USHORT monster_id = put_npc_packet->id;
-
-	UINT eType = put_npc_packet->eType;
-	Vec3 vPos = put_npc_packet->vPos;
-	Vec3 vRot = put_npc_packet->vRot;
-
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
-}
-
-void CNetwork::Recv_Remove_Animal_Packet(char * packet)
-{
-	sc_remove_npc_packet* remove_npc_packet = reinterpret_cast<sc_remove_npc_packet*>(packet);
-	USHORT monster_id = remove_npc_packet->id;
-
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalDestory(monster_id);
-}
-
-void CNetwork::Recv_Pos_Animal_Packet(char * packet)
-{
-	sc_pos_npc_packet* pos_npc_packet = reinterpret_cast<sc_pos_npc_packet*>(packet);
-	unsigned int monster_id = pos_npc_packet->id;
-	UINT eType = pos_npc_packet->eType;
-	Vec3 vPos = pos_npc_packet->vPos;
-	Vec3 vRot = pos_npc_packet->vRot;
-
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalUpdate(monster_id, vPos, vRot, eType);
-}
-
-void CNetwork::Recv_Animation_Animal_Packet(char * packet)
-{
-	sc_animation_animal_packet* animation_npc_packet = reinterpret_cast<sc_animation_animal_packet*>(packet);
-	unsigned int monster_id = animation_npc_packet->id;
-	UINT		uiType = animation_npc_packet->uiType;
-
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalAnimationUpdate(monster_id, uiType);
 }
 
 void CNetwork::Recv_Put_Natural_Packet(char * packet)
@@ -471,6 +360,4 @@ void CNetwork::Recv_Time_Packet(char * packet)
 {
 	sc_time_packet* time_packet = reinterpret_cast<sc_time_packet*>(packet);
 	float fTime = time_packet->fTime;
-
-	cout << fTime << endl;
 }

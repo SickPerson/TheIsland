@@ -20,7 +20,7 @@ CPacketMgr::~CPacketMgr()
 {
 }
 
-void CPacketMgr::Send_Login_Packet(wstring strID)
+void CPacketMgr::Send_Login_Packet(string strID)
 {
 	DWORD size{ 0 }, flag{ 0 };
 
@@ -28,7 +28,7 @@ void CPacketMgr::Send_Login_Packet(wstring strID)
 
 	login_packet->size = sizeof(cs_login_packet);
 	login_packet->type = CS_LOGIN;
-	wcscpy_s(login_packet->player_id, strID.c_str());
+	strcpy_s(login_packet->player_id, strID.c_str());
 
 	m_SendWsaBuf.len = sizeof(cs_login_packet);
 
@@ -190,6 +190,7 @@ void CPacketMgr::Send_Remove_Housing_Packet(USHORT houseId)
 
 void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId)
 {
+	cout << "Attack" << endl;
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(m_cSendBuf);
 
 	attack_packet->type = CS_ATTACK;

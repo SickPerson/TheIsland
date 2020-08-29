@@ -37,7 +37,7 @@ void CObjectpool::Init_PlayerPool()
 	for (int i = 0; i < MAX_USER; ++i)
 		m_cumPlayerPool.insert(make_pair(i, new class CPlayer()));
 
-	cout << " dddd " << endl;
+	cout << "Player POOL Create" << endl;
 }
 
 void CObjectpool::Init_AnimalPool()
@@ -48,12 +48,12 @@ void CObjectpool::Init_AnimalPool()
 
 	float fRadius;
 
-	for (int i = 0; i < MAX_ANIMAL; ++i)
+	for (int i = BEGIN_ANIMAL; i < END_ANIMAL; ++i)
 	{
 		CMonster* Animal = new class CMonster();
 		Animal->SetWakeUp(false);
 		Animal->SetState(OBJ_STATE_TYPE::OST_LIVE);
-		if (i < ANIMAL_BEAR)
+		if (i < BEGIN_ANIMAL + ANIMAL_BEAR)
 		{
 			tAnimalStatus tStatus;
 			tStatus.fHealth = 200.f;
@@ -68,6 +68,9 @@ void CObjectpool::Init_AnimalPool()
 			Vec3 vOffsetScale = Vec3(2.f, 2.f, 2.f);
 			Animal->SetOffsetScale(vOffsetScale);
 
+			Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, 0.f, 0.f));
+			Animal->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
 			fRadius = 2000.f;
 
 			float fDistance = (float)(rand() % (int)fRadius + 1);
@@ -80,7 +83,7 @@ void CObjectpool::Init_AnimalPool()
 
 			Animal->SetLocalPos(vPos);
 		}
-		else if (i < ANIMAL_BEAR + ANIMAL_BOAR)
+		else if (i < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR)
 		{
 			tAnimalStatus tStatus;
 			tStatus.fHealth = 200.f;
@@ -107,7 +110,7 @@ void CObjectpool::Init_AnimalPool()
 
 			Animal->SetLocalPos(vPos);
 		}
-		else if (i < ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER)
+		else if (i < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER)
 		{
 			tAnimalStatus tStatus;
 			tStatus.fHealth = 100.f;
@@ -134,7 +137,7 @@ void CObjectpool::Init_AnimalPool()
 
 			Animal->SetLocalPos(vPos);
 		}
-		else if (i < ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER + ANIMAL_WOLF)
+		else if (i < END_ANIMAL)
 		{
 			tAnimalStatus tStatus;
 			tStatus.fHealth = 200.f;
@@ -160,15 +163,18 @@ void CObjectpool::Init_AnimalPool()
 			vPos.z += sin(fRadian) * fDistance;
 			Animal->SetLocalPos(vPos);
 		}
-		Animal->SetLocalPos(Vec3(18000.f, 200.f, 2000.f));
-		Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+		Animal->SetLocalPos(Vec3(16000.f, 200.f, 2000.f));
+		//Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_cumAnimalPool.insert(make_pair(i, Animal));
 	}
-	cout << "ddd" << endl;
+	cout << "Aniaml : " << END_ANIMAL - BEGIN_ANIMAL << endl;
 }
 
 void CObjectpool::Init_NaturalPool()
 {
+	for (int i = 0; i < MAX_NATURAL; ++i) {
+		m_cumNaturalPool.insert(make_pair(i, new CNatural()));
+	}
 	FILE* pFile = NULL;
 
 	wstring ResPath = L"..\\Data\\Map.dat";
@@ -179,11 +185,8 @@ void CObjectpool::Init_NaturalPool()
 	int iSize = 0;
 	fread(&iSize, sizeof(int), 1, pFile);
 
-	cout << "Natural Number : " << iSize << endl;
 	for (int i = 0; i < iSize; ++i)
 	{
-		CNatural* pNatural = new CNatural();
-
 		wchar_t strName[MAX_PATH]{};
 		size_t iLength = 0;
 		fread(&iLength, sizeof(size_t), 1, pFile);
@@ -202,20 +205,20 @@ void CObjectpool::Init_NaturalPool()
 
 			NATURAL_TYPE eType;
 			fread(&eType, sizeof(NATURAL_TYPE), 1, pFile);
-			pNatural->SetType(eType);
-			pNatural->SetOffsetPos(Vec3(0.f, 0.f, 60.f));
-			pNatural->SetOffsetScale(Vec3(1.7f, 1.7f, 1.7f));
+			m_cumNaturalPool[i]->SetType(eType);
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 60.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(1.7f, 1.7f, 1.7f));
 		}
 
 		Vec3 vLocalPos;
 		Vec3 vLocalScale;
 		Vec3 vLocalRot;
 		fread(&vLocalPos, sizeof(Vec3), 1, pFile);
-		pNatural->SetLocalPos(vLocalPos);
+		m_cumNaturalPool[i]->SetLocalPos(vLocalPos);
 		fread(&vLocalScale, sizeof(Vec3), 1, pFile);
-		pNatural->SetLocalScale(vLocalScale);
+		m_cumNaturalPool[i]->SetLocalScale(vLocalScale);
 		fread(&vLocalRot, sizeof(Vec3), 1, pFile);
-		pNatural->SetLocalRot(vLocalRot);
+		m_cumNaturalPool[i]->SetLocalRot(vLocalRot);
 
 		string str1;
 
@@ -227,67 +230,68 @@ void CObjectpool::Init_NaturalPool()
 		}
 		else if (str1 == "plainsgrass")
 		{
-			pNatural->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
-			pNatural->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 		}
 		else if (str1 == "mountainsrocks01")
 		{
 			//pObject->Collider2D()->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
 			//pObject->Collider2D()->SetOffsetScale(Vec3(350.f, 350.f, 350.f));
-			pNatural->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
-			pNatural->SetOffsetScale(Vec3(350.f, 350.f, 350.f));
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(350.f, 350.f, 350.f));
 		}
 		else if (str1 == "mountainsrocks02")
 		{
 			//pObject->Collider2D()->SetOffsetPos(Vec3(20.f, 0.f, 0.f));
 			//pObject->Collider2D()->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
-			pNatural->SetOffsetPos(Vec3(20.f, 0.f, 0.f));
-			pNatural->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(20.f, 0.f, 0.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
 		}
 		else if (str1 == "genericcliffa")
 		{
 			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
 			//pObject->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
-			pNatural->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
-			pNatural->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
 		}
 		else if (str1 == "mountainsrocks01_a")
 		{
 			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
 			//pObject->Collider2D()->SetOffsetScale(Vec3(200.f, 200.f, 200.f));
-			pNatural->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
-			pNatural->SetOffsetScale(Vec3(200.f, 200.f, 200.f));
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(200.f, 200.f, 200.f));
 		}
 		else if (str1 == "mountainsrocks01_b")
 		{
 			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, -60.f));
 			//pObject->Collider2D()->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
-			pNatural->SetOffsetPos(Vec3(0.f, 0.f, -60.f));
-			pNatural->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, -60.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
 		}
 		else if (str1 == "mountainsrocks01_c")
 		{
 			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
 			//pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
-			pNatural->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
-			pNatural->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 		}
 		else if (str1 == "mountainsrocks01_d")
 		{
 			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
 			//pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
-			pNatural->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
-			pNatural->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 		}
 		else
 		{
 			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
 			//pObject->Collider2D()->SetOffsetScale(Vec3(4.f, 4.f, 4.f));
-			pNatural->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
-			pNatural->SetOffsetScale(Vec3(4.f, 4.f, 4.f));
+			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			m_cumNaturalPool[i]->SetOffsetScale(Vec3(4.f, 4.f, 4.f));
 		}
 	}
 	fclose(pFile);
+	cout << "Natural : " << MAX_NATURAL << endl;
 }
 
 void CObjectpool::Init_HousingPool()
@@ -342,6 +346,18 @@ void CObjectpool::Release_HousingPool()
 		}
 	}
 	m_cumHousingPool.clear();
+}
+
+USHORT CObjectpool::GetLoginID()
+{
+	for (auto& User : m_cumPlayerPool)
+	{
+		bool bConnect = User.second->GetConnect();
+		if (bConnect) continue;
+		User.second->SetConnect(true);
+		return User.first;
+	}
+	return MAX_USER;
 }
 
 void CObjectpool::Install_House(CHousing * pHouse, USHORT usIndex)

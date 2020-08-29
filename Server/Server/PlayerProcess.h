@@ -26,7 +26,7 @@ public:
 	virtual ~CPlayerProcess();
 
 public:
-	void Init_Player(USHORT playerId, wchar_t* wcId);
+	void Init_Player(USHORT playerId, char* wcId);
 public:
 	void BindPacketProcess()
 	{
@@ -68,7 +68,7 @@ public:
 		};
 	}
 
-	void AcceptClient(const SOCKET& sSocket, USHORT playerId);
+	void AcceptClient(SOCKET& sSocket, USHORT playerId);
 	void RecvPacket(USHORT playerId, char* packet, DWORD bytesize);
 
 	void PlayerLogin(USHORT playerId, char* packet);

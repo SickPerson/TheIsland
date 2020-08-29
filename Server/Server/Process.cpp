@@ -50,12 +50,12 @@ bool CProcess::PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId,
 	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[animalId]->GetLocalPos();
 
 	Vec3 vPlayerScale = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalScale();
-	Vec3 vAnimalScale = m_pObjectPool->m_cumPlayerPool[animalId]->GetLocalScale();
+	Vec3 vAnimalScale = m_pObjectPool->m_cumAnimalPool[animalId]->GetLocalScale();
 
 	Vec3 vPlayerColScale = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalScale() * fOffset;
-	Vec3 vAnimalColScale = m_pObjectPool->m_cumPlayerPool[animalId]->GetLocalScale();
+	Vec3 vAnimalColScale = m_pObjectPool->m_cumAnimalPool[animalId]->GetLocalScale();
 
-	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vAnimalPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
+	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
 	fDist = sqrtf(fDist);
 
 	if (fDist > fabsf(vPlayerScale.x * vPlayerColScale.x) + fabsf(vAnimalScale.x * vAnimalScale.x))
@@ -212,10 +212,10 @@ bool CProcess::AnimalAndPlayer_CollisionSphere(USHORT AnimalId, USHORT PlayerId,
 	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
 
 	Vec3 vPlayerScale = m_pObjectPool->m_cumPlayerPool[PlayerId]->GetLocalScale();
-	Vec3 vAnimalScale = m_pObjectPool->m_cumPlayerPool[AnimalId]->GetLocalScale();
+	Vec3 vAnimalScale = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalScale();
 
 	Vec3 vPlayerColScale = m_pObjectPool->m_cumPlayerPool[PlayerId]->GetLocalScale() * fOffset;
-	Vec3 vAnimalColScale = m_pObjectPool->m_cumPlayerPool[AnimalId]->GetLocalScale();
+	Vec3 vAnimalColScale = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalScale();
 
 	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vAnimalPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
 	fDist = sqrtf(fDist);
@@ -243,6 +243,11 @@ bool CProcess::AnimalAndHouse_Collision_Door(USHORT AnimalId, USHORT HouseId, Ve
 
 void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
 {
+	USHORT Animal = AnimalId;
+	bool bWakeUp = m_pObjectPool->m_cumAnimalPool[Animal]->GetWakeUp();
+	if (!bWakeUp) return;
+
+
 	UINT uiType = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetType();
 
 	if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
@@ -268,66 +273,61 @@ void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
 
 void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_ATTACK);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_ATTACK;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_FOLLOW);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_FOLLOW;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Evastion(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_EVASION);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_EVASION;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_IDLE);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(NO_TARGET);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_IDLE;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Die(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_DIE);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(NO_TARGET);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_DIE;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
@@ -417,7 +417,7 @@ void CProcess::PushEvent_Rot()
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = EUT_ROT;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 

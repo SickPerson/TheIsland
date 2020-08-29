@@ -34,6 +34,7 @@ public:
 	static concurrent_unordered_map<USHORT, CNatural*> m_cumNaturalPool;
 	static concurrent_unordered_map<USHORT, CHousing*> m_cumHousingPool;
 
+	USHORT GetLoginID();
 	void Install_House(CHousing* pHouse, USHORT usIndex);
 	void Remove_House(USHORT usIndex);
 };

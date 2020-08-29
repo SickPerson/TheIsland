@@ -15,17 +15,16 @@ CMonsterProcess::~CMonsterProcess()
 
 void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT uiTarget)
 {
-	char Animal_State = m_pObjectPool->m_cumAnimalPool[Animal_Id]->GetState();
+	char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[Animal_Id]->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
 	concurrent_unordered_set<USHORT> loginList;
 
 	CopyBeforeLoginList(loginList);
 
-	USHORT AnimalID = Animal_Id + BEGIN_ANIMAL;
 	for (auto& player : loginList) {
-		if (m_pObjectPool->m_cumPlayerPool[player]->ExistList(AnimalID))
-			CPacketMgr::Send_Animation_Npc_Packet(player, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::ATTACK);
+		if (m_pObjectPool->m_cumPlayerPool[player]->ExistList(Animal_Id))
+			CPacketMgr::Send_Animation_Packet(player, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::ATTACK);
 	}
 
 	float fTarget_CurrHp = m_pObjectPool->m_cumPlayerPool[uiTarget]->GetHealth();
@@ -37,36 +36,73 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT uiTarget)
 
 	if (fTarget_AfterHp <= 0.f)
 	{
+		// - Player
+		fTarget_AfterHp = 0.f;
+		m_pObjectPool->m_cumPlayerPool[uiTarget]->SetHealth(fTarget_AfterHp);
+
+		// - Animal
+
+		concurrent_unordered_set<USHORT>	loginList;
+		CopyBeforeLoginList(loginList);
+		concurrent_unordered_set<USHORT>	rangeList;
+		InRangePlayer(loginList, rangeList, Animal_Id);
+
+		if (rangeList.empty())
+		{
+			m_pObjectPool->m_cumAnimalPool[Animal_Id]->SetWakeUp(false);
+			m_pObjectPool->m_cumAnimalPool[Animal_Id]->SetTarget(NO_TARGET);
+			return;
+		}
+
+		USHORT NewTarget = MAX_USER;
+		float fCurrDistance = 9999;
+		for (auto& player : rangeList)
+		{
+			float d = Distance(player, Animal_Id);
+			if (fCurrDistance >= d) {
+				NewTarget = player;
+				fCurrDistance = d;
+			}
+			CPacketMgr::Send_Animation_Packet(player, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::ATTACK);
+		}
+
+		m_pObjectPool->m_cumAnimalPool[Animal_Id]->SetTarget(NewTarget);
+
+		if (PlayerAndAnimal_CollisionSphere(NewTarget, Animal_Id, 0.2f))
+		{
+			PushEvent_Animal_Attack(Animal_Id, NewTarget);
+		}
+		else
+		{
+			PushEvent_Animal_Follow(Animal_Id, NewTarget);
+		}
 	}
 	else
 	{
+		// - Player
+		m_pObjectPool->m_cumPlayerPool[uiTarget]->SetHealth(fTarget_AfterHp);
+		CPacketMgr::Send_Status_Player_Packet(uiTarget, uiTarget);
+
+		// - Animal
 		if (PlayerAndAnimal_CollisionSphere(uiTarget, Animal_Id, 0.2f))
 		{
 			PushEvent_Animal_Attack(Animal_Id, uiTarget);
 		}
 		else
 		{
-			FollowEvent(Animal_Id, uiTarget);
+			PushEvent_Animal_Follow(Animal_Id, uiTarget);
 		}
 	}
 }
 
 void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 {
+	bool bWakeUp = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetWakeUp();
+	if (!bWakeUp) return;
+
 	char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
-	/*concurrent_unordered_set<USHORT> loginList;
-
-	CopyBeforeLoginList(loginList);*/
-
-	/*USHORT AnimalID = AnimalId + BEGIN_ANIMAL;
-	for (auto& player : loginList) {
-		if (m_pObjectPool->m_cumPlayerPool[player]->ExistList(AnimalID))
-			CPacketMgr::Send_Animation_Npc_Packet(player, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
-	}*/
-
-	//UINT Target_State = m_pObjectPool->m_cumPlayerPool[uiTarget]->GetState();
 	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
 	Vec3 vTargetPos = m_pObjectPool->m_cumPlayerPool[uiTarget]->GetLocalPos();
 	float fAnimalSpeed = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetSpeed();
@@ -75,39 +111,26 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
 	vDir.y = 0.f;
 
-	vAnimalPos = vDir * fAnimalSpeed * 0.02f;
+	vAnimalPos = vDir * fAnimalSpeed * 0.05f;
 
 
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalPos(vAnimalPos);
 
 	concurrent_unordered_set<USHORT> loginList;
-	concurrent_unordered_set<USHORT> rangeList;
 	CopyBeforeLoginList(loginList);
+	concurrent_unordered_set<USHORT> rangeList;
+	InRangePlayer(loginList, rangeList, AnimalId);
 
-	for (auto& au : loginList)
+	for (auto& au : rangeList)
 	{
-		CPacketMgr::Send_Pos_Npc_Packet(au, AnimalId);
-		CPacketMgr::Send_Animation_Npc_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
+		CPacketMgr::Send_Pos_Packet(au, AnimalId);
+		CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
 	}
 
-	if (PlayerAndAnimal_CollisionSphere(uiTarget, AnimalId, 0.2f))
-	{
-		PushEvent_Animal_Attack(AnimalId, uiTarget);
-	}
-	else
-	{
-		InRangePlayer(loginList, rangeList, AnimalId);
+	// 따라가기 후에 행동
 
-		if (rangeList.empty())
-		{
-			PushEvent_Animal_Idle(AnimalId, NO_TARGET);
-		}
-		else
-		{
-			PushEvent_Animal_Follow(AnimalId, NO_TARGET);
-		}
-	}
+	PushEvent_Animal_Behavior(AnimalId, uiTarget);
 }
 
 void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
@@ -141,8 +164,8 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
 	{
 		bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
 		if (!bConnect) continue;
-		CPacketMgr::Send_Pos_Npc_Packet(au, AnimalId);
-		CPacketMgr::Send_Animation_Npc_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
+		CPacketMgr::Send_Pos_Packet(au, AnimalId);
+		CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
 	}
 
 	InRangePlayer(loginList, rangeList, AnimalId);
@@ -162,28 +185,17 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
 }
 
 void CMonsterProcess::IdleEvent(USHORT AnimalId)
-{
-	char Animal_State = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
-	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
-
-	concurrent_unordered_set<USHORT> loginList;
-
-	CopyBeforeLoginList(loginList);
-
-	USHORT AnimalID = AnimalId + BEGIN_ANIMAL;
-	for (auto& player : loginList) {
-		if (m_pObjectPool->m_cumPlayerPool[player]->ExistList(AnimalID))
-			CPacketMgr::Send_Animation_Npc_Packet(player, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::IDLE);
-	}
-	
+{	
 	concurrent_unordered_set<USHORT> login_list;
 	concurrent_unordered_set<USHORT> range_list;
+
+
 
 	CopyBeforeLoginList(login_list);
 	InRangePlayer(login_list, range_list, AnimalId);
 
 	if (range_list.empty()) {
-		PushEvent_Animal_Idle(AnimalId, NO_TARGET);
+		m_pObjectPool->m_cumAnimalPool[AnimalId]->SetWakeUp(false);
 		return;
 	}
 	else // 몬스터 범위 내에 있을 경우 타겟을 찾는다.
@@ -193,24 +205,26 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 			bool isConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
 			if (!isConnect)continue;
 			m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(au);
-			break;
+			CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::IDLE);
 		}
-
 	}
 
 	USHORT target_id = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetTarget();
 	BEHAVIOR_TYPE eType = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetType();
 	// 만약 타겟이 범위내에 있다면?
-	if (eType == BEHAVIOR_TYPE::B_EVASION)
+	switch (eType) 
+	{
+	case BEHAVIOR_TYPE::B_EVASION:
 	{
 		PushEvent_Animal_Evastion(AnimalId, target_id);
-
+		break;
 	}
-	else if (eType == BEHAVIOR_TYPE::B_PASSIVE)
+	case BEHAVIOR_TYPE::B_PASSIVE:
 	{
 		PushEvent_Animal_Idle(AnimalId, target_id);
-	}
-	else if (eType == BEHAVIOR_TYPE::B_WARLIKE)
+		break;
+	}	
+	case BEHAVIOR_TYPE::B_WARLIKE:
 	{
 		if (PlayerAndAnimal_CollisionSphere(target_id, AnimalId, 0.2f))
 		{
@@ -220,6 +234,8 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 		{
 			PushEvent_Animal_Follow(AnimalId, target_id);
 		}
+		break;
+	}
 	}
 }
 
@@ -262,7 +278,7 @@ void CMonsterProcess::RespawnEvent(USHORT uiMonster)
 	for (auto& au : range_list) {
 		bool isConnect = CProcess::m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
 		if (!isConnect) continue;
-		CPacketMgr::GetInst()->Send_Put_Npc_Packet(au, uiMonster);
+		CPacketMgr::GetInst()->Send_Pos_Packet(au, uiMonster);
 	}
 }
 
@@ -312,4 +328,14 @@ void CMonsterProcess::InRangePlayer(concurrent_unordered_set<USHORT>& cusLogin, 
 		if(ObjectRangeCheck(player_pos, monster_pos, PLAYER_VIEW_RANGE))
 			cusList.insert(au);
 	}
+}
+
+float CMonsterProcess::Distance(USHORT first, USHORT second)
+{
+	Vec3 vFirst = m_pObjectPool->m_cumPlayerPool[first]->GetLocalPos();
+	Vec3 vSecond = m_pObjectPool->m_cumAnimalPool[second]->GetLocalPos();
+
+	float fDistance = sqrtf(powf(vSecond.x - vFirst.x, 2) + powf(vSecond.z - vSecond.z, 2));
+
+	return fDistance;
 }

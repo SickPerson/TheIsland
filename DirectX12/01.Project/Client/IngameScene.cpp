@@ -1499,17 +1499,13 @@ void CIngameScene::PlayerAnimationUpdate(USHORT usId, UINT uiType)
 	}
 }
 
-
-void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
+void CIngameScene::AnimalUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 {
-	auto p = m_mapAnimals.find(uiId);
+	auto p = m_mapAnimals.find(usId);
 	if (p == m_mapAnimals.end())
-	{
-		// 积己
+	{// 积己
 		CGameObject* pObject = NULL;
-		switch ((ANIMAL_TYPE)eType)
-		{
-		case A_BEAR:
+		if (usId < BEGIN_ANIMAL + ANIMAL_BEAR)
 		{
 			// 磅
 			Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
@@ -1529,7 +1525,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 				tStatus.fDamage = 20.f;
 				tStatus.fSpeed = 150.f;
 				tStatus.fBehaviorTime = 4.f;
-				tStatus.uiAnimalId = uiId;
+				tStatus.uiAnimalId = usId;
 				tStatus.eType = BEHAVIOR_TYPE::B_WARLIKE;
 				tStatus.eKind = ANIMAL_TYPE::A_BEAR;
 
@@ -1547,8 +1543,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 			pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
 		}
-		break;
-		case A_BOAR:
+		else if (usId < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR)
 		{
 			Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
 			pObject = pBoarTex->Instantiate();
@@ -1567,7 +1562,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 				tStatus.fDamage = 20.f;
 				tStatus.fSpeed = 150.f;
 				tStatus.fBehaviorTime = 4.f;
-				tStatus.uiAnimalId = uiId;
+				tStatus.uiAnimalId = usId;
 				tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
 				tStatus.eKind = ANIMAL_TYPE::A_BOAR;
 
@@ -1584,8 +1579,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 			pObject->Transform()->SetLocalRot(Vec3(-XM_PI / 2.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 		}
-		break;
-		case A_DEER:
+		else if (usId < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER)
 		{
 			Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
 			pObject = pDeerTex->Instantiate();
@@ -1606,7 +1600,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 				tStatus.fDamage = 0.f;
 				tStatus.fSpeed = 250.f;
 				tStatus.fBehaviorTime = 4.f;
-				tStatus.uiAnimalId = uiId;
+				tStatus.uiAnimalId = usId;
 				tStatus.eType = BEHAVIOR_TYPE::B_EVASION;
 				tStatus.eKind = ANIMAL_TYPE::A_DEER;
 
@@ -1623,8 +1617,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 			pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(2.f, 2.f, 2.f));
 		}
-		break;
-		case A_WOLF:
+		else if (usId < END_ANIMAL)
 		{
 			Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
 			pObject = pWolfTex->Instantiate();
@@ -1643,7 +1636,7 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 				tStatus.fDamage = 20.f;
 				tStatus.fSpeed = 200.f;
 				tStatus.fBehaviorTime = 4.f;
-				tStatus.uiAnimalId = uiId;
+				tStatus.uiAnimalId = usId;
 				tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
 				tStatus.eKind = ANIMAL_TYPE::A_WOLF;
 
@@ -1656,27 +1649,25 @@ void CIngameScene::AnimalUpdate(USHORT uiId, Vec3 vPos, Vec3 vRot, char eType)
 			pObject->MeshRender()->SetDynamicShadow(true);
 			pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
+
+			CAnimalScript* pAnimalScript = pObject->GetScript<CAnimalScript>();
+			pAnimalScript->SetAnimation(pObject->Animator3D());
+			pAnimalScript->SetIndex(usId);
+
+			m_pScene->FindLayer(L"Animal")->AddGameObject(pObject);
+
+			float fHeight = CNaviMgr::GetInst()->GetY(vPos);
+			pObject->Transform()->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
+			pObject->Transform()->SetLocalRot(vRot);
+			m_mapAnimals.insert(make_pair(usId, pObject));
 		}
-		break;
-		}
-
-		CAnimalScript* pAnimalScript = pObject->GetScript<CAnimalScript>();
-		pAnimalScript->SetAnimation(pObject->Animator3D());
-		pAnimalScript->SetIndex(uiId);
-
-		m_pScene->FindLayer(L"Animal")->AddGameObject(pObject);
-
-		float fHeight = CNaviMgr::GetInst()->GetY( vPos );
-		pObject->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
-		pObject->Transform()->SetLocalRot( vRot );
-		m_mapAnimals.insert(make_pair(uiId, pObject));
 	}
 	// 诀单捞飘
 	else
 	{
 		float fHeight = CNaviMgr::GetInst()->GetY( vPos );
-		m_mapAnimals[uiId]->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
-		m_mapAnimals[uiId]->Transform()->SetLocalRot( vRot );
+		m_mapAnimals[usId]->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
+		m_mapAnimals[usId]->Transform()->SetLocalRot( vRot );
 	}
 }
 

@@ -14,12 +14,18 @@ private:
 
 public:
 	void BindMonsterUpdate() {
-		m_fpMonsterUpdate[AUT_ATTACK] = [&](USHORT uiMonster, USHORT uiTarget) {this->AttackEvent(uiMonster, uiTarget); };
-		m_fpMonsterUpdate[AUT_FOLLOW] = [&](USHORT uiMonster, USHORT uiTarget) {this->FollowEvent(uiMonster, uiTarget); };
-		m_fpMonsterUpdate[AUT_EVASION] = [&](USHORT uiMonster, USHORT uiTarget) {EvastionEvent(uiMonster, uiTarget); };
-		m_fpMonsterUpdate[AUT_IDLE] = [&](USHORT uiMonster, USHORT uiTarget) {this->IdleEvent(uiMonster); };
-		m_fpMonsterUpdate[AUT_DIE] = [&](USHORT uiMonster, USHORT uiTarget) {this->DieEvent(uiMonster); };
-		m_fpMonsterUpdate[AUT_DAMAGE] = [&](USHORT AnimalId, USHORT playerId) {DamageEvent(AnimalId, playerId); };
+		m_fpMonsterUpdate[AUT_ATTACK] = [&](USHORT AnimalId, USHORT uiTarget) {
+			AttackEvent(AnimalId, uiTarget); };
+		m_fpMonsterUpdate[AUT_FOLLOW] = [&](USHORT AnimalId, USHORT uiTarget) {
+			FollowEvent(AnimalId, uiTarget); };
+		m_fpMonsterUpdate[AUT_EVASION] = [&](USHORT AnimalId, USHORT uiTarget) {
+			EvastionEvent(AnimalId, uiTarget); };
+		m_fpMonsterUpdate[AUT_IDLE] = [&](USHORT AnimalId, USHORT uiTarget) {
+			IdleEvent(AnimalId); };
+		m_fpMonsterUpdate[AUT_DIE] = [&](USHORT AnimalId, USHORT uiTarget) {
+			this->DieEvent(AnimalId); };
+		m_fpMonsterUpdate[AUT_DAMAGE] = [&](USHORT AnimalId, USHORT playerId) {
+			DamageEvent(AnimalId, playerId); };
 	}
 	void BindMonsterDamaged() {
 
@@ -42,5 +48,6 @@ public:
 
 public:
 	void InRangePlayer(concurrent_unordered_set<USHORT>& cusLogin, concurrent_unordered_set<USHORT>& cusList, USHORT uiMonster);
+	float Distance(USHORT first, USHORT second);
 };
 

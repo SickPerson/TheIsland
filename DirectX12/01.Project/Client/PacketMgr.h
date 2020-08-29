@@ -18,7 +18,7 @@ public:
 	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }
 
 public:
-	void Send_Login_Packet(wstring strID);
+	void Send_Login_Packet(string strID);
 	void Send_Move_Packet(Vec3 vWorldDir, bool bRun);
 	void Send_Chat_Packet(string message);
 	void Send_Logout_Packet();
