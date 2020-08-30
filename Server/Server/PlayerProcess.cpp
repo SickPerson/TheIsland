@@ -130,10 +130,19 @@ void CPlayerProcess::PlayerMove(USHORT playerId, char * packet)
 
 void CPlayerProcess::PlayerLogout(USHORT playerId)
 {
+	auto& User = m_pObjectPool->m_cumPlayerPool[playerId];
+
 	// 이미 Disconnect인 상태일 경우
-	if (!m_pObjectPool->m_cumPlayerPool[playerId]->GetConnect())
+	if (!User->GetConnect())
 		return;
 	// 아직 Diconnect인 상태가 아닐 경우
+#ifdef DB_ON
+	DB_Event ev;
+	ev.fHealth = User->GetHealth();
+	ev.fHungry = User->GetHungry();
+	ev.fThirst = User->GetThirst();
+#endif // DB_ON
+
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetConnect(false);
 	string name = m_pObjectPool->m_cumPlayerPool[playerId]->GetWcID();
 	cout << name << " 님이 로그아웃 하셨습니다. " << endl;
@@ -221,6 +230,7 @@ void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
 
 void CPlayerProcess::PlayerUseItem(USHORT playerId, char * packet)
 {
+	auto& User = m_pObjectPool->m_cumPlayerPool[playerId];
 	cs_use_item_packet* use_item_packet = reinterpret_cast<cs_use_item_packet*>(packet);
 	char eType = use_item_packet->eType;
 
@@ -257,194 +267,24 @@ void CPlayerProcess::PlayerUseItem(USHORT playerId, char * packet)
 		fValue = 0;
 		break;
 	}
-}
 
-bool CPlayerProcess::CollisionSphere(USHORT playerId, USHORT otherId, UINT uiColType, float fOffset)
-{
-	return false;
-}
-
-void CPlayerProcess::PlayerCollision(USHORT playerId, char * packet)
-{
-	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
-	UINT	uiType = collision_packet->collision_uitype;
-	USHORT	collision_id = collision_packet->collision_id;
-	bool	bRun = collision_packet->bRun;
-	if ((UINT)COLLISION_TYPE::ANIMAL == uiType)
-	{
-		PlayerCollisionAnimal(playerId, collision_id, bRun);
-		//PlayerCollisionAnimal(playerId, packet);
-	}
-	else if ((UINT)COLLISION_TYPE::NATURAL == uiType)
-	{
-		PlayerCollisionNatural(playerId, collision_id, bRun);
-		//PlayerCollisionNatural(playerId, packet);
-	}
-	else if ((UINT)COLLISION_TYPE::NATURAL == uiType)
-	{
-		//PlayerCollisionHouse(playerId, collision_id);
-		//PlayerCollisionHouse(playerId, packet);
-	}
-	else
-		return;
-}
-
-void CPlayerProcess::PlayerCollisionAnimal(USHORT playerId, USHORT AnimalId, bool bRun)
-{
-	if (PlayerAndAnimal_CollisionSphere(playerId, AnimalId, 0.2f)) {
-		Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-		Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
-		float fPlayerSpeed = m_pObjectPool->m_cumPlayerPool[playerId]->GetSpeed();
-		Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
-		vDir.y = 0.f;
-
-		if (bRun)
-		{
-			vPlayerPos += vDir * fPlayerSpeed * 0.02f * 5.f;
-		}
-		else
-		{
-			vPlayerPos += vDir * fPlayerSpeed * 0.02f;
-		}
-
-		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
-
-		UpdateViewList(playerId);
-	}
-	else
-		return;
-}
-
-void CPlayerProcess::PlayerCollisionNatural(USHORT playerId, USHORT NaturalId, bool bRun)
-{
-	if (PlayerAndAnimal_CollisionSphere(playerId, NaturalId, 0.2f))
-	{
-		Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[NaturalId]->GetLocalPos();
-		Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-		float fPlayerSpeed = m_pObjectPool->m_cumPlayerPool[playerId]->GetSpeed();
-		Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
-		vDir.y = 0.f;
-
-		if (bRun)
-		{
-			vPlayerPos += vDir * fPlayerSpeed * 0.02f * 5.f;
-		}
-		else
-		{
-			vPlayerPos += vDir * fPlayerSpeed * 0.02f;
-		}
-
-		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
-
-		UpdateViewList(playerId);
-	}
-	else
-		return;
-}
-
-void CPlayerProcess::PlayerCollisionHouse(USHORT playerId, USHORT HouseId, float fHouseHeight)
-{
-	HOUSING_TYPE eType = m_pObjectPool->m_cumHousingPool[HouseId]->GetType();
-	if (eType >= HOUSING_TYPE::HOUSING_FOUNDATION && eType < HOUSING_TYPE::HOUSING_END)
-	{
-		bool bCollision = PlayerAndHouse_Collision(playerId, HouseId, eType);
-		if (bCollision)
-		{
-			Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-			Vec3 vBuildPos = m_pObjectPool->m_cumHousingPool[playerId]->GetLocalPos();
-
-			float fDiff = vBuildPos.y - vPlayerPos.y;
-			if (fDiff < 30.f && (eType == HOUSING_FOUNDATION || eType == HOUSING_FLOOR))
-			{
-				if (fHouseHeight < vBuildPos.y)
-				{
-
-				}
-			}
+	if (eType > ITEM_FOOD && eType < ITEM_FOOD_END) {
+		if (eType == ITEM_MEAT)
+			User->SetIncreaseHungry(fValue);
+		else {
+			User->SetIncreaseHungry(fValue);
 		}
 	}
-	else
-		return;
+	else if (eType > ITEM_DRINK && eType < ITEM_DRINK_END) {
+		if (eType != ITEM_EMPTY_BOTTLE) {
+			User->SetIncreaseThirst(fValue);
+		}
+	}
+	else if (eType > ITEM_HEAL && eType < ITEM_HEAL_END) {
+		User->SetIncreaseHealth(fValue);
+	}
+	CPacketMgr::Send_Status_Player_Packet(playerId);
 }
-
-//void CPlayerProcess::PlayerCollisionAnimal(USHORT playerId, char * packet)
-//{
-//	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
-//
-//	USHORT Animal_Id = collision_packet->collision_id;
-//	bool bRun = collision_packet->bRun;
-//
-//	if (PlayerAndAnimal_CollisionSphere(playerId, Animal_Id, 0.2f))
-//	{
-//		Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[Animal_Id]->GetLocalPos();
-//		Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-//		float fPlayerSpeed = m_pObjectPool->m_cumPlayerPool[playerId]->GetSpeed();
-//		Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
-//		vDir.y = 0.f;
-//
-//		if (bRun)
-//		{
-//			vPlayerPos += vDir * fPlayerSpeed * 0.02f * 5.f;
-//		}
-//		else
-//		{
-//			vPlayerPos += vDir * fPlayerSpeed * 0.02f;
-//		}
-//
-//		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
-//
-//		UpdateViewList(playerId);
-//	}
-//	else
-//		return;
-//}
-
-//void CPlayerProcess::PlayerCollisionNatural(USHORT playerId, char * packet)
-//{
-//	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
-//
-//	USHORT naturalId = collision_packet->id;
-//	bool bRun = collision_packet->bRun;
-//
-//	if (PlayerAndAnimal_CollisionSphere(playerId, naturalId, 0.2f))
-//	{
-//		Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[naturalId]->GetLocalPos();
-//		Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-//		float fPlayerSpeed = m_pObjectPool->m_cumPlayerPool[playerId]->GetSpeed();
-//		Vec3 vDir = XMVector3Normalize(vPlayerPos - vAnimalPos);
-//		vDir.y = 0.f;
-//
-//		if (bRun)
-//		{
-//			vPlayerPos += vDir * fPlayerSpeed * 0.02f * 5.f;
-//		}
-//		else
-//		{
-//			vPlayerPos += vDir * fPlayerSpeed * 0.02f;
-//		}
-//
-//		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vPlayerPos);
-//
-//		UpdateViewList(playerId);
-//	}
-//}
-
-//void CPlayerProcess::PlayerCollisionHouse(USHORT playerId, char * packet)
-//{
-//	cs_collision_packet* collision_packet = reinterpret_cast<cs_collision_packet*>(packet);
-//
-//	USHORT houseId = collision_packet->id;
-//	UINT uiType = m_pObjectPool->m_cumHousingPool[houseId]->GetType();
-//
-//	if (uiType >= HOUSING_TYPE::HOUSING_FOUNDATION && uiType < HOUSING_TYPE::HOUSING_END)
-//	{
-//		bool bCollision = PlayerAndHouse_Collision(playerId, houseId, uiType);
-//		if (bCollision)
-//		{
-//
-//		}
-//	}
-//}
 
 void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 {
@@ -557,15 +397,7 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 			{
 				au.second->SetWakeUp(true);
 
-				// Collision 재확인
-				if (PlayerAndAnimal_CollisionSphere(user, au.first))
-				{
-					PushEvent_Animal_Behavior(au.first, playerId);
-				}
-				else
-				{
-					PushEvent_Animal_Idle(au.first, NO_TARGET);
-				}
+				PushEvent_Animal_Behavior(au.first, playerId);
 			}
 			CPacketMgr::Send_Pos_Packet(playerId, au.first);
 		}
@@ -668,11 +500,8 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 				bool bWakeUp = m_pObjectPool->m_cumAnimalPool[after]->GetWakeUp();
 				if (!bWakeUp)
 				{
-					if (PlayerAndAnimal_CollisionSphere(user, after))
-					{
-						m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
-						PushEvent_Animal_Behavior(user, after);
-					}
+					m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
+					PushEvent_Animal_Behavior(user, after);
 
 				}
 				CPacketMgr::Send_Pos_Packet(user, after);
@@ -680,13 +509,17 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 		}
 		else // 기존의 ViewList 인 경우
 		{
-			if (after < MAX_USER)
-			{
+			if (after < MAX_USER){
 				CPacketMgr::Send_Pos_Packet(user, after);
 				CPacketMgr::Send_Pos_Packet(after, user);
 			}
-			else
-			{
+			else {
+				bool bWakeUp = m_pObjectPool->m_cumAnimalPool[after]->GetWakeUp();
+				if (!bWakeUp)
+				{
+					m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
+					PushEvent_Animal_Behavior(user, after);
+				}
 			}
 		}
 	}

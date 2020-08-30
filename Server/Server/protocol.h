@@ -162,7 +162,6 @@ struct sc_death_player_packet {
 struct sc_status_player_packet{
 	char size;
 	char type;
-	USHORT id;
 
 	float	fHealth;
 	float	fThrist;

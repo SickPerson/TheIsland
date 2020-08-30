@@ -70,6 +70,12 @@ void CMonster::SetDir(Vec3 & vDir)
 	m_vMoveDir = vDir;
 }
 
+void CMonster::SetPrevPos(Vec3 & vPrevPos)
+{
+	unique_lock<shared_mutex>	lock(m_smAnimalSharedMutex);
+	m_vPrevPos = vPrevPos;
+}
+
 const tAnimalStatus & CMonster::GetAnimalStatus()
 {
 	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
@@ -122,4 +128,10 @@ const Vec3 & CMonster::GetDir()
 {
 	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_vMoveDir;
+}
+
+const Vec3 & CMonster::GetPrevPos()
+{
+	shared_lock<shared_mutex>	lock(m_smAnimalSharedMutex);
+	return m_vPrevPos;
 }

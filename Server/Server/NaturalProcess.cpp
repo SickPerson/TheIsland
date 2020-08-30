@@ -83,9 +83,9 @@ void CNaturalProcess::DamageEvent(USHORT NaturalId, USHORT PlayerId)
 		return;
 
 	float fHealth = m_pObjectPool->m_cumNaturalPool[NaturalId]->GetHealth();
-	float fDamage = m_pObjectPool->m_cumPlayerPool[PlayerId]->GetDamage();
+	//float fDamage = m_pObjectPool->m_cumPlayerPool[PlayerId]->GetDamage();
 
-	fHealth -= fDamage;
+	//fHealth -= fDamage;
 
 	if (fHealth <= 0.f)
 	{

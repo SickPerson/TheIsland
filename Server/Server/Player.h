@@ -8,15 +8,18 @@ public:
 	virtual ~CPlayer();
 
 private:
+	SOCKET			m_sSocket;
+	OVER_EX			m_over;
+	bool			m_bConnect;
+	int				m_iPrevsize;
+	int				m_iCursize;
+
 	int				m_dbNum;
 	USHORT			m_usID;
 	char			m_ID[MAX_STR_LEN];
+
 	tPlayerStatus	m_tPlayerStatus;
-	bool	m_bConnect;
-	SOCKET			m_sSocket;
-	OVER_EX			m_over;
-	int				m_iPrevsize;
-	int				m_iCursize;
+	float			m_fArmor;
 
 private:
 	concurrent_unordered_set<USHORT> m_cusViewList;
@@ -33,7 +36,11 @@ public:
 	void SetHungry(float& fHungry);
 	void SetThirst(float& fThirst);
 	void SetSpeed(float& fSpeed);
-	void SetDamage(float& fDamage);
+	void SetArmor(float& fArmor);
+
+	void SetIncreaseHealth(float& fAmount);
+	void SetIncreaseHungry(float& fAmount);
+	void SetIncreaseThirst(float& fAmount);
 
 	void SetNumID(USHORT& numID);
 	void SetWcID(char* wcID);
@@ -47,7 +54,7 @@ public:
 	float&	GetHungry();
 	float&	GetThirst();
 	float&	GetSpeed();
-	float&	GetDamage();
+	float&	GetArmor();
 
 	const USHORT&	GetNumID();
 	const char*	GetWcID();

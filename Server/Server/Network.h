@@ -37,7 +37,6 @@ private:
 
 private:
 	USHORT GetUserID();
-	//volatile USHORT m_UserID;
 
 public:
 	void Initialize();

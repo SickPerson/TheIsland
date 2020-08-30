@@ -13,24 +13,25 @@ CMonsterProcess::~CMonsterProcess()
 {
 }
 
-void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT uiTarget)
+void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 {
-	char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[Animal_Id]->GetState();
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];
+	auto& Target = m_pObjectPool->m_cumPlayerPool[usTarget];
+
+	char Animal_State = Animal->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
 	concurrent_unordered_set<USHORT> loginList;
-
 	CopyBeforeLoginList(loginList);
-
 	for (auto& player : loginList) {
-		if (m_pObjectPool->m_cumPlayerPool[player]->ExistList(Animal_Id))
+		if (Target->ExistList(Animal_Id))
 			CPacketMgr::Send_Animation_Packet(player, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::ATTACK);
 	}
 
-	float fTarget_CurrHp = m_pObjectPool->m_cumPlayerPool[uiTarget]->GetHealth();
+	float fTarget_CurrHp = Target->GetHealth();
 	float fTarget_AfterHp = fTarget_CurrHp;
 
-	float fAnimalDamage = m_pObjectPool->m_cumAnimalPool[Animal_Id]->GetDamage();
+	float fAnimalDamage = Animal->GetDamage();
 
 	fTarget_AfterHp -= fAnimalDamage;
 
@@ -38,64 +39,31 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT uiTarget)
 	{
 		// - Player
 		fTarget_AfterHp = 0.f;
-		m_pObjectPool->m_cumPlayerPool[uiTarget]->SetHealth(fTarget_AfterHp);
+		Target->SetHealth(fTarget_AfterHp);
 
 		// - Animal
-
-		concurrent_unordered_set<USHORT>	loginList;
-		CopyBeforeLoginList(loginList);
-		concurrent_unordered_set<USHORT>	rangeList;
-		InRangePlayer(loginList, rangeList, Animal_Id);
-
-		if (rangeList.empty())
-		{
-			m_pObjectPool->m_cumAnimalPool[Animal_Id]->SetWakeUp(false);
-			m_pObjectPool->m_cumAnimalPool[Animal_Id]->SetTarget(NO_TARGET);
+		USHORT usNewTarget = FindTarget(Animal_Id);
+		if (usNewTarget == NO_TARGET) {
+			Animal->SetWakeUp(false);
+			Animal->SetTarget(NO_TARGET);
 			return;
 		}
+		Animal->SetTarget(usNewTarget);
 
-		USHORT NewTarget = MAX_USER;
-		float fCurrDistance = 9999;
-		for (auto& player : rangeList)
-		{
-			float d = Distance(player, Animal_Id);
-			if (fCurrDistance >= d) {
-				NewTarget = player;
-				fCurrDistance = d;
-			}
-			CPacketMgr::Send_Animation_Packet(player, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::ATTACK);
-		}
-
-		m_pObjectPool->m_cumAnimalPool[Animal_Id]->SetTarget(NewTarget);
-
-		if (PlayerAndAnimal_CollisionSphere(NewTarget, Animal_Id, 0.2f))
-		{
-			PushEvent_Animal_Attack(Animal_Id, NewTarget);
-		}
-		else
-		{
-			PushEvent_Animal_Follow(Animal_Id, NewTarget);
-		}
+		PushEvent_Animal_Behavior(Animal_Id, usNewTarget);
 	}
 	else
 	{
 		// - Player
-		m_pObjectPool->m_cumPlayerPool[uiTarget]->SetHealth(fTarget_AfterHp);
-		CPacketMgr::Send_Status_Player_Packet(uiTarget, uiTarget);
+		Target->SetHealth(fTarget_AfterHp);
+		CPacketMgr::Send_Status_Player_Packet(usTarget, usTarget);
 
 		// - Animal
-		if (PlayerAndAnimal_CollisionSphere(uiTarget, Animal_Id, 0.2f))
-		{
-			PushEvent_Animal_Attack(Animal_Id, uiTarget);
-		}
-		else
-		{
-			PushEvent_Animal_Follow(Animal_Id, uiTarget);
-		}
+		PushEvent_Animal_Behavior(Animal_Id, usTarget);
 	}
 }
 
-void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
+void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 {
 	bool bWakeUp = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetWakeUp();
 	if (!bWakeUp) return;
@@ -104,9 +72,9 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
 	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
-	Vec3 vTargetPos = m_pObjectPool->m_cumPlayerPool[uiTarget]->GetLocalPos();
+	Vec3 vTargetPos = m_pObjectPool->m_cumPlayerPool[usTarget]->GetLocalPos();
 	float fAnimalSpeed = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetSpeed();
-	Vec3 vTargetRot = m_pObjectPool->m_cumPlayerPool[uiTarget]->GetLocalRot();
+	Vec3 vTargetRot = m_pObjectPool->m_cumPlayerPool[usTarget]->GetLocalRot();
 
 	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
 	vDir.y = 0.f;
@@ -132,10 +100,10 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 		CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
 	}
 
-	PushEvent_Animal_Behavior(AnimalId, uiTarget);
+	PushEvent_Animal_Behavior(AnimalId, usTarget);
 }
 
-void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
+void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 {
 	bool bWakeUp = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetWakeUp();
 	if (!bWakeUp) return;
@@ -144,7 +112,7 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
 	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
-	Vec3 vTargetPos = m_pObjectPool->m_cumPlayerPool[uiTarget]->GetLocalPos();
+	Vec3 vTargetPos = m_pObjectPool->m_cumPlayerPool[usTarget]->GetLocalPos();
 
 	float fAnimalSpeed = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetSpeed();
 	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
@@ -169,65 +137,29 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
 		CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
 	}
 
-	PushEvent_Animal_Behavior(AnimalId, uiTarget);
+	PushEvent_Animal_Behavior(AnimalId, usTarget);
 }
 
 void CMonsterProcess::IdleEvent(USHORT AnimalId)
 {	
-	bool bWakeUp = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetWakeUp();
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
+
+	bool bWakeUp = Animal->GetWakeUp();
 	if (!bWakeUp) return;
 
-	char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
+	char Animal_State = Animal->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
-	concurrent_unordered_set<USHORT> login_list;
-	concurrent_unordered_set<USHORT> range_list;
-
-	CopyBeforeLoginList(login_list);
-	InRangePlayer(login_list, range_list, AnimalId);
-
-	if (range_list.empty()) {
-		m_pObjectPool->m_cumAnimalPool[AnimalId]->SetWakeUp(false);
+	USHORT usNewTarget = FindTarget(AnimalId);
+	if (usNewTarget == NO_TARGET) {
+		Animal->SetWakeUp(false);
+		Animal->SetTarget(NO_TARGET);
 		return;
 	}
-	else // 몬스터 범위 내에 있을 경우 타겟을 찾는다.
-	{
-		for (auto& au : range_list)
-		{
-			bool isConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
-			if (!isConnect)continue;
-			m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(au);
-		}
-	}
 
-	USHORT target_id = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetTarget();
-	BEHAVIOR_TYPE eType = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetType();
-	// 만약 타겟이 범위내에 있다면?
-	switch (eType) 
-	{
-	case BEHAVIOR_TYPE::B_EVASION:
-	{
-		PushEvent_Animal_Evastion(AnimalId, target_id);
-		break;
-	}
-	case BEHAVIOR_TYPE::B_PASSIVE:
-	{
-		PushEvent_Animal_Idle(AnimalId, target_id);
-		break;
-	}	
-	case BEHAVIOR_TYPE::B_WARLIKE:
-	{
-		if (PlayerAndAnimal_CollisionSphere(target_id, AnimalId, 0.2f))
-		{
-			PushEvent_Animal_Attack(AnimalId, target_id);
-		}
-		else
-		{
-			PushEvent_Animal_Follow(AnimalId, target_id);
-		}
-		break;
-	}
-	}
+	Animal->SetTarget(usNewTarget);
+
+	PushEvent_Animal_Behavior(AnimalId, usNewTarget);
 }
 
 void CMonsterProcess::DieEvent(USHORT uiMonster)
@@ -321,12 +253,24 @@ void CMonsterProcess::InRangePlayer(concurrent_unordered_set<USHORT>& cusLogin, 
 	}
 }
 
-float CMonsterProcess::Distance(USHORT first, USHORT second)
+USHORT CMonsterProcess::FindTarget(USHORT Animal_Id)
 {
-	Vec3 vFirst = m_pObjectPool->m_cumPlayerPool[first]->GetLocalPos();
-	Vec3 vSecond = m_pObjectPool->m_cumAnimalPool[second]->GetLocalPos();
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];
 
-	float fDistance = sqrtf(powf(vSecond.x - vFirst.x, 2) + powf(vSecond.z - vSecond.z, 2));
+	concurrent_unordered_set<USHORT>	loginList;
+	CopyBeforeLoginList(loginList);
 
-	return fDistance;
+	USHORT NewTarget = NO_TARGET;
+	float fDist = PLAYER_VIEW_RANGE;
+	for (auto user : loginList) {
+		auto& Player = m_pObjectPool->m_cumPlayerPool[user];
+		if (CollisionSphere(Player, Animal)) {
+			float currDist = CalculationDistance(Player, Animal);
+			if (fDist >= currDist) {
+				fDist = currDist;
+				NewTarget = user;
+			}
+		}
+	}
+	return NewTarget;
 }

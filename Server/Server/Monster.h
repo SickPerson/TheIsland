@@ -18,6 +18,7 @@ private:
 	bool			m_bBehavior;
 	float			m_fCurrentTime;
 	Vec3			m_vMoveDir;
+	Vec3			m_vPrevPos;
 
 public:
 	shared_mutex m_smAnimalSharedMutex;
@@ -33,6 +34,7 @@ public:
 	void SetKind(ANIMAL_TYPE& eKind);
 	void SetTarget(USHORT playerId);
 	void SetDir(Vec3& vDir);
+	void SetPrevPos(Vec3& vPrevPos);
 
 public:
 	const bool& GetWakeUp();
@@ -45,5 +47,6 @@ public:
 	const ANIMAL_TYPE&	GetKind();
 	const USHORT& GetTarget();
 	const Vec3&	GetDir();
+	const Vec3& GetPrevPos();
 };
 

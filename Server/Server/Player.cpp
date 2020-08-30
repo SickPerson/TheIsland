@@ -5,7 +5,8 @@ CPlayer::CPlayer() :
 	m_sSocket(INVALID_SOCKET),
 	m_bConnect(false),
 	m_iCursize(0),
-	m_iPrevsize(0)
+	m_iPrevsize(0),
+	m_fArmor(0)
 {
 	ZeroMemory(&m_over, sizeof(OVER_EX));
 
@@ -108,10 +109,37 @@ void CPlayer::SetSpeed(float & fSpeed)
 	m_tPlayerStatus.fSpeed = fSpeed;
 }
 
-void CPlayer::SetDamage(float & fDamage)
+void CPlayer::SetArmor(float & fArmor)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
-	m_tPlayerStatus.fSpeed = fDamage;
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_fArmor = fArmor;
+}
+
+void CPlayer::SetIncreaseHealth(float & fAmount)
+{
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_tPlayerStatus.fHealth += fAmount;
+	if (m_tPlayerStatus.fHealth > 100.f) {
+		m_tPlayerStatus.fHealth = 100.f;
+	}
+}
+
+void CPlayer::SetIncreaseHungry(float & fAmount)
+{
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_tPlayerStatus.fHungry += fAmount;
+	if (m_tPlayerStatus.fHungry > 100.f) {
+		m_tPlayerStatus.fHungry = 100.f;
+	}
+}
+
+void CPlayer::SetIncreaseThirst(float & fAmount)
+{
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_tPlayerStatus.fThirst += fAmount;
+	if (m_tPlayerStatus.fThirst > 100.f) {
+		m_tPlayerStatus.fThirst = 100.f;
+	}
 }
 
 void CPlayer::SetNumID(USHORT & numID)
@@ -174,10 +202,10 @@ float & CPlayer::GetSpeed()
 	return m_tPlayerStatus.fSpeed;
 }
 
-float & CPlayer::GetDamage()
+float & CPlayer::GetArmor()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex);
-	return m_tPlayerStatus.fDamage;
+	shared_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	return m_fArmor;
 }
 
 const USHORT & CPlayer::GetNumID()

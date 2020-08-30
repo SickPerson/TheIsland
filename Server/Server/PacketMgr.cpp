@@ -139,13 +139,12 @@ void CPacketMgr::Send_Animation_Packet(USHORT User, USHORT Acter, UINT uiAnimati
 	Send_Packet(User, &packet);
 }
 
-void CPacketMgr::Send_Status_Player_Packet(USHORT playerId, USHORT OtherId)
+void CPacketMgr::Send_Status_Player_Packet(USHORT playerId)
 {
 	sc_status_player_packet packet;
 	packet.size = sizeof(sc_status_player_packet);
 	packet.type = SC_STATUS_PLAYER;
 
-	packet.id = playerId;
 	packet.fHealth = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetHealth();
 	packet.fHungry = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetHungry();
 	packet.fThrist = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetThirst();

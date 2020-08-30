@@ -19,7 +19,7 @@ public: // [ COMMON ]
 	static void Send_Animation_Packet(USHORT User, USHORT Acter, UINT uiAnimationType);
 
 public: // Player 관련 패킷
-	static void Send_Status_Player_Packet(USHORT playerId, USHORT OtherId);
+	static void Send_Status_Player_Packet(USHORT playerId);
 	static void Send_Chat_Packet(USHORT playerId, USHORT OtherId, char message[]);
 	static void Send_Death_Player_Packet(USHORT playerId);
 

@@ -48,6 +48,6 @@ public:
 
 public:
 	void InRangePlayer(concurrent_unordered_set<USHORT>& cusLogin, concurrent_unordered_set<USHORT>& cusList, USHORT uiMonster);
-	float Distance(USHORT first, USHORT second);
+	USHORT FindTarget(USHORT Animal_Id);
 };
 

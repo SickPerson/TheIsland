@@ -232,8 +232,6 @@ void CNetwork::WorkerThread()
 		}
 		if (num_byte == 0)
 		{
-			/*auto strID = CProcess::m_pPlayerPool->m_cumPlayerPool[id]->GetWcID();
-			std::cout << "[ Player: " << strID << " ] Disconnect" << std::endl;*/
 			m_pPlayerProcess->PlayerLogout(id);
 			continue;
 		}
@@ -277,6 +275,8 @@ void CNetwork::WorkerThread()
 		{
 			switch (lpover_ex->m_Status)
 			{
+			case EUT_ANIMAL_COLLISION:
+				m_pEtcProcess->Animal_Collision_Event();
 			case EUT_ROT:
 				m_pEtcProcess->Rot_Event();
 				break;

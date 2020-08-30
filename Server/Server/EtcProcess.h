@@ -9,8 +9,7 @@ public:
 	virtual ~CEtcProcess();
 
 public:
-	/*void Player_Collision_Event();
-	void Animal_Collision_Event();*/
+	void Animal_Collision_Event();
 	void Rot_Event();
 	void WeatherEvent();
 	void TimerEvent();

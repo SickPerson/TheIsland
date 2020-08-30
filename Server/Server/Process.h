@@ -33,16 +33,119 @@ public:
 	bool ObjectRangeCheck(Vec3& vFirst, Vec3& vSecond, float fDistance);
 
 public: // - Collision
-	// - Player
-	bool PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId, float fOffset = 1.f);
-	bool PlayerAndNatural_CollisionSphere(USHORT playerId, USHORT naturalId, float fOffset = 1.f);
-	bool PlayerAndHouse_Collision(USHORT playerId, USHORT houseId, char eType);
-	bool PlayerAndHouse_Collision_Door(USHORT playerId, USHORT houseId, Vec3 vOffsetScale, Vec3 vOffsetPos);
-	// - Animal
-	bool AnimalAndPlayer_CollisionSphere(USHORT AnimalId, USHORT PlayerId, float fOffset = 1.f);
-	bool AnimalAndNatural_CollisionSphere(USHORT AnimalId, USHORT NaturalId, float fOffset = 1.f);
-	bool AnimalAndHouse_Collision(USHORT AnimalId, USHORT HouseId, float fOffset = 1.f);
-	bool AnimalAndHouse_Collision_Door(USHORT AnimalId, USHORT HouseId, Vec3 vOffsetScale, Vec3 vOffsetPos);
+	template	<typename T1, typename T2>
+	bool CollisionSphere(std::pair<const USHORT, T1*> pFirst, std::pair<const USHORT, T2*> pSecond, float fOffset = 1.f)
+	{
+		Vec3 vPos1 = pFirst.second->GetLocalPos();
+		Vec3 vPos2 = pSecond.second->GetLocalPos();
+
+		Vec3 vScale1 = pFirst.second->GetLocalScale();
+		Vec3 vScale2 = pSecond.second->GetLocalScale();
+
+		Vec3 vColScale1 = pFirst.second->GetLocalScale() * fOffset;
+		Vec3 vColScale2 = pSecond.second->GetLocalScale();
+
+		float fDist = powf(vPos1.x - vPos2.x, 2) + powf(vPos1.y - vPos2.y, 2) + powf(vPos1.z - vPos2.z, 2);
+		fDist = sqrtf(fDist);
+
+		if (fDist > fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x))
+			return false;
+		return true;
+
+	}
+	template <typename T1, typename T2>
+	bool CollisionSphere(T1* pFirst, T2* pSecond, float fOffset = 1.f)
+	{
+		Vec3 vPos1 = pFirst->GetLocalPos();
+		Vec3 vPos2 = pSecond->GetLocalPos();
+
+		Vec3 vScale1 = pFirst->GetLocalScale();
+		Vec3 vScale2 = pSecond->GetLocalScale();
+
+		Vec3 vColScale1 = pFirst->GetLocalScale() * fOffset;
+		Vec3 vColScale2 = pSecond->GetLocalScale();
+
+		float fDist = powf(vPos1.x - vPos2.x, 2) + powf(vPos1.y - vPos2.y, 2) + powf(vPos1.z - vPos2.z, 2);
+		fDist = sqrtf(fDist);
+
+		if (fDist > fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x))
+			return false;
+		return true;
+
+	}
+	template <typename T1, typename T2>
+	float CalculationDistance(T1* pFirst, T2* pSecond) {
+		Vec3 vPos1 = pFirst->GetLocalPos();
+		Vec3 vPos2 = pSecond->GetLocalPos();
+
+		float fDist = powf(vPos2.z - vPos1.z, 2) + powf(vPos2.x - vPos1.x, 2);
+		fDist = sqrtf(fDist);
+
+		return fDist;
+	}
+	template	<typename T>
+	bool CollisionHouse(std::pair<const USHORT, T*> pFirst, std::pair<const USHORT, CHousing*> pSecond, char eType) {
+		Vec3 vPos1 = pFirst.second->GetLocalPos();
+		Vec3 vPos2 = pSecond.second->GetLocalPos();
+
+		Vec3 vScale1 = pFirst.second->GetLocalScale();
+		Vec3 vScale2 = pSecond.second->GetLocalScale();
+
+		Vec3 vColScale1 = pFirst.second->GetOffsetScale();
+		Vec3 vColScale2 = Vec3(1.f, 1.f, 1.f);
+
+		Vec3 vHouseOffsetScale = pSecond.second->GetOffsetScale();
+
+		switch (eType)
+		{
+		case HOUSING_FOUNDATION:
+			vColScale2 = vHouseOffsetScale;
+			break;
+		case HOUSING_WALL:
+		case HOUSING_WINDOW:
+		case HOUSING_DOOR:
+		{
+			Vec3 vRot = pSecond.second->GetLocalRot();
+			if (vRot.y != 0.f)
+			{
+				vColScale2 = Vec3(vHouseOffsetScale.z, vHouseOffsetScale.y, vHouseOffsetScale.x);
+			}
+			else
+			{
+				vColScale2 = Vec3(vHouseOffsetScale.x, vHouseOffsetScale.y, vHouseOffsetScale.z);
+			}
+		}
+		break;
+		case HOUSING_FLOOR:
+		{
+			vColScale2 = vHouseOffsetScale;
+		}
+		break;
+		default:
+			vColScale2 = vHouseOffsetScale;
+			break;
+		}
+
+		vScale1 *= vColScale1;
+		vScale2 *= vColScale2;
+
+		Vec3 vMax, vOtherMax;
+		Vec3 vMin, vOtherMin;
+
+		Vec3 vPos = pFirst.second->GetLocalPos();
+		vPos.y += 50.f;
+
+		vMax = vPos + vScale1;
+		vMin = vPos - vScale1;
+		vOtherMax = vPos1 + vScale2;
+		vOtherMin = vPos2 - vScale2;
+
+		if (vMax.x < vOtherMin.x || vMin.x > vOtherMax.x) return false;
+		if (vMax.y < vOtherMin.y || vMin.y > vOtherMax.y) return false;
+		if (vMax.z < vOtherMin.z || vMin.z > vOtherMax.z) return false;
+
+		return true;
+	}
 
 public: // Animal
 	void PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId);
@@ -135,4 +238,3 @@ public:
 		return false;
 	}
 };
-
