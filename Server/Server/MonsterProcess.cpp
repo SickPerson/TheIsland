@@ -56,7 +56,7 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 	{
 		// - Player
 		Target->SetHealth(fTarget_AfterHp);
-		CPacketMgr::Send_Status_Player_Packet(usTarget, usTarget);
+		CPacketMgr::Send_Status_Player_Packet(usTarget);
 
 		// - Animal
 		PushEvent_Animal_Behavior(Animal_Id, usTarget);
@@ -75,6 +75,8 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 	Vec3 vTargetPos = m_pObjectPool->m_cumPlayerPool[usTarget]->GetLocalPos();
 	float fAnimalSpeed = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetSpeed();
 	Vec3 vTargetRot = m_pObjectPool->m_cumPlayerPool[usTarget]->GetLocalRot();
+
+	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetPrevPos(vAnimalPos);
 
 	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
 	vDir.y = 0.f;
@@ -113,6 +115,7 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 
 	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
 	Vec3 vTargetPos = m_pObjectPool->m_cumPlayerPool[usTarget]->GetLocalPos();
+	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetPrevPos(vAnimalPos);
 
 	float fAnimalSpeed = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetSpeed();
 	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
@@ -162,22 +165,21 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 	PushEvent_Animal_Behavior(AnimalId, usNewTarget);
 }
 
-void CMonsterProcess::DieEvent(USHORT uiMonster)
+void CMonsterProcess::DieEvent(USHORT Animal_Id)
 {
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];
+	Vec3 AnimalPos = Animal->GetLocalPos();
+
 	concurrent_unordered_set<USHORT> login_list;
-	//concurrent_unordered_set<USHORT> range_list;
+	for (auto& user : login_list) {
+		Vec3 PlayerPos = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
+		if (ObjectRangeCheck(PlayerPos, AnimalPos, PLAYER_VIEW_RANGE)) {
+			CPacketMgr::Send_Animation_Packet(user, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::DIE);
+			CPacketMgr::Send_Remove_Packet(user, Animal_Id);
+		}
+	}
 
-	CopyBeforeLoginList(login_list);
-	//InRangePlayer(login_list, range_list, uiMonster);
-
-	//PushEvent_Respawn(uiMonster);
-
-	/*for (auto& au : range_list)
-	{
-		bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
-		if (!bConnect) continue;
-		CPacketMgr::GetInst()->Send_Remove_Npc_Packet(au, uiMonster);
-	}*/
+	PushEvent_Animal_Respawn(Animal_Id);
 }
 
 void CMonsterProcess::RespawnEvent(USHORT uiMonster)

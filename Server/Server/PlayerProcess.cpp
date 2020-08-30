@@ -193,21 +193,48 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(packet);
 	UINT	uiType = attack_packet->attack_uiType;
 	USHORT	attack_id = attack_packet->attack_id;
+	float	fDamage = attack_packet->fDamage;
 
 	if ((UINT)ATTACK_TYPE::ANIMAL == uiType)
 	{
-		PushEvnet_Animal_Damage(attack_id, playerId);
+		auto& Animal = m_pObjectPool->m_cumAnimalPool[attack_id];
+
+		float fHealth = Animal->GetHealth();
+
+		fHealth -= fDamage;
+
+		if (fHealth > 0.f) {
+			Animal->SetHealth(fHealth);
+		}
+		else {
+			Animal->SetWakeUp(false);
+			Animal->SetState(OST_DIE);
+			fHealth = 0.f;
+			Animal->SetHealth(fHealth);
+			PushEvent_Animal_Die(attack_id, playerId);
+		}
+
 	}
 	else if ((UINT)ATTACK_TYPE::NATURAL == uiType)
 	{
-		Update_Event ev;
-		ev.m_Do_Object = attack_id;
-		ev.m_EventType = EV_NATURAL_UPDATE;
-		ev.m_From_Object = playerId;
-		ev.m_eObjUpdate = NUT_DAMAGE;
-		ev.wakeup_time = high_resolution_clock::now();
-		PushEventQueue(ev);
+		auto& User = m_pObjectPool->m_cumPlayerPool[playerId];
+		auto& Natural = m_pObjectPool->m_cumNaturalPool[attack_id];
+
+		char eType = Natural->GetType();
+		if (eType == N_NONE)
+			return;
+		if (CollisionSphere(User, Natural, 0.2f)) {
+			float fHealth = Natural->GetHealth();
+
+			fHealth -= fDamage;
+
+			if (fHealth <= 0.f) {
+
+			}
+		}
 	}
+	else
+		return;
 }
 
 void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)

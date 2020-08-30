@@ -312,13 +312,8 @@ struct cs_attack_packet {
 	char type;
 	UINT attack_uiType;
 	USHORT attack_id;
+	float	fDamage;
 };
-//struct cs_collision_packet {
-//	char	size;
-//	char	type;
-//	USHORT id;
-//	bool	bRun;
-//};
 
 // [ Housing ] 
 struct cs_install_housing_packet

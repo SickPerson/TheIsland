@@ -23,7 +23,7 @@ public:
 		m_fpMonsterUpdate[AUT_IDLE] = [&](USHORT AnimalId, USHORT uiTarget) {
 			IdleEvent(AnimalId); };
 		m_fpMonsterUpdate[AUT_DIE] = [&](USHORT AnimalId, USHORT uiTarget) {
-			this->DieEvent(AnimalId); };
+			DieEvent(AnimalId); };
 		m_fpMonsterUpdate[AUT_DAMAGE] = [&](USHORT AnimalId, USHORT playerId) {
 			DamageEvent(AnimalId, playerId); };
 	}

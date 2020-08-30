@@ -167,7 +167,6 @@
     <ClInclude Include="PlayerProcess.h">
       <Filter>03. Process\02. Player</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="TimerMgr.h">
       <Filter>07. Util\01. TimerMgr</Filter>
     </ClInclude>
@@ -207,13 +206,18 @@
     <ClInclude Include="Objectpool.h">
       <Filter>04. ObjectPool</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Server.rc" />
+    <ClInclude Include="resource.h">
+      <Filter>99.default\00.sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl">
       <Filter>99.default\02. SimpleMath</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Server.rc">
+      <Filter>99.default\00.sources</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

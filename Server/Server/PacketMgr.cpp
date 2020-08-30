@@ -116,16 +116,9 @@ void CPacketMgr::Send_Remove_Packet(USHORT User, USHORT Acter)
 
 	if (acter < END_ANIMAL) {
 		if (CProcess::m_pObjectPool->m_cumPlayerPool[User]->ExistList(Acter)) {
+			CProcess::m_pObjectPool->m_cumPlayerPool[User]->DeleteList(Acter);
 			Send_Packet(user, &packet);
 		}
-		else {
-			if (user != acter)
-				CProcess::m_pObjectPool->m_cumPlayerPool[User]->InsertList(Acter);
-			Send_Packet(user, &packet);
-		}
-	}
-	else {
-		Send_Packet(user, &packet);
 	}
 }
 
