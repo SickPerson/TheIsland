@@ -43,8 +43,6 @@
 unsigned int CNetwork::m_usID = 0;
 CGameObject*	CNetwork::m_pPlayer;
 CGameObject*	CNetwork::m_pChat;
-concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumPlayer;
-concurrent_unordered_map<unsigned int, CGameObject*> CNetwork::m_cumAnimal;
 
 CNetwork::CNetwork()
 {
@@ -60,11 +58,13 @@ void CNetwork::BindfpPacket()
 {
 	// - Common
 	m_fpPacketProcess[SC_POS] = [&](char* packet) {Recv_Pos_Packet(packet); };
+	m_fpPacketProcess[SC_ROT] = [&](char* packet) {Recv_Rot_packet(packet); };
 	m_fpPacketProcess[SC_REMOVE] = [&](char* packet) {Recv_Remove_Packet(packet); };
 	m_fpPacketProcess[SC_ANIMATION] = [&](char* packet) {Recv_Animation_Packet(packet); };
 	// - Login
 	m_fpPacketProcess[SC_LOGIN_OK] = [&](char* packet) {Recv_Login_OK_Packet(packet); };
 	m_fpPacketProcess[SC_LOGIN_FAIL] = [&](char* packet) {Recv_Login_Fail_Packet(packet); };
+	m_fpPacketProcess[SC_FULL_SERVER] = [&](char* packet) {Recv_Full_Server_Packet(packet); };
 	m_fpPacketProcess[SC_DISCONNECT_SERVER] = [&](char* packet) {Recv_Disconnect_Server_Packet(packet); };
 	// - Player
 	m_fpPacketProcess[SC_STATUS_PLAYER] = [&](char* packet) {Recv_Status_Player_Packet(packet); };
@@ -200,6 +200,13 @@ void CNetwork::Recv_Pos_Packet(char * packet)
 void CNetwork::Recv_Rot_packet(char * packet)
 {
 	sc_rot_packet* rot_packet = reinterpret_cast<sc_rot_packet*>(packet);
+	USHORT usId = rot_packet->usId;
+	Vec3 vRot = rot_packet->vRot;
+
+	if (usId < MAX_USER)
+		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerRotUpdate(usId, vRot);
+	else if (usId < END_ANIMAL)
+		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalRotUpdate(usId, vRot);
 
 }
 void CNetwork::Recv_Remove_Packet(char * packet)
@@ -223,7 +230,7 @@ void CNetwork::Recv_Animation_Packet(char * packet)
 	else
 		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->AnimalAnimationUpdate(id, uiType);
 }
-// ============================== RECV ============================
+
 void CNetwork::Recv_Login_OK_Packet(char * packet)
 {
 	pScene = CSceneMgr::GetInst()->GetCurScene();
@@ -240,6 +247,12 @@ void CNetwork::Recv_Login_Fail_Packet(char * packet)
 {
 	sc_login_fail_packet* login_packet = reinterpret_cast<sc_login_fail_packet*>(packet);
 	cout << "Login Failed" << endl;
+}
+
+void CNetwork::Recv_Full_Server_Packet(char * packet)
+{
+	sc_full_server_packet* full_server_packet = reinterpret_cast<sc_full_server_packet*>(packet);
+	cout << "Full Server" << endl;
 }
 
 void CNetwork::Recv_Disconnect_Server_Packet(char * packet)

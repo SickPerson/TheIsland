@@ -32,9 +32,6 @@ public:
 
 	HWND	m_hWnd;
 
-	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
-	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumAnimal;
-
 public:
 	void Init(HWND hWnd);
 public:
@@ -57,6 +54,7 @@ public:
 	// - Login
 	void Recv_Login_OK_Packet(char* packet);
 	void Recv_Login_Fail_Packet(char* packet);
+	void Recv_Full_Server_Packet(char* packet);
 	void Recv_Disconnect_Server_Packet(char* packet);
 
 	// - Player
@@ -82,6 +80,4 @@ public:
 	void SetHwnd(HWND hWnd) { m_hWnd = hWnd; }
 	void SetChatObj(CGameObject* pObj) { m_pChat = pObj; }
 	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }
-	void SetOtherPlayerObj(concurrent_unordered_map<unsigned int, CGameObject*> pObjs) { m_cumPlayer = pObjs; }
-	void SetAnimalObj(concurrent_unordered_map<unsigned int, CGameObject*> pObjs) { m_cumPlayer = pObjs; }
 };

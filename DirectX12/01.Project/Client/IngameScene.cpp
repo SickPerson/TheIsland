@@ -1416,6 +1416,9 @@ void CIngameScene::PlayerRotUpdate(USHORT usId, Vec3 vRot)
 	}
 	auto p = m_mapPlayers.find(usId);
 	if (p == m_mapPlayers.end()) {
+		
+	}
+	else {
 		m_mapPlayers[usId]->Transform()->SetLocalRot(vRot);
 	}
 }
@@ -1649,25 +1652,39 @@ void CIngameScene::AnimalUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 			pObject->MeshRender()->SetDynamicShadow(true);
 			pObject->Transform()->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 			pObject->Transform()->SetLocalScale(Vec3(20.f, 20.f, 20.f));
-
-			CAnimalScript* pAnimalScript = pObject->GetScript<CAnimalScript>();
-			pAnimalScript->SetAnimation(pObject->Animator3D());
-			pAnimalScript->SetIndex(usId);
-
-			m_pScene->FindLayer(L"Animal")->AddGameObject(pObject);
-
-			float fHeight = CNaviMgr::GetInst()->GetY(vPos);
-			pObject->Transform()->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
-			pObject->Transform()->SetLocalRot(vRot);
-			m_mapAnimals.insert(make_pair(usId, pObject));
 		}
+		CAnimalScript* pAnimalScript = pObject->GetScript<CAnimalScript>();
+		pAnimalScript->SetAnimation(pObject->Animator3D());
+		pAnimalScript->SetIndex(usId);
+
+		m_pScene->FindLayer(L"Animal")->AddGameObject(pObject);
+
+		float fHeight = CNaviMgr::GetInst()->GetY(vPos);
+		pObject->Transform()->SetLocalPos(Vec3(vPos.x, fHeight, vPos.z));
+		pObject->Transform()->SetLocalRot(vRot);
+		m_mapAnimals.insert(make_pair(usId, pObject));
 	}
 	// 업데이트
 	else
 	{
 		float fHeight = CNaviMgr::GetInst()->GetY( vPos );
 		m_mapAnimals[usId]->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
+
+		cout << "Animal POS" << vPos.x << ", " << fHeight << ", " << vPos.z << endl;
 		m_mapAnimals[usId]->Transform()->SetLocalRot( vRot );
+	}
+}
+
+void CIngameScene::AnimalRotUpdate(USHORT usId, Vec3 vRot)
+{
+	auto p = m_mapAnimals.find(usId);
+	if (p == m_mapAnimals.end())
+	{
+		return;
+	}
+	else
+	{
+		m_mapAnimals[usId]->Transform()->SetLocalRot(vRot);
 	}
 }
 

@@ -63,17 +63,29 @@ void CPacketMgr::Send_Pos_Packet(USHORT User, USHORT Acter)
 	USHORT	user = User;
 	USHORT	acter = Acter;
 
-	if (acter < END_ANIMAL) {
-		if (CProcess::m_pObjectPool->m_cumPlayerPool[User]->ExistList(Acter)) {
+	
+	if (acter < MAX_USER) {
+		packet.vPos = CProcess::m_pObjectPool->m_cumPlayerPool[acter]->GetLocalPos();
+		packet.vRot = CProcess::m_pObjectPool->m_cumPlayerPool[acter]->GetLocalRot();
+		if (CProcess::m_pObjectPool->m_cumPlayerPool[user]->ExistList(Acter)) {
 			Send_Packet(user, &packet);
 		}
 		else {
-			CProcess::m_pObjectPool->m_cumPlayerPool[User]->InsertList(Acter);
+			CProcess::m_pObjectPool->m_cumPlayerPool[user]->InsertList(Acter);
 			Send_Packet(user, &packet);
 		}
 	}
-	else {
-		Send_Packet(user, &packet);
+	else if (acter < END_ANIMAL) {
+		packet.vPos = CProcess::m_pObjectPool->m_cumAnimalPool[acter]->GetLocalPos();
+		packet.vRot = CProcess::m_pObjectPool->m_cumAnimalPool[acter]->GetLocalRot();
+		cout << packet.vPos.x << packet.vPos.y << packet.vPos.z << endl;
+		if (CProcess::m_pObjectPool->m_cumPlayerPool[user]->ExistList(Acter)) {
+			Send_Packet(user, &packet);
+		}
+		else {
+			CProcess::m_pObjectPool->m_cumPlayerPool[user]->InsertList(Acter);
+			Send_Packet(user, &packet);
+		}
 	}
 }
 

@@ -99,7 +99,7 @@ public:
 	void InsertLoginList(USHORT& login_Id)
 	{
 		m_cusLoginList.insert(login_Id);
-		cout << "현재 총 접속 인원" << m_cusLoginList.size() << endl;
+		cout << "현재 총 접속 인원 : " << m_cusLoginList.size() << endl;
 	}
 	bool ExistLoginList(USHORT& login_Id)
 	{

@@ -97,7 +97,7 @@ void CEtcProcess::Rot_Event()
 		if (!bConnect) continue;
 		
 		concurrent_unordered_set<USHORT>	ViewList;
-
+		m_pObjectPool->m_cumPlayerPool[user]->CopyViewList(ViewList);
 		for (auto& other : ViewList)
 			CPacketMgr::Send_Rot_Packet(user, other);
 	}

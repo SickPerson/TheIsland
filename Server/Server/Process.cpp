@@ -1,6 +1,7 @@
 #include "Process.h"
 #include "PacketMgr.h"
 #include "TimerMgr.h"
+#include "DataBase.h"
 
 CObjectpool*	CProcess::m_pObjectPool = nullptr;
 USHORT	CProcess::m_houseNum = 0;
@@ -58,7 +59,7 @@ bool CProcess::PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId,
 	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
 	fDist = sqrtf(fDist);
 
-	if (fDist > fabsf(vPlayerScale.x * vPlayerColScale.x) + fabsf(vAnimalScale.x * vAnimalScale.x))
+	if (fDist > fabsf(vPlayerScale.x * vPlayerColScale.x) + fabsf(vAnimalScale.x * vAnimalColScale.x))
 		return false;
 
 	return true;
@@ -279,7 +280,7 @@ void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_ATTACK;
-	ev.wakeup_time = high_resolution_clock::now() + 16ms;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 
@@ -291,7 +292,7 @@ void CProcess::PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_FOLLOW;
-	ev.wakeup_time = high_resolution_clock::now() + 16ms;
+	ev.wakeup_time = high_resolution_clock::now() + 50ms;
 	PushEventQueue(ev);
 }
 
@@ -303,7 +304,7 @@ void CProcess::PushEvent_Animal_Evastion(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_EVASION;
-	ev.wakeup_time = high_resolution_clock::now() + 16ms;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 
@@ -315,7 +316,7 @@ void CProcess::PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_IDLE;
-	ev.wakeup_time = high_resolution_clock::now() + 16ms;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 
@@ -327,7 +328,7 @@ void CProcess::PushEvent_Animal_Die(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_DIE;
-	ev.wakeup_time = high_resolution_clock::now() + 16ms;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 
@@ -457,5 +458,7 @@ void CProcess::PushEvent_DB_UserSave()
 		ev.fX = vPos.x;
 		ev.fY = vPos.y;
 		ev.fZ = vPos.z;
+
+		CDataBase::GetInst()->UpdateUserInfo(ev);
 	}
 }

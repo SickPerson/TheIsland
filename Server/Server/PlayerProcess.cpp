@@ -91,7 +91,7 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 	// NO DB
 	 //Player Init
 	CPacketMgr::Send_Login_OK_Packet(playerId);
-	cout << login_packet->player_id << ": 접속 하였습니다. " << endl;
+	cout << login_packet->player_id << "님이 접속 하였습니다. " << endl;
 	Init_Player(playerId, login_packet->player_id);
 #endif // DB_ON
 
@@ -663,16 +663,12 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 				bool bWakeUp = m_pObjectPool->m_cumAnimalPool[after]->GetWakeUp();
 				if (!bWakeUp)
 				{
-					m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
-					
 					if (PlayerAndAnimal_CollisionSphere(user, after))
 					{
-						PushEvent_Animal_Behavior(after, user);
+						m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
+						PushEvent_Animal_Behavior(user, after);
 					}
-					else
-					{
-						PushEvent_Animal_Idle(after, NO_TARGET);
-					}
+
 				}
 				CPacketMgr::Send_Pos_Packet(user, after);
 			}
@@ -686,15 +682,6 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 			}
 			else
 			{
-				if (PlayerAndAnimal_CollisionSphere(user, after))
-				{
-					PushEvent_Animal_Behavior(after, user);
-				}
-				else
-				{
-					PushEvent_Animal_Idle(after, NO_TARGET);
-				}
-				CPacketMgr::Send_Pos_Packet(user, after);
 			}
 		}
 	}

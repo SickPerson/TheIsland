@@ -110,17 +110,21 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 
 	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
 	vDir.y = 0.f;
+	vAnimalPos += vDir * fAnimalSpeed * 0.05f;
 
-	vAnimalPos = vDir * fAnimalSpeed * 0.05f;
 
-
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));	
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalPos(vAnimalPos);
 
 	concurrent_unordered_set<USHORT> loginList;
 	CopyBeforeLoginList(loginList);
 	concurrent_unordered_set<USHORT> rangeList;
 	InRangePlayer(loginList, rangeList, AnimalId);
+
+	if (rangeList.empty()) {
+		m_pObjectPool->m_cumAnimalPool[AnimalId]->SetWakeUp(false);
+		return;
+	}
 
 	for (auto& au : rangeList)
 	{
@@ -128,59 +132,57 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT uiTarget)
 		CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
 	}
 
-	// 따라가기 후에 행동
-
 	PushEvent_Animal_Behavior(AnimalId, uiTarget);
 }
 
 void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT uiTarget)
 {
-	char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
-	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
+	//char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
+	//if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
-	/*concurrent_unordered_set<USHORT> loginList;
+	///*concurrent_unordered_set<USHORT> loginList;
 
-	CopyBeforeLoginList(loginList);*/
+	//CopyBeforeLoginList(loginList);*/
 
-	/*USHORT AnimalID = AnimalId + BEGIN_ANIMAL;
-	for (auto& player : loginList) {
-		if (m_pObjectPool->m_cumPlayerPool[player]->ExistList(AnimalID))
-			CPacketMgr::Send_Animation_Npc_Packet(player, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
-	}*/
+	///*USHORT AnimalID = AnimalId + BEGIN_ANIMAL;
+	//for (auto& player : loginList) {
+	//	if (m_pObjectPool->m_cumPlayerPool[player]->ExistList(AnimalID))
+	//		CPacketMgr::Send_Animation_Npc_Packet(player, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
+	//}*/
 
-	concurrent_unordered_set<USHORT> loginList;
-	concurrent_unordered_set<USHORT> rangeList;
+	//concurrent_unordered_set<USHORT> loginList;
+	//concurrent_unordered_set<USHORT> rangeList;
 
-	CopyBeforeLoginList(loginList);
+	//CopyBeforeLoginList(loginList);
 
-	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
-	Vec3 vAnimalDir = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetDir();
-	float fAnimalSpeed = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetSpeed();
+	//Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
+	//Vec3 vAnimalDir = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetDir();
+	//float fAnimalSpeed = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetSpeed();
 
-	vAnimalPos += vAnimalDir * fAnimalSpeed * 0.02f;
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalPos(vAnimalPos);
+	//vAnimalPos += vAnimalDir * fAnimalSpeed * 0.02f;
+	//m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalPos(vAnimalPos);
 
-	for (auto& au : loginList)
-	{
-		bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
-		if (!bConnect) continue;
-		CPacketMgr::Send_Pos_Packet(au, AnimalId);
-		CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
-	}
+	//for (auto& au : loginList)
+	//{
+	//	bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
+	//	if (!bConnect) continue;
+	//	CPacketMgr::Send_Pos_Packet(au, AnimalId);
+	//	CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
+	//}
 
-	InRangePlayer(loginList, rangeList, AnimalId);
+	//InRangePlayer(loginList, rangeList, AnimalId);
 
-	// 이동 후 어떻게 할것인가?
-	// 범위내에 플레이어가 없다면 IDLE
-	if (rangeList.empty())
-	{
-		PushEvent_Animal_Idle(AnimalId, NO_TARGET);
-	}
-	// 범위내에 플레이어가 있다면 다시 도망간다.
-	else
-	{
-		PushEvent_Animal_Evastion(AnimalId, uiTarget);
-	}
+	//// 이동 후 어떻게 할것인가?
+	//// 범위내에 플레이어가 없다면 IDLE
+	//if (rangeList.empty())
+	//{
+	//	PushEvent_Animal_Idle(AnimalId, NO_TARGET);
+	//}
+	//// 범위내에 플레이어가 있다면 다시 도망간다.
+	//else
+	//{
+	//	PushEvent_Animal_Evastion(AnimalId, uiTarget);
+	//}
 
 }
 
@@ -205,7 +207,6 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 			bool isConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
 			if (!isConnect)continue;
 			m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(au);
-			CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::IDLE);
 		}
 	}
 
