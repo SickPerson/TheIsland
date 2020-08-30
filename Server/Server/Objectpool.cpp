@@ -235,57 +235,41 @@ void CObjectpool::Init_NaturalPool()
 		}
 		else if (str1 == "mountainsrocks01")
 		{
-			//pObject->Collider2D()->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
-			//pObject->Collider2D()->SetOffsetScale(Vec3(350.f, 350.f, 350.f));
 			m_cumNaturalPool[i]->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
 			m_cumNaturalPool[i]->SetOffsetScale(Vec3(350.f, 350.f, 350.f));
 		}
 		else if (str1 == "mountainsrocks02")
 		{
-			//pObject->Collider2D()->SetOffsetPos(Vec3(20.f, 0.f, 0.f));
-			//pObject->Collider2D()->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
 			m_cumNaturalPool[i]->SetOffsetPos(Vec3(20.f, 0.f, 0.f));
 			m_cumNaturalPool[i]->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
 		}
 		else if (str1 == "genericcliffa")
 		{
-			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
-			//pObject->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
 			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
 			m_cumNaturalPool[i]->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
 		}
 		else if (str1 == "mountainsrocks01_a")
 		{
-			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
-			//pObject->Collider2D()->SetOffsetScale(Vec3(200.f, 200.f, 200.f));
 			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
 			m_cumNaturalPool[i]->SetOffsetScale(Vec3(200.f, 200.f, 200.f));
 		}
 		else if (str1 == "mountainsrocks01_b")
 		{
-			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, -60.f));
-			//pObject->Collider2D()->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
 			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, -60.f));
 			m_cumNaturalPool[i]->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
 		}
 		else if (str1 == "mountainsrocks01_c")
 		{
-			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
-			//pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
 			m_cumNaturalPool[i]->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 		}
 		else if (str1 == "mountainsrocks01_d")
 		{
-			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
-			//pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
 			m_cumNaturalPool[i]->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 		}
 		else
 		{
-			//pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
-			//pObject->Collider2D()->SetOffsetScale(Vec3(4.f, 4.f, 4.f));
 			m_cumNaturalPool[i]->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
 			m_cumNaturalPool[i]->SetOffsetScale(Vec3(4.f, 4.f, 4.f));
 		}

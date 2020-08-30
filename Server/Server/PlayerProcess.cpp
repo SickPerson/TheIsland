@@ -168,9 +168,14 @@ void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
 	cs_rot_packet* rot_packet = reinterpret_cast<cs_rot_packet*>(packet);
 	Vec3 vPreRot = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalRot();
 	Vec3 vCurrRot = rot_packet->vRot;
-
+	Vec3 vRight = rot_packet->vDir[0]; DIR_TYPE::RIGHT;
+	Vec3 vUp = rot_packet->vDir[1]; DIR_TYPE::UP;
+	Vec3 vFront = rot_packet->vDir[2]; DIR_TYPE::FRONT;
 	if (vPreRot != vCurrRot) {
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalRot(vCurrRot);
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalDir(DIR_TYPE::RIGHT, vRight);
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalDir(DIR_TYPE::UP, vUp);
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalDir(DIR_TYPE::FRONT, vFront);
 	}
 }
 

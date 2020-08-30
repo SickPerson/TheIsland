@@ -278,15 +278,6 @@ void CNetwork::Recv_Status_Player_Packet(char * packet)
 	//dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerStatusUpdate(fHealth, fHungry, fThrist);
 }
 
-void CNetwork::Recv_Rot_Player_packet(char * packet)
-{
-	sc_rot_player_packet*	rot_packet = reinterpret_cast<sc_rot_player_packet*>(packet);
-	USHORT id = rot_packet->id;
-	Vec3 vRot = rot_packet->vRot;
-
-	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerRotUpdate(id, vRot);
-}
-
 void CNetwork::Recv_Chat_Packet(char * packet)
 {
 	sc_chat_packet* chat_packet = reinterpret_cast<sc_chat_packet*>(packet);

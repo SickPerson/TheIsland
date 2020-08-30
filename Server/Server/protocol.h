@@ -8,9 +8,9 @@ constexpr	int	MAX_USER = 100;
 constexpr	int	NO_TARGET = 9999;
 
 constexpr	int	BEGIN_ANIMAL = MAX_USER;
-constexpr	int	ANIMAL_BEAR = 1;
+constexpr	int	ANIMAL_BEAR = 0;
 constexpr	int	ANIMAL_BOAR = 0;
-constexpr	int	ANIMAL_DEER = 0;
+constexpr	int	ANIMAL_DEER = 1;
 constexpr	int	ANIMAL_WOLF = 0;
 constexpr	int	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER + ANIMAL_WOLF;
 constexpr	int	END_ANIMAL = BEGIN_ANIMAL + MAX_ANIMAL;
@@ -169,103 +169,11 @@ struct sc_status_player_packet{
 	float	fHungry;
 };
 
-struct sc_put_player_packet {
-	char size;
-	char type;
-	USHORT id;
-
-	Vec3	vPos;
-	Vec3	vRot;
-};
-
-struct sc_pos_player_packet{
-	char size;
-	char type;
-	USHORT id;
-
-	Vec3 vPos;
-	Vec3 vRot;
-	unsigned move_time;
-};
-
-struct sc_rot_player_packet {
-	char size;
-	char type;
-	USHORT id;
-	Vec3	vRot;
-};
-
 struct sc_chat_packet {
 	char size;
 	char type;
 	char ID[MAX_STR_LEN];
 	char meesage[MAX_STR_LEN];
-};
-
-struct sc_remove_player_packet {
-	char size;
-	char type;
-	USHORT id;
-};
-
-struct sc_animation_player_packet
-{
-	char size;
-	char type;
-	USHORT id;
-	UINT animation_uiType;
-};
-
-// NPC
-struct sc_wake_up_packet{
-	char size;
-	char type;
-	USHORT id;
-};
-struct sc_put_npc_packet {
-	char size;
-	char type;
-	USHORT id;
-
-	char	eType;
-	Vec3	vPos;
-	Vec3	vRot;
-};
-
-struct sc_pos_npc_packet{
-	char size;
-	char type;
-	USHORT id;
-
-	char eType;
-	Vec3 vPos;
-	Vec3 vRot;
-};
-
-struct sc_remove_npc_packet
-{
-	char size;
-	char type;
-	USHORT id;
-};
-
-struct sc_status_npc_packet
-{
-	char size;
-	char type;
-	USHORT id;
-
-	float fHealth;
-	float fStamina;
-	float fDamage;
-
-};
-struct sc_animation_animal_packet
-{
-	char size;
-	char type;
-	USHORT id;
-	UINT	uiType;
 };
 
 // [ Housing ]
@@ -382,6 +290,7 @@ struct cs_rot_packet {
 	char size;
 	char type;
 	Vec3	vRot;
+	Vec3	vDir[3];
 };
 
 struct cs_chat_packet {
@@ -397,18 +306,6 @@ struct cs_collision_packet {
 	UINT	collision_uitype; // 0 : animal 1: natural 2: house
 	USHORT	collision_id;
 	bool	bRun;
-};
-
-struct cs_packet_chat {
-	char	size;
-	char	type;
-	wchar_t	message[MAX_STR_LEN];
-};
-
-struct cs_packet_logout {
-	char	size;
-	char	type;
-	USHORT id;
 };
 
 struct cs_attack_packet {

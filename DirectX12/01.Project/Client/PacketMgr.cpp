@@ -119,6 +119,9 @@ void CPacketMgr::Send_Rot_player_Packet()
 	packet->size = sizeof(cs_rot_packet);
 	packet->type = CS_ROT;
 	packet->vRot = m_pPlayer->Transform()->GetLocalRot();
+	packet->vDir[0] = m_pPlayer->Transform()->GetLocalDir(DIR_TYPE::RIGHT);
+	packet->vDir[1] = m_pPlayer->Transform()->GetLocalDir(DIR_TYPE::UP);
+	packet->vDir[2] = m_pPlayer->Transform()->GetLocalDir(DIR_TYPE::FRONT);
 
 	DWORD size{ 0 }, flag{ 0 };
 	m_SendWsaBuf.len = sizeof(cs_rot_packet);

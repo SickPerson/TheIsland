@@ -59,7 +59,6 @@ public:
 
 	// - Player
 	void Recv_Status_Player_Packet(char* packet);
-	void Recv_Rot_Player_packet(char* packet);
 	void Recv_Chat_Packet(char* packet);
 
 public: // Natural
