@@ -133,25 +133,6 @@ void CPacketMgr::Send_Rot_player_Packet()
 	}
 }
 
-void CPacketMgr::Send_Collision_Player_Packet(UINT ColuiType, USHORT ColId, bool bRun)
-{
-	cs_collision_packet* packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
-	packet->size = sizeof(cs_collision_packet);
-	packet->type = CS_COLLISION;
-	packet->collision_uitype = ColuiType;
-	packet->collision_id = ColId;
-	packet->bRun = bRun;
-
-	DWORD size{ 0 }, flag{ 0 };
-	m_SendWsaBuf.len = sizeof(cs_collision_packet);
-	int ret = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
-
-	if (ret != 0) {
-		int err_no = WSAGetLastError();
-		CNetwork::Err_display("Err while sending packet - ", err_no);
-	}
-}
-
 void CPacketMgr::Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale, Vec3 vOffsetPos, Vec3 vOffsetScale)
 {
 	cs_install_housing_packet* install_housing_packet = reinterpret_cast<cs_install_housing_packet*>(m_cSendBuf);
@@ -191,7 +172,7 @@ void CPacketMgr::Send_Remove_Housing_Packet(USHORT houseId)
 	}
 }
 
-void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId, float fDamage)
+void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId, char eitemType)
 {
 	cout << "Attack" << endl;
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(m_cSendBuf);
@@ -199,7 +180,7 @@ void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId, flo
 	attack_packet->type = CS_ATTACK;
 	attack_packet->attack_uiType = attackType;
 	attack_packet->attack_id = attackId;
-	attack_packet->fDamage = fDamage;
+	attack_packet->eType = eitemType;
 
 	DWORD size{ 0 }, flag{ 0 };
 	m_SendWsaBuf.len = sizeof(cs_attack_packet);
