@@ -299,20 +299,12 @@ struct cs_chat_packet {
 	char meesage[MAX_STR_LEN];
 };
 
-struct cs_collision_packet {
-	char	size;
-	char	type;
-	UINT	collision_uitype; // 0 : animal 1: natural 2: house
-	USHORT	collision_id;
-	bool	bRun;
-};
-
 struct cs_attack_packet {
 	char size;
 	char type;
 	UINT attack_uiType;
 	USHORT attack_id;
-	float	fDamage;
+	char	eType;
 };
 
 // [ Housing ] 

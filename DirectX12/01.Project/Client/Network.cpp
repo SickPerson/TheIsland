@@ -270,7 +270,6 @@ void CNetwork::Recv_Disconnect_Server_Packet(char * packet)
 void CNetwork::Recv_Status_Player_Packet(char * packet)
 {
 	sc_status_player_packet* status_player_packet = reinterpret_cast<sc_status_player_packet*>(packet);
-	USHORT player_id = status_player_packet->id;
 	float fHealth = status_player_packet->fHealth;
 	float fHungry = status_player_packet->fHungry;
 	float fThrist = status_player_packet->fThrist;

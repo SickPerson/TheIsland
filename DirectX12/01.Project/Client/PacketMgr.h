@@ -27,7 +27,7 @@ public:
 	void Send_Collision_Player_Packet(UINT ColuiType, USHORT ColId, bool bRun);
 	void Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale, Vec3 vOffsetPos, Vec3 vOffsetScale);
 	void Send_Remove_Housing_Packet(USHORT houseId);
-	void Send_Attack_Player_Packet(UINT attackType, USHORT attackId);
+	void Send_Attack_Player_Packet(UINT attackType, USHORT attackId, float fDamage);
 	void Send_Animation_Player_Packet(UINT uiAnimationType);
 	void Send_Use_Item_Packet(char eType);
 };

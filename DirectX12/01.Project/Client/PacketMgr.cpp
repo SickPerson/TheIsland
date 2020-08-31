@@ -191,7 +191,7 @@ void CPacketMgr::Send_Remove_Housing_Packet(USHORT houseId)
 	}
 }
 
-void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId)
+void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId, float fDamage)
 {
 	cout << "Attack" << endl;
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(m_cSendBuf);
@@ -199,6 +199,7 @@ void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId)
 	attack_packet->type = CS_ATTACK;
 	attack_packet->attack_uiType = attackType;
 	attack_packet->attack_id = attackId;
+	attack_packet->fDamage = fDamage;
 
 	DWORD size{ 0 }, flag{ 0 };
 	m_SendWsaBuf.len = sizeof(cs_attack_packet);

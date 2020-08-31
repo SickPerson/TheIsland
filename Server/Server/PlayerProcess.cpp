@@ -193,7 +193,11 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(packet);
 	UINT	uiType = attack_packet->attack_uiType;
 	USHORT	attack_id = attack_packet->attack_id;
-	float	fDamage = attack_packet->fDamage;
+	char	eType = attack_packet->eType;
+	float	fDamage;
+	switch (eType) {
+
+	}
 
 	if ((UINT)ATTACK_TYPE::ANIMAL == uiType)
 	{
