@@ -17,6 +17,7 @@ private:
 	DWORD	m_saved_packet_size;
 	char	m_cPacketBuf[255];
 
+	bool m_bLogin;
 	bool m_bClientClose;
 private:
 	function<void(char*)> m_fpPacketProcess[SC_END];
@@ -30,9 +31,6 @@ public:
 	static CGameObject*	m_pChat;
 
 	HWND	m_hWnd;
-
-	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumPlayer;
-	static concurrent_unordered_map<unsigned int, CGameObject*> m_cumAnimal;
 
 public:
 	void Init(HWND hWnd);
@@ -48,26 +46,20 @@ public:
 	void ProcessPacket(char* _packet);
 
 public:
+	// - Player, Animal Common
+	void Recv_Pos_Packet(char* packet);
+	void Recv_Rot_packet(char* packet);
+	void Recv_Remove_Packet(char* packet);
+	void Recv_Animation_Packet(char* packet);
 	// - Login
 	void Recv_Login_OK_Packet(char* packet);
 	void Recv_Login_Fail_Packet(char* packet);
+	void Recv_Full_Server_Packet(char* packet);
 	void Recv_Disconnect_Server_Packet(char* packet);
 
 	// - Player
 	void Recv_Status_Player_Packet(char* packet);
-	void Recv_Put_Player_Packet(char* packet);
-	void Recv_Remove_Player_Packet(char* packet);
-	void Recv_Pos_Player_Packet(char* packet);
-	void Recv_Rot_Player_packet(char* packet);
 	void Recv_Chat_Packet(char* packet);
-	void Recv_Animation_Player_Packet(char* packet);
-
-public:
-	void Recv_WakeUp_Npc_Packet(char* packet);
-	void Recv_Put_Animal_Packet(char* packet);
-	void Recv_Remove_Animal_Packet(char* packet);
-	void Recv_Pos_Animal_Packet(char* packet);
-	void Recv_Animation_Animal_Packet(char* packet);
 
 public: // Natural
 	void Recv_Put_Natural_Packet(char* packet);
@@ -87,6 +79,4 @@ public:
 	void SetHwnd(HWND hWnd) { m_hWnd = hWnd; }
 	void SetChatObj(CGameObject* pObj) { m_pChat = pObj; }
 	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }
-	void SetOtherPlayerObj(concurrent_unordered_map<unsigned int, CGameObject*> pObjs) { m_cumPlayer = pObjs; }
-	void SetAnimalObj(concurrent_unordered_map<unsigned int, CGameObject*> pObjs) { m_cumPlayer = pObjs; }
 };

@@ -33,12 +33,12 @@ public:
 	void SetOffsetScale(Vec3 vScale);
 
 public:
-	const Vec3	GetLocalPos();
-	const Vec3	GetLocalScale();
-	const Vec3	GetLocalRot();
+	const Vec3&	GetLocalPos();
+	const Vec3&	GetLocalScale();
+	const Vec3&	GetLocalRot();
 	const Vec3& GetLocalDir(DIR_TYPE _eType);
 	const char	GetState();
 
-	const Vec3	GetOffsetPos();
-	const Vec3	GetOffsetScale();
+	const Vec3&	GetOffsetPos();
+	const Vec3&	GetOffsetScale();
 };

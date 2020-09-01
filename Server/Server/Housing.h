@@ -2,14 +2,6 @@
 #include "stdafx.h"
 #include "Object.h"
 
-enum class HOUSING_LOCK_TYPE
-{
-	INDEX,
-	TYPE,
-	INSTALL,
-	END
-};
-
 class CHousing:
 	public CObject
 {
@@ -23,16 +15,14 @@ public:
 	bool			m_bInstall;
 
 private:
-	std::shared_mutex m_smHousingSharedMutex[(UINT)HOUSING_LOCK_TYPE::END];
+	shared_mutex m_smHousingSharedMutex;
 
 public:
-	void SetIndex(USHORT& usIndex);
 	void SetType(HOUSING_TYPE eType);
 	void SetInstall(bool bInstall);
 
 public:
-	USHORT&			GetIndex();
-	HOUSING_TYPE&	GetType();
-	bool&			GetInstall();
+	const HOUSING_TYPE&	GetType();
+	const bool&			GetInstall();
 };
 

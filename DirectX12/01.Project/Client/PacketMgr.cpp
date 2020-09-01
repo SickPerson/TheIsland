@@ -20,7 +20,7 @@ CPacketMgr::~CPacketMgr()
 {
 }
 
-void CPacketMgr::Send_Login_Packet(wstring strID)
+void CPacketMgr::Send_Login_Packet(string strID)
 {
 	DWORD size{ 0 }, flag{ 0 };
 
@@ -28,7 +28,7 @@ void CPacketMgr::Send_Login_Packet(wstring strID)
 
 	login_packet->size = sizeof(cs_login_packet);
 	login_packet->type = CS_LOGIN;
-	wcscpy_s(login_packet->player_id, strID.c_str());
+	strcpy_s(login_packet->player_id, strID.c_str());
 
 	m_SendWsaBuf.len = sizeof(cs_login_packet);
 
@@ -119,28 +119,12 @@ void CPacketMgr::Send_Rot_player_Packet()
 	packet->size = sizeof(cs_rot_packet);
 	packet->type = CS_ROT;
 	packet->vRot = m_pPlayer->Transform()->GetLocalRot();
+	packet->vDir[0] = m_pPlayer->Transform()->GetLocalDir(DIR_TYPE::RIGHT);
+	packet->vDir[1] = m_pPlayer->Transform()->GetLocalDir(DIR_TYPE::UP);
+	packet->vDir[2] = m_pPlayer->Transform()->GetLocalDir(DIR_TYPE::FRONT);
 
 	DWORD size{ 0 }, flag{ 0 };
 	m_SendWsaBuf.len = sizeof(cs_rot_packet);
-	int ret = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
-
-	if (ret != 0) {
-		int err_no = WSAGetLastError();
-		CNetwork::Err_display("Err while sending packet - ", err_no);
-	}
-}
-
-void CPacketMgr::Send_Collision_Player_Packet(UINT ColuiType, USHORT ColId, bool bRun)
-{
-	cs_collision_packet* packet = reinterpret_cast<cs_collision_packet*>(m_cSendBuf);
-	packet->size = sizeof(cs_collision_packet);
-	packet->type = CS_COLLISION;
-	packet->collision_uitype = ColuiType;
-	packet->collision_id = ColId;
-	packet->bRun = bRun;
-
-	DWORD size{ 0 }, flag{ 0 };
-	m_SendWsaBuf.len = sizeof(cs_collision_packet);
 	int ret = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 
 	if (ret != 0) {
@@ -188,13 +172,15 @@ void CPacketMgr::Send_Remove_Housing_Packet(USHORT houseId)
 	}
 }
 
-void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId)
+void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId, char eitemType)
 {
+	cout << "Attack" << endl;
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(m_cSendBuf);
 
 	attack_packet->type = CS_ATTACK;
 	attack_packet->attack_uiType = attackType;
 	attack_packet->attack_id = attackId;
+	attack_packet->eType = eitemType;
 
 	DWORD size{ 0 }, flag{ 0 };
 	m_SendWsaBuf.len = sizeof(cs_attack_packet);

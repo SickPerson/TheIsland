@@ -14,38 +14,26 @@ CHousing::~CHousing()
 {
 }
 
-void CHousing::SetIndex(USHORT & usIndex)
-{
-	unique_lock<shared_mutex> lock(m_smHousingSharedMutex[(UINT)HOUSING_LOCK_TYPE::INDEX]);
-	m_usIndex = usIndex;
-}
-
 void CHousing::SetType(HOUSING_TYPE eType)
 {
-	unique_lock<shared_mutex> lock(m_smHousingSharedMutex[(UINT)HOUSING_LOCK_TYPE::TYPE]);
+	unique_lock<shared_mutex> lock(m_smHousingSharedMutex);
 	m_eType = eType;
 }
 
 void CHousing::SetInstall(bool bInstall)
 {
-	unique_lock<shared_mutex> lock(m_smHousingSharedMutex[(UINT)HOUSING_LOCK_TYPE::INSTALL]);
+	unique_lock<shared_mutex> lock(m_smHousingSharedMutex);
 	m_bInstall = bInstall;
 }
 
-USHORT & CHousing::GetIndex()
+const HOUSING_TYPE & CHousing::GetType()
 {
-	shared_lock<shared_mutex> lock(m_smHousingSharedMutex[(UINT)HOUSING_LOCK_TYPE::INDEX]);
-	return m_usIndex;
-}
-
-HOUSING_TYPE & CHousing::GetType()
-{
-	shared_lock<shared_mutex> lock(m_smHousingSharedMutex[(UINT)HOUSING_LOCK_TYPE::TYPE]);
+	shared_lock<shared_mutex> lock(m_smHousingSharedMutex);
 	return m_eType;
 }
 
-bool & CHousing::GetInstall()
+const bool & CHousing::GetInstall()
 {
-	shared_lock<shared_mutex> lock(m_smHousingSharedMutex[(UINT)HOUSING_LOCK_TYPE::INSTALL]);
+	shared_lock<shared_mutex> lock(m_smHousingSharedMutex);
 	return m_bInstall;
 }

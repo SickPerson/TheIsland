@@ -53,51 +53,91 @@ void CPacketMgr::Send_Login_Fail_Packet(USHORT playerId)
 	Send_Packet(playerId, &packet);
 }
 
-void CPacketMgr::Send_Put_Player_Packet(USHORT playerId, USHORT OtherId)
+void CPacketMgr::Send_Pos_Packet(USHORT User, USHORT Acter)
 {
-	Vec3 vPos = CProcess::m_pObjectPool->m_cumPlayerPool[OtherId]->GetLocalPos();
-	Vec3 vRot = CProcess::m_pObjectPool->m_cumPlayerPool[OtherId]->GetLocalRot();
+	sc_pos_packet packet;
+	packet.size = sizeof(sc_pos_packet);
+	packet.type = SC_POS;
+	packet.usId = Acter;
+	
+	USHORT	user = User;
+	USHORT	acter = Acter;
 
-	sc_put_player_packet	packet;
-	packet.id = OtherId;
-	packet.size = sizeof(packet);
-	packet.type = SC_PUT_PLAYER;
-
-	packet.vPos = vPos;
-	packet.vRot = vRot;
-
-	Send_Packet(playerId, &packet);
-
-	if (playerId == OtherId) return;
-
-	if(!CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->ExistList(OtherId))
-		CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->InsertList(OtherId);
+	
+	if (acter < MAX_USER) {
+		packet.vPos = CProcess::m_pObjectPool->m_cumPlayerPool[acter]->GetLocalPos();
+		packet.vRot = CProcess::m_pObjectPool->m_cumPlayerPool[acter]->GetLocalRot();
+		if (CProcess::m_pObjectPool->m_cumPlayerPool[user]->ExistList(Acter)) {
+			Send_Packet(user, &packet);
+		}
+		else {
+			CProcess::m_pObjectPool->m_cumPlayerPool[user]->InsertList(Acter);
+			Send_Packet(user, &packet);
+		}
+	}
+	else if (acter < END_ANIMAL) {
+		packet.vPos = CProcess::m_pObjectPool->m_cumAnimalPool[acter]->GetLocalPos();
+		packet.vRot = CProcess::m_pObjectPool->m_cumAnimalPool[acter]->GetLocalRot();
+		cout << packet.vPos.x << packet.vPos.y << packet.vPos.z << endl;
+		if (CProcess::m_pObjectPool->m_cumPlayerPool[user]->ExistList(Acter)) {
+			Send_Packet(user, &packet);
+		}
+		else {
+			CProcess::m_pObjectPool->m_cumPlayerPool[user]->InsertList(Acter);
+			Send_Packet(user, &packet);
+		}
+	}
 }
 
-void CPacketMgr::Send_Pos_Player_Packet(USHORT playerId, USHORT OtherId)
+void CPacketMgr::Send_Rot_Packet(USHORT User, USHORT Acter)
 {
-	Vec3 pos = CProcess::m_pObjectPool->m_cumPlayerPool[OtherId]->GetLocalPos();
-	Vec3 rot = CProcess::m_pObjectPool->m_cumPlayerPool[OtherId]->GetLocalRot();
-
-	sc_pos_player_packet packet;
-	packet.size = sizeof(sc_pos_player_packet);
-	packet.type = SC_POS_PLAYER;
-	packet.id = OtherId;
-	packet.vPos = pos;
-	packet.vRot = rot;
-	if (0 != CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->ExistList(OtherId) && playerId != OtherId)
-		Send_Packet(playerId, &packet);
+	sc_rot_packet packet;
+	packet.size = sizeof(sc_rot_packet);
+	packet.type = SC_ROT;
+	packet.usId = Acter;
+	
+	USHORT acter = Acter;
+	if (acter < MAX_USER)
+		packet.vRot = CProcess::m_pObjectPool->m_cumPlayerPool[acter]->GetLocalRot();
 	else
-		Send_Put_Player_Packet(playerId, OtherId);
+		packet.vRot = CProcess::m_pObjectPool->m_cumAnimalPool[acter]->GetLocalRot();
+
+	Send_Packet(User, &packet);
 }
 
-void CPacketMgr::Send_Status_Player_Packet(USHORT playerId, USHORT OtherId)
+void CPacketMgr::Send_Remove_Packet(USHORT User, USHORT Acter)
+{
+	sc_remove_packet packet;
+	packet.size = sizeof(sc_remove_packet);
+	packet.type = SC_REMOVE;
+
+	USHORT user = User;
+	USHORT acter = Acter;
+
+	if (acter < END_ANIMAL) {
+		if (CProcess::m_pObjectPool->m_cumPlayerPool[User]->ExistList(Acter)) {
+			CProcess::m_pObjectPool->m_cumPlayerPool[User]->DeleteList(Acter);
+			Send_Packet(user, &packet);
+		}
+	}
+}
+
+void CPacketMgr::Send_Animation_Packet(USHORT User, USHORT Acter, UINT uiAnimationType)
+{
+	sc_animation_packet packet;
+	packet.size = sizeof(sc_animation_packet);
+	packet.type = SC_ANIMATION;
+	packet.usId = Acter;
+	packet.uiType = uiAnimationType;
+	Send_Packet(User, &packet);
+}
+
+void CPacketMgr::Send_Status_Player_Packet(USHORT playerId)
 {
 	sc_status_player_packet packet;
 	packet.size = sizeof(sc_status_player_packet);
 	packet.type = SC_STATUS_PLAYER;
 
-	packet.id = playerId;
 	packet.fHealth = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetHealth();
 	packet.fHungry = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetHungry();
 	packet.fThrist = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetThirst();
@@ -105,35 +145,12 @@ void CPacketMgr::Send_Status_Player_Packet(USHORT playerId, USHORT OtherId)
 	Send_Packet(playerId, &packet);
 }
 
-void CPacketMgr::Send_Rot_Player_Packet(USHORT playerId, USHORT OtherId)
-{
-	sc_rot_player_packet packet;
-	packet.size = sizeof(sc_rot_player_packet);
-	packet.type = SC_ROT_PLAYER;
-	packet.id = OtherId;
-	packet.vRot = CProcess::m_pObjectPool->m_cumPlayerPool[OtherId]->GetLocalRot();
-	if(playerId != OtherId)
-		Send_Packet(playerId, &packet);
-}
-
-void CPacketMgr::Send_Remove_Player_Packet(USHORT playerId, USHORT OtherId)
-{
-	sc_remove_player_packet packet;
-	packet.size = sizeof(packet);
-	packet.type = SC_REMOVE_PLAYER;
-	packet.id = OtherId;
-	Send_Packet(playerId, &packet);
-
-	if(CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->ExistList(OtherId))
-		CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->DeleteList(OtherId);
-}
-
 void CPacketMgr::Send_Chat_Packet(USHORT playerId, USHORT OtherId, char message[])
 {
 	sc_chat_packet packet;
 	packet.size = sizeof(sc_chat_packet);
 	packet.type = SC_CHAT;
-	wcscpy_s(packet.wcid, CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetWcID());
+	strcpy_s(packet.ID, CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetWcID());
 	strcpy_s(packet.meesage, message);
 	Send_Packet(OtherId, &packet);
 }
@@ -141,82 +158,6 @@ void CPacketMgr::Send_Chat_Packet(USHORT playerId, USHORT OtherId, char message[
 void CPacketMgr::Send_Death_Player_Packet(USHORT playerId)
 {
 
-}
-
-void CPacketMgr::Send_Animation_Player_Packet(USHORT playerId, USHORT actId, UINT AnimationType)
-{
-	sc_animation_player_packet packet;
-	packet.size = sizeof(sc_animation_player_packet);
-	packet.type = SC_ANIMATION_PLAYER;
-	packet.animation_uiType = (UINT)AnimationType;
-	packet.id = actId;
-	cout << packet.animation_uiType << endl;
-	Send_Packet(playerId, &packet);
-}
-
-void CPacketMgr::Send_Put_Npc_Packet(USHORT PlayerID, USHORT NpcID)
-{
-	Vec3 pos = CProcess::m_pObjectPool->m_cumAnimalPool[NpcID]->GetLocalPos();
-	Vec3 rot = CProcess::m_pObjectPool->m_cumAnimalPool[NpcID]->GetLocalRot();
-	char eType = CProcess::m_pObjectPool->m_cumAnimalPool[NpcID]->GetKind();
-
-	sc_put_npc_packet	packet;
-	packet.id = NpcID;
-	packet.size = sizeof(packet);
-	packet.type = SC_PUT_ANIMAL;
-
-	packet.eType = eType;
-	packet.vPos = pos;
-	packet.vRot = rot;
-	
-
-	Send_Packet(PlayerID, &packet);
-
-	if(CProcess::m_pObjectPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + BEGIN_ANIMAL))
-		CProcess::m_pObjectPool->m_cumPlayerPool[PlayerID]->InsertList(NpcID + BEGIN_ANIMAL);
-}
-
-void CPacketMgr::Send_Pos_Npc_Packet(USHORT PlayerID, USHORT NpcID)
-{
-	Vec3 pos = CProcess::m_pObjectPool->m_cumAnimalPool[NpcID]->GetLocalPos();
-	Vec3 rot = CProcess::m_pObjectPool->m_cumAnimalPool[NpcID]->GetLocalRot();
-	char eType = CProcess::m_pObjectPool->m_cumAnimalPool[NpcID]->GetKind();
-
-	sc_pos_npc_packet packet;
-	packet.size = sizeof(sc_pos_npc_packet);
-	packet.type = SC_POS_ANIMAL;
-	packet.id = NpcID;
-
-	packet.eType = eType;
-	packet.vPos = pos;
-	packet.vRot = rot;
-
-	if (0 != CProcess::m_pObjectPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + BEGIN_ANIMAL))
-		CPacketMgr::Send_Packet(PlayerID, &packet);
-	else
-		CPacketMgr::Send_Put_Npc_Packet(PlayerID, NpcID);
-}
-
-void CPacketMgr::Send_Remove_Npc_Packet(USHORT PlayerID, USHORT NpcID)
-{
-	sc_remove_player_packet packet;
-	packet.size = sizeof(packet);
-	packet.type = SC_REMOVE_ANIMAL;
-	packet.id = NpcID;
-	Send_Packet(PlayerID, &packet);
-
-	if (CProcess::m_pObjectPool->m_cumPlayerPool[PlayerID]->ExistList(NpcID + BEGIN_ANIMAL))
-		CProcess::m_pObjectPool->m_cumPlayerPool[PlayerID]->DeleteList(NpcID + BEGIN_ANIMAL);
-}
-
-void CPacketMgr::Send_Animation_Npc_Packet(USHORT playerId, USHORT NpcId, UINT AnimationType)
-{
-	sc_animation_animal_packet packet;
-	packet.size = sizeof(sc_animation_animal_packet);
-	packet.type = SC_ANIMATION_ANIMAL;
-	packet.id = NpcId;
-	packet.uiType = AnimationType;
-	Send_Packet(playerId, &packet);
 }
 
 void CPacketMgr::Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id)
@@ -285,6 +226,37 @@ void CPacketMgr::Send_Time_Packet(USHORT player_Id, float fTime)
 	packet.type = SC_TIME;
 	packet.fTime = fTime;
 	Send_Packet(player_Id, &packet);
+}
+
+void CPacketMgr::Send_Add_Item_Packet(USHORT player_Id, char eItemtype, int iAmount)
+{
+	sc_add_item_packet packet;
+	packet.size = sizeof(sc_add_item_packet);
+	packet.type = SC_ADD_ITEM;
+	packet.eItemType = eItemtype;
+	packet.iAmount = iAmount;
+
+	Send_Packet(player_Id, &packet);
+}
+
+void CPacketMgr::Send_Full_Server_Packet(SOCKET m_sock)
+{
+	sc_full_server_packet packet;
+	packet.size = sizeof(sc_full_server_packet);
+	packet.type = SC_FULL_SERVER;
+
+	char* cPacket = reinterpret_cast<char*>(&packet);
+	char	iSize = cPacket[0];
+
+	DWORD flags{0};
+	int retval = send(m_sock, cPacket, iSize, flags);
+
+	if (retval == SOCKET_ERROR) {
+		int err_no = WSAGetLastError();
+		if (err_no != WSA_IO_PENDING) {
+			CNetwork::Err_display("Send Socket Err - ", err_no);
+		}
+	}
 }
 
 void CPacketMgr::Send_Disconnect_Server_Packet(USHORT player_Id)

@@ -1,13 +1,13 @@
 #include "Player.h"
 #include "Network.h"
 
-CPlayer::CPlayer()
+CPlayer::CPlayer() :
+	m_sSocket(INVALID_SOCKET),
+	m_bConnect(false),
+	m_iCursize(0),
+	m_iPrevsize(0),
+	m_fArmor(0)
 {
-	SetSocket(INVALID_SOCKET);
-	SetConnect(false);
-	m_iCursize = 0;
-	m_iPrevsize = 0;
-
 	ZeroMemory(&m_over, sizeof(OVER_EX));
 
 	m_over.m_Event = EV_RECV;
@@ -22,10 +22,9 @@ CPlayer::~CPlayer()
 
 void CPlayer::SetRecvState()
 {
-	DWORD flag{};
-	DWORD size{};
-
 	ZeroMemory(&m_over.m_Overlapped, sizeof(WSAOVERLAPPED));
+
+	DWORD size{ 0 }, flag{ 0 };
 
 	int retval = WSARecv(m_sSocket, &m_over.m_DataBuffer, 1, &size, &flag, &m_over.m_Overlapped, NULL);
 
@@ -78,7 +77,7 @@ char* CPlayer::RecvEvent(DWORD dataSize, char * packet)
 
 void CPlayer::SetPlayerStatus(tPlayerStatus & status)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::STATUS]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	m_tPlayerStatus.fHealth = status.fHealth;
 	m_tPlayerStatus.fHungry = status.fHungry;
 	m_tPlayerStatus.fThirst = status.fThirst;
@@ -88,126 +87,153 @@ void CPlayer::SetPlayerStatus(tPlayerStatus & status)
 
 void CPlayer::SetHealth(float & fHealth)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HEALTH]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	m_tPlayerStatus.fHealth = fHealth;
 }
 
 void CPlayer::SetHungry(float & fHungry)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HUNGRY]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	m_tPlayerStatus.fHungry = fHungry;
 }
 
 void CPlayer::SetThirst(float & fThirst)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::THIRST]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	m_tPlayerStatus.fThirst = fThirst;
 }
 
 void CPlayer::SetSpeed(float & fSpeed)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SPEED]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	m_tPlayerStatus.fSpeed = fSpeed;
 }
 
-void CPlayer::SetDamage(float & fDamage)
+void CPlayer::SetArmor(float & fArmor)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::DAMAGE]);
-	m_tPlayerStatus.fSpeed = fDamage;
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_fArmor = fArmor;
+}
+
+void CPlayer::SetIncreaseHealth(float & fAmount)
+{
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_tPlayerStatus.fHealth += fAmount;
+	if (m_tPlayerStatus.fHealth > 100.f) {
+		m_tPlayerStatus.fHealth = 100.f;
+	}
+}
+
+void CPlayer::SetIncreaseHungry(float & fAmount)
+{
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_tPlayerStatus.fHungry += fAmount;
+	if (m_tPlayerStatus.fHungry > 100.f) {
+		m_tPlayerStatus.fHungry = 100.f;
+	}
+}
+
+void CPlayer::SetIncreaseThirst(float & fAmount)
+{
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_tPlayerStatus.fThirst += fAmount;
+	if (m_tPlayerStatus.fThirst > 100.f) {
+		m_tPlayerStatus.fThirst = 100.f;
+	}
 }
 
 void CPlayer::SetNumID(USHORT & numID)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::NUMID]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	m_usID = numID;
 }
 
-void CPlayer::SetWcID(wchar_t * wcID)
+void CPlayer::SetWcID(char * wcID)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::WCID]);
-	wcscpy_s(m_wcID, wcID);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
+	strcpy_s(m_ID, wcID);
 }
 
-void CPlayer::SetDbID(int & dbID)
+void CPlayer::SetDbNum(int & dbID)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::DBID]);
-	m_db_ID = dbID;
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
+	m_dbNum = dbID;
 }
 
 void CPlayer::SetConnect(bool bConnect)
 {
-	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::CONNECT]);
+	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	m_bConnect = bConnect;
 }
 
-void CPlayer::SetSocket(const SOCKET & socket)
+void CPlayer::SetSocket(SOCKET & socket)
 {
-	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SOCKET]);
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
 	m_sSocket = socket;
 }
 
 tPlayerStatus & CPlayer::GetPlayerStatus()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::STATUS]);
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex);
 	return m_tPlayerStatus;
 }
 
 float & CPlayer::GetHealth()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HEALTH]);
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	return m_tPlayerStatus.fHealth;
 }
 
 float & CPlayer::GetHungry()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::HUNGRY]);
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	return m_tPlayerStatus.fHungry;
 }
 
 float & CPlayer::GetThirst()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::THIRST]);
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	return m_tPlayerStatus.fThirst;
 }
 
 float & CPlayer::GetSpeed()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SPEED]);
+	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex);
 	return m_tPlayerStatus.fSpeed;
 }
 
-float & CPlayer::GetDamage()
+float & CPlayer::GetArmor()
 {
-	shared_lock<shared_mutex> lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::DAMAGE]);
-	return m_tPlayerStatus.fDamage;
+	shared_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	return m_fArmor;
 }
 
-USHORT & CPlayer::GetNumID()
+const USHORT & CPlayer::GetNumID()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::NUMID]);
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex);
 	return m_usID;
 }
 
-wchar_t * CPlayer::GetWcID()
+const char * CPlayer::GetWcID()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::WCID]);
-	return m_wcID;
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex);
+	return m_ID;
 }
 
-int CPlayer::GetDbID()
+const int& CPlayer::GetDbNum()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::DBID]);
-	return m_db_ID;
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex);
+	return m_dbNum;
 }
 
-bool CPlayer::GetConnect()
+const bool CPlayer::GetConnect()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::CONNECT]);
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex);
 	return m_bConnect;
 }
 
-SOCKET & CPlayer::GetSocket()
+const SOCKET & CPlayer::GetSocket()
 {
-	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::SOCKET]);
+	shared_lock<shared_mutex>lock(m_smPlayerStatusMutex);
 	return m_sSocket;
 }

@@ -1,12 +1,6 @@
 #pragma once
 #include "Object.h"
 
-enum class PLAYER_LOCK_TYPE
-{
-	STATUS, HEALTH, HUNGRY, THIRST, SPEED, DAMAGE,
-	SOCKET, CONNECT, NUMID, WCID, DBID, END
-};
-
 class CPlayer : public CObject
 {
 public:
@@ -14,19 +8,22 @@ public:
 	virtual ~CPlayer();
 
 private:
-	USHORT			m_usID;
-	wchar_t			m_wcID[MAX_STR_LEN];
-	int				m_db_ID;
-	tPlayerStatus	m_tPlayerStatus;
-	volatile bool	m_bConnect;
 	SOCKET			m_sSocket;
 	OVER_EX			m_over;
+	bool			m_bConnect;
 	int				m_iPrevsize;
 	int				m_iCursize;
 
+	int				m_dbNum;
+	USHORT			m_usID;
+	char			m_ID[MAX_STR_LEN];
+
+	tPlayerStatus	m_tPlayerStatus;
+	float			m_fArmor;
+
 private:
 	concurrent_unordered_set<USHORT> m_cusViewList;
-	shared_mutex m_smPlayerStatusMutex[(UINT)PLAYER_LOCK_TYPE::END];
+	shared_mutex m_smPlayerStatusMutex;
 	recursive_mutex	m_rmPlayerListMutex;
 
 public:
@@ -39,13 +36,17 @@ public:
 	void SetHungry(float& fHungry);
 	void SetThirst(float& fThirst);
 	void SetSpeed(float& fSpeed);
-	void SetDamage(float& fDamage);
+	void SetArmor(float& fArmor);
+
+	void SetIncreaseHealth(float& fAmount);
+	void SetIncreaseHungry(float& fAmount);
+	void SetIncreaseThirst(float& fAmount);
 
 	void SetNumID(USHORT& numID);
-	void SetWcID(wchar_t* wcID);
-	void SetDbID(int& dbID);
+	void SetWcID(char* wcID);
+	void SetDbNum(int& dbID);
 	void SetConnect(bool bConnect);
-	void SetSocket(const SOCKET& socket);
+	void SetSocket(SOCKET& socket);
 
 public:
 	tPlayerStatus& GetPlayerStatus();
@@ -53,40 +54,64 @@ public:
 	float&	GetHungry();
 	float&	GetThirst();
 	float&	GetSpeed();
-	float&	GetDamage();
+	float&	GetArmor();
 
-	USHORT&	GetNumID();
-	wchar_t*	GetWcID();
-	int		GetDbID();
-	bool	GetConnect();
-	SOCKET&	GetSocket();
+	const USHORT&	GetNumID();
+	const char*	GetWcID();
+	const int&		GetDbNum();
+	const bool		GetConnect();
+	const SOCKET&	GetSocket();
 
 public:
-	void CopyBefore(concurrency::concurrent_unordered_set<USHORT>& _usCopyList)
-	{
+	void CopyViewList(concurrent_unordered_set<USHORT>& cusCopyViewList){
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
-		_usCopyList = m_cusViewList;
+		cusCopyViewList = m_cusViewList;
 	}
-	void CopyPlayerList(concurrency::concurrent_unordered_set<USHORT>& _usCopyList) {
+	void CopyUserViewList(concurrent_unordered_set<USHORT>& cusCopyUserViewList) {
 		unique_lock<recursive_mutex>lock(m_rmPlayerListMutex);
-		_usCopyList = m_cusViewList;
+		cusCopyUserViewList = m_cusViewList;
 		lock.unlock();
 
-		for (auto au = _usCopyList.begin(); au != _usCopyList.end();)
+		for (auto au = cusCopyUserViewList.begin(); au != cusCopyUserViewList.end();)
 		{
 			if (*au >= MAX_USER)
-				au = _usCopyList.unsafe_erase(au);
+				au = cusCopyUserViewList.unsafe_erase(au);
 			else
 				++au;
 		}
 	}
-	void DeleteList(USHORT _usID)
+	void CopyAnimalViewList(concurrent_unordered_set<USHORT>& cusCopyAnimalViewList) {
+		unique_lock<recursive_mutex> lock(m_rmPlayerListMutex);
+		cusCopyAnimalViewList = m_cusViewList;
+		lock.unlock();
+
+		for (auto au = cusCopyAnimalViewList.begin(); au != cusCopyAnimalViewList.end();) {
+			if (*au < MAX_USER)
+				au = cusCopyAnimalViewList.unsafe_erase(au);
+			else
+				++au;
+		}
+	}
+	void InsertList(USHORT usId)
+	{
+		if (m_usID == usId)
+			return;
+		m_cusViewList.insert(usId);
+	}
+	bool ExistList(USHORT usId)
+	{
+		if (m_cusViewList.count(usId))
+			return true;
+		return false;
+	}
+	void DeleteList(USHORT usId)
 	{
 		concurrency::concurrent_unordered_set<USHORT> list;
-		CopyBefore(list);
+		CopyViewList(list);
+
 		for (auto au = list.begin(); au != list.end();)
 		{
-			if (*au == _usID)
+			if (*au == usId)
 			{
 				au = list.unsafe_erase(au);
 				break;
@@ -94,20 +119,9 @@ public:
 			else
 				++au;
 		}
+
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
 		m_cusViewList = list;
-	}
-	void InsertList(USHORT _usID)
-	{
-		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
-		m_cusViewList.insert(_usID);
-	}
-	bool ExistList(USHORT _usID)
-	{
-		if (m_cusViewList.count(_usID) != 0)
-			return true;
-		else
-			return false;
 	}
 	void ClearList()
 	{

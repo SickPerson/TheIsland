@@ -2,21 +2,6 @@
 #include "stdafx.h"
 #include "Object.h"
 
-enum class ANIMAL_LOCK_TYPE
-{
-	STATUS, 
-	HP, 
-	STAMINA, 
-	SPEED, 
-	DAMAGE, 
-	BEHAVIOR_TYPE, 
-	KIND, 
-	WAKEUP, 
-	TARGET, 
-	DIR, 
-	END
-};
-
 class CMonster :
 	public CObject
 {
@@ -33,15 +18,14 @@ private:
 	bool			m_bBehavior;
 	float			m_fCurrentTime;
 	Vec3			m_vMoveDir;
-
-	float			m_fAttackCoolTime;
-	float			m_fAttackTime;
-	float			m_fNpcTime = 0.f;
-
-	float	m_fRotate = 0.f;
-	shared_mutex m_smAnimalSharedMutex[(UINT)ANIMAL_LOCK_TYPE::END];
+	Vec3			m_vPrevPos;
 
 public:
+	shared_mutex m_smAnimalSharedMutex;
+
+public:
+	void SetWakeUp(bool bWakeUp);
+
 	void SetAnimalStatus(tAnimalStatus& animalStatus);
 	void SetHealth(float& fHealth);
 	void SetSpeed(float& fSpeed);
@@ -49,18 +33,20 @@ public:
 	void SetType(BEHAVIOR_TYPE& eType);
 	void SetKind(ANIMAL_TYPE& eKind);
 	void SetTarget(USHORT playerId);
-	void SetWakeUp(bool bWakeUp);
 	void SetDir(Vec3& vDir);
+	void SetPrevPos(Vec3& vPrevPos);
 
 public:
-	tAnimalStatus& GetAnimalStatus();
-	float&	GetHealth();
-	float&	GetSpeed();
-	float&	GetDamage();
-	BEHAVIOR_TYPE&	GetType();
-	ANIMAL_TYPE&	GetKind();
-	USHORT& GetTarget();
-	bool& GetWakeUp();
-	Vec3&	GetDir();
+	const bool& GetWakeUp();
+
+	const tAnimalStatus& GetAnimalStatus();
+	const float&	GetHealth();
+	const float&	GetSpeed();
+	const float&	GetDamage();
+	const BEHAVIOR_TYPE&	GetType();
+	const ANIMAL_TYPE&	GetKind();
+	const USHORT& GetTarget();
+	const Vec3&	GetDir();
+	const Vec3& GetPrevPos();
 };
 

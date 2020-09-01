@@ -5,15 +5,21 @@
 -----------------------------------------*/
 constexpr	int	SERVER_PORT = 9000;
 constexpr	int	MAX_USER = 100;
-constexpr	int	NO_TARGET = MAX_USER;
+constexpr	int	NO_TARGET = 9999;
+
 constexpr	int	BEGIN_ANIMAL = MAX_USER;
-constexpr	int	ANIMAL_BEAR = 1;
-constexpr	int	ANIMAL_BOAR = 1;
+constexpr	int	ANIMAL_BEAR = 0;
+constexpr	int	ANIMAL_BOAR = 0;
 constexpr	int	ANIMAL_DEER = 1;
-constexpr	int	ANIMAL_WOLF = 1;
+constexpr	int	ANIMAL_WOLF = 0;
 constexpr	int	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER + ANIMAL_WOLF;
-constexpr	int	END_ANIMAL = MAX_USER + MAX_ANIMAL;
+constexpr	int	END_ANIMAL = BEGIN_ANIMAL + MAX_ANIMAL;
+
 constexpr	int	BEGIN_NATURAL = END_ANIMAL;
+constexpr	int	MAX_NATURAL = 306;
+constexpr	int	END_NATURAL = BEGIN_NATURAL + MAX_NATURAL;
+
+constexpr	int	BEGIN_HOUSE = END_NATURAL;
 
 constexpr	int	MAX_BUF = 255;
 constexpr	int	MAX_STR_LEN = 15;
@@ -49,23 +55,19 @@ enum CS_PACKET_TYPE {
 
 // [ Server -> Client Packet Protocol ]
 enum SC_PACKET_TYPE {
+	// - Common
+	SC_POS,
+	SC_ROT,
+	SC_REMOVE,
+	SC_ANIMATION,
 	// - Login
 	SC_LOGIN_OK,
 	SC_LOGIN_FAIL,
+	SC_FULL_SERVER,
 	SC_DISCONNECT_SERVER,
 	// - Player
 	SC_STATUS_PLAYER,
-	SC_PUT_PLAYER,
-	SC_POS_PLAYER,
-	SC_ROT_PLAYER,
-	SC_REMOVE_PLAYER,
 	SC_CHAT,
-	SC_ANIMATION_PLAYER,
-	// - Animal
-	SC_PUT_ANIMAL,
-	SC_POS_ANIMAL,
-	SC_REMOVE_ANIMAL,
-	SC_ANIMATION_ANIMAL,
 	// - Natural
 	SC_PUT_NATURAL,
 	SC_DESTROY_NATURAL,
@@ -96,6 +98,36 @@ enum class ANIMAL_ANIMATION_TYPE { WALK, RUN, IDLE, EAT, DIE, ATTACK };
 // ___________________________________________________________________
 //						[ Sever -> Client ]
 // ___________________________________________________________________
+// [ COMMON ]
+struct sc_pos_packet {
+	char	size;
+	char	type;
+	USHORT	usId;
+
+	Vec3	vPos;
+	Vec3	vRot;
+};
+
+struct sc_rot_packet {
+	char	size;
+	char	type;
+	USHORT	usId;
+
+	Vec3	vRot;
+};
+
+struct sc_remove_packet {
+	char	size;
+	char	type;
+	USHORT	usId;
+};
+
+struct sc_animation_packet {
+	char	size;
+	char	type;
+	USHORT	usId;	// Object Id
+	UINT	uiType; // Animation Type
+};
 // Player
 struct sc_login_ok_packet {
 	char	size;
@@ -130,110 +162,17 @@ struct sc_death_player_packet {
 struct sc_status_player_packet{
 	char size;
 	char type;
-	USHORT id;
 
 	float	fHealth;
 	float	fThrist;
 	float	fHungry;
 };
 
-struct sc_put_player_packet {
-	char size;
-	char type;
-	USHORT id;
-
-	Vec3	vPos;
-	Vec3	vRot;
-};
-
-struct sc_pos_player_packet{
-	char size;
-	char type;
-	USHORT id;
-
-	Vec3 vPos;
-	Vec3 vRot;
-	unsigned move_time;
-};
-
-struct sc_rot_player_packet {
-	char size;
-	char type;
-	USHORT id;
-	Vec3	vRot;
-};
-
 struct sc_chat_packet {
 	char size;
 	char type;
-	wchar_t wcid[MAX_STR_LEN];
+	char ID[MAX_STR_LEN];
 	char meesage[MAX_STR_LEN];
-};
-
-struct sc_remove_player_packet {
-	char size;
-	char type;
-	USHORT id;
-};
-
-struct sc_animation_player_packet
-{
-	char size;
-	char type;
-	USHORT id;
-	UINT animation_uiType;
-};
-
-// NPC
-struct sc_wake_up_packet{
-	char size;
-	char type;
-	USHORT id;
-};
-struct sc_put_npc_packet {
-	char size;
-	char type;
-	USHORT id;
-
-	char	eType;
-	Vec3	vPos;
-	Vec3	vRot;
-};
-
-struct sc_pos_npc_packet{
-	char size;
-	char type;
-	USHORT id;
-
-	char eType;
-	Vec3 vPos;
-	Vec3 vRot;
-};
-
-struct sc_remove_npc_packet
-{
-	char size;
-	char type;
-	USHORT id;
-};
-
-struct sc_status_npc_packet
-{
-	char size;
-	char type;
-	USHORT id;
-
-	float fHealth;
-	float fStamina;
-	float fDamage;
-
-};
-struct sc_animation_animal_packet
-{
-	char size;
-	char type;
-	USHORT id;
-	UINT	uiType;
 };
 
 // [ Housing ]
@@ -286,8 +225,8 @@ struct sc_add_item_packet
 {
 	char size;
 	char type;
-	UINT uiItemType;
-	UINT uiInven_num;
+	char eItemType;
+	int	iAmount;
 };
 
 // [ Etc ]
@@ -305,6 +244,11 @@ struct sc_time_packet
 	float fTime;
 };
 
+struct sc_full_server_packet {
+	char	size;
+	char	type;
+};
+
 struct sc_disconnect_server_packet {
 	char	size;
 	char	tpye;
@@ -317,7 +261,7 @@ struct sc_disconnect_server_packet {
 struct cs_login_packet {
 	char			size;
 	char			type;
-	wchar_t			player_id[MAX_STR_LEN];	
+	char			player_id[MAX_STR_LEN];	
 };
 
 struct cs_logout_packet {
@@ -345,6 +289,7 @@ struct cs_rot_packet {
 	char size;
 	char type;
 	Vec3	vRot;
+	Vec3	vDir[3];
 };
 
 struct cs_chat_packet {
@@ -354,38 +299,13 @@ struct cs_chat_packet {
 	char meesage[MAX_STR_LEN];
 };
 
-struct cs_collision_packet {
-	char	size;
-	char	type;
-	UINT	collision_uitype; // 0 : animal 1: natural 2: house
-	USHORT	collision_id;
-	bool	bRun;
-};
-
-struct cs_packet_chat {
-	char	size;
-	char	type;
-	wchar_t	message[MAX_STR_LEN];
-};
-
-struct cs_packet_logout {
-	char	size;
-	char	type;
-	USHORT id;
-};
-
 struct cs_attack_packet {
 	char size;
 	char type;
 	UINT attack_uiType;
 	USHORT attack_id;
+	char	eType;
 };
-//struct cs_collision_packet {
-//	char	size;
-//	char	type;
-//	USHORT id;
-//	bool	bRun;
-//};
 
 // [ Housing ] 
 struct cs_install_housing_packet

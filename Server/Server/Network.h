@@ -36,7 +36,7 @@ private:
 	CEtcProcess*		m_pEtcProcess;
 
 private:
-	volatile USHORT m_UserID;
+	USHORT GetUserID();
 
 public:
 	void Initialize();

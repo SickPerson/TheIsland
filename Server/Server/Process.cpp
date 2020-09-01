@@ -1,6 +1,7 @@
 #include "Process.h"
 #include "PacketMgr.h"
 #include "TimerMgr.h"
+#include "DataBase.h"
 
 CObjectpool*	CProcess::m_pObjectPool = nullptr;
 USHORT	CProcess::m_houseNum = 0;
@@ -44,231 +45,45 @@ bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
 	return false;
 }
 
-bool CProcess::PlayerAndAnimal_CollisionSphere(USHORT playerId, USHORT animalId, float fOffset)
-{
-	Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[animalId]->GetLocalPos();
-
-	Vec3 vPlayerScale = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalScale();
-	Vec3 vAnimalScale = m_pObjectPool->m_cumPlayerPool[animalId]->GetLocalScale();
-
-	Vec3 vPlayerColScale = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalScale() * fOffset;
-	Vec3 vAnimalColScale = m_pObjectPool->m_cumPlayerPool[animalId]->GetLocalScale();
-
-	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vAnimalPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
-	fDist = sqrtf(fDist);
-
-	if (fDist > fabsf(vPlayerScale.x * vPlayerColScale.x) + fabsf(vAnimalScale.x * vAnimalScale.x))
-		return false;
-
-	return true;
-}
-
-bool CProcess::PlayerAndNatural_CollisionSphere(USHORT playerId, USHORT naturalId, float fOffset)
-{
-	Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[naturalId]->GetLocalPos();
-
-	Vec3 vPlayerScale = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalScale();
-	Vec3 vAnimalScale = m_pObjectPool->m_cumPlayerPool[naturalId]->GetLocalScale();
-
-	Vec3 vPlayerColScale = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalScale() * fOffset;
-	Vec3 vAnimalColScale = m_pObjectPool->m_cumPlayerPool[naturalId]->GetLocalScale();
-
-	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vPlayerPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
-	fDist = sqrtf(fDist);
-
-	if (fDist > fabsf(vPlayerScale.x * vPlayerColScale.x) + fabsf(vAnimalScale.x * vAnimalColScale.x))
-		return false;
-
-	return true;
-}
-
-bool CProcess::PlayerAndHouse_Collision(USHORT playerId, USHORT houseId, char eType)
-{
-	Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	Vec3 vHousePos = m_pObjectPool->m_cumHousingPool[houseId]->GetLocalPos();
-
-	Vec3 vPlayerScale = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalScale();
-	Vec3 vHouseScale = m_pObjectPool->m_cumHousingPool[houseId]->GetLocalScale();
-
-	Vec3 vPlayerColScale = Vec3(20.f, 60.f, 20.f);
-	Vec3 vHouseColScale = Vec3(1.f, 1.f, 1.f);
-
-	HOUSING_TYPE Type = (HOUSING_TYPE)eType;
-
-	Vec3 vHouseOffsetScale = m_pObjectPool->m_cumHousingPool[houseId]->GetOffsetScale();
-	switch (Type)
-	{
-	case HOUSING_FOUNDATION:
-		
-		vHouseScale = vHouseOffsetScale;
-		break;
-	case HOUSING_WALL:
-	case HOUSING_WINDOW:
-	{
-		Vec3 vRot = m_pObjectPool->m_cumHousingPool[houseId]->GetLocalRot();
-		if (vRot.y != 0.f)
-		{
-			vHouseColScale = Vec3(vHouseOffsetScale.z, vHouseOffsetScale.y, vHouseOffsetScale.x);
-			//std::cout << "Turn" << vOffsetScale.x << std::endl;
-		}
-		else
-		{
-			vHouseColScale = Vec3(vHouseOffsetScale.x, vHouseOffsetScale.y, vHouseOffsetScale.z);
-		}
-	}
-	break;
-	case HOUSING_DOOR:
-	{
-		Vec3 vRot = m_pObjectPool->m_cumHousingPool[houseId]->GetLocalRot();
-		Vec3 vOffsetPos = Vec3(0.f, 0.f, 0.f);
-		if (vRot.y != 0.f)
-		{
-			vHouseColScale = Vec3(vHouseOffsetScale.z / 3.5f, vHouseOffsetScale.y / 3.5f, vHouseOffsetScale.x);
-			vOffsetPos = Vec3(80.f, 0.f, 0.f);
-		}
-		else
-		{
-			// vOffsetScale.x = 20.f;
-			vHouseColScale = Vec3(vHouseOffsetScale.x, vHouseOffsetScale.y / 3.5f, vHouseOffsetScale.z / 3.5f);
-			vOffsetPos = Vec3(0.f, 0.f, 80.f);
-		}
-		if (PlayerAndHouse_Collision_Door(playerId, houseId, vHouseColScale, vOffsetPos))
-			return true;
-		if (PlayerAndHouse_Collision_Door(playerId, houseId, vHouseColScale, -vOffsetPos))
-			return true;
-
-		return false;
-	}
-	break;
-	case HOUSING_FLOOR:
-	{
-		vHouseColScale = vHouseOffsetScale;
-	}
-	break;
-	default:
-		vHouseColScale = vHouseOffsetScale;
-		break;
-	}
-
-	vPlayerScale *= vPlayerColScale;
-	vHouseScale *= vHouseColScale;
-
-	Vec3 vMax, vOtherMax;
-	Vec3 vMin, vOtherMin;
-
-	Vec3 vPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	vPos.y += 50.f;
-
-	vMax = vPos + vPlayerScale;
-	vMin = vPos - vPlayerScale;
-	vOtherMax = vHousePos + vHouseScale;
-	vOtherMin = vHousePos - vHouseScale;
-
-	if (vMax.x < vOtherMin.x || vMin.x > vOtherMax.x) return false;
-	if (vMax.y < vOtherMin.y || vMin.y > vOtherMax.y) return false;
-	if (vMax.z < vOtherMin.z || vMin.z > vOtherMax.z) return false;
-
-	return true;
-}
-
-bool CProcess::PlayerAndHouse_Collision_Door(USHORT playerId, USHORT houseId, Vec3 vOffsetScale, Vec3 vOffsetPos)
-{
-	Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	Vec3 vDoorPos = m_pObjectPool->m_cumHousingPool[houseId]->GetLocalPos();
-
-	Vec3 vScale1 = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalScale();
-	Vec3 vScale2 = m_pObjectPool->m_cumHousingPool[houseId]->GetLocalScale();
-
-	Vec3 vColScale1 = Vec3(20.f, 60.f, 20.f);
-
-	vScale1 *= vColScale1;
-	vScale2 *= vOffsetScale;
-
-	Vec3 vMax, vOtherMax;
-	Vec3 vMin, vOtherMin;
-
-	Vec3 vPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-	vPos.y += 50.f;
-
-	vDoorPos += vOffsetPos;
-
-	vMax = vPos + vScale1;
-	vMin = vPos - vScale1;
-	vOtherMax = vDoorPos + vScale2;
-	vOtherMin = vDoorPos - vScale2;
-
-	if (vMax.x < vOtherMin.x || vMin.x > vOtherMax.x) return false;
-	if (vMax.y < vOtherMin.y || vMin.y > vOtherMax.y) return false;
-	if (vMax.z < vOtherMin.z || vMin.z > vOtherMax.z) return false;
-
-	return true;
-}
-
-bool CProcess::AnimalAndPlayer_CollisionSphere(USHORT AnimalId, USHORT PlayerId, float fOffset)
-{
-	Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[PlayerId]->GetLocalPos();
-	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
-
-	Vec3 vPlayerScale = m_pObjectPool->m_cumPlayerPool[PlayerId]->GetLocalScale();
-	Vec3 vAnimalScale = m_pObjectPool->m_cumPlayerPool[AnimalId]->GetLocalScale();
-
-	Vec3 vPlayerColScale = m_pObjectPool->m_cumPlayerPool[PlayerId]->GetLocalScale() * fOffset;
-	Vec3 vAnimalColScale = m_pObjectPool->m_cumPlayerPool[AnimalId]->GetLocalScale();
-
-	float fDist = powf(vAnimalPos.x - vPlayerPos.x, 2) + powf(vAnimalPos.y - vAnimalPos.y, 2) + powf(vAnimalPos.z - vPlayerPos.z, 2);
-	fDist = sqrtf(fDist);
-
-	if (fDist > fabsf(vPlayerScale.x * vPlayerColScale.x) + fabsf(vAnimalScale.x * vAnimalScale.x))
-		return false;
-
-	return true;
-}
-
-bool CProcess::AnimalAndNatural_CollisionSphere(USHORT AnimalId, USHORT NaturalId, float fOffset)
-{
-	return false;
-}
-
-bool CProcess::AnimalAndHouse_Collision(USHORT AnimalId, USHORT HouseId, float fOffset)
-{
-	return false;
-}
-
-bool CProcess::AnimalAndHouse_Collision_Door(USHORT AnimalId, USHORT HouseId, Vec3 vOffsetScale, Vec3 vOffsetPos)
-{
-	return false;
-}
-
 void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
 {
-	UINT uiType = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetType();
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
+	auto& User = m_pObjectPool->m_cumPlayerPool[PlayerId];
 
-	if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
-	{
-		if (AnimalAndPlayer_CollisionSphere(AnimalId, PlayerId, 0.2f))
+	// 만약 깨어 있지 않다면 return
+	bool bWakeUp = Animal->GetWakeUp();
+	if (!bWakeUp) return;
+
+	if (CollisionSphere(Animal, User)) {
+		UINT uiType = Animal->GetType();
+
+		if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
 		{
-			PushEvent_Animal_Attack(AnimalId, PlayerId);
+			if (CollisionSphere(Animal, User, 0.2f))
+			{
+				PushEvent_Animal_Attack(AnimalId, PlayerId);
+			}
+			else
+			{
+				PushEvent_Animal_Follow(AnimalId, PlayerId);
+			}
 		}
-		else
+		else if (uiType == (UINT)BEHAVIOR_TYPE::B_PASSIVE)
 		{
-			PushEvent_Animal_Follow(AnimalId, PlayerId);
+			PushEvent_Animal_Idle(AnimalId, NO_TARGET);
+		}
+		else if (uiType == (UINT)BEHAVIOR_TYPE::B_EVASION)
+		{
+			PushEvent_Animal_Evastion(AnimalId, PlayerId);
 		}
 	}
-	else if (uiType == (UINT)BEHAVIOR_TYPE::B_PASSIVE)
-	{
-		PushEvent_Animal_Idle(AnimalId, NO_TARGET);
-	}
-	else if (uiType == (UINT)BEHAVIOR_TYPE::B_EVASION)
-	{
-		PushEvent_Animal_Evastion(AnimalId, PlayerId);
+	else {
+		PushEvent_Animal_Idle(AnimalId, PlayerId);
 	}
 }
 
 void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_ATTACK);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
@@ -281,53 +96,49 @@ void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)
 
 void CProcess::PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_FOLLOW);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_FOLLOW;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 30ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Evastion(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_EVASION);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_EVASION;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 30ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_IDLE);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(NO_TARGET);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_IDLE;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 30ms;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Die(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_DIE);
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(NO_TARGET);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_DIE;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 30ms;
 	PushEventQueue(ev);
 }
 
@@ -402,7 +213,7 @@ void CProcess::PushEvent_Etc_Player_Collision()
 void CProcess::PushEvent_Etc_Animal_Collision()
 {
 	Update_Event ev;
-	ev.m_Do_Object = 9997;
+	ev.m_Do_Object = 9996;
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = EUT_ANIMAL_COLLISION;
@@ -417,7 +228,7 @@ void CProcess::PushEvent_Rot()
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = EUT_ROT;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 16ms;
 	PushEventQueue(ev);
 }
 
@@ -457,5 +268,7 @@ void CProcess::PushEvent_DB_UserSave()
 		ev.fX = vPos.x;
 		ev.fY = vPos.y;
 		ev.fZ = vPos.z;
+
+		CDataBase::GetInst()->UpdateUserInfo(ev);
 	}
 }
