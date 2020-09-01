@@ -228,6 +228,17 @@ void CPacketMgr::Send_Time_Packet(USHORT player_Id, float fTime)
 	Send_Packet(player_Id, &packet);
 }
 
+void CPacketMgr::Send_Add_Item_Packet(USHORT player_Id, char eItemtype, int iAmount)
+{
+	sc_add_item_packet packet;
+	packet.size = sizeof(sc_add_item_packet);
+	packet.type = SC_ADD_ITEM;
+	packet.eItemType = eItemtype;
+	packet.iAmount = iAmount;
+
+	Send_Packet(player_Id, &packet);
+}
+
 void CPacketMgr::Send_Full_Server_Packet(SOCKET m_sock)
 {
 	sc_full_server_packet packet;

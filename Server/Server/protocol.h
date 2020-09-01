@@ -225,8 +225,8 @@ struct sc_add_item_packet
 {
 	char size;
 	char type;
-	UINT uiItemType;
-	UINT uiInven_num;
+	char eItemType;
+	int	iAmount;
 };
 
 // [ Etc ]

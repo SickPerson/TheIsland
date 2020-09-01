@@ -194,10 +194,9 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 	UINT	uiType = attack_packet->attack_uiType;
 	USHORT	attack_id = attack_packet->attack_id;
 	char	eType = attack_packet->eType;
-	float	fDamage;
-	switch (eType) {
 
-	}
+	float	fDamage = GetDamage(eType);
+
 
 	if ((UINT)ATTACK_TYPE::ANIMAL == uiType)
 	{
@@ -209,6 +208,7 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 
 		if (fHealth > 0.f) {
 			Animal->SetHealth(fHealth);
+			cout << "Animal Attack : " << attack_id << endl;
 		}
 		else {
 			Animal->SetWakeUp(false);
@@ -216,6 +216,22 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			fHealth = 0.f;
 			Animal->SetHealth(fHealth);
 			PushEvent_Animal_Die(attack_id, playerId);
+			cout << "Animal Attack : " << attack_id << endl;
+
+			// Item Get
+			char eItemType;
+			int	iAmount = 1;
+			int random = rand() % 3;
+			if (random == 0)
+				eItemType = ITEM_LEATHER;
+			else if (random == 1)
+				eItemType == ITEM_BONE;
+			else if (random == 2)
+				eItemType == ITEM_MEAT;
+
+			if (eItemType == ITEM_MACHETTE)
+				iAmount = 3;
+			CPacketMgr::Send_Add_Item_Packet(playerId, eItemType, iAmount);
 		}
 
 	}
@@ -224,7 +240,6 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 		auto& User = m_pObjectPool->m_cumPlayerPool[playerId];
 		auto& Natural = m_pObjectPool->m_cumNaturalPool[attack_id];
 
-		char eType = Natural->GetType();
 		if (eType == N_NONE)
 			return;
 		if (CollisionSphere(User, Natural, 0.2f)) {
@@ -233,7 +248,40 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			fHealth -= fDamage;
 
 			if (fHealth <= 0.f) {
+				Natural->SetDestroy(true);
+				fHealth = 0.f;
+				Natural->SetHealth(fHealth);
+				PushEvent_Natural_Respawn(attack_id);
+			}
+			else {
+				Natural->SetHealth(fHealth);
+				char eItemType;
+				int iAmount = 1;
+				if (eType == N_TREE) {
+					int random = rand() % 5;
+					if (random == 0)
+						eItemType = ITEM_APPLE;
+					else {
+						if (eType == ITEM_AXE) {
+							iAmount = 3;
+							eItemType = ITEM_WOOD;
+						}
+					}
 
+				}
+				else {
+					if (eType == N_STONE) {
+						if (eItemType == ITEM_PICKAXE) {
+							iAmount = 3;
+							eItemType = ITEM_STONE;
+						}
+					}
+					else if (eType == N_BUSH) {
+						int iAmount = 2;
+						eItemType = ITEM_CLOTH;
+					}
+				}
+				CPacketMgr::Send_Add_Item_Packet(playerId, eItemType, iAmount);
 			}
 		}
 	}
@@ -265,39 +313,7 @@ void CPlayerProcess::PlayerUseItem(USHORT playerId, char * packet)
 	cs_use_item_packet* use_item_packet = reinterpret_cast<cs_use_item_packet*>(packet);
 	char eType = use_item_packet->eType;
 
-	float fValue{};
-	switch (eType) {
-	case ITEM_MEAT:
-		fValue = 15.f;
-		break;
-	case ITEM_COOKMEAT:
-		fValue = 20.f;
-		break;
-	case ITEM_CHOCOLATEBAR:
-		fValue = 50.f;
-		break;
-	case ITEM_CAN:
-		fValue = 25.f;
-		break;
-	case ITEM_APPLE:
-		fValue = 15.f;
-		break;
-	case ITEM_EMPTY_BOTTLE:
-		fValue = 0.f;
-		break;
-	case ITEM_WATER_BOTTLE:
-		fValue = 25.f;
-		break;
-	case ITEM_MEDICKIT:
-		fValue = 100.f;
-		break;
-	case ITEM_BANDAGE:
-		fValue = 10.f;
-		break;
-	default:
-		fValue = 0;
-		break;
-	}
+	float fValue = GetValue(eType);
 
 	if (eType > ITEM_FOOD && eType < ITEM_FOOD_END) {
 		if (eType == ITEM_MEAT)
@@ -532,7 +548,7 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 				if (!bWakeUp)
 				{
 					m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
-					PushEvent_Animal_Behavior(user, after);
+					PushEvent_Animal_Behavior(after, user);
 
 				}
 				CPacketMgr::Send_Pos_Packet(user, after);
@@ -549,9 +565,81 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 				if (!bWakeUp)
 				{
 					m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
-					PushEvent_Animal_Behavior(user, after);
+					PushEvent_Animal_Behavior(after, user);
 				}
 			}
 		}
 	}
+}
+
+float CPlayerProcess::GetDamage(char eType)
+{
+	float fDamage;
+
+	switch (eType) {
+	case ITEM_PICKAXE:
+		fDamage = 30.f;
+		break;
+	case ITEM_AXE:
+		fDamage = 30.f;
+		break;
+	case ITEM_MACHETTE:
+	case ITEM_WOODCLUB:
+	{
+	}
+	break;
+	case ITEM_HAMMER:
+	{
+		fDamage = 15.f;
+	}
+	break;
+	case ITEM_BOW:
+	{
+		fDamage = 30.f;
+	}
+	break;
+	default:
+		break;
+	}
+
+	return fDamage;
+}
+
+float CPlayerProcess::GetValue(char eType)
+{
+	float fValue{};
+	switch (eType) {
+	case ITEM_MEAT:
+		fValue = 15.f;
+		break;
+	case ITEM_COOKMEAT:
+		fValue = 20.f;
+		break;
+	case ITEM_CHOCOLATEBAR:
+		fValue = 50.f;
+		break;
+	case ITEM_CAN:
+		fValue = 25.f;
+		break;
+	case ITEM_APPLE:
+		fValue = 15.f;
+		break;
+	case ITEM_EMPTY_BOTTLE:
+		fValue = 0.f;
+		break;
+	case ITEM_WATER_BOTTLE:
+		fValue = 25.f;
+		break;
+	case ITEM_MEDICKIT:
+		fValue = 100.f;
+		break;
+	case ITEM_BANDAGE:
+		fValue = 10.f;
+		break;
+	default:
+		fValue = 0;
+		break;
+	}
+
+	return fValue;
 }

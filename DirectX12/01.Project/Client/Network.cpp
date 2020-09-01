@@ -340,8 +340,10 @@ void CNetwork::Recv_Remove_Housing_Packet(char * packet)
 void CNetwork::Recv_Add_Item_Packet(char * packet)
 {
 	sc_add_item_packet* add_item_packet = reinterpret_cast<sc_add_item_packet*>(packet);
-	UINT uiType = add_item_packet->uiItemType;
-	UINT uiInvenNum = add_item_packet->uiInven_num;
+	char eType = add_item_packet->eItemType;
+	int iAmount = add_item_packet->iAmount;
+
+	// 아이템 추가하는 부분
 }
 
 void CNetwork::Recv_Weather_Packet(char * packet)

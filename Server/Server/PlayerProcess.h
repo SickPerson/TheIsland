@@ -84,4 +84,8 @@ public:
 public:
 	void InitViewList(USHORT playerId);
 	void UpdateViewList(USHORT playerId);
+
+public:
+	float GetDamage(char eType);
+	float GetValue(char eType);
 };

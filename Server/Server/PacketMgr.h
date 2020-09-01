@@ -35,6 +35,9 @@ public: // etc
 	static void Send_Weather_Packet(USHORT player_Id, bool bRain);
 	static void Send_Time_Packet(USHORT player_Id, float fTime);
 
+public:
+	static void Send_Add_Item_Packet(USHORT player_Id, char eItemtype, int iAmount);
+
 public: // Server
 	static void Send_Full_Server_Packet(SOCKET m_sock);
 	static void Send_Disconnect_Server_Packet(USHORT player_Id);
