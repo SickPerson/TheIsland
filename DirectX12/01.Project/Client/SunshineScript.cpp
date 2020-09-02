@@ -10,6 +10,7 @@
 #include <Engine/ParticleSystem.h>
 
 #include <iostream>
+#include "Network.h"
 
 CSunshineScript::CSunshineScript() :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
