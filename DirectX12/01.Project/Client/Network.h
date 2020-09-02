@@ -19,6 +19,9 @@ private:
 
 	bool m_bLogin;
 	bool m_bClientClose;
+
+	float m_fServerTime;
+
 private:
 	function<void(char*)> m_fpPacketProcess[SC_END];
 
@@ -36,6 +39,7 @@ public:
 	void Init(HWND hWnd);
 public:
 	SOCKET&	GetSocket() { return m_sock; }
+	float GetTime()const { return m_fServerTime; }
 public:
 	static void Err_quit(const char* msg, int err_no);
 	static void Err_display(const char* msg, int err_no);

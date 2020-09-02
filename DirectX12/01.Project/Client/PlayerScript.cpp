@@ -430,8 +430,11 @@ void CPlayerScript::Update()
 	}
 
 	m_fRotTime -= DT;
-	if (m_fRotTime < 0.f) {
+	if (m_fRotTime < 0.f) 
+	{
+#ifdef NETWORK_ON
 		CPacketMgr::GetInst()->Send_Rot_player_Packet();
+#endif // NETWORK_ON
 		m_fRotTime = 3.f;
 	}
 }

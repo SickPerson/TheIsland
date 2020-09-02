@@ -8,6 +8,7 @@
 #include <iostream>
 #include "../../../Server/Server/protocol.h"
 
+#define CHECK_COLLISION
 CAnimalSpawner::CAnimalSpawner(BEHAVIOR_TYPE eType) :
 	CScript((UINT)SCRIPT_TYPE::WORLDSCRIPT),
 	m_eSpawnType(eType),
@@ -73,7 +74,7 @@ void CAnimalSpawner::Respawn()
 			// °õ
 			Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
 			pObject = pBearTex->Instantiate();
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 			pObject->AddComponent( new CCollider2D );
 
 			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
@@ -112,7 +113,7 @@ void CAnimalSpawner::Respawn()
 			{
 				Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
 				pObject = pWolfTex->Instantiate();
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 				pObject->AddComponent( new CCollider2D );
 
 				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
@@ -147,7 +148,7 @@ void CAnimalSpawner::Respawn()
 			{
 				Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
 				pObject = pBoarTex->Instantiate();
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 				pObject->AddComponent( new CCollider2D );
 
 				pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
@@ -184,7 +185,7 @@ void CAnimalSpawner::Respawn()
 		{
 			Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
 			pObject = pDeerTex->Instantiate();
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 			pObject->AddComponent( new CCollider2D );
 
 			pObject->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );

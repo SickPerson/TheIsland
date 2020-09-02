@@ -126,7 +126,7 @@ void CIngameScene::Init()
 	// Script 설정
 	pPlayer->AddComponent( new CPlayerScript );
 
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 	pPlayer->AddComponent( new CCollider2D );
 	pPlayer->Collider2D()->SetOffsetScale( Vec3( 150.f, 150.f, 150.f ) );
 	pPlayer->Collider2D()->SetCollider2DType( COLLIDER2D_TYPE::SPHERE );
@@ -383,7 +383,7 @@ void CIngameScene::Init()
 	// =================================
 	// Player Layer 와 Monster Layer 는 충돌 검사 진행
 	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Animal" );
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Environment" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Environment" );
 	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"House" );
 	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Human");
 	//
@@ -1240,7 +1240,7 @@ void CIngameScene::CreateNatural()
 			pObject->AddComponent( new CNaturalScript( NATURAL_TREE ) );
 			pObject->GetScript<CNaturalScript>()->LoadFromScene( pFile );
 
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 			pObject->AddComponent( new CCollider2D );
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 60.f));
@@ -1267,13 +1267,13 @@ void CIngameScene::CreateNatural()
 		else if (str1 == "plainsgrass")
 		{
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 0.f, 20.f ) );
 			pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 			//pObject->FrustumCheck(false);
 #endif
 		}
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 		else if ( str1 == "mountainsrocks01" )
 		{
 			pObject->Collider2D()->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
