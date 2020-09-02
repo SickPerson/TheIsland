@@ -185,6 +185,7 @@ void CNetwork::ProcessPacket(char* packet)
 {
 	m_fpPacketProcess[packet[1]](packet);
 }
+
 void CNetwork::Recv_Pos_Packet(char * packet)
 {
 	sc_pos_packet* pos_packet = reinterpret_cast<sc_pos_packet*>(packet);
@@ -364,5 +365,5 @@ void CNetwork::Recv_Weather_Packet(char * packet)
 void CNetwork::Recv_Time_Packet(char * packet)
 {
 	sc_time_packet* time_packet = reinterpret_cast<sc_time_packet*>(packet);
-	float fTime = time_packet->fTime;
+	m_fServerTime = time_packet->fTime;
 }

@@ -4,6 +4,8 @@
 // simd 사용 안함
 #define _XM_NO_INTRINSICS_
 
+#define CHECK_COLLISION
+
 #include <d3d12.h>
 #include <wrl/client.h>
 #include <d3dcompiler.h>
