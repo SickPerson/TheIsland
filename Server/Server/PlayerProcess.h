@@ -28,8 +28,7 @@ public:
 public:
 	void Init_Player(USHORT playerId, char* wcId);
 public:
-	void BindPacketProcess()
-	{
+	void BindPacketProcess(){
 		m_fpPacketProcess[CS_LOGIN] = [&](USHORT playerId, char* packet){
 			PlayerLogin(playerId, packet);
 		};

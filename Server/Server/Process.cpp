@@ -90,7 +90,7 @@ void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_ATTACK;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + 30ms;
 	PushEventQueue(ev);
 }
 

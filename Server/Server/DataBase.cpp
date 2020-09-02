@@ -218,8 +218,8 @@ bool CDataBase::IsIDExist(wstring login_id)
 void CDataBase::AddUserInfo(DB_Event & _ev)
 {
 	wstring execFunc = L"EXEC insert_info";
-	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.fHealth) + L", " +
-		L", " + to_wstring(_ev.fHungry) + L", " + to_wstring(_ev.fThirst) + L", " +
+	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.fHealth) 
+		+ L", " + L", " + to_wstring(_ev.fHungry) + L", " + to_wstring(_ev.fThirst) + L", " +
 		to_wstring(_ev.fX) + L", " + to_wstring(_ev.fY) + L", " + to_wstring(_ev.fZ);
 	execFunc += var;
 
