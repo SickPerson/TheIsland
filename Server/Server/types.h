@@ -26,8 +26,8 @@ enum ANIMAL_UPDATE_TYPE{
 // - Natural
 enum NATURAL_UPDATE_TYPE
 {
+	NUT_DIE,
 	NUT_RESPAWN,
-	NUT_DAMAGE,
 	NUT_END
 };
 // - Etc

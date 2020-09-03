@@ -240,6 +240,9 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 		auto& User = m_pObjectPool->m_cumPlayerPool[playerId];
 		auto& Natural = m_pObjectPool->m_cumNaturalPool[attack_id];
 
+		bool bDestroy = Natural->GetDestroy();
+		if (!bDestroy) return;
+
 		if (eType == N_NONE)
 			return;
 		if (CollisionSphere(User, Natural, 0.2f)) {
@@ -249,9 +252,11 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 
 			if (fHealth <= 0.f) {
 				Natural->SetDestroy(true);
+				Natural->SetAngle(0.f);
+
 				fHealth = 0.f;
 				Natural->SetHealth(fHealth);
-				PushEvent_Natural_Respawn(attack_id);
+				PushEvent_Natural_Die(attack_id);
 			}
 			else {
 				Natural->SetHealth(fHealth);
@@ -584,21 +589,18 @@ float CPlayerProcess::GetDamage(char eType)
 		fDamage = 30.f;
 		break;
 	case ITEM_MACHETTE:
+		fDamage = 45.f;
 	case ITEM_WOODCLUB:
-	{
-	}
+		fDamage = 20.f;
 	break;
 	case ITEM_HAMMER:
-	{
 		fDamage = 15.f;
-	}
 	break;
 	case ITEM_BOW:
-	{
 		fDamage = 30.f;
-	}
 	break;
 	default:
+		fDamage = 0.f;
 		break;
 	}
 

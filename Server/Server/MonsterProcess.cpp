@@ -65,16 +65,21 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 
 void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 {
-	bool bWakeUp = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetWakeUp();
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
+	auto& User = m_pObjectPool->m_cumPlayerPool[usTarget];
+
+	bool bWakeUp = Animal->GetWakeUp();
 	if (!bWakeUp) return;
 
 	char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
-	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
-	Vec3 vTargetPos = m_pObjectPool->m_cumPlayerPool[usTarget]->GetLocalPos();
-	float fAnimalSpeed = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetSpeed();
-	Vec3 vTargetRot = m_pObjectPool->m_cumPlayerPool[usTarget]->GetLocalRot();
+	Vec3 vAnimalPos = Animal->GetLocalPos();
+	Animal->SetPrevPos(vAnimalPos);
+
+	Vec3 vTargetPos = User->GetLocalPos();
+	float fAnimalSpeed = Animal->GetSpeed();
+	Vec3 vTargetRot = User->GetLocalRot();
 
 	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetPrevPos(vAnimalPos);
 
@@ -83,8 +88,8 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 	vAnimalPos += vDir * fAnimalSpeed * 0.05f;
 
 
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));	
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalPos(vAnimalPos);
+	Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+	Animal->SetLocalPos(vAnimalPos);
 
 	concurrent_unordered_set<USHORT> loginList;
 	CopyBeforeLoginList(loginList);
@@ -92,7 +97,7 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 	InRangePlayer(loginList, rangeList, AnimalId);
 
 	if (rangeList.empty()) {
-		m_pObjectPool->m_cumAnimalPool[AnimalId]->SetWakeUp(false);
+		Animal->SetWakeUp(false);
 		return;
 	}
 
@@ -107,22 +112,26 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 
 void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 {
-	bool bWakeUp = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetWakeUp();
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
+	auto& User = m_pObjectPool->m_cumPlayerPool[usTarget];
+	bool bWakeUp = Animal->GetWakeUp();
 	if (!bWakeUp) return;
 
-	char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
+	char Animal_State = Animal->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
-	Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
-	Vec3 vTargetPos = m_pObjectPool->m_cumPlayerPool[usTarget]->GetLocalPos();
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetPrevPos(vAnimalPos);
+	Vec3 vAnimalPos = Animal->GetLocalPos();
+	Animal->SetPrevPos(vAnimalPos);
 
-	float fAnimalSpeed = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetSpeed();
+	Vec3 vTargetPos = User->GetLocalPos();
+	Animal->SetPrevPos(vAnimalPos);
+
+	float fAnimalSpeed = Animal->GetSpeed();
 	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
 	vDir.y = 0.f;
 	vAnimalPos += - vDir * fAnimalSpeed * 0.05f;
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalRot(Vec3(0.f, atan2( - vDir.x, - vDir.z) + 3.141592f, 0.f));
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetLocalPos(vAnimalPos);
+	Animal->SetLocalRot(Vec3(0.f, atan2( - vDir.x, - vDir.z) + 3.141592f, 0.f));
+	Animal->SetLocalPos(vAnimalPos);
 
 	concurrent_unordered_set<USHORT> loginList;
 	CopyBeforeLoginList(loginList);
@@ -130,7 +139,7 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 	InRangePlayer(loginList, rangeList, AnimalId);
 
 	if (rangeList.empty()) {
-		m_pObjectPool->m_cumAnimalPool[AnimalId]->SetWakeUp(false);
+		Animal->SetWakeUp(false);
 		return;
 	}
 
@@ -169,6 +178,7 @@ void CMonsterProcess::DieEvent(USHORT Animal_Id)
 {
 	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];
 	Vec3 AnimalPos = Animal->GetLocalPos();
+	Animal->SetPrevPos(AnimalPos);
 
 	concurrent_unordered_set<USHORT> login_list;
 	for (auto& user : login_list) {
@@ -194,7 +204,7 @@ void CMonsterProcess::RespawnEvent(USHORT uiMonster)
 		return;
 
 	CProcess::m_pObjectPool->m_cumAnimalPool[uiMonster]->SetWakeUp(true);
-	USHORT monster_id = MAX_USER + uiMonster;
+	USHORT monster_id = uiMonster;
 
 	Vec3 monster_pos = CProcess::m_pObjectPool->m_cumAnimalPool[uiMonster]->GetLocalPos();
 

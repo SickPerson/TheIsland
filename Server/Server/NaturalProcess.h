@@ -12,11 +12,11 @@ private:
 
 public:
 	void BindNaturalUpdate() {
+		m_fpNaturalUpdate[NUT_DIE] = [&](USHORT NaturalId, USHORT PlayerId) {
+			DieEvent(NaturalId);
+		};
 		m_fpNaturalUpdate[NUT_RESPAWN] = [&](USHORT NaturalId, USHORT PlayerId) {
 			RespawnEvent(NaturalId);
-		};
-		m_fpNaturalUpdate[NUT_DAMAGE] = [&](USHORT NaturalId, USHORT PlayerId) {
-			DamageEvent(NaturalId, PlayerId);
 		};
 	}
 
@@ -27,8 +27,7 @@ public:
 	}
 
 public:
-	void Damage(USHORT Natural_Id, float fDamage);
+	void DieEvent(USHORT Natural_Id);
 	void RespawnEvent(USHORT natural_id);
-	void DamageEvent(USHORT NaturalId, USHORT PlayerId);
 };
 

@@ -158,8 +158,8 @@ public: // Animal
 	void PushEvnet_Animal_Damage(USHORT AnimalId, USHORT PlayerId);
 
 public: // Natural
+	void PushEvent_Natural_Die(USHORT NaturalId);
 	void PushEvent_Natural_Respawn(USHORT NaturalId);
-	void PushEvent_Natural_Damage(USHORT NaturalId, USHORT PlayerId);
 
 public: // Etc
 	void PushEvent_Etc_Player_Collision();

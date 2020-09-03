@@ -175,27 +175,31 @@ void CProcess::PushEvnet_Animal_Damage(USHORT AnimalId, USHORT PlayerId)
 	PushEventQueue(ev);
 }
 
+void CProcess::PushEvent_Natural_Die(USHORT NaturalId)
+{
+	bool Destroy = m_pObjectPool->m_cumNaturalPool[NaturalId]->GetDestroy();
+	if (!Destroy) return;
+
+	Update_Event ev;
+	ev.m_Do_Object = NaturalId;
+	ev.m_EventType = EV_NATURAL_UPDATE;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_eObjUpdate = NUT_DIE;
+	ev.wakeup_time = high_resolution_clock::now() + 30ms;
+	PushEventQueue(ev);
+}
+
 void CProcess::PushEvent_Natural_Respawn(USHORT NaturalId)
 {
-	m_pObjectPool->m_cumNaturalPool[NaturalId]->SetDestroy(true);
-	m_pObjectPool->m_cumNaturalPool[NaturalId]->SetAngle(0.f);
+	bool Destroy = m_pObjectPool->m_cumNaturalPool[NaturalId]->GetDestroy();
+	if (!Destroy) return;
+
 	Update_Event ev;
 	ev.m_Do_Object = NaturalId;
 	ev.m_EventType = EV_NATURAL_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = NUT_RESPAWN;
 	ev.wakeup_time = high_resolution_clock::now() + 10s;
-	PushEventQueue(ev);
-}
-
-void CProcess::PushEvent_Natural_Damage(USHORT NaturalId, USHORT PlayerId)
-{
-	Update_Event ev;
-	ev.m_Do_Object = NaturalId;
-	ev.m_EventType = EV_NATURAL_UPDATE;
-	ev.m_From_Object = PlayerId;
-	ev.m_eObjUpdate = NUT_DAMAGE;
-	ev.wakeup_time = high_resolution_clock::now();
 	PushEventQueue(ev);
 }
 

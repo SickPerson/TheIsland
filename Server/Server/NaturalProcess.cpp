@@ -12,38 +12,17 @@ CNaturalProcess::~CNaturalProcess()
 {
 }
 
-void CNaturalProcess::Damage(USHORT Natural_Id, float fDamage)
+void CNaturalProcess::DieEvent(USHORT Natural_Id)
 {
 	bool bDestroy = m_pObjectPool->m_cumNaturalPool[Natural_Id]->GetDestroy();
-	if (bDestroy) return;
+	if (!bDestroy) return;
 
-	NATURAL_TYPE eType = m_pObjectPool->m_cumNaturalPool[Natural_Id]->GetType();
-
-	if (eType == N_NONE)
-		return;
-
-	float fHealth = m_pObjectPool->m_cumNaturalPool[Natural_Id]->GetHealth();
-
-	fHealth -= fDamage;
-
-	if (fHealth <= 0.f)
-	{
-		m_pObjectPool->m_cumNaturalPool[Natural_Id]->SetDestroy(true);
-		m_pObjectPool->m_cumNaturalPool[Natural_Id]->SetHealth(0.f);
-
-		concurrent_unordered_set<USHORT> list;
-		CProcess::CopyBeforeLoginList(list);
-		for (auto& au : list)
-		{
-			bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
-			if (!bConnect) continue;
-			CPacketMgr::GetInst()->Send_Natural_Destroy_Packet(au, Natural_Id);
-		}
-		PushEvent_Natural_Respawn(Natural_Id);
+	for (auto& user : m_pObjectPool->m_cumPlayerPool) {
+		bool bConnect = user.second->GetConnect();
+		if (!bConnect) continue;
+		CPacketMgr::Send_Natural_Destroy_Packet(user.first, Natural_Id);
 	}
-	else {
-		m_pObjectPool->m_cumNaturalPool[Natural_Id]->SetHealth(fHealth);
-	}
+	PushEvent_Natural_Respawn(Natural_Id);
 }
 
 void CNaturalProcess::RespawnEvent(USHORT natural_id)
@@ -70,40 +49,10 @@ void CNaturalProcess::RespawnEvent(USHORT natural_id)
 	default:
 		break;
 	}
-}
 
-void CNaturalProcess::DamageEvent(USHORT NaturalId, USHORT PlayerId)
-{
-	bool bDestroy = m_pObjectPool->m_cumNaturalPool[NaturalId]->GetDestroy();
-	if (bDestroy) return;
-
-	NATURAL_TYPE eType = m_pObjectPool->m_cumNaturalPool[NaturalId]->GetType();
-
-	if (eType == N_NONE)
-		return;
-
-	float fHealth = m_pObjectPool->m_cumNaturalPool[NaturalId]->GetHealth();
-	//float fDamage = m_pObjectPool->m_cumPlayerPool[PlayerId]->GetDamage();
-
-	//fHealth -= fDamage;
-
-	if (fHealth <= 0.f)
-	{
-		m_pObjectPool->m_cumNaturalPool[NaturalId]->SetDestroy(true);
-		m_pObjectPool->m_cumNaturalPool[NaturalId]->SetHealth(0.f);
-
-		concurrent_unordered_set<USHORT> list;
-		CProcess::CopyBeforeLoginList(list);
-		for (auto& au : list)
-		{
-			bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
-			if (!bConnect) continue;
-			CPacketMgr::GetInst()->Send_Natural_Destroy_Packet(au, NaturalId);
-		}
-
-		PushEvent_Natural_Respawn(NaturalId);
-	}
-	else {
-		m_pObjectPool->m_cumNaturalPool[NaturalId]->SetHealth(fHealth);
+	for (auto& user : m_pObjectPool->m_cumPlayerPool) {
+		bool bConnect = user.second->GetConnect();
+		if (!bConnect) continue;
+		CPacketMgr::Send_Put_Natural_Packet(user.first, natural_id);
 	}
 }

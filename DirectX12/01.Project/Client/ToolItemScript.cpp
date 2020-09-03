@@ -288,7 +288,6 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				{
 					return 0;
 				}
-
 				pObj->GetScript<CNaturalScript>()->Damage(pHost, m_fDamage);
 #ifdef NETWORK_ON	
 				CPacketMgr::GetInst()->Send_Attack_Player_Packet( 1, pObj->GetScript<CNaturalScript>()->GetIndex(), ITEM_WOODCLUB);
