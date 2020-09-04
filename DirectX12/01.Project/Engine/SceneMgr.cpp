@@ -93,7 +93,7 @@ void CSceneMgr::Update()
 	// 충돌 처리
 	CCollisionMgr::GetInst()->Update();
 #else
-#endif // CHECK_COLLISTION
+#endif // CHECK_COLLISION
 
 }
 

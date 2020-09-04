@@ -40,9 +40,8 @@ void CSunshineScript::Update()
 #else
 	m_fTime += DT * DAYCYCLE;
 #endif	
-	if (m_fTime > 60.f)
+	if (((int)m_fTime % 60) == 0)
 	{
-		m_fTime = 0.f;
 		m_iMinute++;
 		if (m_iMinute >= 60)
 		{

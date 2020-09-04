@@ -1514,7 +1514,7 @@ void CIngameScene::AnimalUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 			// °õ
 			Ptr<CMeshData> pBearTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\bear.mdat", L"MeshData\\bear.mdat");
 			pObject = pBearTex->Instantiate();
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 			pObject->AddComponent(new CCollider2D);
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
@@ -1551,7 +1551,7 @@ void CIngameScene::AnimalUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 		{
 			Ptr<CMeshData> pBoarTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\boar.mdat", L"MeshData\\boar.mdat");
 			pObject = pBoarTex->Instantiate();
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 			pObject->AddComponent(new CCollider2D);
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
@@ -1587,7 +1587,7 @@ void CIngameScene::AnimalUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 		{
 			Ptr<CMeshData> pDeerTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\deer.mdat", L"MeshData\\deer.mdat");
 			pObject = pDeerTex->Instantiate();
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 			pObject->AddComponent(new CCollider2D);
 
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
@@ -1625,7 +1625,7 @@ void CIngameScene::AnimalUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 		{
 			Ptr<CMeshData> pWolfTex = CResMgr::GetInst()->Load<CMeshData>(L"MeshData\\wolf.mdat", L"MeshData\\wolf.mdat");
 			pObject = pWolfTex->Instantiate();
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 			pObject->AddComponent(new CCollider2D);
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 50.f, 0.f));
@@ -1750,7 +1750,7 @@ void CIngameScene::InstallHousing( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRo
 	}
 	pObject->AddComponent( new CBuildScript( ( HOUSING_TYPE )uiType ) );
 
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 	pObject->AddComponent( new CCollider2D );
 	pObject->Collider2D()->SetOffsetScale( Vec3( 195.f, 195.f, 195.f ) );
 
