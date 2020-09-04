@@ -39,7 +39,7 @@ typedef struct DB_Event {
 
 	UINT state; // DataBase_TYPE
 	int inum; // ID �õ尪
-	wstring sid; // ID
+	wstring strID; // ID
 
 	float fHealth;
 	float fHungry;

@@ -225,3 +225,36 @@ void CPacketMgr::Send_Use_Item_Packet(char eType)
 		CNetwork::Err_display("Err while sending pakcet - ", err_no);
 	}
 }
+
+void CPacketMgr::Send_Equip_Armor_Packet(char eType)
+{
+	cs_equip_armor_packet* packet = reinterpret_cast<cs_equip_armor_packet*>(m_cSendBuf);
+	packet->size = sizeof(cs_equip_armor_packet);
+	packet->type = CS_EQUIP_ARMOR;
+	packet->eType = eType;
+
+	DWORD	size{ 0 }, flag{ 0 };
+	m_SendWsaBuf.len = sizeof(cs_equip_armor_packet);
+	int retval = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0) {
+		int err_no = WSAGetLastError();
+		CNetwork::Err_display("Err while sending pakcet - ", err_no);
+	}
+}
+
+void CPacketMgr::Send_Destroy_Armor_Packet()
+{
+	cs_destroy_armor_packet* packet = reinterpret_cast<cs_destroy_armor_packet*>(m_cSendBuf);
+	packet->size = sizeof(cs_destroy_armor_packet);
+	packet->type = CS_DESTROY_ARMOR;
+
+	DWORD	size{ 0 }, flag{ 0 };
+	m_SendWsaBuf.len = sizeof(cs_destroy_armor_packet);
+	int retval = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0) {
+		int err_no = WSAGetLastError();
+		CNetwork::Err_display("Err while sending pakcet - ", err_no);
+	}
+}

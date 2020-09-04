@@ -172,7 +172,7 @@ void CObjectpool::Init_AnimalPool()
 
 void CObjectpool::Init_NaturalPool()
 {
-	for (int i = 0; i < MAX_NATURAL; ++i) {
+	for (int i = BEGIN_NATURAL; i < BEGIN_NATURAL + MAX_NATURAL; ++i) {
 		m_cumNaturalPool.insert(make_pair(i, new CNatural()));
 	}
 	FILE* pFile = NULL;
@@ -185,7 +185,7 @@ void CObjectpool::Init_NaturalPool()
 	int iSize = 0;
 	fread(&iSize, sizeof(int), 1, pFile);
 
-	for (int i = 0; i < iSize; ++i)
+	for (int i = BEGIN_NATURAL; i < BEGIN_NATURAL + iSize; ++i)
 	{
 		wchar_t strName[MAX_PATH]{};
 		size_t iLength = 0;

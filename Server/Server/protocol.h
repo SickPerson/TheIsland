@@ -48,8 +48,8 @@ enum CS_PACKET_TYPE {
 	CS_GET_ITEM,
 	CS_REMOVE_ITEM,
 	CS_USE_ITEM,
-	CS_DRESS_ITEM,
-	CS_UNDRESS_ITEM,
+	CS_EQUIP_ARMOR,
+	CS_DESTROY_ARMOR,
 	CS_END
 };
 
@@ -364,6 +364,17 @@ struct cs_use_item_packet {
 	char	size;
 	char	type;
 	char	eType;
+};
+
+struct cs_equip_armor_packet {
+	char	size;
+	char	type;
+	char	eType;
+};
+
+struct cs_destroy_armor_packet {
+	char	size;
+	char	type;
 };
 
 #pragma pack (pop)

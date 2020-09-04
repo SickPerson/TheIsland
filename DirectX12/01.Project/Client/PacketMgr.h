@@ -29,5 +29,7 @@ public:
 	void Send_Attack_Player_Packet(UINT attackType, USHORT attackId, char eitemType);
 	void Send_Animation_Player_Packet(UINT uiAnimationType);
 	void Send_Use_Item_Packet(char eType);
+	void Send_Equip_Armor_Packet(char eType);
+	void Send_Destroy_Armor_Packet();
 };
 

@@ -1213,7 +1213,7 @@ void CIngameScene::CreateNatural()
 	int iSize = 0;
 	fread( &iSize, sizeof( int ), 1, pFile );
 
-	for ( int i = 0; i < iSize; ++i )
+	for ( int i = BEGIN_NATURAL; i < BEGIN_NATURAL + iSize; ++i )
 	{
 		CGameObject* pObject = nullptr;
 
@@ -1239,6 +1239,7 @@ void CIngameScene::CreateNatural()
 			pObject = pMeshData->Instantiate();
 			pObject->AddComponent( new CNaturalScript( NATURAL_TREE ) );
 			pObject->GetScript<CNaturalScript>()->LoadFromScene( pFile );
+			pObject->GetScript<CNaturalScript>()->SetIndex(i);
 
 #ifdef CHECK_COLLISION
 			pObject->AddComponent( new CCollider2D );
@@ -1763,7 +1764,6 @@ void CIngameScene::InstallHousing( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRo
 
 	Vec3 vNewPos = vPos;
 	vNewPos.y = CNaviMgr::GetInst()->GetY( vPos );
-
 	pObject->Transform()->SetLocalPos( vNewPos );
 
 	pObject->Transform()->SetLocalRot( vRot );

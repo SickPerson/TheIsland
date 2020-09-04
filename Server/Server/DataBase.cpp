@@ -192,9 +192,10 @@ void CDataBase::PushEvent_Change_State(USHORT & player_Id)
 
 bool CDataBase::IsIDExist(wstring login_id)
 {
+	shared_lock<shared_mutex>	lock(m_smDBMutex);
 	wstring execFunc = L"EXEC select_id " + login_id;
 
-	SQLRETURN ret;
+	SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
 	ret = SQLExecDirect(m_hStmt, (SQLWCHAR*)execFunc.c_str(), SQL_NTS);
 	ret = SQLBindCol(m_hStmt, 1, SQL_C_WCHAR, &m_dUserId, MAX_STR_LEN, &cbID);
 
@@ -212,19 +213,21 @@ bool CDataBase::IsIDExist(wstring login_id)
 	}
 
 	SQLCancel(m_hStmt);
+	SQLFreeHandle(SQL_HANDLE_STMT, m_hStmt);
 	return isExist;
 }
 
 void CDataBase::AddUserInfo(DB_Event & _ev)
 {
 	wstring execFunc = L"EXEC insert_info";
-	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.fHealth) 
-		+ L", " + L", " + to_wstring(_ev.fHungry) + L", " + to_wstring(_ev.fThirst) + L", " +
-		to_wstring(_ev.fX) + L", " + to_wstring(_ev.fY) + L", " + to_wstring(_ev.fZ);
+	wstring var = to_wstring(_ev.inum) + L", " + _ev.strID + L", " + to_wstring(_ev.fHealth)
+		+ L", " + to_wstring(_ev.fHungry) + L", " + to_wstring(_ev.fThirst) + L", "
+		+ to_wstring(_ev.fX) + L", " + to_wstring(_ev.fY) + L", " + to_wstring(_ev.fZ);
 	execFunc += var;
 
-	SQLRETURN ret;
+	SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
 	ret = SQLExecDirect(m_hStmt, (SQLWCHAR*)execFunc.c_str(), SQL_NTS);
+
 	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
 	{
 		ret = SQLBindCol(m_hStmt, 2, SQL_C_WCHAR, &m_dUserId, 100, &cbID);
@@ -237,55 +240,64 @@ void CDataBase::AddUserInfo(DB_Event & _ev)
 		HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
 
 	SQLCancel(m_hStmt);
+	SQLFreeHandle(SQL_HANDLE_STMT, m_hStmt);
 }
 
 void CDataBase::UpdateUserInfo(DB_Event & _ev)
 {
+	unique_lock<shared_mutex>	lock(m_smDBMutex);
+
 	wstring execFunc = L"EXEC update_info ";
-	wstring var = to_wstring(_ev.inum) + L", " + _ev.sid + L", " + to_wstring(_ev.fHealth) + L", " +
-		L", " + to_wstring(_ev.fHungry) + L", " + to_wstring(_ev.fThirst) + L", " +
-		to_wstring(_ev.fX) + L", " + to_wstring(_ev.fY) + L", " + to_wstring(_ev.fZ);
+	wstring var = to_wstring(_ev.inum) + L", " + _ev.strID + L", " + to_wstring(_ev.fHealth) 
+		+ L", " + to_wstring(_ev.fHungry) + L", " + to_wstring(_ev.fThirst) + L", " 
+		+ to_wstring(_ev.fX) + L", " + to_wstring(_ev.fY) + L", " + to_wstring(_ev.fZ);
 	execFunc += var;
 
-	SQLRETURN ret;
+	SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
 	ret = SQLExecDirect(m_hStmt, (SQLWCHAR*)execFunc.c_str(), SQL_NTS);
 	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
 		ret = SQLFetch(m_hStmt);
 	else
 		HandleDiagnosticRecord(m_hStmt, SQL_HANDLE_STMT, ret);
-
 	SQLCancel(m_hStmt);
+	SQLFreeHandle(SQL_HANDLE_STMT, m_hStmt);
 }
 
 DB_Event & CDataBase::GetUserInfo(wstring & login_id)
 {
 	wstring execFunc = L"EXEC select_info " + login_id;
 
-	SQLRETURN ret = SQLExecDirect(m_hStmt, (SQLWCHAR*)execFunc.c_str(), SQL_NTS);
+	SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, m_hDbc, &m_hStmt);
+	ret = SQLExecDirect(m_hStmt, (SQLWCHAR*)execFunc.c_str(), SQL_NTS);
 
 	ret = SQLBindCol(m_hStmt, 1, SQL_C_LONG, &m_dUserNum, 100, &cbNum);
 	ret = SQLBindCol(m_hStmt, 2, SQL_C_WCHAR, &m_dUserId, MAX_STR_LEN + 1, &cbID);
 	ret = SQLBindCol(m_hStmt, 3, SQL_C_SHORT, &m_dUserHp, 100, &cbHp);
-	ret = SQLBindCol(m_hStmt, 5, SQL_C_SHORT, &m_dUserHungry, 100, &cbHungry);
-	ret = SQLBindCol(m_hStmt, 6, SQL_C_SHORT, &m_dUserThirst, 100, &cbThirst);
-	ret = SQLBindCol(m_hStmt, 7, SQL_C_DOUBLE, &m_dUserX, 100, &cbX);
-	ret = SQLBindCol(m_hStmt, 8, SQL_C_DOUBLE, &m_dUserY, 100, &cbY);
-	ret = SQLBindCol(m_hStmt, 9, SQL_C_DOUBLE, &m_dUserZ, 100, &cbZ);
+	ret = SQLBindCol(m_hStmt, 4, SQL_C_SHORT, &m_dUserHungry, 100, &cbHungry);
+	ret = SQLBindCol(m_hStmt, 5, SQL_C_SHORT, &m_dUserThirst, 100, &cbThirst);
+	ret = SQLBindCol(m_hStmt, 6, SQL_C_DOUBLE, &m_dUserX, 100, &cbX);
+	ret = SQLBindCol(m_hStmt, 7, SQL_C_DOUBLE, &m_dUserY, 100, &cbY);
+	ret = SQLBindCol(m_hStmt, 8, SQL_C_DOUBLE, &m_dUserZ, 100, &cbZ);
 
 	DB_Event ev{};
-	ret = SQLFetch(m_hStmt);
-	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO)
-		cout << "Error" << endl;
-	if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
-		ev.inum = m_dUserNum;
-		ev.sid = m_dUserId;
-		ev.fHealth = m_dUserHp;
-		ev.fHungry = m_dUserHungry;
-		ev.fThirst = m_dUserThirst;
-		ev.fX = m_dUserX;
-		ev.fY = m_dUserY;
-		ev.fZ = m_dUserZ;
+	for (int i = 0;; i++) {
+		ret = SQLFetch(m_hStmt);
+		if (ret == SQL_ERROR || ret == SQL_SUCCESS_WITH_INFO)
+			cout << "Error" << endl;
+		if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
+			ev.inum = m_dUserNum;
+			ev.strID = m_dUserId;
+			ev.fHealth = m_dUserHp;
+			ev.fHungry = m_dUserHungry;
+			ev.fThirst = m_dUserThirst;
+			ev.fX = m_dUserX;
+			ev.fY = m_dUserY;
+			ev.fZ = m_dUserZ;
+		}
+		else
+			break;
 	}
 	SQLCancel(m_hStmt);
+	SQLFreeHandle(SQL_HANDLE_STMT, m_hStmt);
 	return ev;
 }

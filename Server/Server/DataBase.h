@@ -18,6 +18,8 @@ private:
 	SQLLEN	cbNum = 0, cbID = 0, cbHp = 0, cbStamina = 0, cbHungry = 0, cbThirst = 0;
 	SQLLEN cbX = 0, cbY = 0, cbZ = 0;
 
+	shared_mutex	m_smDBMutex;
+
 private:
 	concurrent_queue<DB_Event>m_DatabaseEventQueue;
 	concurrent_queue<DB_Event>m_SaveStateQueue;
