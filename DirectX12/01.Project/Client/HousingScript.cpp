@@ -24,7 +24,7 @@ CHousingScript::CHousingScript(ITEM_TYPE eType, int iCount)
 		m_pObj[i] = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)i)->Instantiate();
 		m_pObj[i]->AddComponent(new CBuildScript((HOUSING_TYPE)i));
 		
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 		m_pObj[i]->AddComponent( new CCollider2D );
 		m_pObj[i]->Collider2D()->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
 
@@ -108,7 +108,7 @@ UINT CHousingScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		m_pObj[m_eType] = CHousingMgr::GetInst()->GetHousingMeshData(m_eType)->Instantiate();
 		m_pObj[m_eType]->AddComponent(new CBuildScript(m_eType));
 
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 		m_pObj[m_eType]->AddComponent( new CCollider2D );
 		m_pObj[m_eType]->Collider2D()->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
 		if (m_eType >= HOUSING_WALL && m_eType < HOUSING_FLOOR)

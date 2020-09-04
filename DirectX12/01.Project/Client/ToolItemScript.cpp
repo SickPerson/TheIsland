@@ -54,7 +54,7 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 	case ITEM_BOW:
 		pTex = CResMgr::GetInst()->Load<CMeshData>(L"Arrow.mdat", L"MeshData\\arrow.mdat");
 		m_pObj = pTex->Instantiate();
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 		m_pObj->AddComponent(new CCollider2D);
 
 		m_pObj->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
@@ -72,7 +72,7 @@ CToolItemScript::CToolItemScript(ITEM_TYPE eType, int iCount)
 		pTex = CResMgr::GetInst()->Load<CMeshData>(L"Campfire.mdat", L"MeshData\\campfire.mdat");
 		m_pObj = pTex->Instantiate();
 		m_pObj->AddComponent(new CBuildScript(HOUSING_ETC));
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 		m_pObj->AddComponent( new CCollider2D );
 
 		m_pObj->Collider2D()->SetOffsetScale(Vec3(150.f, 150.f, 150.f));
@@ -176,7 +176,7 @@ void CToolItemScript::Update()
 			Ptr<CMeshData> pTex = CResMgr::GetInst()->Load<CMeshData>(L"Arrow.mdat", L"MeshData\\arrow.mdat");
 			m_pObj = pTex->Instantiate();
 
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 			m_pObj->AddComponent( new CCollider2D );
 
 			m_pObj->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));

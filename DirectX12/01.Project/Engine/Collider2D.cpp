@@ -69,7 +69,7 @@ void CCollider2D::FinalUpdate()
 	m_matColWorld = matScale * matTranslation;
 	m_matColWorld *= Transform()->GetWorldMat();
 #else
-#endif CHECK_COLLISTION
+#endif CHECK_COLLISION
 }
 
 void CCollider2D::Render()
@@ -88,7 +88,7 @@ void CCollider2D::Render()
 
 	memset(&m_matColWorld, 0, sizeof(Matrix));
 #else
-#endif CHECK_COLLISTION
+#endif CHECK_COLLISION
 }
 
 void CCollider2D::SetCollider2DType(COLLIDER2D_TYPE _eType)
