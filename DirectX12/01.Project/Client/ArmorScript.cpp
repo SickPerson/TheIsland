@@ -75,7 +75,6 @@ void CArmorScript::DestroyArmor()
 #ifdef NETWORK_ON
 	CPacketMgr::GetInst()->Send_Destroy_Armor_Packet();
 #endif // NETWORK_ON
-
 	m_pHost->GetScript<CPlayerScript>()->GetInventoryObject()->GetScript<CInventoryScript>()->DestroyArmor();
 }
 

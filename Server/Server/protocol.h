@@ -133,6 +133,12 @@ struct sc_login_ok_packet {
 	char	size;
 	char	type;
 	USHORT	id;
+
+	float	fHealth;
+	float	fHungry;
+	float	fThirst;
+
+	Vec3	vPos;
 };
 
 struct sc_login_fail_packet {

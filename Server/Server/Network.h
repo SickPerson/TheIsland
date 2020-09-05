@@ -15,9 +15,6 @@ private:
 	vector<shared_ptr<thread>>		m_vWorkerThread;
 	shared_ptr<thread>				m_pAcceptThread;
 	shared_ptr<thread>				m_pUpdateThread;
-#ifdef DB_ON
-	shared_ptr<thread>				m_pDatabaseThread;
-#endif // DB_ON
 
 private:
 	HANDLE			m_hIocp;
@@ -49,9 +46,6 @@ public:
 	void WorkerThread();
 	void AcceptThread();
 	void UpdateThread();
-#ifdef DB_ON
-	void DataBaseThread();
-#endif // DB_ON
 
 	void EndServer() { m_bRunningServer = false; }
 	bool GetServerState() { return m_bRunningServer; }

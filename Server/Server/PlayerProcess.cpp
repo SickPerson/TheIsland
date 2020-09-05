@@ -69,16 +69,15 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 
 	if (CDataBase::GetInst()->IsIDExist(wStrName)) {
 		DB_Event UserInfo = CDataBase::GetInst()->GetUserInfo(wStrName);
-		{
 
-			tPlayerStatus tStatus;
-			tStatus.fHealth = UserInfo.fHealth;
-			tStatus.fHungry = UserInfo.fHungry;
-			tStatus.fThirst = UserInfo.fThirst;
-			tStatus.fSpeed = 200.f;
-			tStatus.fDamage = 20.f;
-			m_pObjectPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
-		}
+		tPlayerStatus tStatus;
+		tStatus.fHealth = UserInfo.fHealth;
+		tStatus.fHungry = UserInfo.fHungry;
+		tStatus.fThirst = UserInfo.fThirst;
+		tStatus.fSpeed = 200.f;
+		tStatus.fDamage = 20.f;
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
+
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetDbNum(UserInfo.inum);
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetNumID(playerId);
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetWcID(login_packet->player_id);
@@ -86,8 +85,6 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetConnect(true);
-
-		CPacketMgr::Send_Login_OK_Packet(playerId);
 	}
 	else {
 		DB_Event UserInfo{};
@@ -121,17 +118,15 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetConnect(true);
-
-		CPacketMgr::Send_Login_OK_Packet(playerId);
 	}
 #else
 	// NO DB
 	 //Player Init
 	CPacketMgr::Send_Login_OK_Packet(playerId);
-	cout << login_packet->player_id << "님이 접속 하였습니다. " << endl;
 	Init_Player(playerId, login_packet->player_id);
 #endif // DB_ON
-
+	CPacketMgr::Send_Login_OK_Packet(playerId);
+	cout << login_packet->player_id << "님이 접속 하였습니다. " << endl;
 	// Server -> Client에 초기 플레이어 값 패킷 전송
 	//CPacketMgr::Send_Status_Player_Packet(playerId, playerId);
 	//CPacketMgr::Send_Pos_Player_Packet(playerId, playerId);
@@ -175,9 +170,14 @@ void CPlayerProcess::PlayerLogout(USHORT playerId)
 	// 아직 Diconnect인 상태가 아닐 경우
 #ifdef DB_ON
 	DB_Event ev;
+	ev.inum = User->GetDbNum();
 	ev.fHealth = User->GetHealth();
 	ev.fHungry = User->GetHungry();
 	ev.fThirst = User->GetThirst();
+	Vec3 vPos = User->GetLocalPos();
+	ev.fX = vPos.x;
+	ev.fY = vPos.y;
+	ev.fZ = vPos.z;
 #endif // DB_ON
 
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetConnect(false);
@@ -262,9 +262,9 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			if (random == 0)
 				eItemType = ITEM_LEATHER;
 			else if (random == 1)
-				eItemType == ITEM_BONE;
+				eItemType = ITEM_BONE;
 			else if (random == 2)
-				eItemType == ITEM_MEAT;
+				eItemType = ITEM_MEAT;
 
 			if (eItemType == ITEM_MACHETTE)
 				iAmount = 3;

@@ -206,14 +206,14 @@ void CProcess::PushEvent_Natural_Respawn(USHORT NaturalId)
 	PushEventQueue(ev);
 }
 
-void CProcess::PushEvent_Etc_Player_Collision()
+void CProcess::PushEvent_Etc_DB_Update()
 {
 	Update_Event ev;
-	ev.m_Do_Object = 9996;
+	ev.m_Do_Object = 9995;
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
-	ev.m_eObjUpdate = EUT_PLAYER_COLLISION;
-	ev.wakeup_time = high_resolution_clock::now() + 50ms;
+	ev.m_eObjUpdate = EUT_USERINFO_SAVE;
+	ev.wakeup_time = high_resolution_clock::now() + 15s;
 	PushEventQueue(ev);
 }
 
@@ -224,7 +224,7 @@ void CProcess::PushEvent_Etc_Animal_Collision()
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = EUT_ANIMAL_COLLISION;
-	ev.wakeup_time = high_resolution_clock::now() + 30ms;
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
 	PushEventQueue(ev);
 }
 
@@ -235,7 +235,7 @@ void CProcess::PushEvent_Rot()
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = EUT_ROT;
-	ev.wakeup_time = high_resolution_clock::now() + 16ms;
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(16);
 	PushEventQueue(ev);
 }
 
@@ -259,23 +259,4 @@ void CProcess::PushEvent_Etc_Time()
 	ev.m_eObjUpdate = EUT_TIMER;
 	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
-}
-
-void CProcess::PushEvent_DB_UserSave()
-{
-	for (auto& player : m_pObjectPool->m_cumPlayerPool) {
-		bool bConnect = player.second->GetConnect();
-		if (!bConnect) continue;
-		DB_Event ev;
-		ev.state = EV_DB;
-		ev.fHealth = player.second->GetHealth();
-		ev.fHungry = player.second->GetHungry();
-		ev.fThirst = player.second->GetThirst();
-		Vec3 vPos = player.second->GetLocalPos();
-		ev.fX = vPos.x;
-		ev.fY = vPos.y;
-		ev.fZ = vPos.z;
-
-		CDataBase::GetInst()->UpdateUserInfo(ev);
-	}
 }

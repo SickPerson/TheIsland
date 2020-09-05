@@ -163,14 +163,11 @@ public: // Natural
 	void PushEvent_Natural_Respawn(USHORT NaturalId);
 
 public: // Etc
-	void PushEvent_Etc_Player_Collision();
+	void PushEvent_Etc_DB_Update();
 	void PushEvent_Etc_Animal_Collision();
 	void PushEvent_Rot();
 	void PushEvent_Etc_Weather();
 	void PushEvent_Etc_Time();
-
-public: // DB
-	void PushEvent_DB_UserSave();
 
 public:
 	concurrent_unordered_set<USHORT>& GetLoginList()

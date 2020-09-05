@@ -92,6 +92,8 @@ USHORT CNetwork::GetUserID()
 
 void CNetwork::Initialize()
 {
+	CDataBase::GetInst()->Init();
+
 	//m_UserID = 0;
 	CProcess::Initalize();
 	Init_Process();
@@ -150,10 +152,6 @@ void CNetwork::StartServer()
 	cout << "Accept Thread Create" << endl;
 	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
 	cout << "Update Thread Create" << endl;
-#ifdef DB_ON
-	m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
-	cout << "DataBase Thread Create" << endl;
-#endif // DB_ON
 	cout << "==============================" << endl;
 	cout << "∥      Server Start          ∥" << endl;
 	cout << "==============================" << endl;
@@ -169,10 +167,6 @@ void CNetwork::CloseServer()
 	}*/
 
 	// Thread Exit
-#ifdef DB_ON
-	m_pDatabaseThread->join();
-	cout << "DatabaseThread Close" << endl;
-#endif
 	m_pUpdateThread->join();
 	cout << "UpdateThread Close" << std::endl;
 	m_pAcceptThread->join();
@@ -275,6 +269,8 @@ void CNetwork::WorkerThread()
 		{
 			switch (lpover_ex->m_Status)
 			{
+			case EUT_USERINFO_SAVE:
+				m_pEtcProcess->UserInfo_Save_Event();
 			case EUT_ANIMAL_COLLISION:
 				m_pEtcProcess->Animal_Collision_Event();
 			case EUT_ROT:
@@ -349,24 +345,6 @@ void CNetwork::UpdateThread() // 일정 시간이 지날때마다 업데이트를 해주라는 함수
 		}
 	}
 }
-
-#ifdef DB_ON
-void CNetwork::DataBaseThread()
-{
-	while (m_bRunningServer)
-	{
-		this_thread::sleep_for(10ms);
-		while (!CDataBase::GetInst()->EmptyDatabaseEventQueue())
-		{
-			DB_Event db_ev;
-			if (CDataBase::GetInst()->PopDatabaseEventQueue(db_ev))
-				CDataBase::GetInst()->RunDataBase(db_ev);
-			else
-				break;
-		}
-	}
-}
-#endif // DB_ON
 
 void CNetwork::Err_quit(const char* msg, int err_no)
 {

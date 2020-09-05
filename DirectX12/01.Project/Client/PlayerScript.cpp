@@ -148,7 +148,6 @@ void CPlayerScript::Update()
 
 			if (KEY_TAB(KEY_TYPE::KEY_LBTN))
 			{
-				cout << "여긴가" << endl;
 				ITEM_TYPE eType = (ITEM_TYPE)PlayerPicking(LEFT_CLICK);
 				if (eType > ITEM_TOOL && eType < ITEM_TOOL_END)
 				{
@@ -650,7 +649,6 @@ UINT CPlayerScript::PlayerPicking(bool bLeft)
 	int num = m_pQuickSlot->GetSelect();
 	if (bLeft)
 	{
-		cout << "여기" << endl;
 		return m_pInventory->GetScript<CInventoryScript>()->Use_Left(GetObj(), pCollider, num);
 	}
 	else

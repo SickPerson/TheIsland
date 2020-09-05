@@ -42,6 +42,10 @@ void CPacketMgr::Send_Login_OK_Packet(USHORT playerId)
 	packet.size = sizeof(packet);
 	packet.type = SC_LOGIN_OK;
 	packet.id = playerId;
+	packet.fHealth = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetHealth();
+	packet.fHungry = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetHungry();
+	packet.fThirst = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetThirst();
+	packet.vPos = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
 	Send_Packet(playerId, &packet);
 }
 
