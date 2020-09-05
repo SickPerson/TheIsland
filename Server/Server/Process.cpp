@@ -54,7 +54,10 @@ void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
 	bool bWakeUp = Animal->GetWakeUp();
 	if (!bWakeUp) return;
 
-	if (CollisionSphere(Animal, User)) {
+	Vec3 vPos1 = Animal->GetLocalPos();
+	Vec3 vPos2 = User->GetLocalPos();
+
+	if (ObjectRangeCheck(vPos1, vPos2, 2000.f)) {
 		UINT uiType = Animal->GetType();
 
 		if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
@@ -221,7 +224,7 @@ void CProcess::PushEvent_Etc_Animal_Collision()
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = EUT_ANIMAL_COLLISION;
-	ev.wakeup_time = high_resolution_clock::now() + 50ms;
+	ev.wakeup_time = high_resolution_clock::now() + 30ms;
 	PushEventQueue(ev);
 }
 

@@ -271,6 +271,11 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			CPacketMgr::Send_Add_Item_Packet(playerId, eItemType, iAmount);
 		}
 
+		BEHAVIOR_TYPE Type = Animal->GetType();
+
+		if (Type == (UINT)BEHAVIOR_TYPE::B_PASSIVE)
+			PushEvent_Animal_Attack(attack_id, playerId);
+
 	}
 	else if ((UINT)ATTACK_TYPE::NATURAL == uiType)
 	{
