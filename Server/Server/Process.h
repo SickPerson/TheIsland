@@ -54,7 +54,7 @@ public: // - Collision
 
 	}
 	template <typename T1, typename T2>
-	bool CollisionSphere(T1* pFirst, T2* pSecond, float fOffset = 1.f)
+	bool CollisionSphere(T1* pFirst, T2* pSecond, float fOffset = 10.f)
 	{
 		Vec3 vPos1 = pFirst->GetLocalPos();
 		Vec3 vPos2 = pSecond->GetLocalPos();
@@ -62,13 +62,14 @@ public: // - Collision
 		Vec3 vScale1 = pFirst->GetLocalScale();
 		Vec3 vScale2 = pSecond->GetLocalScale();
 
-		Vec3 vColScale1 = pFirst->GetLocalScale() * fOffset;
-		Vec3 vColScale2 = pSecond->GetLocalScale();
+		Vec3 vColScale1 = pFirst->GetOffsetScale() * fOffset;
+		Vec3 vColScale2 = pSecond->GetOffsetScale();
 
 		float fDist = powf(vPos1.x - vPos2.x, 2) + powf(vPos1.y - vPos2.y, 2) + powf(vPos1.z - vPos2.z, 2);
 		fDist = sqrtf(fDist);
 
-		if (fDist > fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x))
+		float f = fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x);
+		if (fDist > f)
 			return false;
 		return true;
 

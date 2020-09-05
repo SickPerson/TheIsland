@@ -98,6 +98,9 @@ void CObjectpool::Init_AnimalPool()
 			Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
 			Animal->SetOffsetScale(vOffsetScale);
 
+			Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, 0.f, 0.f));
+			Animal->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+
 			fRadius = 2000.f;
 
 			float fDistance = (float)(rand() % (int)fRadius + 1);
@@ -163,7 +166,7 @@ void CObjectpool::Init_AnimalPool()
 			vPos.z += sin(fRadian) * fDistance;
 			Animal->SetLocalPos(vPos);
 		}
-		Animal->SetLocalPos(Vec3(16000.f, 200.f, 2000.f));
+		//Animal->SetLocalPos(Vec3(16000.f, 200.f, 2000.f));
 		//Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_cumAnimalPool.insert(make_pair(i, Animal));
 	}

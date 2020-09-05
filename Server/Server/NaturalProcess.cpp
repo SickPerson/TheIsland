@@ -14,6 +14,7 @@ CNaturalProcess::~CNaturalProcess()
 
 void CNaturalProcess::DieEvent(USHORT Natural_Id)
 {
+	cout << "Natural Index : " << Natural_Id << " DIE" << endl;
 	bool bDestroy = m_pObjectPool->m_cumNaturalPool[Natural_Id]->GetDestroy();
 	if (!bDestroy) return;
 

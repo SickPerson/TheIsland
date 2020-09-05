@@ -4,6 +4,7 @@ CObject::CObject() :
 	m_vLocalPos(Vec3(0.f, 0.f, 0.f)),
 	m_vLocalRot(Vec3(0.f, 0.f, 0.f)),
 	m_vLocalScale(Vec3(1.f, 1.f, 1.f)),
+	m_vOffsetScale(Vec3(150.f, 150.f, 150.f)),
 	m_eState(OBJ_STATE_TYPE::OST_LIVE)
 {
 }

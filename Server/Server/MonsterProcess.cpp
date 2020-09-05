@@ -164,14 +164,13 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 
 	USHORT usNewTarget = FindTarget(AnimalId);
 	if (usNewTarget == NO_TARGET) {
-		Animal->SetWakeUp(false);
 		Animal->SetTarget(NO_TARGET);
-		return;
+		PushEvent_Animal_Idle(AnimalId, NO_TARGET);
 	}
-
-	Animal->SetTarget(usNewTarget);
-
-	PushEvent_Animal_Behavior(AnimalId, usNewTarget);
+	else {
+		Animal->SetTarget(usNewTarget);
+		PushEvent_Animal_Behavior(AnimalId, usNewTarget);
+	}
 }
 
 void CMonsterProcess::DieEvent(USHORT Animal_Id)
