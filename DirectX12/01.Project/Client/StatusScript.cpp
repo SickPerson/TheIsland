@@ -24,19 +24,21 @@ void CStatusScript::Update()
 	{
 		Damage(20.f * DT);
 	}
+#ifdef NETWORK_ON
+#else
 	m_fHungry -= 0.2f * DT;
-	if (m_fHungry < 0.f)
+	if ( m_fHungry < 0.f )
 	{
 		m_fHungry = 0.f;
-		Damage(0.5f * DT);
+		Damage( 0.5f * DT );
 	}
 	m_fThirst -= 0.35f * DT;
-	if (m_fThirst < 0.f)
+	if ( m_fThirst < 0.f )
 	{
 		m_fThirst = 0.f;
-		Damage(0.25f * DT);
+		Damage( 0.25f * DT );
 	}
-
+#endif // NETWORK_ON
 	const vector<CGameObject *>& vecObj = GetObj()->GetChild();
 
 	vecObj[0]->Transform()->SetLocalPos(Vec3(-0.46f + 0.46f * m_fHealth / 100.f, 0.3f, -150.f));

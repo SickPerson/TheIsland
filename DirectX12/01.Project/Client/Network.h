@@ -35,6 +35,11 @@ public:
 
 	HWND	m_hWnd;
 
+
+private:
+	int m_iMinute;
+	int m_iDay;
+
 public:
 	void Init(HWND hWnd);
 public:
