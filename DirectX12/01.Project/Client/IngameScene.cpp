@@ -287,7 +287,12 @@ void CIngameScene::Init()
 
 
 	CreateNatural();
-	//CreateAnimalSpawner();
+#ifdef NETWORK_ON
+
+#else
+	CreateAnimalSpawner();
+#endif
+
 	CreateShowFPS();
 
 	// ==========================
@@ -387,6 +392,19 @@ void CIngameScene::Init()
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"House" );
 	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Human");
 	//
+#ifdef NETWORK_ON
+
+#else
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Animal", L"Environment");
+
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Arrow", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Arrow", L"House");
+
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Environment");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"House");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Human");
+#endif
 	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Animal", L"Environment" );
 	//
 	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"Animal" );
@@ -443,13 +461,18 @@ void CIngameScene::Update()
 		{
 			if (m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive()) 
 			{
-				
+#ifdef NETWORK_ON
 				string str = m_pChat->GetScript<CInputScript>()->GetString();
 				CPacketMgr::GetInst()->Send_Chat_Packet(str);
-				//string strPlayerName = "Player";
-				//m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
 				m_pChat->GetScript<CInputScript>()->SetEnable(false);
-				//m_pChat->GetScript<CInputScript>()->Clear();
+				m_pChat->GetScript<CInputScript>()->Clear();
+#else
+				string str = m_pChat->GetScript<CInputScript>()->GetString();
+				string strPlayerName = "Player";
+				m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
+				m_pChat->GetScript<CInputScript>()->SetEnable(false);
+				m_pChat->GetScript<CInputScript>()->Clear();
+#endif
 			}
 			else if(!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 				m_pChat->GetScript<CInputScript>()->SetEnable(true);
