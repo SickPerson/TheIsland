@@ -81,10 +81,8 @@ void CSunshineScript::Update()
 		string strTime = std::to_string( m_iHour ) + " : " + std::to_string( m_iMinute );
 		m_pClock->Font()->SetString( strTime );
 	}
-#endif	
-	
 
-	/*if ( !m_bRain )
+	if ( !m_bRain )
 	{
 		if ( m_iDay % 4 == 1 )
 		{
@@ -120,8 +118,8 @@ void CSunshineScript::Update()
 	}
 
 	m_pRain->SetActive( m_bRain );
-	*/
 
+#endif	
 
 	CLight3D* pLight = Light3D();
 	Vec3 vDir = Vec3(1.f, -1.f, 1.f);
