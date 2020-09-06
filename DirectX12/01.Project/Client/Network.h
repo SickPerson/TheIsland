@@ -11,7 +11,7 @@ class CNetwork
 private:
 	SOCKET	m_sock;
 	WSABUF	m_RecvWsaBuf;
-	char	m_cRecvbuf[BUF_SIZE];
+	char	m_cRecvbuf[1024];
 
 	DWORD	m_in_packet_size;
 	DWORD	m_saved_packet_size;
@@ -35,11 +35,6 @@ public:
 
 	HWND	m_hWnd;
 
-
-private:
-	int m_iMinute;
-	int m_iDay;
-
 public:
 	void Init(HWND hWnd);
 public:
@@ -50,7 +45,7 @@ public:
 	static void Err_display(const char* msg, int err_no);
 public:
 	bool ConnectServer(string ipAddr);
-	void DisConnect();
+	void DisConnect(SOCKET socket);
 	void RecvPacket();
 	void ProcessPacket(char* _packet);
 

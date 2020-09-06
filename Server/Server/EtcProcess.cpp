@@ -100,7 +100,6 @@ void CEtcProcess::TimerEvent()
 {
 	CTimerMgr::GetInst()->Tick();
 	float fTime = CTimerMgr::GetInst()->GetTotalTime();
-
 	concurrent_unordered_set<USHORT> loginList;
 	CopyBeforeLoginList(loginList);
 

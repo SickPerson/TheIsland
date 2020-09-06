@@ -37,52 +37,27 @@ void CSunshineScript::Update()
 {
 #ifdef NETWORK_ON
 	m_fTime = CNetwork::GetInst()->GetTime();
-
-	int  iTime = ( int )m_fTime % 60;
-
-	if ( iTime == 0 && m_fTime > 1.f)
-	{
-		m_iMinute++;
-
-		if ( m_iMinute >= 60 )
-		{
-			m_iHour++;
-			m_iMinute = 0;
-			if ( m_iHour >= 24 )
-			{
-				m_iHour = 0.f;
-				m_iDay++;
-				string strDay = "Day : " + std::to_string( m_iDay );
-				m_pDay->Font()->SetString( strDay );
-			}
-		}
-		string strTime = std::to_string( m_iHour ) + " : " + std::to_string( m_iMinute );
-		m_pClock->Font()->SetString( strTime );
-	}
-
 #else
 	m_fTime += DT * DAYCYCLE;
-	if ( m_fTime > 60.f )
+#endif	
+	if (((int)m_fTime % 60) == 0)
 	{
 		m_iMinute++;
-		m_fTime = 0.f;
-		if ( m_iMinute >= 60 )
+		if (m_iMinute >= 60)
 		{
 			m_iHour++;
 			m_iMinute = 0;
-			if ( m_iHour >= 24 )
+			if (m_iHour >= 24)
 			{
 				m_iHour = 0.f;
 				m_iDay++;
-				string strDay = "Day : " + std::to_string( m_iDay );
-				m_pDay->Font()->SetString( strDay );
+				string strDay = "Day : " + std::to_string(m_iDay);
+				m_pDay->Font()->SetString(strDay);
 			}
 		}
-		string strTime = std::to_string( m_iHour ) + " : " + std::to_string( m_iMinute );
-		m_pClock->Font()->SetString( strTime );
+		string strTime = std::to_string(m_iHour) + " : " + std::to_string(m_iMinute);
+		m_pClock->Font()->SetString(strTime);
 	}
-#endif	
-	
 
 	/*if ( !m_bRain )
 	{

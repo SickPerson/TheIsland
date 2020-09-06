@@ -21,7 +21,12 @@
 #include <Engine/LandScape.h>
 #include <Engine/GridScript.h>
 
+#include <Engine/PlayerScript.h>
+#include <Engine/FPSCamScript.h>
 #include <Engine/ToolCamScript.h>
+#include <Engine/MonsterScript.h>
+#include <Engine/StatusScript.h>
+#include <Engine/QuickSlotScript.h>
 
 #include "PlayerCamScript.h"
 #include "InventoryScript.h"
@@ -31,7 +36,6 @@
 #include "AnimalScript.h"
 #include <Engine/Animator3D.h>
 #include "SunshineScript.h"
-#include "StatusScript.h"
 
 #include <Engine/NaviMgr.h>
 #include <Engine/Layer.h>
@@ -108,7 +112,7 @@ void CNetwork::Err_display(const char * msg, int err_no)
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, NULL);
 	cout << "[ " << msg << " ]";
 	wcout << L"¿¡·¯ " << lpMsgBuf << endl;
-	while (true);
+	//while (true);
 	LocalFree(lpMsgBuf);
 }
 
@@ -138,9 +142,9 @@ bool CNetwork::ConnectServer(string ipAddr)
 	return true;
 }
 
-void CNetwork::DisConnect()
+void CNetwork::DisConnect(SOCKET socket)
 {
-	closesocket(m_sock);
+	closesocket(socket);
 	WSACleanup();
 	cout << "DisConnect" << endl;
 }
@@ -162,7 +166,8 @@ void CNetwork::RecvPacket()
 			if (0 == m_in_packet_size) m_in_packet_size = ptr[0];
 			if (iobyte + m_saved_packet_size >= m_in_packet_size) {
 				memcpy(m_cPacketBuf + m_saved_packet_size, ptr, m_in_packet_size - m_saved_packet_size);
-				ProcessPacket(m_cPacketBuf);
+				m_fpPacketProcess[m_cPacketBuf[1]](m_cPacketBuf);
+				//ProcessPacket(m_cPacketBuf);
 				ptr += m_in_packet_size - m_saved_packet_size;
 				iobyte -= m_in_packet_size - m_saved_packet_size;
 				m_in_packet_size = 0;
@@ -275,13 +280,6 @@ void CNetwork::Recv_Status_Player_Packet(char * packet)
 	float fHungry = status_player_packet->fHungry;
 	float fThrist = status_player_packet->fThrist;
 
-	CGameObject* pStatus = CSceneMgr::GetInst()->GetCurScene()->GetLayer( 30 )->FindObject( L"Player Status" );
-
-	CStatusScript* pScript = pStatus->GetScript<CStatusScript>();
-	pScript->SetHealth( fHealth );
-	pScript->SetHungry( fHungry );
-	pScript->SetThirst( fThrist );
-
 	//dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerStatusUpdate(fHealth, fHungry, fThrist);
 }
 
@@ -372,5 +370,7 @@ void CNetwork::Recv_Weather_Packet(char * packet)
 void CNetwork::Recv_Time_Packet(char * packet)
 {
 	sc_time_packet* time_packet = reinterpret_cast<sc_time_packet*>(packet);
+	cout << time_packet->fTime << endl;
 	m_fServerTime = time_packet->fTime;
+
 }

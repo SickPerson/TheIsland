@@ -53,10 +53,7 @@ CAnimalScript::~CAnimalScript()
 
 void CAnimalScript::Update()
 {
-#ifdef NETWORK_ON
 	return;
-#else
-#endif
 
 	if (m_pParticleObj != NULL)
 	{
@@ -256,10 +253,7 @@ void CAnimalScript::Update()
 
 void CAnimalScript::OnCollision(CCollider2D * _pOther)
 {
-#ifdef NETWORK_ON
 	return;
-#else
-#endif
 
 	if (m_bAnimalDead)
 		return;
@@ -418,10 +412,7 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 
 void CAnimalScript::OnCollisionEnter(CCollider2D * _pOther)
 {
-#ifdef NETWORK_ON
 	return;
-#else
-#endif
 
 	if (m_bAnimalDead)
 		return;
@@ -442,10 +433,7 @@ void CAnimalScript::OnCollisionEnter(CCollider2D * _pOther)
 
 void CAnimalScript::OnCollisionExit(CCollider2D * _pOther)
 {
-#ifdef NETWORK_ON
 	return;
-#else
-#endif
 	
 	if (m_bAnimalDead)
 		return;

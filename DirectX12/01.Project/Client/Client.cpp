@@ -55,17 +55,10 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
-#ifdef NETWORK_ON
-	if (FAILED(CCore::GetInst()->Init(g_hWnd, tResolution{ 1280, 720 }, true)))
+	if ( FAILED( CCore::GetInst()->Init( g_hWnd, tResolution{ 1280, 720 }, true ) ) )
 	{
 		return 0;
 	}
-#else
-	if (FAILED(CCore::GetInst()->Init(g_hWnd, tResolution{ 1920, 1080 }, false)))
-	{
-		return 0;
-	}
-#endif // NETWORK_ON
 
 #ifdef NETWORK_ON
 	CNetwork::GetInst()->Init(g_hWnd);
@@ -218,16 +211,17 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 	{
 		if (WSAGETSELECTERROR(lParam)) {
 			//closesocket((SOCKET)wParam);
-			CNetwork::GetInst()->DisConnect();
+			CNetwork::GetInst()->DisConnect((SOCKET)wParam);
 			break;
 		}
 		switch (WSAGETSELECTEVENT(lParam)) {
 		case FD_READ:
+			//CNetwork::GetInst()->RecvPacket((SOCKET)wParam);
 			CNetwork::GetInst()->RecvPacket();
 			break;
 		case FD_CLOSE:
 			//closesocket((SOCKET)wParam);
-			CNetwork::GetInst()->DisConnect();
+			CNetwork::GetInst()->DisConnect((SOCKET)wParam);
 			break;
 		}
 	}

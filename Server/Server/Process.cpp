@@ -107,7 +107,7 @@ void CProcess::PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_FOLLOW;
-	ev.wakeup_time = high_resolution_clock::now() + 45ms;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 
@@ -119,7 +119,7 @@ void CProcess::PushEvent_Animal_Evastion(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_EVASION;
-	ev.wakeup_time = high_resolution_clock::now() + 30ms;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 
@@ -143,7 +143,7 @@ void CProcess::PushEvent_Animal_Die(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_DIE;
-	ev.wakeup_time = high_resolution_clock::now() + 30ms;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 
@@ -190,7 +190,7 @@ void CProcess::PushEvent_Natural_Die(USHORT NaturalId)
 	ev.m_EventType = EV_NATURAL_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = NUT_DIE;
-	ev.wakeup_time = high_resolution_clock::now() + 30ms;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 
@@ -226,7 +226,7 @@ void CProcess::PushEvent_Etc_Animal_Collision()
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = EUT_ANIMAL_COLLISION;
-	ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(500);
 	PushEventQueue(ev);
 }
 
@@ -237,7 +237,7 @@ void CProcess::PushEvent_Rot()
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = EUT_ROT;
-	ev.wakeup_time = high_resolution_clock::now() + milliseconds(16);
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(1000);
 	PushEventQueue(ev);
 }
 

@@ -229,6 +229,7 @@ void CPacketMgr::Send_Time_Packet(USHORT player_Id, float fTime)
 	packet.size = sizeof(sc_time_packet);
 	packet.type = SC_TIME;
 	packet.fTime = fTime;
+	cout << fTime << endl;
 	Send_Packet(player_Id, &packet);
 }
 
