@@ -42,7 +42,6 @@ bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
 {
 	float fDist = powf(vSecond.x - vFirst.x, 2) + powf(vSecond.z - vFirst.z, 2);
 	fDist = sqrtf(fDist);
-	cout << fDist << endl;
 	if (fDistance > fDist)
 		return true;
 	return false;
@@ -96,7 +95,7 @@ void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_ATTACK;
-	ev.wakeup_time = high_resolution_clock::now() + 30ms;
+	ev.wakeup_time = high_resolution_clock::now() + 50ms;
 	PushEventQueue(ev);
 }
 
@@ -108,7 +107,7 @@ void CProcess::PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_FOLLOW;
-	ev.wakeup_time = high_resolution_clock::now() + 30ms;
+	ev.wakeup_time = high_resolution_clock::now() + 45ms;
 	PushEventQueue(ev);
 }
 
@@ -132,7 +131,7 @@ void CProcess::PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_IDLE;
-	ev.wakeup_time = high_resolution_clock::now() + 30ms;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 

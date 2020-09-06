@@ -602,6 +602,13 @@ void CAnimalScript::Damage(CGameObject* _pOther, float fDamage)
 		m_fLivingTime = 10.f;
 
 		Animator3D()->ChangeAnimation( L"Die" );
+#ifdef NETWORK_ON
+		/*CPacketMgr::GetInst()->Send_Dead_Animal_Packet((USHORT)m_iIndex);
+		tEvent tEv;
+		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
+		tEv.wParam = (DWORD_PTR)GetObj();
+		CEventMgr::GetInst()->AddEvent(tEv);*/
+#endif // NETWORK_ON
 	}
 }
 

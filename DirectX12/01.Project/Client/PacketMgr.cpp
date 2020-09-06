@@ -258,3 +258,20 @@ void CPacketMgr::Send_Destroy_Armor_Packet()
 		CNetwork::Err_display("Err while sending pakcet - ", err_no);
 	}
 }
+
+void CPacketMgr::Send_Dead_Animal_Packet(USHORT index)
+{
+	cs_dead_animal_packet* packet = reinterpret_cast<cs_dead_animal_packet*>(m_cSendBuf);
+	packet->size = sizeof(cs_dead_animal_packet);
+	packet->type = CS_DEAD_ANIMAL;
+	packet->index = index;
+
+	DWORD	size{ 0 }, flag{ 0 };
+	m_SendWsaBuf.len = sizeof(cs_dead_animal_packet);
+	int retval = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
+
+	if (retval != 0) {
+		int err_no = WSAGetLastError();
+		CNetwork::Err_display("Err while sending pakcet - ", err_no);
+	}
+}

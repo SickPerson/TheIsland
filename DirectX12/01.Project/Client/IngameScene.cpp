@@ -1670,8 +1670,6 @@ void CIngameScene::AnimalUpdate(USHORT usId, Vec3 vPos, Vec3 vRot)
 	{
 		float fHeight = CNaviMgr::GetInst()->GetY( vPos );
 		m_mapAnimals[usId]->Transform()->SetLocalPos( Vec3( vPos.x, fHeight, vPos.z ) );
-
-		cout << "Animal POS" << vPos.x << ", " << fHeight << ", " << vPos.z << endl;
 		m_mapAnimals[usId]->Transform()->SetLocalRot( vRot );
 	}
 }
@@ -1685,7 +1683,7 @@ void CIngameScene::AnimalRotUpdate(USHORT usId, Vec3 vRot)
 	}
 	else
 	{
-		m_mapAnimals[usId]->Transform()->SetLocalRot(vRot);
+		//m_mapAnimals[usId]->Transform()->SetLocalRot(vRot);
 	}
 }
 

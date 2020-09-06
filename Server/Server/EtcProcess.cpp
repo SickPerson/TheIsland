@@ -67,8 +67,14 @@ void CEtcProcess::Rot_Event()
 		
 		concurrent_unordered_set<USHORT>	ViewList;
 		m_pObjectPool->m_cumPlayerPool[user]->CopyViewList(ViewList);
-		for (auto& other : ViewList)
+		for (auto& other : ViewList) {
+			if (MAX_USER <= other &&other < END_ANIMAL)
+			{
+				if (m_pObjectPool->m_cumAnimalPool[other]->GetState() == OST_DIE || !m_pObjectPool->m_cumAnimalPool[other]->GetWakeUp())
+					continue;
+			}
 			CPacketMgr::Send_Rot_Packet(user, other);
+		}
 	}
 
 	PushEvent_Rot();

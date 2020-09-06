@@ -50,6 +50,7 @@ enum CS_PACKET_TYPE {
 	CS_USE_ITEM,
 	CS_EQUIP_ARMOR,
 	CS_DESTROY_ARMOR,
+	CS_DEAD_ANIMAL,
 	CS_END
 };
 
@@ -381,6 +382,12 @@ struct cs_equip_armor_packet {
 struct cs_destroy_armor_packet {
 	char	size;
 	char	type;
+};
+
+struct cs_dead_animal_packet {
+	char	size;
+	char	type;
+	USHORT	index;
 };
 
 #pragma pack (pop)

@@ -89,7 +89,7 @@ public: // - Collision
 		Vec3 vDis1 = vPos1;
 		Vec3 vDis2 = vPos2;
 
-		float fDist = powf(vDis2.x - vDis1.x, 2) + powf(vDis2.z - vDis1.x, 2);
+		float fDist = powf(vDis2.x - vDis1.x, 2) + powf(vDis2.z - vDis1.z, 2);
 		fDist = sqrtf(fDist);
 		return fDist;
 	}

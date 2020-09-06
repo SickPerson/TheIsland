@@ -93,7 +93,7 @@ const Vec3 & CObject::GetLocalDir(DIR_TYPE _eType)
 }
 
 const Vec3& CObject::GetLocalScale()
-{
+{ 
 	shared_lock<shared_mutex> lock(m_ObjMutex);
 	return m_vLocalScale;
 }

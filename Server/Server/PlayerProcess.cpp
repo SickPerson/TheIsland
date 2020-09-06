@@ -52,6 +52,8 @@ void CPlayerProcess::RecvPacket(USHORT playerId, char * packet, DWORD bytesize)
 		m_fpPacketProcess[packet[1]](playerId, packet);
 		CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->SetRecvState();
 	}
+	else
+		return;
 }
 
 void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
@@ -121,7 +123,6 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 #else
 	// NO DB
 	 //Player Init
-	CPacketMgr::Send_Login_OK_Packet(playerId);
 	Init_Player(playerId, login_packet->player_id);
 #endif // DB_ON
 	CPacketMgr::Send_Login_OK_Packet(playerId);
@@ -243,17 +244,17 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 
 		fHealth -= fDamage;
 
+		cout << "HP : " << fHealth << endl;
+
 		if (fHealth > 0.f) {
 			Animal->SetHealth(fHealth);
-			cout << "Animal Attack : " << attack_id << endl;
 		}
 		else {
 			Animal->SetWakeUp(false);
 			Animal->SetState(OST_DIE);
 			fHealth = 0.f;
 			Animal->SetHealth(fHealth);
-			PushEvent_Animal_Die(attack_id, playerId);
-			cout << "Animal Attack : " << attack_id << endl;
+			//PushEvent_Animal_Die(attack_id, playerId);
 
 			// Item Get
 			char eItemType;
@@ -462,6 +463,22 @@ void CPlayerProcess::PlayerNaturalAttack(USHORT playerId, char * packet)
 	cs_natural_attack_packet* natural_attack_packet = reinterpret_cast<cs_natural_attack_packet*>(packet);
 }
 
+void CPlayerProcess::AnimalDead(USHORT playerId, char * packet)
+{
+	cs_dead_animal_packet* animal_packet = reinterpret_cast<cs_dead_animal_packet*>(packet);
+	USHORT index = animal_packet->index;
+
+	m_pObjectPool->m_cumAnimalPool[index]->SetState(OST_DIE);
+	m_pObjectPool->m_cumAnimalPool[index]->SetWakeUp(false);
+	concurrent_unordered_set<USHORT> loginList;
+
+	CopyBeforeLoginList(loginList);
+
+	for (auto user : loginList) {
+		CPacketMgr::GetInst()->Send_Remove_Packet(user, index);
+	}
+}
+
 void CPlayerProcess::PlayerChat(USHORT _usID, char * _packet)
 {
 	cs_chat_packet* chat_packet = reinterpret_cast<cs_chat_packet*>(_packet);
@@ -506,6 +523,8 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 
 		if (ObjectRangeCheck(player_pos, Animal_Pos, PLAYER_VIEW_RANGE))
 		{
+			if (au.second->GetState() == OST_DIE)
+				continue;
 			if (!au.second->GetWakeUp())
 			{
 				au.second->SetWakeUp(true);
@@ -610,6 +629,8 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 			}
 			else
 			{
+				if (OST_DIE == m_pObjectPool->m_cumAnimalPool[after]->GetState())
+					continue;
 				bool bWakeUp = m_pObjectPool->m_cumAnimalPool[after]->GetWakeUp();
 				if (!bWakeUp)
 				{
@@ -627,6 +648,9 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 				CPacketMgr::Send_Pos_Packet(after, user);
 			}
 			else {
+				if (OST_DIE == m_pObjectPool->m_cumAnimalPool[after]->GetState()) {
+					CPacketMgr::Send_Remove_Packet(user, after);
+				}
 				bool bWakeUp = m_pObjectPool->m_cumAnimalPool[after]->GetWakeUp();
 				if (!bWakeUp)
 				{

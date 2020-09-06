@@ -365,5 +365,5 @@ void CNetwork::Err_display(const char* msg, int err_no)
 	cout << "[ " << msg << " ]";
 	wcout << L"¿¡·¯ " << lpMsgBuf << endl;
 	LocalFree(lpMsgBuf);
-	while (true);
+	//while (true);
 }

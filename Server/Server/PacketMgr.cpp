@@ -113,6 +113,7 @@ void CPacketMgr::Send_Remove_Packet(USHORT User, USHORT Acter)
 	sc_remove_packet packet;
 	packet.size = sizeof(sc_remove_packet);
 	packet.type = SC_REMOVE;
+	packet.usId = Acter;
 
 	USHORT user = User;
 	USHORT acter = Acter;
@@ -120,8 +121,8 @@ void CPacketMgr::Send_Remove_Packet(USHORT User, USHORT Acter)
 	if (acter < END_ANIMAL) {
 		if (CProcess::m_pObjectPool->m_cumPlayerPool[User]->ExistList(Acter)) {
 			CProcess::m_pObjectPool->m_cumPlayerPool[User]->DeleteList(Acter);
-			Send_Packet(user, &packet);
 		}
+		Send_Packet(user, &packet);
 	}
 }
 

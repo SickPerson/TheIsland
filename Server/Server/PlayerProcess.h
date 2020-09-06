@@ -68,6 +68,9 @@ public:
 		m_fpPacketProcess[CS_DESTROY_ARMOR] = [&](USHORT playerId, char* packet) {
 			PlayerDestroyArmor(playerId, packet);
 		};
+		m_fpPacketProcess[CS_DEAD_ANIMAL] = [&](USHORT playerId, char* packet) {
+			AnimalDead(playerId, packet);
+		};
 	}
 
 	void AcceptClient(SOCKET& sSocket, USHORT playerId);
@@ -88,6 +91,8 @@ public:
 	void PlayerInstallHousing(USHORT playerId, char* packet);
 	void PlayerRemoveHousing(USHORT playerId, char* packet);
 	void PlayerNaturalAttack(USHORT playerId, char* packet);
+
+	void AnimalDead(USHORT playerId, char* packet);
 public:
 	void InitViewList(USHORT playerId);
 	void UpdateViewList(USHORT playerId);
