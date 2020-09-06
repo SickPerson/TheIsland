@@ -192,11 +192,11 @@
     <ClInclude Include="RainScript.h">
       <Filter>ComponentScript\Environment</Filter>
     </ClInclude>
-    <ClInclude Include="HumanScript.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="PacketMgr.h">
       <Filter>Network\PacketMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="HumanScript.h">
+      <Filter>ComponentScript\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -305,11 +305,11 @@
     <ClCompile Include="RainScript.cpp">
       <Filter>ComponentScript\Environment</Filter>
     </ClCompile>
-    <ClCompile Include="HumanScript.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="PacketMgr.cpp">
       <Filter>Network\PacketMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="HumanScript.cpp">
+      <Filter>ComponentScript\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

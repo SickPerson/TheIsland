@@ -461,7 +461,7 @@ bool CBuildScript::Upgrade()
 	pObject = CHousingMgr::GetInst()->GetHousingMeshData((HOUSING_TYPE)m_eType, m_iGrade)->Instantiate();
 	pObject->AddComponent(new CBuildScript((HOUSING_TYPE)m_eType, m_iGrade));
 
-#ifdef CHECK_COLLISTION
+#ifdef CHECK_COLLISION
 	pObject->AddComponent( new CCollider2D );
 
 	pObject->Collider2D()->SetOffsetScale( Vec3( 195.f, 195.f, 195.f ) );
