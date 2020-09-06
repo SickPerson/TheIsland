@@ -146,11 +146,11 @@ void CSunshineScript::Update()
 				fLight = (float)(fTime - 5.f) / 7.f;
 			else
 				fLight = (float)(fTime - 20.f) / -7.f;
-			fLight += 0.3f;
 			if (m_pSkybox)
 			{
 				m_pSkybox->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_0, &fLight);
 			}
+			fLight += 0.3f;
 			if (m_pSea)
 			{
 				m_pSea->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_3, &fLight);
