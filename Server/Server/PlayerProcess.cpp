@@ -35,7 +35,6 @@ void CPlayerProcess::Init_Player(USHORT playerId, char* wcId)
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetWcID(wcId);
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(18000.f, 200.f, 2000.f));
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
-	//m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 }
 
 void CPlayerProcess::AcceptClient(SOCKET& sSocket, USHORT playerId)
@@ -63,10 +62,44 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 		InsertLoginList(playerId);
 #ifdef DB_ON
 	// USE DB
-	wstring wName = login_packet->player_id;
-	if (CDataBase::GetInst()->IsIDExist(wName)) {
-		DB_Event UserInfo = CDataBase::GetInst()->GetUserInfo(wName);
-		Vec3 vPos = Vec3(UserInfo.x, UserInfo.y, UserInfo.z);
+	string strName = login_packet->player_id;
+	wstring wStrName;
+	wStrName.assign(strName.begin(), strName.end());
+
+	if (CDataBase::GetInst()->IsIDExist(wStrName)) {
+		DB_Event UserInfo = CDataBase::GetInst()->GetUserInfo(wStrName);
+
+		tPlayerStatus tStatus;
+		tStatus.fHealth = UserInfo.fHealth;
+		tStatus.fHungry = UserInfo.fHungry;
+		tStatus.fThirst = UserInfo.fThirst;
+		tStatus.fSpeed = 200.f;
+		tStatus.fDamage = 20.f;
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
+
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetDbNum(UserInfo.inum);
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetNumID(playerId);
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetWcID(login_packet->player_id);
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(UserInfo.fX, UserInfo.fY, UserInfo.fZ));
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetConnect(true);
+	}
+	else {
+		DB_Event UserInfo{};
+		UserInfo.strID = wStrName;
+		UserInfo.fHealth = 100.f;
+		UserInfo.fHungry = 100.f;
+		UserInfo.fThirst = 100.f;
+		UserInfo.fX = 18000.f;
+		UserInfo.fY = 200.f;
+		UserInfo.fZ = 2000.f;
+
+		CDataBase::GetInst()->AddUserInfo(UserInfo);
+
+		DB_Event Info;
+		Info = CDataBase::GetInst()->GetUserInfo(wStrName);
+		cout << Info.fX << ", " << Info.fY << ", " << Info.fZ << endl;
 		{
 
 			tPlayerStatus tStatus;
@@ -74,27 +107,25 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 			tStatus.fHungry = UserInfo.fHungry;
 			tStatus.fThirst = UserInfo.fThirst;
 			tStatus.fSpeed = 200.f;
-			DatabtStatus.fDamage = 20.f;
+			tStatus.fDamage = 20.f;
 			m_pObjectPool->m_cumPlayerPool[playerId]->SetPlayerStatus(tStatus);
 		}
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetDbNum(UserInfo.inum);
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetNumID(playerId);
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetWcID(login_packet->player_id);
-		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vPos);
+		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(UserInfo.fX, UserInfo.fY, UserInfo.fZ));
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_pObjectPool->m_cumPlayerPool[playerId]->SetConnect(true);
-
-		CPacketMgr::Send_Login_OK_Packet(playerId);
 	}
 #else
 	// NO DB
 	 //Player Init
 	CPacketMgr::Send_Login_OK_Packet(playerId);
-	cout << login_packet->player_id << "님이 접속 하였습니다. " << endl;
 	Init_Player(playerId, login_packet->player_id);
 #endif // DB_ON
-
+	CPacketMgr::Send_Login_OK_Packet(playerId);
+	cout << login_packet->player_id << "님이 접속 하였습니다. " << endl;
 	// Server -> Client에 초기 플레이어 값 패킷 전송
 	//CPacketMgr::Send_Status_Player_Packet(playerId, playerId);
 	//CPacketMgr::Send_Pos_Player_Packet(playerId, playerId);
@@ -138,11 +169,17 @@ void CPlayerProcess::PlayerLogout(USHORT playerId)
 	// 아직 Diconnect인 상태가 아닐 경우
 #ifdef DB_ON
 	DB_Event ev;
+	ev.inum = User->GetDbNum();
 	ev.fHealth = User->GetHealth();
 	ev.fHungry = User->GetHungry();
 	ev.fThirst = User->GetThirst();
+	Vec3 vPos = User->GetLocalPos();
+	ev.fX = vPos.x;
+	ev.fY = vPos.y;
+	ev.fZ = vPos.z;
 #endif // DB_ON
 
+	closesocket(m_pObjectPool->m_cumPlayerPool[playerId]->GetSocket());
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetConnect(false);
 	string name = m_pObjectPool->m_cumPlayerPool[playerId]->GetWcID();
 	cout << name << " 님이 로그아웃 하셨습니다. " << endl;
@@ -225,14 +262,19 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			if (random == 0)
 				eItemType = ITEM_LEATHER;
 			else if (random == 1)
-				eItemType == ITEM_BONE;
+				eItemType = ITEM_BONE;
 			else if (random == 2)
-				eItemType == ITEM_MEAT;
+				eItemType = ITEM_MEAT;
 
 			if (eItemType == ITEM_MACHETTE)
 				iAmount = 3;
 			CPacketMgr::Send_Add_Item_Packet(playerId, eItemType, iAmount);
 		}
+
+		BEHAVIOR_TYPE Type = Animal->GetType();
+
+		if (Type == (UINT)BEHAVIOR_TYPE::B_PASSIVE)
+			PushEvent_Animal_Attack(attack_id, playerId);
 
 	}
 	else if ((UINT)ATTACK_TYPE::NATURAL == uiType)
@@ -260,7 +302,7 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			}
 			else {
 				Natural->SetHealth(fHealth);
-				char eItemType;
+				char eItemType = ITEM_END;
 				int iAmount = 1;
 				if (eType == N_TREE) {
 					int random = rand() % 5;
@@ -336,6 +378,25 @@ void CPlayerProcess::PlayerUseItem(USHORT playerId, char * packet)
 		User->SetIncreaseHealth(fValue);
 	}
 	CPacketMgr::Send_Status_Player_Packet(playerId);
+}
+
+void CPlayerProcess::PlayerEquipArmor(USHORT playerId, char * packet)
+{
+	cs_equip_armor_packet* armor_packet = reinterpret_cast<cs_equip_armor_packet*>(packet);
+
+	char eType = armor_packet->eType;
+
+	float fValue = GetArmor(eType);
+
+	m_pObjectPool->m_cumPlayerPool[playerId]->SetArmor(fValue);
+}
+
+void CPlayerProcess::PlayerDestroyArmor(USHORT playerId, char * packet)
+{
+	cs_destroy_armor_packet* armor_packet = reinterpret_cast<cs_destroy_armor_packet*>(packet);
+	
+	float fValue = 0.f;
+	m_pObjectPool->m_cumPlayerPool[playerId]->SetArmor(fValue);
 }
 
 void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
@@ -643,5 +704,26 @@ float CPlayerProcess::GetValue(char eType)
 		break;
 	}
 
+	return fValue;
+}
+
+float CPlayerProcess::GetArmor(char eType)
+{
+	float fValue{};
+	switch (eType) 
+	{
+	case ITEM_TSHIRT:
+		fValue = 30.f;
+		break;
+	case ITEM_SHIRT:
+		fValue = 60.f;
+		break;
+	case ITEM_JACKET:
+		fValue = 100.f;
+		break;
+	default:
+		fValue = 0.f;
+		break;
+	}
 	return fValue;
 }

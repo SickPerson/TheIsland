@@ -62,6 +62,12 @@ public:
 		m_fpPacketProcess[CS_USE_ITEM] = [&](USHORT playerId, char* packet) {
 			PlayerUseItem(playerId, packet);
 		};
+		m_fpPacketProcess[CS_EQUIP_ARMOR] = [&](USHORT playerId, char* packet) {
+			PlayerEquipArmor(playerId, packet);
+		};
+		m_fpPacketProcess[CS_DESTROY_ARMOR] = [&](USHORT playerId, char* packet) {
+			PlayerDestroyArmor(playerId, packet);
+		};
 	}
 
 	void AcceptClient(SOCKET& sSocket, USHORT playerId);
@@ -76,6 +82,8 @@ public:
 	void PlayerAttack(USHORT playerId, char* packet);
 	void PlayerAnimation(USHORT playerId, char* packet);
 	void PlayerUseItem(USHORT playerId, char* packet);
+	void PlayerEquipArmor(USHORT playerId, char* packet);
+	void PlayerDestroyArmor(USHORT playerId, char* packet);
 
 	void PlayerInstallHousing(USHORT playerId, char* packet);
 	void PlayerRemoveHousing(USHORT playerId, char* packet);
@@ -87,4 +95,5 @@ public:
 public:
 	float GetDamage(char eType);
 	float GetValue(char eType);
+	float GetArmor(char eType);
 };

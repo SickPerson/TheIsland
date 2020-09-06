@@ -62,13 +62,14 @@ public: // - Collision
 		Vec3 vScale1 = pFirst->GetLocalScale();
 		Vec3 vScale2 = pSecond->GetLocalScale();
 
-		Vec3 vColScale1 = pFirst->GetLocalScale() * fOffset;
-		Vec3 vColScale2 = pSecond->GetLocalScale();
+		Vec3 vColScale1 = pFirst->GetOffsetScale() * fOffset;
+		Vec3 vColScale2 = pSecond->GetOffsetScale();
 
-		float fDist = powf(vPos1.x - vPos2.x, 2) + powf(vPos1.y - vPos2.y, 2) + powf(vPos1.z - vPos2.z, 2);
+		float fDist = powf(vPos1.x - vPos2.x, 2) + powf(vPos1.z - vPos2.z, 2);
 		fDist = sqrtf(fDist);
 
-		if (fDist > fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x))
+		float f = fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x);
+		if (fDist > f)
 			return false;
 		return true;
 
@@ -81,6 +82,15 @@ public: // - Collision
 		float fDist = powf(vPos2.z - vPos1.z, 2) + powf(vPos2.x - vPos1.x, 2);
 		fDist = sqrtf(fDist);
 
+		return fDist;
+	}
+
+	float CalculationDistance(Vec3& vPos1, Vec3& vPos2) {
+		Vec3 vDis1 = vPos1;
+		Vec3 vDis2 = vPos2;
+
+		float fDist = powf(vDis2.x - vDis1.x, 2) + powf(vDis2.z - vDis1.x, 2);
+		fDist = sqrtf(fDist);
 		return fDist;
 	}
 	template	<typename T>
@@ -162,14 +172,11 @@ public: // Natural
 	void PushEvent_Natural_Respawn(USHORT NaturalId);
 
 public: // Etc
-	void PushEvent_Etc_Player_Collision();
+	void PushEvent_Etc_DB_Update();
 	void PushEvent_Etc_Animal_Collision();
 	void PushEvent_Rot();
 	void PushEvent_Etc_Weather();
 	void PushEvent_Etc_Time();
-
-public: // DB
-	void PushEvent_DB_UserSave();
 
 public:
 	concurrent_unordered_set<USHORT>& GetLoginList()

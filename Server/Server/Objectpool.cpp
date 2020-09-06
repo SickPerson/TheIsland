@@ -81,7 +81,7 @@ void CObjectpool::Init_AnimalPool()
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
 
-			Animal->SetLocalPos(vPos);
+			//Animal->SetLocalPos(vPos);
 		}
 		else if (i < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR)
 		{
@@ -97,6 +97,9 @@ void CObjectpool::Init_AnimalPool()
 
 			Vec3 vOffsetScale = Vec3(60.f, 60.f, 60.f);
 			Animal->SetOffsetScale(vOffsetScale);
+
+			Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, 0.f, 0.f));
+			Animal->SetLocalScale(Vec3(1.f, 1.f, 1.f));
 
 			fRadius = 2000.f;
 
@@ -172,7 +175,7 @@ void CObjectpool::Init_AnimalPool()
 
 void CObjectpool::Init_NaturalPool()
 {
-	for (int i = 0; i < MAX_NATURAL; ++i) {
+	for (int i = BEGIN_NATURAL; i < BEGIN_NATURAL + MAX_NATURAL; ++i) {
 		m_cumNaturalPool.insert(make_pair(i, new CNatural()));
 	}
 	FILE* pFile = NULL;
@@ -185,7 +188,7 @@ void CObjectpool::Init_NaturalPool()
 	int iSize = 0;
 	fread(&iSize, sizeof(int), 1, pFile);
 
-	for (int i = 0; i < iSize; ++i)
+	for (int i = BEGIN_NATURAL; i < BEGIN_NATURAL + iSize; ++i)
 	{
 		wchar_t strName[MAX_PATH]{};
 		size_t iLength = 0;

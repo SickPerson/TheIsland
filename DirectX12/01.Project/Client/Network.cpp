@@ -241,6 +241,10 @@ void CNetwork::Recv_Login_OK_Packet(char * packet)
 		dynamic_cast<CLoginScene*>(pScene->GetSceneScript())->NextScene();
 		m_bLogin = true;
 	}
+
+	if (m_pPlayer != nullptr) {
+		m_pPlayer->Transform()->SetLocalPos(login_packet->vPos);
+	}
 	cout << "Login Success" << endl;
 }
 

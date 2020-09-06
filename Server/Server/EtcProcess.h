@@ -13,5 +13,6 @@ public:
 	void Rot_Event();
 	void WeatherEvent();
 	void TimerEvent();
+	void UserInfo_Save_Event();
 };
 

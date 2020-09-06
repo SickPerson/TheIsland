@@ -8,6 +8,8 @@
 
 #include <iostream>
 
+#include "PacketMgr.h"
+
 CUsableScript::CUsableScript(ITEM_TYPE eType, int iCount)
 	: CItemScript((UINT)eType)
 {
@@ -105,13 +107,20 @@ UINT CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	{
 		if (m_eItemType == ITEM_MEAT)
 		{
+#ifdef NETWORK_ON
+			CPacketMgr::GetInst()->Send_Use_Item_Packet(m_eItemType);
+#else
 			pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->Damage(m_fValue);
 			pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreaseHungry(m_fValue);
-
+#endif // NETWORK_ON
 		}
 		else
 		{
+#ifdef NETWORK_ON
+			CPacketMgr::GetInst()->Send_Use_Item_Packet(m_eItemType);
+#else
 			pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreaseHungry(m_fValue);
+#endif // NETWORK_ON
 		}
 	}
 	else if (m_eItemType > ITEM_DRINK && m_eItemType < ITEM_DRINK_END)
@@ -134,7 +143,11 @@ UINT CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		}
 		else
 		{
+#ifdef NETWORK_ON
+			CPacketMgr::GetInst()->Send_Use_Item_Packet(m_eItemType);
+#else
 			pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreasefThirst(m_fValue);
+#endif // NETWORK_ON
 			if (m_eItemType == ITEM_WATER_BOTTLE)
 			{
 				CItemScript* pItem = new CUsableScript(ITEM_EMPTY_BOTTLE);
@@ -144,7 +157,11 @@ UINT CUsableScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 	}
 	else if (m_eItemType > ITEM_HEAL && m_eItemType < ITEM_HEAL_END)
 	{
+#ifdef NETWORK_ON
+		CPacketMgr::GetInst()->Send_Use_Item_Packet(m_eItemType);
+#else
 		pHost->GetScript<CPlayerScript>()->GetStatusObject()->GetScript<CStatusScript>()->SetIncreaseHealth(m_fValue);
+#endif // NETWORK_ON
 	}
 
 	if (bUse)

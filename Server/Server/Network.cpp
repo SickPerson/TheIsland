@@ -92,6 +92,8 @@ USHORT CNetwork::GetUserID()
 
 void CNetwork::Initialize()
 {
+	CDataBase::GetInst()->Init();
+
 	//m_UserID = 0;
 	CProcess::Initalize();
 	Init_Process();
@@ -150,10 +152,6 @@ void CNetwork::StartServer()
 	cout << "Accept Thread Create" << endl;
 	m_pUpdateThread = std::shared_ptr< std::thread >(new std::thread{ [&]() {CNetwork::GetInst()->UpdateThread(); } });
 	cout << "Update Thread Create" << endl;
-#ifdef DB_ON
-	m_pDatabaseThread = std::shared_ptr<std::thread>(new std::thread{ [&]() {CNetwork::GetInst()->DataBaseThread(); } });
-	cout << "DataBase Thread Create" << endl;
-#endif // DB_ON
 	cout << "==============================" << endl;
 	cout << "∥      Server Start          ∥" << endl;
 	cout << "==============================" << endl;
@@ -169,10 +167,6 @@ void CNetwork::CloseServer()
 	}*/
 
 	// Thread Exit
-#ifdef DB_ON
-	m_pDatabaseThread->join();
-	cout << "DatabaseThread Close" << endl;
-#endif
 	m_pUpdateThread->join();
 	cout << "UpdateThread Close" << std::endl;
 	m_pAcceptThread->join();
@@ -209,16 +203,17 @@ void CNetwork::CheckThisCputCount()
 
 void CNetwork::WorkerThread()
 {
-	DWORD		num_byte;
+	/*DWORD		num_byte;
 	ULONGLONG	key64;
-	PULONG_PTR	p_key = &key64;
+	PULONG_PTR	p_key = &key64;*/
 	while (m_bRunningServer) {
-		OVER_EX*	lpover_ex;
+		DWORD		io_byte;
+		ULONG_PTR	key;
+		WSAOVERLAPPED*	over;
 
-		bool	is_error = GetQueuedCompletionStatus(m_hIocp, &num_byte, p_key,
-			reinterpret_cast<LPWSAOVERLAPPED *>(&lpover_ex), INFINITE);
+		bool	is_error = GetQueuedCompletionStatus(m_hIocp, &io_byte, &key, &over, INFINITE);
 
-		USHORT id = static_cast<unsigned>(key64);
+		OVER_EX*	lpover_ex = reinterpret_cast<OVER_EX*>(over);
 
 		// 비정상 종료 : FALSE, 수신 바이트 크기 = 0
 		// 정상 종료 : TRUE, 수신 바이트 크기 = 0
@@ -226,43 +221,43 @@ void CNetwork::WorkerThread()
 		{
 			int err_no = WSAGetLastError();
 			if (err_no != WSA_IO_PENDING){
-				m_pPlayerProcess->PlayerLogout(id);
+				m_pPlayerProcess->PlayerLogout(key);
 			}
 			continue;
 		}
-		if (num_byte == 0)
+		if (io_byte == 0)
 		{
-			m_pPlayerProcess->PlayerLogout(id);
+			m_pPlayerProcess->PlayerLogout(key);
 			continue;
 		}
 		switch (lpover_ex->m_Event)
 		{
 		case EV_RECV:
 		{
-			m_pPlayerProcess->RecvPacket(id, lpover_ex->m_MessageBuffer, num_byte);
+			m_pPlayerProcess->RecvPacket(key, lpover_ex->m_MessageBuffer, io_byte);
 			//delete lpover_ex;
 			break;
 		}
 		case EV_SEND:
 		{
 			// Send 오류가 발생하면 플레이어를 종료시킨다.
-			if (num_byte != lpover_ex->m_DataBuffer.len) {
+			if (io_byte != lpover_ex->m_DataBuffer.len) {
 				int err_no = WSAGetLastError();
 				Err_display("[Worker Thread]Send Error: ",err_no);
-				m_pPlayerProcess->PlayerLogout(id);
+				m_pPlayerProcess->PlayerLogout(key);
 			}
 			delete lpover_ex;
 			break;
 		}
 		case EV_MONSTER_UPDATE:
 		{
-			m_pAnimalProcess->UpdateMonster(lpover_ex->m_Status, id, lpover_ex->m_usOtherID);
+			m_pAnimalProcess->UpdateMonster(lpover_ex->m_Status, key, lpover_ex->m_usOtherID);
 			delete lpover_ex;
 			break;
 		}
 		case EV_NATURAL_UPDATE:
 		{
-			m_pNaturalProcess->UpdateNatural(lpover_ex->m_Status, id, lpover_ex->m_usOtherID);
+			m_pNaturalProcess->UpdateNatural(lpover_ex->m_Status, key, lpover_ex->m_usOtherID);
 			delete lpover_ex;
 			break;
 		}
@@ -275,6 +270,8 @@ void CNetwork::WorkerThread()
 		{
 			switch (lpover_ex->m_Status)
 			{
+			case EUT_USERINFO_SAVE:
+				m_pEtcProcess->UserInfo_Save_Event();
 			case EUT_ANIMAL_COLLISION:
 				m_pEtcProcess->Animal_Collision_Event();
 			case EUT_ROT:
@@ -349,24 +346,6 @@ void CNetwork::UpdateThread() // 일정 시간이 지날때마다 업데이트를 해주라는 함수
 		}
 	}
 }
-
-#ifdef DB_ON
-void CNetwork::DataBaseThread()
-{
-	while (m_bRunningServer)
-	{
-		this_thread::sleep_for(10ms);
-		while (!CDataBase::GetInst()->EmptyDatabaseEventQueue())
-		{
-			DB_Event db_ev;
-			if (CDataBase::GetInst()->PopDatabaseEventQueue(db_ev))
-				CDataBase::GetInst()->RunDataBase(db_ev);
-			else
-				break;
-		}
-	}
-}
-#endif // DB_ON
 
 void CNetwork::Err_quit(const char* msg, int err_no)
 {

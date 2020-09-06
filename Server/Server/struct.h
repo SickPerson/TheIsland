@@ -7,7 +7,7 @@ typedef struct Over_ex
 {
 	WSAOVERLAPPED	m_Overlapped;
 	WSABUF			m_DataBuffer;
-	char			m_MessageBuffer[MAX_BUF];
+	char			m_MessageBuffer[1024];
 	EVENT_TYPE		m_Event;
 	char			m_Status;
 	USHORT	m_usOtherID;
@@ -39,7 +39,7 @@ typedef struct DB_Event {
 
 	UINT state; // DataBase_TYPE
 	int inum; // ID �õ尪
-	wstring sid; // ID
+	wstring strID; // ID
 
 	float fHealth;
 	float fHungry;

@@ -1,10 +1,11 @@
 #include "EtcProcess.h"
 #include "PacketMgr.h"
 #include "TimerMgr.h"
-
+#include "DataBase.h"
 
 CEtcProcess::CEtcProcess()
 {
+	PushEvent_Etc_DB_Update();
 	PushEvent_Etc_Animal_Collision();
 	PushEvent_Rot();
 	PushEvent_Etc_Weather();
@@ -53,6 +54,7 @@ void CEtcProcess::Animal_Collision_Event()
 			}
 		}
 	}
+	PushEvent_Etc_Animal_Collision();
 }
 
 void CEtcProcess::Rot_Event()
@@ -104,4 +106,24 @@ void CEtcProcess::TimerEvent()
 	}
 	// Add Event
 	PushEvent_Etc_Time();
+}
+
+void CEtcProcess::UserInfo_Save_Event()
+{
+	for (auto& user : m_pObjectPool->m_cumPlayerPool) {
+		bool bConnect = user.second->GetConnect();
+		if (!bConnect) continue;
+
+		DB_Event ev;
+		ev.inum = user.second->GetDbNum();
+		ev.fHealth = user.second->GetHealth();
+		ev.fHungry = user.second->GetHungry();
+		ev.fThirst = user.second->GetThirst();
+		Vec3 vPos = user.second->GetLocalPos();
+		ev.fX = vPos.x;
+		ev.fY = vPos.y;
+		ev.fZ = vPos.z;
+		CDataBase::GetInst()->UpdateUserInfo(ev);
+	}
+	PushEvent_Etc_DB_Update();
 }
