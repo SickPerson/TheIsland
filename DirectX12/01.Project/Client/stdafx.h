@@ -36,6 +36,6 @@
 #include <Engine/global.h>
 
 
-// #define NETWORK_ON
+#define NETWORK_ON
 
 #define WM_SOCKET	WM_USER + 1
