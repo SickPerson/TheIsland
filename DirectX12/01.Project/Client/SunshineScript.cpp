@@ -24,7 +24,8 @@ CSunshineScript::CSunshineScript() :
 	DAYCYCLE(60.f),
 	m_pRain(NULL),
 	m_fRainTime(3600.f),
-	m_bRain(false)
+	m_bRain(false),
+	m_bRainCheat(false)
 {
 }
 
@@ -82,42 +83,46 @@ void CSunshineScript::Update()
 		m_pClock->Font()->SetString( strTime );
 	}
 
-	if ( !m_bRain )
+	if ( !m_bRainCheat )
+
 	{
-		if ( m_iDay % 4 == 1 )
+		if ( !m_bRain )
 		{
-			m_bRain = true;
+			if ( m_iDay % 4 == 1 )
+			{
+				m_bRain = true;
 
-			tEvent evt = {};
+				tEvent evt = {};
 
-			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
-			evt.wParam = ( DWORD_PTR )m_pRain;
-			evt.lParam = ( ( DWORD_PTR )0 << 16 | ( DWORD_PTR )true );
+				evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+				evt.wParam = ( DWORD_PTR )m_pRain;
+				evt.lParam = ( ( DWORD_PTR )0 << 16 | ( DWORD_PTR )true );
 
-			CEventMgr::GetInst()->AddEvent( evt );
+				CEventMgr::GetInst()->AddEvent( evt );
+			}
 		}
-	}
 
-	else
-	{
-		m_fRainTime -= DT * DAYCYCLE;
-
-		if ( m_fRainTime <= 0 )
+		else
 		{
-			m_bRain = false;
-			m_fRainTime = 3600.f;
+			m_fRainTime -= DT * DAYCYCLE;
 
-			tEvent evt = {};
+			if ( m_fRainTime <= 0 )
+			{
+				m_bRain = false;
+				m_fRainTime = 3600.f;
 
-			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
-			evt.wParam = ( DWORD_PTR )m_pRain;
-			evt.lParam = ( ( DWORD_PTR )29 << 16 | ( DWORD_PTR )true );
+				tEvent evt = {};
 
-			CEventMgr::GetInst()->AddEvent( evt );
+				evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+				evt.wParam = ( DWORD_PTR )m_pRain;
+				evt.lParam = ( ( DWORD_PTR )29 << 16 | ( DWORD_PTR )true );
+
+				CEventMgr::GetInst()->AddEvent( evt );
+			}
 		}
-	}
 
-	m_pRain->SetActive( m_bRain );
+		m_pRain->SetActive( m_bRain );
+	}
 
 #endif	
 
@@ -258,7 +263,9 @@ void CSunshineScript::SetRain( CGameObject * pObject )
 
 void CSunshineScript::SetRainDrop( bool bRain )
 {
-	if ( !bRain )
+	m_bRainCheat = bRain;
+
+	if ( bRain )
 	{
 		tEvent evt = {};
 

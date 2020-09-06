@@ -13,6 +13,7 @@ class CSunshineScript :
 
 	float m_fRainTime;
 	bool	m_bRain;
+	bool	m_bRainCheat;
 
 	CGameObject* m_pSkybox;
 	CGameObject* m_pSea;
