@@ -35,7 +35,6 @@ void CPlayerProcess::Init_Player(USHORT playerId, char* wcId)
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetWcID(wcId);
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(Vec3(18000.f, 200.f, 2000.f));
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalScale(Vec3(1.5f, 1.5f, 1.5f));
-	//m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 }
 
 void CPlayerProcess::AcceptClient(SOCKET& sSocket, USHORT playerId)
@@ -180,6 +179,7 @@ void CPlayerProcess::PlayerLogout(USHORT playerId)
 	ev.fZ = vPos.z;
 #endif // DB_ON
 
+	closesocket(m_pObjectPool->m_cumPlayerPool[playerId]->GetSocket());
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetConnect(false);
 	string name = m_pObjectPool->m_cumPlayerPool[playerId]->GetWcID();
 	cout << name << " ´ÔÀÌ ·Î±×¾Æ¿ô ÇÏ¼Ì½À´Ï´Ù. " << endl;

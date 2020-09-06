@@ -82,7 +82,6 @@ void CPacketMgr::Send_Pos_Packet(USHORT User, USHORT Acter)
 	else if (acter < END_ANIMAL) {
 		packet.vPos = CProcess::m_pObjectPool->m_cumAnimalPool[acter]->GetLocalPos();
 		packet.vRot = CProcess::m_pObjectPool->m_cumAnimalPool[acter]->GetLocalRot();
-		cout << packet.vPos.x << packet.vPos.y << packet.vPos.z << endl;
 		if (CProcess::m_pObjectPool->m_cumPlayerPool[user]->ExistList(Acter)) {
 			Send_Packet(user, &packet);
 		}

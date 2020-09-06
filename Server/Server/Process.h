@@ -84,6 +84,15 @@ public: // - Collision
 
 		return fDist;
 	}
+
+	float CalculationDistance(Vec3& vPos1, Vec3& vPos2) {
+		Vec3 vDis1 = vPos1;
+		Vec3 vDis2 = vPos2;
+
+		float fDist = powf(vDis2.x - vDis1.x, 2) + powf(vDis2.z - vDis1.x, 2);
+		fDist = sqrtf(fDist);
+		return fDist;
+	}
 	template	<typename T>
 	bool CollisionHouse(std::pair<const USHORT, T*> pFirst, std::pair<const USHORT, CHousing*> pSecond, char eType) {
 		Vec3 vPos1 = pFirst.second->GetLocalPos();

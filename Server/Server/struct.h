@@ -7,7 +7,7 @@ typedef struct Over_ex
 {
 	WSAOVERLAPPED	m_Overlapped;
 	WSABUF			m_DataBuffer;
-	char			m_MessageBuffer[MAX_BUF];
+	char			m_MessageBuffer[1024];
 	EVENT_TYPE		m_Event;
 	char			m_Status;
 	USHORT	m_usOtherID;

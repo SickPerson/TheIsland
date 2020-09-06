@@ -15,12 +15,11 @@ CMonsterProcess::~CMonsterProcess()
 
 void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 {
-	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];
-	auto& Target = m_pObjectPool->m_cumPlayerPool[usTarget];
-
-	char Animal_State = Animal->GetState();
+	char Animal_State = m_pObjectPool->m_cumAnimalPool[Animal_Id]->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];
+	auto& Target = m_pObjectPool->m_cumPlayerPool[usTarget];
 	if (CollisionSphere(Animal, Target, 0.2f)) {
 		concurrent_unordered_set<USHORT> loginList;
 		CopyBeforeLoginList(loginList);
@@ -63,9 +62,8 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 			PushEvent_Animal_Behavior(Animal_Id, usTarget);
 		}
 	}
-	else {
-		PushEvent_Animal_Behavior(Animal_Id, usTarget);
-	}
+	else
+		PushEvent_Animal_Follow(Animal_Id, usTarget);
 }
 
 void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
@@ -159,23 +157,19 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 
 void CMonsterProcess::IdleEvent(USHORT AnimalId)
 {	
-	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
-
-	bool bWakeUp = Animal->GetWakeUp();
+	bool bWakeUp = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetWakeUp();
 	if (!bWakeUp) return;
 
-	char Animal_State = Animal->GetState();
+	char Animal_State = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
-
-
 
 	USHORT usNewTarget = FindTarget(AnimalId);
 	if (usNewTarget == NO_TARGET) {
-		Animal->SetTarget(NO_TARGET);
+		m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(NO_TARGET);
 		PushEvent_Animal_Idle(AnimalId, NO_TARGET);
 	}
 	else {
-		Animal->SetTarget(usNewTarget);
+		m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(usNewTarget);
 		PushEvent_Animal_Behavior(AnimalId, usNewTarget);
 	}
 }
@@ -286,7 +280,7 @@ USHORT CMonsterProcess::FindTarget(USHORT Animal_Id)
 		Vec3 vPos1 = Animal->GetLocalPos();
 		Vec3 vPos2 = Player->GetLocalPos();
 		if (ObjectRangeCheck(vPos1, vPos2, 2000.f)) {
-			float currDist = CalculationDistance(Player, Animal);
+			float currDist = CalculationDistance(vPos1, vPos2);
 			if (fDist >= currDist) {
 				fDist = currDist;
 				NewTarget = user;

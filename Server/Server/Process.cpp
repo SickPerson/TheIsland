@@ -40,7 +40,10 @@ void CProcess::Release()
 
 bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
 {
-	if (fDistance > sqrtf(pow(vSecond.x - vFirst.x, 2) + pow(vSecond.z - vFirst.z, 2)))
+	float fDist = powf(vSecond.x - vFirst.x, 2) + powf(vSecond.z - vFirst.z, 2);
+	fDist = sqrtf(fDist);
+	cout << fDist << endl;
+	if (fDistance > fDist)
 		return true;
 	return false;
 }
