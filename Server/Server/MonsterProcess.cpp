@@ -143,7 +143,7 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 
 		Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
 		vDir.y = 0.f;
-		vAnimalPos += vDir * fAnimalSpeed * 0.05f;
+		vAnimalPos += vDir * fAnimalSpeed * 0.5f;
 
 
 		Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
@@ -162,9 +162,9 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 
 		if (rangeList.empty()) {
 			Animal->SetWakeUp(false);
+			Animal->SetTarget(NO_TARGET);
 			return;
 		}
-
 		PushEvent_Animal_Behavior(AnimalId, usTarget);
 	}
 }
@@ -188,6 +188,7 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 
 	if (rangeList.empty()) {
 		Animal->SetWakeUp(false);
+		Animal->SetTarget(NO_TARGET);
 		return;
 	}
 	// ==============================================================
@@ -200,22 +201,22 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 	float fAnimalSpeed = Animal->GetSpeed();
 	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
 	vDir.y = 0.f;
-	vAnimalPos += - vDir * fAnimalSpeed * 0.05f;
+	vAnimalPos += - vDir * fAnimalSpeed * 0.5f;
 	Animal->SetLocalRot(Vec3(0.f, atan2( - vDir.x, - vDir.z) + 3.141592f, 0.f));
 	Animal->SetLocalPos(vAnimalPos);
 
-	for (auto user : loginList) {
-		auto& Player = m_pObjectPool->m_cumPlayerPool[user];
-
-		Vec3 vPos1 = Animal->GetLocalPos();
-		Vec3 vPos2 = Player->GetLocalPos();
-		if (ObjectRangeCheck(vPos1, vPos2, PLAYER_VIEW_RANGE)) {
-			CPacketMgr::Send_Pos_Packet(user, AnimalId);
-			CPacketMgr::Send_Animation_Packet(user, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
-		}
+	for (auto user : rangeList) {
+		CPacketMgr::Send_Pos_Packet(user, AnimalId);
+		CPacketMgr::Send_Animation_Packet(user, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
 	}
 
-	//PushEvent_Animal_Behavior(AnimalId, usTarget);
+	if (rangeList.empty()) {
+		Animal->SetWakeUp(false);
+		Animal->SetTarget(NO_TARGET);
+		return;
+	}
+
+	PushEvent_Animal_Behavior(AnimalId, usTarget);
 }
 
 void CMonsterProcess::IdleEvent(USHORT AnimalId)

@@ -81,7 +81,7 @@ void CObjectpool::Init_AnimalPool()
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
 
-			//Animal->SetLocalPos(vPos);
+			Animal->SetLocalPos(vPos);
 		}
 		else if (i < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR)
 		{
@@ -166,7 +166,7 @@ void CObjectpool::Init_AnimalPool()
 			vPos.z += sin(fRadian) * fDistance;
 			Animal->SetLocalPos(vPos);
 		}
-		Animal->SetLocalPos(Vec3(16000.f, 200.f, 2000.f));
+		//Animal->SetLocalPos(Vec3(16000.f, 200.f, 2000.f));
 		//Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_cumAnimalPool.insert(make_pair(i, Animal));
 	}
@@ -337,13 +337,16 @@ void CObjectpool::Release_HousingPool()
 
 USHORT CObjectpool::GetLoginID()
 {
+	mu.lock();
 	for (auto& User : m_cumPlayerPool)
 	{
 		bool bConnect = User.second->GetConnect();
 		if (bConnect) continue;
 		User.second->SetConnect(true);
+		mu.unlock();
 		return User.first;
 	}
+	mu.unlock();
 	return MAX_USER;
 }
 

@@ -167,7 +167,6 @@ void CNetwork::RecvPacket()
 			if (iobyte + m_saved_packet_size >= m_in_packet_size) {
 				memcpy(m_cPacketBuf + m_saved_packet_size, ptr, m_in_packet_size - m_saved_packet_size);
 				m_fpPacketProcess[m_cPacketBuf[1]](m_cPacketBuf);
-				//ProcessPacket(m_cPacketBuf);
 				ptr += m_in_packet_size - m_saved_packet_size;
 				iobyte -= m_in_packet_size - m_saved_packet_size;
 				m_in_packet_size = 0;

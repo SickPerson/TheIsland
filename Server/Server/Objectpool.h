@@ -14,6 +14,9 @@ public:
 	~CObjectpool();
 
 private:
+	mutex mu;
+
+private:
 	void Initalize();
 	void Release();
 

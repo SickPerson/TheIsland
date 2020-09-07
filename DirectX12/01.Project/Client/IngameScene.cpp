@@ -1760,9 +1760,9 @@ void CIngameScene::InstallHousing( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRo
 #endif
 	pObject->SetName( L"House" );
 
-	Vec3 vNewPos = vPos;
-	vNewPos.y = CNaviMgr::GetInst()->GetY( vPos );
-	pObject->Transform()->SetLocalPos( vNewPos );
+	//Vec3 vNewPos = vPos;
+	//vNewPos.y = CNaviMgr::GetInst()->GetY( vPos );
+	pObject->Transform()->SetLocalPos(vPos);
 
 	pObject->Transform()->SetLocalRot( vRot );
 	pObject->Transform()->SetLocalScale( vScale );

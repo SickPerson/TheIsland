@@ -197,17 +197,10 @@ void CPlayerProcess::PlayerPos(USHORT playerId, char * packet)
 {
 	cs_pos_packet* pos_packet = reinterpret_cast<cs_pos_packet*>(packet);
 
-	//Vec3 vPrePos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
 	Vec3 vCurrPos = pos_packet->vLocalPos;
 
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vCurrPos);
 	UpdateViewList(playerId);
-	/*if (ObjectRangeCheck(vPrePos, vCurrPos, 10.f)) {
-		m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vCurrPos);
-		UpdateViewList(playerId);
-	}
-	else
-		return;*/
 }
 
 void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
@@ -254,7 +247,7 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			Animal->SetState(OST_DIE);
 			fHealth = 0.f;
 			Animal->SetHealth(fHealth);
-			//PushEvent_Animal_Die(attack_id, playerId);
+			PushEvent_Animal_Die(attack_id, playerId);
 
 			// Item Get
 			char eItemType;
