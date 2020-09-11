@@ -1454,52 +1454,61 @@ void CIngameScene::PlayerAnimationUpdate(USHORT usId, UINT uiType)
 {
 	cout << usId << " | " << uiType << endl;
 
-	auto p = m_mapAnimals.find(usId);
-	if (p == m_mapAnimals.end())
+	auto p = m_mapPlayers.find(usId);
+	if (p == m_mapPlayers.end())
 	{
 		// ¾ø´Â°Å
 		return;
 	}
 	if (usId == CNetwork::m_usID)
 		return;
-
-	switch (uiType) {
-	case (UINT)PLAYER_ANIMATION_TYPE::WALK:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Walk");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::RUN:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Run");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::IDLE1:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle1");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::IDLE2:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle2");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::DIE:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Die");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"TakeWeapon");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::ATTACK1:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack1");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::ATTACK2:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack2");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::ATTACK3:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack3");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::HIT1:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit1");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::HIT2:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit2");
-		break;
-	case (UINT)PLAYER_ANIMATION_TYPE::JUMP:
-		m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Jump");
-		break;
+	else {
+		switch (uiType) {
+		case (UINT)PLAYER_ANIMATION_TYPE::WALK:
+			cout << "ID : " << usId << " Walk" << endl;
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Walk");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::RUN:
+			cout << "ID : " << usId << " Run" << endl;
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Run");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::IDLE1:
+			cout << "ID : " << usId << " Idle1" << endl;
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle1");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::IDLE2:
+			cout << "ID : " << usId << " Idle2" << endl;
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle2");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::DIE:
+			cout << "ID : " << usId << " Die" << endl;
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Die");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON:
+			cout << "ID : " << usId << " Take Weapon" << endl;
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"TakeWeapon");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::ATTACK1:
+			cout << "ID : " << usId << " Attack1" << endl;
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack1");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::ATTACK2:
+			cout << "ID : " << usId << " Attack2" << endl;
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack2");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::ATTACK3:
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack3");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::HIT1:
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit1");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::HIT2:
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Hit2");
+			break;
+		case (UINT)PLAYER_ANIMATION_TYPE::JUMP:
+			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Jump");
+			break;
+		}
 	}
 }
 

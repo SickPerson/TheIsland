@@ -135,7 +135,6 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 
 void CPlayerProcess::PlayerMove(USHORT playerId, char * packet)
 {
-	cout << "Worker " << CTimerMgr::GetInst()->GetDeltaTime() << endl;
 	cs_move_packet* move_packet = reinterpret_cast<cs_move_packet*>(packet);
 
 	Vec3 vLocalPos = move_packet->vLocalPos;
@@ -497,8 +496,6 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 	Vec3 player_pos = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
 	// ------------------- CHECK -------------------- &?????
 	for (auto au : loginList) {
-		bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
-		if (!bConnect) continue;
 		Vec3 other_pos = m_pObjectPool->m_cumPlayerPool[au]->GetLocalPos();
 		if (ObjectRangeCheck(player_pos, other_pos, PLAYER_VIEW_RANGE))
 		{

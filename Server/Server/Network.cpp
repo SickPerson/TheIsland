@@ -225,17 +225,16 @@ void CNetwork::WorkerThread()
 			}
 			continue;
 		}
-		if (io_byte == 0)
-		{
-			m_pPlayerProcess->PlayerLogout(key);
-			continue;
-		}
 		switch (lpover_ex->m_Event)
 		{
 		case EV_RECV:
 		{
+			if (io_byte == 0)
+			{
+				m_pPlayerProcess->PlayerLogout(key);
+				continue;
+			}
 			m_pPlayerProcess->RecvPacket(key, lpover_ex->m_MessageBuffer, io_byte);
-			//delete lpover_ex;
 			break;
 		}
 		case EV_SEND:

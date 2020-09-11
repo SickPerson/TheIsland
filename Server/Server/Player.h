@@ -70,7 +70,6 @@ public:
 	void CopyUserViewList(concurrent_unordered_set<USHORT>& cusCopyUserViewList) {
 		unique_lock<recursive_mutex>lock(m_rmPlayerListMutex);
 		cusCopyUserViewList = m_cusViewList;
-		lock.unlock();
 
 		for (auto au = cusCopyUserViewList.begin(); au != cusCopyUserViewList.end();)
 		{
