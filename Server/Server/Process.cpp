@@ -237,7 +237,7 @@ void CProcess::PushEvent_Rot()
 	ev.m_EventType = EV_ETC;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = EUT_ROT;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(100);
 	PushEventQueue(ev);
 }
 

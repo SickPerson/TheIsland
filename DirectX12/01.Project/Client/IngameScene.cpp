@@ -1465,35 +1465,27 @@ void CIngameScene::PlayerAnimationUpdate(USHORT usId, UINT uiType)
 	else {
 		switch (uiType) {
 		case (UINT)PLAYER_ANIMATION_TYPE::WALK:
-			cout << "ID : " << usId << " Walk" << endl;
 			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Walk");
 			break;
 		case (UINT)PLAYER_ANIMATION_TYPE::RUN:
-			cout << "ID : " << usId << " Run" << endl;
 			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Run");
 			break;
 		case (UINT)PLAYER_ANIMATION_TYPE::IDLE1:
-			cout << "ID : " << usId << " Idle1" << endl;
 			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle1");
 			break;
 		case (UINT)PLAYER_ANIMATION_TYPE::IDLE2:
-			cout << "ID : " << usId << " Idle2" << endl;
 			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Idle2");
 			break;
 		case (UINT)PLAYER_ANIMATION_TYPE::DIE:
-			cout << "ID : " << usId << " Die" << endl;
 			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Die");
 			break;
 		case (UINT)PLAYER_ANIMATION_TYPE::TAKE_WEAPON:
-			cout << "ID : " << usId << " Take Weapon" << endl;
 			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"TakeWeapon");
 			break;
 		case (UINT)PLAYER_ANIMATION_TYPE::ATTACK1:
-			cout << "ID : " << usId << " Attack1" << endl;
 			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack1");
 			break;
 		case (UINT)PLAYER_ANIMATION_TYPE::ATTACK2:
-			cout << "ID : " << usId << " Attack2" << endl;
 			m_mapPlayers[usId]->Animator3D()->ChangeAnimation(L"Attack2");
 			break;
 		case (UINT)PLAYER_ANIMATION_TYPE::ATTACK3:
