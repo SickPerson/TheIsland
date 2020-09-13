@@ -43,7 +43,7 @@ void CMonsterProcess::BehaviorEvent(USHORT AnimalId, USHORT usTarget)
 
 		if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
 		{
-			if (CollisionSphere(Animal, Target, 0.2f))
+			if (CollisionSphere(Animal, Target, 0.3f))
 			{
 				Animal->SetTarget(usTarget);
 				Update_Event ev;
@@ -119,7 +119,7 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 	}
 	// ==============================================================
 
-	if (true == CollisionSphere(Animal, Target, 0.2f)) {
+	if (true == CollisionSphere(Animal, Target, 0.3f)) {
 		for (auto& player : rangeList) {
 			if (m_pObjectPool->m_cumPlayerPool[player]->ExistList(Animal_Id)) {
 				CPacketMgr::Send_Pos_Packet(player, Animal_Id);
@@ -140,7 +140,7 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 			fTarget_AfterHp = 0.f;
 			Target->SetHealth(fTarget_AfterHp);
 			Target->SetState(OST_DIE);
-			CPacketMgr::Send_Status_Player_Packet(usTarget);
+			//CPacketMgr::Send_Status_Player_Packet(usTarget);
 
 			// New Target
 			USHORT NewTarget = NO_TARGET;
@@ -172,7 +172,8 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 		{
 			// - Player
 			Target->SetHealth(fTarget_AfterHp);
-			CPacketMgr::Send_Status_Player_Packet(usTarget);
+			cout << "HP : " << fTarget_AfterHp << endl;
+			//CPacketMgr::Send_Status_Player_Packet(usTarget);
 
 			// - Animal
 			PushEvent_Animal_Behavior(Animal_Id, usTarget);
@@ -383,10 +384,15 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 void CMonsterProcess::DieEvent(USHORT Animal_Id)
 {
 	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];
+
+	if (Animal->GetState() == OST_LIVE)
+		return;
+
 	Vec3 AnimalPos = Animal->GetLocalPos();
 	Animal->SetPrevPos(AnimalPos);
 
 	concurrent_unordered_set<USHORT> login_list;
+	CopyBeforeLoginList(login_list);
 	for (auto& user : login_list) {
 		Vec3 PlayerPos = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
 		if (ObjectRangeCheck(PlayerPos, AnimalPos, PLAYER_VIEW_RANGE)) {

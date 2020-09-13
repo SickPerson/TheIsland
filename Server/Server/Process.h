@@ -106,6 +106,7 @@ public: // - Collision
 
 		Vec3 vHouseOffsetScale = pSecond.second->GetOffsetScale();
 
+		
 		switch (eType)
 		{
 		case HOUSING_FOUNDATION:

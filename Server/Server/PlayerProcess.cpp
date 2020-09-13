@@ -237,11 +237,12 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 	{
 		auto& Animal = m_pObjectPool->m_cumAnimalPool[attack_id];
 
+		if (Animal->GetState() == OST_DIE)
+			return;
+
 		float fHealth = Animal->GetHealth();
 
 		fHealth -= fDamage;
-
-		cout << "HP : " << fHealth << endl;
 
 		if (fHealth > 0.f) {
 			Animal->SetHealth(fHealth);
@@ -420,18 +421,21 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 	if (uiType >= HOUSING_WALL && uiType < HOUSING_FLOOR)
 		House->SetOffsetPos(Vec3(0.f, 0.f, 120.f));
 	House->SetOffsetScale(Vec3(195.f, 195.f, 195.f));
-	m_pObjectPool->Install_House(House, house_id);
 
-	concurrent_unordered_set<USHORT> loginList;
+	if (m_pObjectPool->Check_Install_House(House)) {
+		m_pObjectPool->Install_House(House, house_id);
 
-	CopyBeforeLoginList(loginList);
+		concurrent_unordered_set<USHORT> loginList;
 
-	for (auto& au : loginList)
-	{
-		bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
-		if (!bConnect)	continue;
-		if (au == playerId) continue;
-		CPacketMgr::Send_Install_Housing_Packet(au, house_id);
+		CopyBeforeLoginList(loginList);
+
+		for (auto& au : loginList)
+		{
+			bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
+			if (!bConnect)	continue;
+			if (au == playerId) continue;
+			CPacketMgr::Send_Install_Housing_Packet(au, house_id);
+		}
 	}
 }
 
@@ -588,7 +592,8 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 	for (auto& animal : m_pObjectPool->m_cumAnimalPool)
 	{
 		char eType = animal.second->GetState();
-		if (eType == OBJ_STATE_TYPE::OST_DIE) continue;
+		if (eType == OBJ_STATE_TYPE::OST_DIE) 
+			continue;
 		Vec3 Other_Pos = animal.second->GetLocalPos();
 		if (ObjectRangeCheck(vPlayer_Pos, Other_Pos, PLAYER_VIEW_RANGE))
 		{

@@ -90,7 +90,7 @@ void CObjectpool::Init_AnimalPool()
 			tStatus.fStamina = 100.f;
 			tStatus.fDamage = 20.f;
 			tStatus.fSpeed = 150.f;
-			tStatus.eType = BEHAVIOR_TYPE::B_WARLIKE;
+			tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
 			tStatus.eKind = ANIMAL_TYPE::A_BOAR;
 
 			Animal->SetAnimalStatus(tStatus);
@@ -354,10 +354,10 @@ bool CObjectpool::Check_Install_House(CHousing * pHouse)
 {
 	CHousing* phouse = pHouse;
 	for (auto& house : m_cumHousingPool) {
-		/*if (CollisionHouse(house, phouse))
+		if (CollisionHouse(house, phouse))
 		{
-
-		}*/
+			return false;
+		}
 	}
 	return true;
 }

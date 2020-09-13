@@ -110,22 +110,8 @@ public:
 	}
 	void DeleteList(USHORT usId)
 	{
-		concurrency::concurrent_unordered_set<USHORT> list;
-		CopyViewList(list);
-
-		for (auto au = list.begin(); au != list.end();)
-		{
-			if (*au == usId)
-			{
-				au = list.unsafe_erase(au);
-				break;
-			}
-			else
-				++au;
-		}
-
 		lock_guard<recursive_mutex>lock(m_rmPlayerListMutex);
-		m_cusViewList = list;
+		m_cusViewList.unsafe_erase(usId);
 	}
 	void ClearList()
 	{
