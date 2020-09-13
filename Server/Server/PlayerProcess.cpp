@@ -433,7 +433,6 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 		{
 			bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
 			if (!bConnect)	continue;
-			if (au == playerId) continue;
 			CPacketMgr::Send_Install_Housing_Packet(au, house_id);
 		}
 	}
