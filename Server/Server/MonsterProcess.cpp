@@ -13,6 +13,91 @@ CMonsterProcess::~CMonsterProcess()
 {
 }
 
+void CMonsterProcess::BehaviorEvent(USHORT AnimalId, USHORT usTarget)
+{
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
+	auto& Target = m_pObjectPool->m_cumPlayerPool[usTarget];
+
+	// ========================== 예외 처리 ==========================
+	char Animal_State = Animal->GetState();
+	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
+
+	concurrent_unordered_set<USHORT> loginList;
+	concurrent_unordered_set<USHORT> rangeList;
+	CopyBeforeLoginList(loginList);
+	InRangePlayer(loginList, rangeList, AnimalId);
+
+	if (rangeList.empty()) {
+		Animal->SetWakeUp(false);
+		Animal->SetTarget(NO_TARGET);
+		return;
+	}
+	// ==============================================================
+
+	Vec3 vPos1 = Animal->GetLocalPos();
+	Vec3 vPos2 = Target->GetLocalPos();
+
+	if (ObjectRangeCheck(vPos1, vPos2, 2000.f))
+	{
+		UINT uiType = Animal->GetType();
+
+		if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
+		{
+			if (CollisionSphere(Animal, Target, 0.2f))
+			{
+				Animal->SetTarget(usTarget);
+				Update_Event ev;
+				ev.m_Do_Object = AnimalId;
+				ev.m_EventType = EV_MONSTER_UPDATE;
+				ev.m_From_Object = usTarget;
+				ev.m_eObjUpdate = AUT_ATTACK;
+				ev.wakeup_time = high_resolution_clock::now() + milliseconds(500);
+				PushEventQueue(ev);
+			}
+			else {
+				Animal->SetTarget(usTarget);
+				Update_Event ev;
+				ev.m_Do_Object = AnimalId;
+				ev.m_EventType = EV_MONSTER_UPDATE;
+				ev.m_From_Object = usTarget;
+				ev.m_eObjUpdate = AUT_FOLLOW;
+				ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+				PushEventQueue(ev);
+			}
+		}
+		else if(uiType == (UINT)BEHAVIOR_TYPE::B_PASSIVE){
+			Animal->SetTarget(NO_TARGET);
+			Update_Event ev;
+			ev.m_Do_Object = AnimalId;
+			ev.m_EventType = EV_MONSTER_UPDATE;
+			ev.m_From_Object = usTarget;
+			ev.m_eObjUpdate = AUT_IDLE;
+			ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+			PushEventQueue(ev);
+		}
+		else if (uiType == (UINT)BEHAVIOR_TYPE::B_EVASION) {
+			Animal->SetTarget(usTarget);
+			Update_Event ev;
+			ev.m_Do_Object = AnimalId;
+			ev.m_EventType = EV_MONSTER_UPDATE;
+			ev.m_From_Object = usTarget;
+			ev.m_eObjUpdate = AUT_EVASION;
+			ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+			PushEventQueue(ev);
+		}
+	}
+	else {
+		Animal->SetTarget(NO_TARGET);
+		Update_Event ev;
+		ev.m_Do_Object = AnimalId;
+		ev.m_EventType = EV_MONSTER_UPDATE;
+		ev.m_From_Object = usTarget;
+		ev.m_eObjUpdate = AUT_IDLE;
+		ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+		PushEventQueue(ev);
+	}
+}
+
 void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 {
 	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];

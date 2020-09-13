@@ -99,6 +99,7 @@ public:
 	}
 	bool ExistList(USHORT usId)
 	{
+		unique_lock<recursive_mutex> lock(m_rmPlayerListMutex);
 		if (m_cusViewList.count(usId))
 			return true;
 		return false;

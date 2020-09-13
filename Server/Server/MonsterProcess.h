@@ -14,6 +14,9 @@ private:
 
 public:
 	void BindMonsterUpdate() {
+		m_fpMonsterUpdate[AUT_BEHAVIOR] = [&](USHORT AnimalId, USHORT usTarget) {
+			BehaviorEvent(AnimalId, usTarget);
+		};
 		m_fpMonsterUpdate[AUT_ATTACK] = [&](USHORT AnimalId, USHORT uiTarget) {
 			AttackEvent(AnimalId, uiTarget); };
 		m_fpMonsterUpdate[AUT_FOLLOW] = [&](USHORT AnimalId, USHORT uiTarget) {
@@ -37,6 +40,7 @@ public:
 	}
 
 public:
+	void BehaviorEvent(USHORT AnimalId, USHORT usTarget);
 	void AttackEvent(USHORT AnimalId, USHORT uiTarget);
 	void FollowEvent(USHORT AnimalId, USHORT uiTarget);
 	void EvastionEvent(USHORT AnimalId, USHORT uiTarget);

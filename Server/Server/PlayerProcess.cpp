@@ -519,7 +519,14 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 			{
 				au.second->SetWakeUp(true);
 
-				PushEvent_Animal_Behavior(au.first, playerId);
+				m_pObjectPool->m_cumAnimalPool[au.first]->SetTarget(playerId);
+				Update_Event ev;
+				ev.m_Do_Object = au.first;
+				ev.m_EventType = EV_MONSTER_UPDATE;
+				ev.m_From_Object = playerId;
+				ev.m_eObjUpdate = AUT_BEHAVIOR;
+				ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+				PushEventQueue(ev);
 			}
 			CPacketMgr::Send_Pos_Packet(playerId, au.first);
 		}
@@ -625,7 +632,14 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 				if (!bWakeUp)
 				{
 					m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
-					PushEvent_Animal_Behavior(after, user);
+					m_pObjectPool->m_cumAnimalPool[after]->SetTarget(playerId);
+					Update_Event ev;
+					ev.m_Do_Object = after;
+					ev.m_EventType = EV_MONSTER_UPDATE;
+					ev.m_From_Object = playerId;
+					ev.m_eObjUpdate = AUT_BEHAVIOR;
+					ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+					PushEventQueue(ev);
 
 				}
 				CPacketMgr::Send_Pos_Packet(user, after);
@@ -645,7 +659,15 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 				if (!bWakeUp)
 				{
 					m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
-					PushEvent_Animal_Behavior(after, user);
+
+					m_pObjectPool->m_cumAnimalPool[after]->SetTarget(playerId);
+					Update_Event ev;
+					ev.m_Do_Object = after;
+					ev.m_EventType = EV_MONSTER_UPDATE;
+					ev.m_From_Object = playerId;
+					ev.m_eObjUpdate = AUT_BEHAVIOR;
+					ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+					PushEventQueue(ev);
 				}
 			}
 		}
