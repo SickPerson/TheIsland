@@ -8,8 +8,8 @@ CEtcProcess::CEtcProcess()
 	//PushEvent_Etc_DB_Update();
 	//PushEvent_Etc_Animal_Collision();
 	PushEvent_Rot();
-	//PushEvent_Etc_Weather();
-	//PushEvent_Etc_Time();
+	PushEvent_Etc_Weather();
+	PushEvent_Etc_Time();
 }
 
 
@@ -68,7 +68,7 @@ void CEtcProcess::Rot_Event()
 		concurrent_unordered_set<USHORT>	ViewList;
 		m_pObjectPool->m_cumPlayerPool[user]->CopyViewList(ViewList);
 		for (auto& other : ViewList) {
-			if (MAX_USER <= other &&other < END_ANIMAL)
+			if (MAX_USER <= other && other < END_ANIMAL)
 			{
 				if (m_pObjectPool->m_cumAnimalPool[other]->GetState() == OST_DIE || !m_pObjectPool->m_cumAnimalPool[other]->GetWakeUp())
 					continue;

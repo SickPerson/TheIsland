@@ -21,6 +21,8 @@ private:
 	tPlayerStatus	m_tPlayerStatus;
 	float			m_fArmor;
 
+	int				m_Count[CS_END];
+
 private:
 	concurrent_unordered_set<USHORT> m_cusViewList;
 	shared_mutex m_smPlayerStatusMutex;
@@ -47,6 +49,8 @@ public:
 	void SetDbNum(int& dbID);
 	void SetConnect(bool bConnect);
 	void SetSocket(SOCKET& socket);
+
+	void SetCount(char cstype) { unique_lock<shared_mutex> lock(m_smPlayerStatusMutex); ++m_Count[cstype]; cout << m_Count[cstype] << endl; }
 
 public:
 	tPlayerStatus& GetPlayerStatus();

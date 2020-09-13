@@ -36,7 +36,11 @@ CSunshineScript::~CSunshineScript()
 void CSunshineScript::Update()
 {
 #ifdef NETWORK_ON
-	m_fTime = CNetwork::GetInst()->GetTime();
+	time -= DT;
+	if (time <= 0.f) {
+		m_fTime = CNetwork::GetInst()->GetTime();
+		time = 1.f;
+	}
 #else
 	m_fTime += DT * DAYCYCLE;
 #endif	

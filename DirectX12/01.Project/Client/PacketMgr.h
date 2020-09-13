@@ -13,6 +13,7 @@ private:
 
 public:
 	static CGameObject*	m_pPlayer;
+	static int count[CS_END];
 
 public:
 	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }

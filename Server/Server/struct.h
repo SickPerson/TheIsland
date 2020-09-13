@@ -13,6 +13,14 @@ typedef struct Over_ex
 	USHORT	m_usOtherID;
 }OVER_EX, POVER_EX;
 
+typedef struct Client {
+	OVER_EX m_RecvOver;
+	int		m_iPrev;
+	int		m_iCur;
+
+	char	m_PacketBuf[MAX_BUF];
+};
+
 /*_____________________________________________
 			[Update Event]
 _______________________________________________*/

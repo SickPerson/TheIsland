@@ -23,6 +23,9 @@ class CSunshineScript :
 
 	CGameObject* m_pRain;
 
+	// юс╫ц
+	float time = 1.f;
+
 public:
 	CSunshineScript();
 	virtual ~CSunshineScript();

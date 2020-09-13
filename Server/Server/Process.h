@@ -156,7 +156,6 @@ public: // - Collision
 
 		return true;
 	}
-
 public: // Animal
 	void PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId);
 	void PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId);

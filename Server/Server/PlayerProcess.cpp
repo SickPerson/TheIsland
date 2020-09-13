@@ -198,6 +198,8 @@ void CPlayerProcess::PlayerPos(USHORT playerId, char * packet)
 
 	Vec3 vCurrPos = pos_packet->vLocalPos;
 
+	cout << "POS ";
+	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(pos_packet->type);
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vCurrPos);
 	UpdateViewList(playerId);
 }
@@ -205,6 +207,8 @@ void CPlayerProcess::PlayerPos(USHORT playerId, char * packet)
 void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
 {
 	cs_rot_packet* rot_packet = reinterpret_cast<cs_rot_packet*>(packet);
+	cout << "ROT ";
+	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(rot_packet->type);
 	Vec3 vPreRot = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalRot();
 	Vec3 vCurrRot = rot_packet->vRot;
 	Vec3 vRight = rot_packet->vDir[0]; DIR_TYPE::RIGHT;
@@ -225,8 +229,9 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 	USHORT	attack_id = attack_packet->attack_id;
 	char	eType = attack_packet->eType;
 
+	cout << "ATTACK ";
+	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(attack_packet->type);
 	float	fDamage = GetDamage(eType);
-
 
 	if ((UINT)ATTACK_TYPE::ANIMAL == uiType)
 	{
@@ -249,7 +254,7 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			PushEvent_Animal_Die(attack_id, playerId);
 
 			// Item Get
-			char eItemType;
+			/*char eItemType;
 			int	iAmount = 1;
 			int random = rand() % 3;
 			if (random == 0)
@@ -261,7 +266,7 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 
 			if (eItemType == ITEM_MACHETTE)
 				iAmount = 3;
-			CPacketMgr::Send_Add_Item_Packet(playerId, eItemType, iAmount);
+			CPacketMgr::Send_Add_Item_Packet(playerId, eItemType, iAmount);*/
 		}
 
 		BEHAVIOR_TYPE Type = Animal->GetType();
@@ -325,8 +330,6 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			}
 		}
 	}
-	else
-		return;
 }
 
 void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
@@ -336,6 +339,9 @@ void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
 	cs_animation_packet* animation_packet = reinterpret_cast<cs_animation_packet*>(packet);
 
 	UINT uiType = animation_packet->uiType;
+
+	cout << "ANI ";
+	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(animation_packet->type);
 
 	concurrent_unordered_set<USHORT>	UserViewList;
 	m_pObjectPool->m_cumPlayerPool[User]->CopyUserViewList(UserViewList);
@@ -486,21 +492,21 @@ void CPlayerProcess::PlayerChat(USHORT _usID, char * _packet)
 
 void CPlayerProcess::InitViewList(USHORT playerId)
 {
-	USHORT user = playerId;
+	auto& Player = m_pObjectPool->m_cumPlayerPool[playerId];
 	// Player ViewList Update
 
 	concurrent_unordered_set<USHORT> loginList;
 	CopyBeforeLoginList(loginList);
 
 	// [ Add Player List ]
-	Vec3 player_pos = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
-	// ------------------- CHECK -------------------- &?????
+	Vec3 player_pos = Player->GetLocalPos();
+
 	for (auto au : loginList) {
 		Vec3 other_pos = m_pObjectPool->m_cumPlayerPool[au]->GetLocalPos();
 		if (ObjectRangeCheck(player_pos, other_pos, PLAYER_VIEW_RANGE))
 		{
-			CPacketMgr::Send_Pos_Packet(au, user);
-			CPacketMgr::Send_Pos_Packet(user, au);
+			CPacketMgr::Send_Pos_Packet(au, playerId);
+			CPacketMgr::Send_Pos_Packet(playerId, au);
 		}
 	}
 
@@ -519,7 +525,8 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 			{
 				au.second->SetWakeUp(true);
 
-				m_pObjectPool->m_cumAnimalPool[au.first]->SetTarget(playerId);
+				au.second->SetTarget(playerId);
+
 				Update_Event ev;
 				ev.m_Do_Object = au.first;
 				ev.m_EventType = EV_MONSTER_UPDATE;
@@ -661,6 +668,7 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 					m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
 
 					m_pObjectPool->m_cumAnimalPool[after]->SetTarget(playerId);
+
 					Update_Event ev;
 					ev.m_Do_Object = after;
 					ev.m_EventType = EV_MONSTER_UPDATE;

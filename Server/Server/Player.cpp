@@ -13,6 +13,10 @@ CPlayer::CPlayer() :
 	m_over.m_Event = EV_RECV;
 	m_over.m_DataBuffer.buf = m_over.m_MessageBuffer;
 	m_over.m_DataBuffer.len = MAX_BUF;
+
+	for (int i = 0; i < CS_END; ++i) {
+		m_Count[i] = 0;
+	}
 }
 
 CPlayer::~CPlayer()

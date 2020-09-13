@@ -350,6 +350,18 @@ USHORT CObjectpool::GetLoginID()
 	return MAX_USER;
 }
 
+bool CObjectpool::Check_Install_House(CHousing * pHouse)
+{
+	CHousing* phouse = pHouse;
+	for (auto& house : m_cumHousingPool) {
+		/*if (CollisionHouse(house, phouse))
+		{
+
+		}*/
+	}
+	return true;
+}
+
 void CObjectpool::Install_House(CHousing * pHouse, USHORT usIndex)
 {
 	m_cumHousingPool.insert(make_pair(usIndex, pHouse));

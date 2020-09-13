@@ -27,6 +27,9 @@ public:
 			IdleEvent(AnimalId); };
 		m_fpMonsterUpdate[AUT_DIE] = [&](USHORT AnimalId, USHORT uiTarget) {
 			DieEvent(AnimalId); };
+		m_fpMonsterUpdate[AUT_RESPAWN] = [&](USHORT AnimalId, USHORT usTarget) {
+			RespawnEvent(AnimalId);
+		};
 		m_fpMonsterUpdate[AUT_DAMAGE] = [&](USHORT AnimalId, USHORT playerId) {
 			DamageEvent(AnimalId, playerId); };
 	}
