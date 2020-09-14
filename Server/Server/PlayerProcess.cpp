@@ -400,7 +400,7 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 {
 	cs_install_housing_packet* install_housing_packet = reinterpret_cast<cs_install_housing_packet*>(packet);
 
-	USHORT house_id = m_houseNum++;
+	USHORT house_id = m_houseNum;
 	UINT uiType = install_housing_packet->housing_type;
 	Vec3 vLocalPos = install_housing_packet->vLocalPos;
 	Vec3 vLocalRot = install_housing_packet->vLocalRot;
@@ -434,6 +434,7 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 				CPacketMgr::Send_Check_Housing_Packet(au, house_id, true);
 			CPacketMgr::Send_Install_Housing_Packet(au, house_id);
 		}
+		PlusHouseNum();
 	}
 	else
 		CPacketMgr::Send_Check_Housing_Packet(playerId, house_id, false);

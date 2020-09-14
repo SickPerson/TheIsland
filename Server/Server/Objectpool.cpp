@@ -365,6 +365,10 @@ bool CObjectpool::Check_Install_House(CHousing * pHouse)
 void CObjectpool::Install_House(CHousing * pHouse, USHORT usIndex)
 {
 	m_cumHousingPool.insert(make_pair(usIndex, pHouse));
+
+	for (auto& au : m_cumHousingPool) {
+		cout << "[" << au.first << "]";
+	}
 }
 
 void CObjectpool::Remove_House(USHORT usIndex)

@@ -49,7 +49,9 @@ void CFPSCamScript::Update()
 
 		Vec3 vCameraRot = Transform()->GetLocalRot();
 
+#ifdef NETWORK_ON
 		vDrag.y -= 41.f;
+#endif // NETWORK_ON
 		vCameraRot.x -= vDrag.y * DT * 3.f;
 
 		if(vCameraRot.x > -1.f && vCameraRot.x < XM_PI / 2.f)

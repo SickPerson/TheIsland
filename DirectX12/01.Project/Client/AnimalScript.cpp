@@ -53,8 +53,9 @@ CAnimalScript::~CAnimalScript()
 
 void CAnimalScript::Update()
 {
+#ifdef NETWORK_ON
 	return;
-
+#endif // NETWORK_ON
 	if (m_pParticleObj != NULL)
 	{
 		m_fParticleTime -= DT;
@@ -253,7 +254,9 @@ void CAnimalScript::Update()
 
 void CAnimalScript::OnCollision(CCollider2D * _pOther)
 {
+#ifdef NETWORK_ON
 	return;
+#endif // NETWORK_ON
 
 	if (m_bAnimalDead)
 		return;
@@ -412,7 +415,9 @@ void CAnimalScript::OnCollision(CCollider2D * _pOther)
 
 void CAnimalScript::OnCollisionEnter(CCollider2D * _pOther)
 {
+#ifdef NETWORK_ON
 	return;
+#endif // NETWORK_ON
 
 	if (m_bAnimalDead)
 		return;
@@ -433,8 +438,9 @@ void CAnimalScript::OnCollisionEnter(CCollider2D * _pOther)
 
 void CAnimalScript::OnCollisionExit(CCollider2D * _pOther)
 {
+#ifdef NETWORK_ON
 	return;
-	
+#endif // NETWORK_ON
 	if (m_bAnimalDead)
 		return;
 	// 플레이어가 시야반경에서 벗어나도 일정 행동을 수행하도록
@@ -602,13 +608,6 @@ void CAnimalScript::Damage(CGameObject* _pOther, float fDamage)
 		m_fLivingTime = 10.f;
 
 		Animator3D()->ChangeAnimation( L"Die" );
-#ifdef NETWORK_ON
-		/*CPacketMgr::GetInst()->Send_Dead_Animal_Packet((USHORT)m_iIndex);
-		tEvent tEv;
-		tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-		tEv.wParam = (DWORD_PTR)GetObj();
-		CEventMgr::GetInst()->AddEvent(tEv);*/
-#endif // NETWORK_ON
 	}
 }
 

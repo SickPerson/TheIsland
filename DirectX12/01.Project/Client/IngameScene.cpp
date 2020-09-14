@@ -287,7 +287,11 @@ void CIngameScene::Init()
 
 
 	CreateNatural();
-	//CreateAnimalSpawner();
+#ifdef NETWORK_ON
+
+#else
+	CreateAnimalSpawner();
+#endif // NETWORK_ON
 	CreateShowFPS();
 
 	// ==========================
@@ -382,20 +386,28 @@ void CIngameScene::Init()
 	// CollisionMgr 충돌 그룹(Layer) 지정
 	// =================================
 	// Player Layer 와 Monster Layer 는 충돌 검사 진행
-	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Animal" );
-	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Environment" );
-	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"House" );
-	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Player", L"Human");
+#ifdef NETWORK_ON
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Environment");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"House");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Human");
+#else
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Environment");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"House");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Human");
 	//
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Animal", L"Environment" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Animal", L"Environment" );
 	//
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"Animal" );
-	//CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"House" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"Animal" );
+	CCollisionMgr::GetInst()->CheckCollisionLayer( L"Arrow", L"House" );
 	//
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Animal");
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Environment");
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"House");
-	//CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Human");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Environment");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"House");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Build", L"Human");
+#endif // NETWORK_ON
+	
 
 	GiveStartItem();
 	ShowCursor(m_bShowCursor);
@@ -445,11 +457,15 @@ void CIngameScene::Update()
 			{
 				
 				string str = m_pChat->GetScript<CInputScript>()->GetString();
+#ifdef NETWORK_ON
 				CPacketMgr::GetInst()->Send_Chat_Packet(str);
-				//string strPlayerName = "Player";
-				//m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
 				m_pChat->GetScript<CInputScript>()->SetEnable(false);
-				//m_pChat->GetScript<CInputScript>()->Clear();
+#else
+				string strPlayerName = "Player";
+				m_pChat->GetScript<CChatScript>()->AddChat(strPlayerName, str);
+				m_pChat->GetScript<CInputScript>()->SetEnable(false);
+				m_pChat->GetScript<CInputScript>()->Clear();
+#endif // NETWORK_ON
 			}
 			else if(!m_pChat->GetScript<CInputScript>()->GetEnable() && !m_pInventory->GetScript<CInventoryScript>()->GetInventoryActive())
 				m_pChat->GetScript<CInputScript>()->SetEnable(true);

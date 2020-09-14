@@ -24,6 +24,8 @@ void CStatusScript::Update()
 	{
 		Damage(20.f * DT);
 	}
+#ifdef NETWORK_ON
+#else
 	m_fHungry -= 0.2f * DT;
 	if (m_fHungry < 0.f)
 	{
@@ -36,6 +38,7 @@ void CStatusScript::Update()
 		m_fThirst = 0.f;
 		Damage(0.25f * DT);
 	}
+#endif // NETWORK_ON
 
 	const vector<CGameObject *>& vecObj = GetObj()->GetChild();
 

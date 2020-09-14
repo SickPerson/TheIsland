@@ -21,12 +21,7 @@
 #include <Engine/LandScape.h>
 #include <Engine/GridScript.h>
 
-#include <Engine/PlayerScript.h>
-#include <Engine/FPSCamScript.h>
 #include <Engine/ToolCamScript.h>
-#include <Engine/MonsterScript.h>
-#include <Engine/StatusScript.h>
-#include <Engine/QuickSlotScript.h>
 
 #include "PlayerCamScript.h"
 #include "InventoryScript.h"
@@ -36,6 +31,7 @@
 #include "AnimalScript.h"
 #include <Engine/Animator3D.h>
 #include "SunshineScript.h"
+#include "StatusScript.h"
 
 #include <Engine/NaviMgr.h>
 #include <Engine/Layer.h>
@@ -182,11 +178,6 @@ void CNetwork::RecvPacket()
 	}
 }
 
-void CNetwork::ProcessPacket(char* packet)
-{
-	m_fpPacketProcess[packet[1]](packet);
-}
-
 void CNetwork::Recv_Pos_Packet(char * packet)
 {
 	sc_pos_packet* pos_packet = reinterpret_cast<sc_pos_packet*>(packet);
@@ -280,7 +271,12 @@ void CNetwork::Recv_Status_Player_Packet(char * packet)
 	float fHungry = status_player_packet->fHungry;
 	float fThrist = status_player_packet->fThrist;
 
-	//dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerStatusUpdate(fHealth, fHungry, fThrist);
+	CGameObject* pStatus = CSceneMgr::GetInst()->GetCurScene()->GetLayer(30)->FindObject(L"Player Status");
+
+	CStatusScript* pScript = pStatus->GetScript<CStatusScript>();
+	pScript->SetHealth(fHealth);
+	pScript->SetHungry(fHungry);
+	pScript->SetThirst(fThrist);
 }
 
 void CNetwork::Recv_Chat_Packet(char * packet)

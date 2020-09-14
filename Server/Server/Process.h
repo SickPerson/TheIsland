@@ -33,6 +33,9 @@ public:
 public:
 	static void Initalize();
 	static void Release();
+
+public:
+	void PlusHouseNum() { unique_lock<recursive_mutex>(m_rmProcessMutex); ++m_houseNum; };
 public:
 	bool ObjectRangeCheck(Vec3& vFirst, Vec3& vSecond, float fDistance);
 
