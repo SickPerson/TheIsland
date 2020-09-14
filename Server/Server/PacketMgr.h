@@ -26,6 +26,7 @@ public: // Player 관련 패킷
 public:
 	static void Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id);
 	static void Send_Remove_Housing_Packet(USHORT player_Id, USHORT housing_Id);
+	static void Send_Check_Housing_Packet(USHORT player_Id, USHORT housing_Id, bool bCheck);
 
 public:
 	static void Send_Put_Natural_Packet(USHORT PlayerId, USHORT NaturalId);
@@ -33,7 +34,7 @@ public:
 
 public: // etc
 	static void Send_Weather_Packet(USHORT player_Id, bool bRain);
-	static void Send_Time_Packet(USHORT player_Id, float fTime);
+	static void Send_Time_Packet(USHORT player_Id, int Day, int Hour, int Min);
 
 public:
 	static void Send_Add_Item_Packet(USHORT player_Id, char eItemtype, int iAmount);

@@ -75,6 +75,7 @@ void CNetwork::BindfpPacket()
 	// - House
 	m_fpPacketProcess[SC_INSTALL_HOUSE] = [&](char* packet) {Recv_Install_Housing_Packet(packet); };
 	m_fpPacketProcess[SC_REMOVE_HOUSE] = [&](char* packet) {Recv_Remove_Housing_Packet(packet); };
+	m_fpPacketProcess[SC_CHECK_HOUSE] = [&](char* packet) {Recv_Check_Housing_Packet(packet)};
 	// - Item
 	m_fpPacketProcess[SC_ADD_ITEM] = [&](char* packet) {};
 	m_fpPacketProcess[SC_REMOVE_ITEM] = [&](char* packet) {};
@@ -342,6 +343,13 @@ void CNetwork::Recv_Remove_Housing_Packet(char * packet)
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->DestroyHousing(house_id);
 }
 
+void CNetwork::Recv_Check_Housing_Packet(char * packet)
+{
+	sc_check_housing_packet* check_housing_packet = reinterpret_cast<sc_check_housing_packet*>(packet);
+	bool bCheck = check_housing_packet->bCheck;
+
+}
+
 void CNetwork::Recv_Add_Item_Packet(char * packet)
 {
 	sc_add_item_packet* add_item_packet = reinterpret_cast<sc_add_item_packet*>(packet);
@@ -369,7 +377,6 @@ void CNetwork::Recv_Weather_Packet(char * packet)
 void CNetwork::Recv_Time_Packet(char * packet)
 {
 	sc_time_packet* time_packet = reinterpret_cast<sc_time_packet*>(packet);
-	cout << time_packet->fTime << endl;
-	m_fServerTime = time_packet->fTime;
+	cout << "DAY : " << time_packet->iday << " HOUR : " << time_packet->ihour << "MIN : " << time_packet->imin << endl;
 
 }

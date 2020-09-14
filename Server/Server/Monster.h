@@ -13,9 +13,9 @@ private:
 	tAnimalStatus	m_tStatus;
 
 	USHORT			m_uiTarget;
-	bool			m_bWakeUp;
+	volatile bool	m_bWakeUp;
 
-	bool			m_bBehavior;
+	volatile bool	m_bHit;
 	float			m_fCurrentTime;
 	Vec3			m_vMoveDir;
 	Vec3			m_vPrevPos;
@@ -35,9 +35,10 @@ public:
 	void SetTarget(USHORT playerId);
 	void SetDir(Vec3& vDir);
 	void SetPrevPos(Vec3& vPrevPos);
+	void SetHit(bool bHit);
 
 public:
-	const bool& GetWakeUp();
+	const bool GetWakeUp();
 
 	const tAnimalStatus& GetAnimalStatus();
 	const float&	GetHealth();
@@ -48,5 +49,6 @@ public:
 	const USHORT& GetTarget();
 	const Vec3&	GetDir();
 	const Vec3& GetPrevPos();
+	const bool	GetHit();
 };
 

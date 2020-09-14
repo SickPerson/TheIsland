@@ -72,6 +72,7 @@ public: // Natural
 public: // Housing
 	void Recv_Install_Housing_Packet(char* packet);
 	void Recv_Remove_Housing_Packet(char* packet);
+	void Recv_Check_Housing_Packet(char* packet);
 public:
 	void Recv_Add_Item_Packet(char* packet);
 

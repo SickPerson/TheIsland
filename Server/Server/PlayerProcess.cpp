@@ -229,13 +229,14 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 	USHORT	attack_id = attack_packet->attack_id;
 	char	eType = attack_packet->eType;
 
-	cout << "ATTACK ";
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(attack_packet->type);
 	float	fDamage = GetDamage(eType);
 
 	if ((UINT)ATTACK_TYPE::ANIMAL == uiType)
 	{
 		auto& Animal = m_pObjectPool->m_cumAnimalPool[attack_id];
+
+		Animal->SetHit(true);
 
 		if (Animal->GetState() == OST_DIE)
 			return;
@@ -272,9 +273,6 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 
 		BEHAVIOR_TYPE Type = Animal->GetType();
 
-		if (Type == (UINT)BEHAVIOR_TYPE::B_PASSIVE)
-			PushEvent_Animal_Attack(attack_id, playerId);
-
 	}
 	else if ((UINT)ATTACK_TYPE::NATURAL == uiType)
 	{
@@ -301,7 +299,7 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 			}
 			else {
 				Natural->SetHealth(fHealth);
-				char eItemType = ITEM_END;
+				/*char eItemType = ITEM_END;
 				int iAmount = 1;
 				if (eType == N_TREE) {
 					int random = rand() % 5;
@@ -327,7 +325,7 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 						eItemType = ITEM_CLOTH;
 					}
 				}
-				CPacketMgr::Send_Add_Item_Packet(playerId, eItemType, iAmount);
+				CPacketMgr::Send_Add_Item_Packet(playerId, eItemType, iAmount);*/
 			}
 		}
 	}
@@ -341,7 +339,6 @@ void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
 
 	UINT uiType = animation_packet->uiType;
 
-	cout << "ANI ";
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(animation_packet->type);
 
 	concurrent_unordered_set<USHORT>	UserViewList;
@@ -433,9 +430,13 @@ void CPlayerProcess::PlayerInstallHousing(USHORT playerId, char * packet)
 		{
 			bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
 			if (!bConnect)	continue;
+			if (playerId == au)
+				CPacketMgr::Send_Check_Housing_Packet(au, house_id, true);
 			CPacketMgr::Send_Install_Housing_Packet(au, house_id);
 		}
 	}
+	else
+		CPacketMgr::Send_Check_Housing_Packet(playerId, house_id, false);
 }
 
 void CPlayerProcess::PlayerRemoveHousing(USHORT playerId, char * packet)

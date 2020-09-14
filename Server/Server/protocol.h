@@ -75,6 +75,7 @@ enum SC_PACKET_TYPE {
 	// - Housing
 	SC_INSTALL_HOUSE,
 	SC_REMOVE_HOUSE,
+	SC_CHECK_HOUSE,
 	// - Item
 	SC_ADD_ITEM,
 	SC_REMOVE_ITEM,
@@ -206,6 +207,14 @@ struct sc_remove_housing_packet
 	USHORT	house_id;
 };
 
+struct sc_check_housing_packet
+{
+	char	size;
+	char	type;
+	USHORT	house_id;
+	bool	bCheck;
+};
+
 // [ Natural ]
 struct sc_put_natural_packet
 {
@@ -248,7 +257,10 @@ struct sc_time_packet
 {
 	char size;
 	char type;
-	float fTime;
+	//float fTime;
+	int	imin;
+	int	ihour;
+	int iday;
 };
 
 struct sc_full_server_packet {

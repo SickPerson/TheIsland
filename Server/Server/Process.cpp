@@ -3,6 +3,10 @@
 #include "TimerMgr.h"
 #include "DataBase.h"
 
+int		CProcess::m_Minute = 0;
+int		CProcess::m_Hour = 0;
+int		CProcess::m_Day = 0;
+
 CObjectpool*	CProcess::m_pObjectPool = nullptr;
 USHORT	CProcess::m_houseNum = 0;
 concurrent_unordered_set<USHORT> CProcess::m_cusLoginList;
@@ -75,7 +79,18 @@ void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
 		}
 		else if (uiType == (UINT)BEHAVIOR_TYPE::B_PASSIVE)
 		{
-			PushEvent_Animal_Idle(AnimalId, NO_TARGET);
+			if (Animal->GetHit()) {
+				if (CollisionSphere(Animal, User, 0.2f))
+				{
+					PushEvent_Animal_Attack(AnimalId, PlayerId);
+				}
+				else
+				{
+					PushEvent_Animal_Follow(AnimalId, PlayerId);
+				}
+			}
+			else
+				PushEvent_Animal_Idle(AnimalId, NO_TARGET);
 		}
 		else if (uiType == (UINT)BEHAVIOR_TYPE::B_EVASION)
 		{
@@ -131,7 +146,7 @@ void CProcess::PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_IDLE;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(3000);
 	PushEventQueue(ev);
 }
 

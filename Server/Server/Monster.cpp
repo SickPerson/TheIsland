@@ -2,7 +2,8 @@
 
 CMonster::CMonster() :
 	m_uiTarget(NO_TARGET),
-	m_bWakeUp(false)
+	m_bWakeUp(false),
+	m_bHit(false)
 {
 }
 
@@ -76,6 +77,12 @@ void CMonster::SetPrevPos(Vec3 & vPrevPos)
 	m_vPrevPos = vPrevPos;
 }
 
+void CMonster::SetHit(bool bHit)
+{
+	unique_lock<shared_mutex>	lock(m_smAnimalSharedMutex);
+	m_bHit = bHit;
+}
+
 const tAnimalStatus & CMonster::GetAnimalStatus()
 {
 	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
@@ -91,7 +98,7 @@ const float & CMonster::GetHealth()
 const float & CMonster::GetSpeed()
 {
 	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
-	return m_tStatus.fHealth;
+	return m_tStatus.fSpeed;
 }
 
 const float & CMonster::GetDamage()
@@ -118,7 +125,7 @@ const USHORT & CMonster::GetTarget()
 	return m_uiTarget;
 }
 
-const bool & CMonster::GetWakeUp()
+const bool CMonster::GetWakeUp()
 {
 	shared_lock<shared_mutex> lock(m_smAnimalSharedMutex);
 	return m_bWakeUp;
@@ -134,4 +141,10 @@ const Vec3 & CMonster::GetPrevPos()
 {
 	shared_lock<shared_mutex>	lock(m_smAnimalSharedMutex);
 	return m_vPrevPos;
+}
+
+const bool CMonster::GetHit()
+{
+	shared_lock<shared_mutex>	lock(m_smAnimalSharedMutex);
+	return m_bHit;
 }

@@ -98,8 +98,19 @@ void CEtcProcess::WeatherEvent()
 
 void CEtcProcess::TimerEvent()
 {
-	CTimerMgr::GetInst()->Tick();
-	float fTime = CTimerMgr::GetInst()->GetTotalTime();
+	m_Minute += 1;
+
+	if (((int)m_Minute % 60) == 0) {
+		m_Minute++;
+		if (m_Minute >= 60) {
+			m_Hour++;
+			m_Minute = 0;
+			if (m_Hour >= 24) {
+				m_Hour = 0.f;
+				m_Day++;
+			}
+		}
+	}
 	concurrent_unordered_set<USHORT> loginList;
 	CopyBeforeLoginList(loginList);
 
@@ -107,7 +118,7 @@ void CEtcProcess::TimerEvent()
 	{
 		bool bConnect = m_pObjectPool->m_cumPlayerPool[playerId]->GetConnect();
 		if (!bConnect) continue;
-		CPacketMgr::Send_Time_Packet(playerId, fTime);
+		CPacketMgr::Send_Time_Packet(playerId, m_Day, m_Hour, m_Minute);
 	}
 	// Add Event
 	PushEvent_Etc_Time();

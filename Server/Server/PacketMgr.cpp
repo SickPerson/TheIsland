@@ -189,6 +189,16 @@ void CPacketMgr::Send_Remove_Housing_Packet(USHORT player_Id, USHORT housing_Id)
 	Send_Packet(player_Id, &packet);
 }
 
+void CPacketMgr::Send_Check_Housing_Packet(USHORT player_Id, USHORT housing_Id, bool bCheck)
+{
+	sc_check_housing_packet	packet;
+	packet.size = sizeof(sc_check_housing_packet);
+	packet.type = SC_CHECK_HOUSE;
+	packet.house_id = housing_Id;
+	packet.bCheck = bCheck;
+	Send_Packet(player_Id, &packet);
+}
+
 void CPacketMgr::Send_Put_Natural_Packet(USHORT PlayerId, USHORT NaturalId)
 {
 	sc_put_natural_packet packet;
@@ -223,13 +233,14 @@ void CPacketMgr::Send_Weather_Packet(USHORT player_Id, bool bRain)
 	Send_Packet(player_Id, &packet);
 }
 
-void CPacketMgr::Send_Time_Packet(USHORT player_Id, float fTime)
+void CPacketMgr::Send_Time_Packet(USHORT player_Id, int Day, int Hour, int Min)
 {
 	sc_time_packet packet;
 	packet.size = sizeof(sc_time_packet);
 	packet.type = SC_TIME;
-	packet.fTime = fTime;
-	cout << fTime << endl;
+	packet.iday = Day;
+	packet.ihour = Hour;
+	packet.imin = Min;
 	Send_Packet(player_Id, &packet);
 }
 

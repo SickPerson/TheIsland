@@ -328,27 +328,36 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 
 	// ==============================================================
 
-	Vec3	vPos = Animal->GetLocalPos();
-	Animal->SetPrevPos(vPos);
+	int random = rand() % 2;
 
-	Vec3 vDir = Vec3(rand() / (float)RAND_MAX, 0.f, rand() / (float)RAND_MAX);
-	vDir = XMVector3Normalize(vDir);
-	Animal->SetDir(vDir);
-	float fSpeed = Animal->GetSpeed();
-	vPos += vDir * fSpeed * 0.05f;
+	if (random == 0)
+	{
+		Vec3	vPos = Animal->GetLocalPos();
+		Animal->SetPrevPos(vPos);
 
-	char eType = Animal->GetKind();
+		Vec3 vDir = Vec3(rand() / (float)RAND_MAX, 0.f, rand() / (float)RAND_MAX);
+		vDir = XMVector3Normalize(vDir);
+		Animal->SetDir(vDir);
+		float fSpeed = Animal->GetSpeed();
+		vPos += vDir * fSpeed * 0.05f;
 
-	if (A_BEAR == eType || A_BOAR == eType)
-		Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
-	else {
-		if(A_WOLF == eType)
-			Animal->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z), 0.f));
-		else
-			Animal->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+		char eType = Animal->GetKind();
+
+		if (A_BEAR == eType || A_BOAR == eType)
+			Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+		else {
+			if (A_WOLF == eType)
+				Animal->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z), 0.f));
+			else
+				Animal->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+		}
+
+		Animal->SetLocalPos(vPos);
 	}
+	else if (random == 1)
+	{
 
-	Animal->SetLocalPos(vPos);
+	}
 
 	// Animation 보내기, 주변 타겟 찾기
 
@@ -360,8 +369,13 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 		Vec3 vPos1 = Animal->GetLocalPos();
 		Vec3 vPos2 = Player->GetLocalPos();
 		if (ObjectRangeCheck(vPos1, vPos2, PLAYER_VIEW_RANGE)) {
-			CPacketMgr::Send_Pos_Packet(user, AnimalId);
-			CPacketMgr::Send_Animation_Packet(user, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
+			if (random == 0) {
+				CPacketMgr::Send_Pos_Packet(user, AnimalId);
+				CPacketMgr::Send_Animation_Packet(user, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
+			}
+			else if (random == 1) {
+
+			}
 			float currDist = CalculationDistance(vPos1, vPos2);
 			if (fDist >= currDist) {
 				fDist = currDist;

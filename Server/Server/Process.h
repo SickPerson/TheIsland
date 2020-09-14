@@ -19,6 +19,10 @@ public:
 	recursive_mutex	m_rmProcessMutex;
 
 public:
+	static int m_Minute;
+	static int m_Hour;
+	static int m_Day;
+
 	static USHORT	m_houseNum;
 	static CObjectpool*	m_pObjectPool;
 
