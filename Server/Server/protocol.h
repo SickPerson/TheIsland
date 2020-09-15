@@ -171,6 +171,7 @@ struct sc_status_player_packet{
 	char size;
 	char type;
 
+
 	float	fHealth;
 	float	fThrist;
 	float	fHungry;

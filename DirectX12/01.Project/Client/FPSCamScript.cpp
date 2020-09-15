@@ -51,6 +51,7 @@ void CFPSCamScript::Update()
 
 #ifdef NETWORK_ON
 		vDrag.y -= 41.f;
+#else
 #endif // NETWORK_ON
 		vCameraRot.x -= vDrag.y * DT * 3.f;
 

@@ -353,7 +353,10 @@ void CPlayerScript::Update()
 
 			//std::cout << vDrag.x << std::endl;
 			// x -= 18, y -= 41
+#ifdef NETWORK_ON
 			vDrag.x += 18.f;
+#else
+#endif
 
 			if (vDrag.x != 0.f)
 			{

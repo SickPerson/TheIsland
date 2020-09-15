@@ -219,6 +219,11 @@ void CSunshineScript::SetTime(int iDay, int iHour, int iMin)
 	m_iDay = iDay;
 	m_iHour = iHour;
 	m_iMinute = iMin;
+
+	string strDay = "Day : " + std::to_string(m_iDay);
+	m_pDay->Font()->SetString(strDay);
+	string strTime = std::to_string(m_iHour) + " : " + std::to_string(m_iMinute);
+	m_pClock->Font()->SetString(strTime);
 }
 
 void CSunshineScript::SetDayCycle(float fCycle)
