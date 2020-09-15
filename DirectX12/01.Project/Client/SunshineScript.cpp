@@ -36,14 +36,14 @@ CSunshineScript::~CSunshineScript()
 void CSunshineScript::Update()
 {
 #ifdef NETWORK_ON
-	time -= DT;
+	/*time -= DT;
 	if (time <= 0.f) {
-		m_fTime = CNetwork::GetInst()->GetTime();
-		time = 1.f;
-	}
+	   m_fTime = CNetwork::GetInst()->GetTime();
+	   time = 1.f;
+	}*/
 #else
 	m_fTime += DT * DAYCYCLE;
-#endif	
+
 	if (((int)m_fTime % 60) == 0)
 	{
 		m_iMinute++;
@@ -62,40 +62,42 @@ void CSunshineScript::Update()
 		string strTime = std::to_string(m_iHour) + " : " + std::to_string(m_iMinute);
 		m_pClock->Font()->SetString(strTime);
 	}
+#endif   
+
 
 	/*if ( !m_bRain )
 	{
-		if ( m_iDay % 4 == 1 )
-		{
-			m_bRain = true;
+	   if ( m_iDay % 4 == 1 )
+	   {
+		  m_bRain = true;
 
-			tEvent evt = {};
+		  tEvent evt = {};
 
-			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
-			evt.wParam = ( DWORD_PTR )m_pRain;
-			evt.lParam = ( ( DWORD_PTR )0 << 16 | ( DWORD_PTR )true );
+		  evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+		  evt.wParam = ( DWORD_PTR )m_pRain;
+		  evt.lParam = ( ( DWORD_PTR )0 << 16 | ( DWORD_PTR )true );
 
-			CEventMgr::GetInst()->AddEvent( evt );
-		}
+		  CEventMgr::GetInst()->AddEvent( evt );
+	   }
 	}
 
 	else
 	{
-		m_fRainTime -= DT * DAYCYCLE;
+	   m_fRainTime -= DT * DAYCYCLE;
 
-		if ( m_fRainTime <= 0 )
-		{
-			m_bRain = false;
-			m_fRainTime = 3600.f;
+	   if ( m_fRainTime <= 0 )
+	   {
+		  m_bRain = false;
+		  m_fRainTime = 3600.f;
 
-			tEvent evt = {};
+		  tEvent evt = {};
 
-			evt.eType = EVENT_TYPE::TRANSFER_LAYER;
-			evt.wParam = ( DWORD_PTR )m_pRain;
-			evt.lParam = ( ( DWORD_PTR )29 << 16 | ( DWORD_PTR )true );
+		  evt.eType = EVENT_TYPE::TRANSFER_LAYER;
+		  evt.wParam = ( DWORD_PTR )m_pRain;
+		  evt.lParam = ( ( DWORD_PTR )29 << 16 | ( DWORD_PTR )true );
 
-			CEventMgr::GetInst()->AddEvent( evt );
-		}
+		  CEventMgr::GetInst()->AddEvent( evt );
+	   }
 	}
 
 	m_pRain->SetActive( m_bRain );
@@ -110,7 +112,7 @@ void CSunshineScript::Update()
 		float fTime = (float)(m_iHour);
 		//fTime += 3.f;
 		//if (fTime > 24.f)
-		//	fTime -= 21.f;
+		//   fTime -= 21.f;
 
 		fTime += ((float)(m_iMinute) / 60.f * 100.f) / 100.f;
 		vDir.y = cosf((fTime * 15.f) * XM_PI / 180.f);
@@ -121,7 +123,7 @@ void CSunshineScript::Update()
 		// 5½Ã ~ 20½Ã
 		if (m_iHour <= 20 && m_iHour >= 5)
 		{
-			if(m_iHour <= 12)
+			if (m_iHour <= 12)
 				fLight = (float)(fTime - 5.f) / 7.f;
 			else
 				fLight = (float)(fTime - 20.f) / -7.f;
@@ -135,7 +137,7 @@ void CSunshineScript::Update()
 				m_pSea->MeshRender()->GetSharedMaterial()->SetData(SHADER_PARAM::FLOAT_3, &fLight);
 			}
 		}
-		else 
+		else
 		{
 			fLight = 0.05f;
 			if (m_pSkybox)
@@ -162,7 +164,7 @@ void CSunshineScript::Update()
 	Light3D()->SetLightDir(vDir);
 
 	// Rain
-	if ( !m_pRain )
+	if (!m_pRain)
 		return;
 	CGameObject* pMainCam = CSceneMgr::GetInst()->GetCurScene()->GetLayer(0)->GetMainCamera();
 	Vec3 vMainCam = pMainCam->Transform()->GetLocalPos();
@@ -212,6 +214,13 @@ void CSunshineScript::SetTime(int iHour, int iMin)
 	DAYCYCLE = 60.f;
 }
 
+void CSunshineScript::SetTime(int iDay, int iHour, int iMin)
+{
+	m_iDay = iDay;
+	m_iHour = iHour;
+	m_iMinute = iMin;
+}
+
 void CSunshineScript::SetDayCycle(float fCycle)
 {
 	DAYCYCLE = fCycle;
@@ -232,22 +241,22 @@ void CSunshineScript::SetSea(CGameObject* pObject)
 	m_pSea = pObject;
 }
 
-void CSunshineScript::SetRain( CGameObject * pObject )
+void CSunshineScript::SetRain(CGameObject * pObject)
 {
 	m_pRain = pObject;
 }
 
-void CSunshineScript::SetRainDrop( bool bRain )
+void CSunshineScript::SetRainDrop(bool bRain)
 {
-	if ( !bRain )
+	if (!bRain)
 	{
 		tEvent evt = {};
 
 		evt.eType = EVENT_TYPE::TRANSFER_LAYER;
-		evt.wParam = ( DWORD_PTR )m_pRain;
-		evt.lParam = ( ( DWORD_PTR )0 << 16 | ( DWORD_PTR )true );
+		evt.wParam = (DWORD_PTR)m_pRain;
+		evt.lParam = ((DWORD_PTR)0 << 16 | (DWORD_PTR)true);
 
-		CEventMgr::GetInst()->AddEvent( evt );
+		CEventMgr::GetInst()->AddEvent(evt);
 	}
 
 	else
@@ -255,11 +264,11 @@ void CSunshineScript::SetRainDrop( bool bRain )
 		tEvent evt = {};
 
 		evt.eType = EVENT_TYPE::TRANSFER_LAYER;
-		evt.wParam = ( DWORD_PTR )m_pRain;
-		evt.lParam = ( ( DWORD_PTR )29 << 16 | ( DWORD_PTR )true );
+		evt.wParam = (DWORD_PTR)m_pRain;
+		evt.lParam = ((DWORD_PTR)29 << 16 | (DWORD_PTR)true);
 
-		CEventMgr::GetInst()->AddEvent( evt );
+		CEventMgr::GetInst()->AddEvent(evt);
 	}
 
-	m_pRain->SetActive( bRain );
+	m_pRain->SetActive(bRain);
 }

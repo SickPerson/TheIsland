@@ -49,5 +49,6 @@ public:
 	void SetRain( CGameObject* pObject );
 
 	void SetRainDrop( bool bRain );
+	void SetTime(int iDay, int iHour, int iMin);
 };
 

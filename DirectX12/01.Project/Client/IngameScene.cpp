@@ -387,11 +387,16 @@ void CIngameScene::Init()
 	// =================================
 	// Player Layer 와 Monster Layer 는 충돌 검사 진행
 #ifdef NETWORK_ON
+	/*CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Environment");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"House");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Human");*/
+#else
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Animal");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Environment");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"House");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Human");
-#else
+	//
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Animal");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Environment");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"House");
