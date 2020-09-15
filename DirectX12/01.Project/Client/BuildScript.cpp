@@ -392,32 +392,7 @@ bool CBuildScript::Build(bool bSendPacket)
 #ifdef NETWORK_ON	
 	if (bSendPacket)
 		CPacketMgr::GetInst()->Send_Install_Housing_Packet(m_eType, vPos, vRot, vScale, Vec3(0.f, 0.f, 120.f), Vec3(195.f, 195.f, 195.f));
-		//CNetwork::GetInst()->Send_Install_Housing_Packet( m_eType, vPos, vRot, vScale, Collider2D()->GetOffsetPos(), GetOffsetScale() );
-
-	else
-	{
-		//int test = 0;
-		for ( int i = 0; i < MeshRender()->GetMaterialCount(); ++i )
-		{
-			MeshRender()->GetCloneMaterial( i )->SetShader( CResMgr::GetInst()->FindRes<CShader>( L"Std3DShader" ) );
-			//SetData(SHADER_PARAM::INT_3, &test);
-		}
-
-		if ( m_eType == HOUSING_FOUNDATION )
-		{
-			CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData( HOUSING_FLOOR )->Instantiate();
-			pFloor->SetName( L"Foundation_Floor" );
-			pFloor->FrustumCheck( false );
-			pFloor->Transform()->SetLocalPos( Vec3( 0.f, 0.f, -14.f ) );
-			pFloor->Transform()->SetLocalScale( Vec3( 1.f, 1.f, 1.f ) );
-			for ( int i = 0; i < MeshRender()->GetMaterialCount(); ++i )
-			{
-				pFloor->MeshRender()->GetCloneMaterial( i )->SetShader( CResMgr::GetInst()->FindRes<CShader>( L"Std3DShader" ) );
-				//SetData(SHADER_PARAM::INT_3, &test);
-			}
-			GetObj()->AddChild( pFloor );
-		}
-	}
+	return false;
 #else
 	for ( int i = 0; i < MeshRender()->GetMaterialCount(); ++i )
 	{
@@ -439,15 +414,33 @@ bool CBuildScript::Build(bool bSendPacket)
 		}
 		GetObj()->AddChild( pFloor );
 	}
+	return true;
 #endif
 
-	return true;
 }
 
 void CBuildScript::MustBuild()
 {
-	m_bCollision = false;
-	Build(false);
+	for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
+	{
+		MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
+		//SetData(SHADER_PARAM::INT_3, &test);
+	}
+
+	if (m_eType == HOUSING_FOUNDATION)
+	{
+		CGameObject* pFloor = CHousingMgr::GetInst()->GetHousingMeshData(HOUSING_FLOOR)->Instantiate();
+		pFloor->SetName(L"Foundation_Floor");
+		pFloor->FrustumCheck(false);
+		pFloor->Transform()->SetLocalPos(Vec3(0.f, 0.f, -14.f));
+		pFloor->Transform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+		for (int i = 0; i < MeshRender()->GetMaterialCount(); ++i)
+		{
+			pFloor->MeshRender()->GetCloneMaterial(i)->SetShader(CResMgr::GetInst()->FindRes<CShader>(L"Std3DShader"));
+			//SetData(SHADER_PARAM::INT_3, &test);
+		}
+		GetObj()->AddChild(pFloor);
+	}
 }
 
 bool CBuildScript::Upgrade()

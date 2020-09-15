@@ -20,6 +20,8 @@ private:
 	bool m_bLogin;
 	bool m_bClientClose;
 
+	bool m_bHousingCheck;
+
 	float m_fServerTime;
 
 private:
@@ -84,4 +86,7 @@ public:
 	void SetHwnd(HWND hWnd) { m_hWnd = hWnd; }
 	void SetChatObj(CGameObject* pObj) { m_pChat = pObj; }
 	void SetPlayerObj(CGameObject* pObj) { m_pPlayer = pObj; }
+
+	void SetHousingCheck(bool bCheck) { m_bHousingCheck = bCheck; }
+	bool GetHousingCheck() { return m_bHousingCheck; }
 };

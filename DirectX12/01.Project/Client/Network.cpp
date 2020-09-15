@@ -343,7 +343,7 @@ void CNetwork::Recv_Check_Housing_Packet(char * packet)
 {
 	sc_check_housing_packet* check_housing_packet = reinterpret_cast<sc_check_housing_packet*>(packet);
 	bool bCheck = check_housing_packet->bCheck;
-
+	m_bHousingCheck = bCheck;
 }
 
 void CNetwork::Recv_Add_Item_Packet(char * packet)
