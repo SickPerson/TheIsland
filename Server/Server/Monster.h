@@ -16,9 +16,10 @@ private:
 	volatile bool	m_bWakeUp;
 
 	volatile bool	m_bHit;
-	float			m_fCurrentTime;
 	Vec3			m_vMoveDir;
 	Vec3			m_vPrevPos;
+	volatile bool	m_bIdle;
+	int				m_iBehaviorCount;
 
 public:
 	shared_mutex m_smAnimalSharedMutex;
@@ -37,6 +38,9 @@ public:
 	void SetPrevPos(Vec3& vPrevPos);
 	void SetHit(bool bHit);
 
+	void SetIdle(bool bIdle) { unique_lock<shared_mutex> lock(m_smAnimalSharedMutex); m_bIdle = bIdle; };
+	void SetBehaviorCount(int count) { unique_lock<shared_mutex> lock(m_smAnimalSharedMutex); m_iBehaviorCount = count; };
+
 public:
 	const bool GetWakeUp();
 
@@ -50,5 +54,17 @@ public:
 	const Vec3&	GetDir();
 	const Vec3& GetPrevPos();
 	const bool	GetHit();
+
+	const bool GetIdle() { shared_lock<shared_mutex> lock(m_smAnimalSharedMutex); return m_bIdle; };
+	const int	GetBehaviorCount() { shared_lock<shared_mutex> lock(m_smAnimalSharedMutex); return m_iBehaviorCount; };
+
+public:
+	void MinusBehaviorCount() 
+	{ 
+		unique_lock<shared_mutex> lock(m_smAnimalSharedMutex); 
+		if (m_iBehaviorCount > 0) {
+			--m_iBehaviorCount;
+		}
+	};
 };
 

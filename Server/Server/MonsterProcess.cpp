@@ -3,6 +3,11 @@
 #include "TimerMgr.h"
 #include <DirectXMath.h>
 
+
+random_device	rd;
+
+uniform_real_distribution<float>	urd(0.0, 1.0);
+
 CMonsterProcess::CMonsterProcess()
 {
 	BindMonsterUpdate();
@@ -140,7 +145,7 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 			fTarget_AfterHp = 0.f;
 			Target->SetHealth(fTarget_AfterHp);
 			Target->SetState(OST_DIE);
-			//CPacketMgr::Send_Status_Player_Packet(usTarget);
+			CPacketMgr::Send_Status_Player_Packet(usTarget);
 
 			// New Target
 			USHORT NewTarget = NO_TARGET;
@@ -172,8 +177,7 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 		{
 			// - Player
 			Target->SetHealth(fTarget_AfterHp);
-			cout << "HP : " << fTarget_AfterHp << endl;
-			//CPacketMgr::Send_Status_Player_Packet(usTarget);
+			CPacketMgr::Send_Status_Player_Packet(usTarget);
 
 			// - Animal
 			PushEvent_Animal_Behavior(Animal_Id, usTarget);
@@ -229,7 +233,7 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 
 		Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
 		vDir.y = 0.f;
-		vAnimalPos += vDir * fAnimalSpeed * 0.5f;
+		vAnimalPos += vDir * fAnimalSpeed * 0.03f;
 
 
 		Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
@@ -287,7 +291,7 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 	float fAnimalSpeed = Animal->GetSpeed();
 	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
 	vDir.y = 0.f;
-	vAnimalPos += - vDir * fAnimalSpeed * 0.5f;
+	vAnimalPos += - vDir * fAnimalSpeed * 0.03f;
 	Animal->SetLocalRot(Vec3(0.f, atan2( - vDir.x, - vDir.z) + 3.141592f, 0.f));
 	Animal->SetLocalPos(vAnimalPos);
 
@@ -328,35 +332,55 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 
 	// ==============================================================
 
-	int random = rand() % 2;
+	int iCount = Animal->GetBehaviorCount();
 
-	if (random == 0)
-	{
-		Vec3	vPos = Animal->GetLocalPos();
-		Animal->SetPrevPos(vPos);
+	if (iCount == 0) {
+		int random = rand() % 2;
 
-		Vec3 vDir = Vec3(rand() / (float)RAND_MAX, 0.f, rand() / (float)RAND_MAX);
-		vDir = XMVector3Normalize(vDir);
-		Animal->SetDir(vDir);
-		float fSpeed = Animal->GetSpeed();
-		vPos += vDir * fSpeed * 0.05f;
-
-		char eType = Animal->GetKind();
-
-		if (A_BEAR == eType || A_BOAR == eType)
-			Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
-		else {
-			if (A_WOLF == eType)
-				Animal->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z), 0.f));
-			else
-				Animal->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+		if (random == 0) {
+			Animal->SetIdle(false);
+			Animal->SetBehaviorCount(rand()%5);
+			Vec3 vDir = Vec3(urd(rd), 0.f, rand() / urd(rd));
+			vDir = XMVector3Normalize(vDir);
+			Animal->SetDir(vDir);
 		}
-
-		Animal->SetLocalPos(vPos);
+		else if (random == 1) {
+			Animal->SetIdle(true);
+			Animal->SetBehaviorCount(rand() % 5);
+		}
 	}
-	else if (random == 1)
-	{
+	else {
+		Animal->MinusBehaviorCount();
 
+		bool bIdle = Animal->GetIdle();
+
+		if (bIdle) {
+
+		}
+		else {
+			Vec3	vPos = Animal->GetLocalPos();
+			Animal->SetPrevPos(vPos);
+
+			/*Vec3 vDir = Vec3(rand() / (float)RAND_MAX, 0.f, rand() / (float)RAND_MAX);
+			vDir = XMVector3Normalize(vDir);
+			Animal->SetDir(vDir);*/
+			Vec3 vDir = Animal->GetDir();
+			float fSpeed = Animal->GetSpeed();
+			vPos += vDir * fSpeed * 0.03f;
+
+			char eType = Animal->GetKind();
+
+			if (A_BEAR == eType || A_BOAR == eType)
+				Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+			else {
+				if (A_WOLF == eType)
+					Animal->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z), 0.f));
+				else
+					Animal->SetLocalRot(Vec3(0.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+			}
+
+			Animal->SetLocalPos(vPos);
+		}
 	}
 
 	// Animation 보내기, 주변 타겟 찾기
@@ -369,12 +393,13 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 		Vec3 vPos1 = Animal->GetLocalPos();
 		Vec3 vPos2 = Player->GetLocalPos();
 		if (ObjectRangeCheck(vPos1, vPos2, PLAYER_VIEW_RANGE)) {
-			if (random == 0) {
+			bool bIdle = Animal->GetIdle();
+			if (bIdle) {
+
+			}
+			else {
 				CPacketMgr::Send_Pos_Packet(user, AnimalId);
 				CPacketMgr::Send_Animation_Packet(user, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
-			}
-			else if (random == 1) {
-
 			}
 			float currDist = CalculationDistance(vPos1, vPos2);
 			if (fDist >= currDist) {

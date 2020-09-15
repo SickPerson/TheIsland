@@ -128,8 +128,8 @@ void CPlayerProcess::PlayerLogin(USHORT playerId, char * packet)
 	CPacketMgr::Send_Login_OK_Packet(playerId);
 	cout << login_packet->player_id << "님이 접속 하였습니다. " << endl;
 	// Server -> Client에 초기 플레이어 값 패킷 전송
-	//CPacketMgr::Send_Status_Player_Packet(playerId, playerId);
-	//CPacketMgr::Send_Pos_Player_Packet(playerId, playerId);
+	CPacketMgr::Send_Status_Player_Packet(playerId);
+	//CPacketMgr::Send(playerId, playerId);
 	InitViewList(playerId);
 }
 
@@ -446,7 +446,7 @@ void CPlayerProcess::PlayerRemoveHousing(USHORT playerId, char * packet)
 
 	USHORT house_id = remove_housing_packet->house_id;
 
-	m_pObjectPool->Remove_House(house_id);
+	//m_pObjectPool->Remove_House(house_id);
 
 	concurrent_unordered_set<USHORT> loginList;
 

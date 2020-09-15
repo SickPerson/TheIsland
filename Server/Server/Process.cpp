@@ -4,7 +4,7 @@
 #include "DataBase.h"
 
 int		CProcess::m_Minute = 0;
-int		CProcess::m_Hour = 0;
+int		CProcess::m_Hour = 11;
 int		CProcess::m_Day = 0;
 
 CObjectpool*	CProcess::m_pObjectPool = nullptr;
@@ -122,7 +122,7 @@ void CProcess::PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_FOLLOW;
-	ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(250);
 	PushEventQueue(ev);
 }
 
@@ -134,7 +134,7 @@ void CProcess::PushEvent_Animal_Evastion(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_EVASION;
-	ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(250);
 	PushEventQueue(ev);
 }
 
@@ -146,7 +146,7 @@ void CProcess::PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_IDLE;
-	ev.wakeup_time = high_resolution_clock::now() + milliseconds(3000);
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(250);
 	PushEventQueue(ev);
 }
 

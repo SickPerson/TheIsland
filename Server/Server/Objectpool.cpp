@@ -380,7 +380,3 @@ void CObjectpool::Install_House(CHousing * pHouse, USHORT usIndex)
 {
 	m_cumHousingPool.insert(make_pair(usIndex, pHouse));
 }
-
-void CObjectpool::Remove_House(USHORT usIndex)
-{
-}

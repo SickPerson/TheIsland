@@ -106,5 +106,4 @@ public:
 	USHORT GetLoginID();
 	bool Check_Install_House(CHousing* pHouse);
 	void Install_House(CHousing* pHouse, USHORT usIndex);
-	void Remove_House(USHORT usIndex);
 };

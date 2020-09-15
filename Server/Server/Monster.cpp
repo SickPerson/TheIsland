@@ -3,7 +3,9 @@
 CMonster::CMonster() :
 	m_uiTarget(NO_TARGET),
 	m_bWakeUp(false),
-	m_bHit(false)
+	m_bHit(false),
+	m_bIdle(true),
+	m_iBehaviorCount(0)
 {
 }
 
