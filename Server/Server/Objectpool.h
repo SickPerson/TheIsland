@@ -32,7 +32,8 @@ private:
 	void Release_HousingPool();
 
 public:
-	bool CollisionHouse(std::pair<const USHORT, CHousing*> pFirst, CHousing* pSecond) {
+	template<typename T>
+	bool CollisionHouse(std::pair<const USHORT, T*> pFirst, CHousing* pSecond) {
 		Vec3 vPos1 = pFirst.second->GetLocalPos();
 		Vec3 vPos2 = pSecond->GetLocalPos();
 

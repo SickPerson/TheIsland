@@ -359,16 +359,26 @@ bool CObjectpool::Check_Install_House(CHousing * pHouse)
 			return false;
 		}
 	}
+	for (auto& natural : m_cumNaturalPool) {
+		if (CollisionHouse(natural, phouse)) {
+			if (natural.second->GetType() == N_BUSH)
+				continue;
+			return false;
+		}
+	}
+	for (auto& player : m_cumPlayerPool) {
+		if (CollisionHouse(player, phouse)) {
+			if (!player.second->GetConnect())
+				continue;
+			return false;
+		}
+	}
 	return true;
 }
 
 void CObjectpool::Install_House(CHousing * pHouse, USHORT usIndex)
 {
 	m_cumHousingPool.insert(make_pair(usIndex, pHouse));
-
-	for (auto& au : m_cumHousingPool) {
-		cout << "[" << au.first << "]";
-	}
 }
 
 void CObjectpool::Remove_House(USHORT usIndex)
