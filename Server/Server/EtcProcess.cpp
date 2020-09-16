@@ -10,6 +10,7 @@ CEtcProcess::CEtcProcess()
 	PushEvent_Rot();
 	PushEvent_Etc_Weather();
 	PushEvent_Etc_Time();
+	PushEvent_Etc_Player_Update();
 }
 
 
@@ -142,4 +143,34 @@ void CEtcProcess::UserInfo_Save_Event()
 		CDataBase::GetInst()->UpdateUserInfo(ev);
 	}
 	PushEvent_Etc_DB_Update();
+}
+
+void CEtcProcess::PlayerUpdate_Event()
+{
+	float HealthValueByHungry = 0.5f;
+	float HealthValueByThirst = 0.25f;
+	float HungryValue = 0.2f;
+	float ThirstValue = 0.35f;
+
+	for (auto& user : m_pObjectPool->m_cumPlayerPool) {
+		bool bConnect = user.second->GetConnect();
+		if (!bConnect) continue;
+
+		user.second->SetDecreaseHungry(HungryValue);
+		user.second->SetDecreaseThirst(ThirstValue);
+
+		float Hungry = user.second->GetHungry();
+		float Thirst = user.second->GetThirst();
+
+		if (Hungry <= 0.f) {
+			user.second->SetDecreaseHealth(HealthValueByHungry);
+		}
+		if (Thirst <= 0.f) {
+			user.second->SetDecreaseHealth(HealthValueByThirst);
+		}
+
+		CPacketMgr::Send_Status_Player_Packet(user.first);
+	}
+
+	PushEvent_Etc_Player_Update();
 }

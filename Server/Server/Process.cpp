@@ -277,3 +277,14 @@ void CProcess::PushEvent_Etc_Time()
 	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
+
+void CProcess::PushEvent_Etc_Player_Update()
+{
+	Update_Event ev;
+	ev.m_Do_Object = 10000;
+	ev.m_EventType = EV_ETC;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_eObjUpdate = EUT_PLAYER_UPDATE;
+	ev.wakeup_time = high_resolution_clock::now() + 1s;
+	PushEventQueue(ev);
+}

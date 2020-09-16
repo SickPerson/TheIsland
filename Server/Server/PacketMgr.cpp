@@ -146,6 +146,8 @@ void CPacketMgr::Send_Status_Player_Packet(USHORT playerId)
 	packet.fHungry = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetHungry();
 	packet.fThrist = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetThirst();
 
+	cout << "HP : " << packet.fHealth << "HUNGRY : " << packet.fHungry << "THRIST : " << packet.fThrist << endl;
+
 	Send_Packet(playerId, &packet);
 }
 

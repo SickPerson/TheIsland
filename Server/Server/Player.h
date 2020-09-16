@@ -44,6 +44,10 @@ public:
 	void SetIncreaseHungry(float& fAmount);
 	void SetIncreaseThirst(float& fAmount);
 
+	void SetDecreaseHealth(float& fAmount);
+	void SetDecreaseHungry(float& fAmount);
+	void SetDecreaseThirst(float& fAmount);
+
 	void SetNumID(USHORT& numID);
 	void SetWcID(char* wcID);
 	void SetDbNum(int& dbID);

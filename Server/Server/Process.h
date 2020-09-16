@@ -184,6 +184,7 @@ public: // Etc
 	void PushEvent_Rot();
 	void PushEvent_Etc_Weather();
 	void PushEvent_Etc_Time();
+	void PushEvent_Etc_Player_Update();
 
 public:
 	concurrent_unordered_set<USHORT>& GetLoginList()

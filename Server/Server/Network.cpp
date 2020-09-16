@@ -282,6 +282,9 @@ void CNetwork::WorkerThread()
 			case EUT_TIMER:
 				m_pEtcProcess->TimerEvent();
 				break;
+			case EUT_PLAYER_UPDATE:
+				m_pEtcProcess->PlayerUpdate_Event();
+				break;
 			}
 			delete lpover_ex;
 			break;

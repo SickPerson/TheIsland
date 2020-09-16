@@ -198,7 +198,6 @@ void CPlayerProcess::PlayerPos(USHORT playerId, char * packet)
 
 	Vec3 vCurrPos = pos_packet->vLocalPos;
 
-	cout << "POS ";
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(pos_packet->type);
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vCurrPos);
 	UpdateViewList(playerId);
@@ -207,8 +206,7 @@ void CPlayerProcess::PlayerPos(USHORT playerId, char * packet)
 void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
 {
 	cs_rot_packet* rot_packet = reinterpret_cast<cs_rot_packet*>(packet);
-	cout << "ROT ";
-	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(rot_packet->type);
+
 	Vec3 vPreRot = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalRot();
 	Vec3 vCurrRot = rot_packet->vRot;
 	Vec3 vRight = rot_packet->vDir[0]; DIR_TYPE::RIGHT;

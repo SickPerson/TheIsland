@@ -146,6 +146,33 @@ void CPlayer::SetIncreaseThirst(float & fAmount)
 	}
 }
 
+void CPlayer::SetDecreaseHealth(float & fAmount)
+{
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_tPlayerStatus.fHealth -= fAmount;
+	if (m_tPlayerStatus.fHealth <= 0.f) {
+		m_tPlayerStatus.fHealth = 0.f;
+	}
+}
+
+void CPlayer::SetDecreaseHungry(float & fAmount)
+{
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_tPlayerStatus.fHungry -= fAmount;
+	if (m_tPlayerStatus.fHungry <= 0.f) {
+		m_tPlayerStatus.fHungry = 0.f;
+	}
+}
+
+void CPlayer::SetDecreaseThirst(float & fAmount)
+{
+	unique_lock<shared_mutex>	lock(m_smPlayerStatusMutex);
+	m_tPlayerStatus.fThirst -= fAmount;
+	if (m_tPlayerStatus.fThirst <= 0.f) {
+		m_tPlayerStatus.fThirst = 0.f;
+	}
+}
+
 void CPlayer::SetNumID(USHORT & numID)
 {
 	unique_lock<shared_mutex> lock(m_smPlayerStatusMutex);

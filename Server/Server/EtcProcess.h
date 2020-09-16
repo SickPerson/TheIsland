@@ -14,5 +14,6 @@ public:
 	void WeatherEvent();
 	void TimerEvent();
 	void UserInfo_Save_Event();
+	void PlayerUpdate_Event();
 };
 
