@@ -52,7 +52,7 @@ public: // - Collision
 		Vec3 vColScale1 = pFirst.second->GetLocalScale() * fOffset;
 		Vec3 vColScale2 = pSecond.second->GetLocalScale();
 
-		float fDist = powf(vPos1.x - vPos2.x, 2) + powf(vPos1.y - vPos2.y, 2) + powf(vPos1.z - vPos2.z, 2);
+		float fDist = powf(vPos1.x - vPos2.x, 2) + powf(vPos1.z - vPos2.z, 2);
 		fDist = sqrtf(fDist);
 
 		if (fDist > fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x))
@@ -72,8 +72,7 @@ public: // - Collision
 		Vec3 vColScale1 = pFirst->GetOffsetScale() * fOffset;
 		Vec3 vColScale2 = pSecond->GetOffsetScale();
 
-		float fDist = powf(vPos1.x - vPos2.x, 2) + powf(vPos1.z - vPos2.z, 2);
-		fDist = sqrtf(fDist);
+		float fDist = CalculationDistance(vPos1, vPos2);
 
 		float f = fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x);
 		if (fDist > f)
@@ -165,7 +164,7 @@ public: // - Collision
 		return true;
 	}
 public: // Animal
-	void PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId);
+	void PushEvent_Animal_Behavior(USHORT AnimalId);
 	void PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId);
 	void PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId);
 	void PushEvent_Animal_Evastion(USHORT AnimalId, USHORT PlayerId);

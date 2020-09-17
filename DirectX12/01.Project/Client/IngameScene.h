@@ -63,7 +63,7 @@ public:
 	void InstallHousing( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale );
 	void DestroyHousing( USHORT uiId );
 
-	void InstallNatural( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale, Vec3 vOffsetPos, Vec3 vOffsetScale, float fHealth, bool bDestroy );
+	void InstallNatural(UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale, Vec3 vOffsetPos, Vec3 vOffsetScale, float fHealth, bool bDestroy );
 	void DestroyNatural( USHORT uiId );
 
 	void ChatUpdate(string name, string Msg);

@@ -18,302 +18,125 @@ CMonsterProcess::~CMonsterProcess()
 {
 }
 
-void CMonsterProcess::BehaviorEvent(USHORT AnimalId, USHORT usTarget)
-{
-	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
-	auto& Target = m_pObjectPool->m_cumPlayerPool[usTarget];
-
-	// ========================== 예외 처리 ==========================
-	char Animal_State = Animal->GetState();
-	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
-
-	concurrent_unordered_set<USHORT> loginList;
-	concurrent_unordered_set<USHORT> rangeList;
-	CopyBeforeLoginList(loginList);
-	InRangePlayer(loginList, rangeList, AnimalId);
-
-	if (rangeList.empty()) {
-		Animal->SetWakeUp(false);
-		Animal->SetTarget(NO_TARGET);
-		return;
-	}
-	// ==============================================================
-
-	Vec3 vPos1 = Animal->GetLocalPos();
-	Vec3 vPos2 = Target->GetLocalPos();
-
-	if (ObjectRangeCheck(vPos1, vPos2, 2000.f))
-	{
-		UINT uiType = Animal->GetType();
-
-		if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
-		{
-			if (CollisionSphere(Animal, Target, 0.3f))
-			{
-				Animal->SetTarget(usTarget);
-				Update_Event ev;
-				ev.m_Do_Object = AnimalId;
-				ev.m_EventType = EV_MONSTER_UPDATE;
-				ev.m_From_Object = usTarget;
-				ev.m_eObjUpdate = AUT_ATTACK;
-				ev.wakeup_time = high_resolution_clock::now() + milliseconds(500);
-				PushEventQueue(ev);
-			}
-			else {
-				Animal->SetTarget(usTarget);
-				Update_Event ev;
-				ev.m_Do_Object = AnimalId;
-				ev.m_EventType = EV_MONSTER_UPDATE;
-				ev.m_From_Object = usTarget;
-				ev.m_eObjUpdate = AUT_FOLLOW;
-				ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
-				PushEventQueue(ev);
-			}
-		}
-		else if(uiType == (UINT)BEHAVIOR_TYPE::B_PASSIVE){
-			Animal->SetTarget(NO_TARGET);
-			Update_Event ev;
-			ev.m_Do_Object = AnimalId;
-			ev.m_EventType = EV_MONSTER_UPDATE;
-			ev.m_From_Object = usTarget;
-			ev.m_eObjUpdate = AUT_IDLE;
-			ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
-			PushEventQueue(ev);
-		}
-		else if (uiType == (UINT)BEHAVIOR_TYPE::B_EVASION) {
-			Animal->SetTarget(usTarget);
-			Update_Event ev;
-			ev.m_Do_Object = AnimalId;
-			ev.m_EventType = EV_MONSTER_UPDATE;
-			ev.m_From_Object = usTarget;
-			ev.m_eObjUpdate = AUT_EVASION;
-			ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
-			PushEventQueue(ev);
-		}
-	}
-	else {
-		Animal->SetTarget(NO_TARGET);
-		Update_Event ev;
-		ev.m_Do_Object = AnimalId;
-		ev.m_EventType = EV_MONSTER_UPDATE;
-		ev.m_From_Object = usTarget;
-		ev.m_eObjUpdate = AUT_IDLE;
-		ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
-		PushEventQueue(ev);
-	}
-}
-
 void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 {
 	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];
 	auto& Target = m_pObjectPool->m_cumPlayerPool[usTarget];
 
+	USHORT&	Animal_Index = Animal_Id;
+	USHORT& Target_Index = usTarget;
+
 	// ========================== 예외 처리 ==========================
+	bool bWakeUp = Animal->GetWakeUp();
+	if (!bWakeUp) return;
+
 	char Animal_State = Animal->GetState();
 	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
 
 	concurrent_unordered_set<USHORT> loginList;
 	concurrent_unordered_set<USHORT> rangeList;
 	CopyBeforeLoginList(loginList);
-	InRangePlayer(loginList, rangeList, Animal_Id);
+	InRangePlayer(loginList, rangeList, Animal_Index);
 
 	if (rangeList.empty()) {
+		Animal->SetExit(false);
 		Animal->SetWakeUp(false);
 		Animal->SetTarget(NO_TARGET);
 		return;
 	}
 	// ==============================================================
+	for (auto& user : rangeList) {
+		bool bConnect = m_pObjectPool->m_cumPlayerPool[user]->GetConnect();
+		if (!bConnect) continue;
+		bool bExist = m_pObjectPool->m_cumPlayerPool[user]->ExistList(Animal_Index);
+		if (bExist) {
+			CPacketMgr::Send_Pos_Packet(user, Animal_Index);
+			CPacketMgr::Send_Animation_Packet(user, Animal_Index, (UINT)ANIMAL_ANIMATION_TYPE::ATTACK);
+		}
+	}
 
-	if (true == CollisionSphere(Animal, Target, 0.3f)) {
-		for (auto& player : rangeList) {
-			if (m_pObjectPool->m_cumPlayerPool[player]->ExistList(Animal_Id)) {
-				CPacketMgr::Send_Pos_Packet(player, Animal_Id);
-				CPacketMgr::Send_Animation_Packet(player, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::ATTACK);
+	// Attack
+	float fTarget_CurrHp = Target->GetHealth();
+	float fAnimalDamage = Animal->GetDamage();
+	fTarget_CurrHp -= fAnimalDamage;
+	float fTarget_AfterHp = fTarget_CurrHp;
+
+
+	if (fTarget_AfterHp <= 0.f)
+	{
+		// - Player
+		fTarget_AfterHp = 0.f;
+		Target->SetHealth(fTarget_AfterHp);
+		Target->SetState(OST_DIE);
+		CPacketMgr::Send_Status_Player_Packet(Target_Index);
+		//CPacketMgr::Send_Death_Player_Packet(Target_Index);
+	}
+	else
+	{
+		// - Player
+		Target->SetHealth(fTarget_AfterHp);
+		CPacketMgr::Send_Status_Player_Packet(Target_Index);
+	}
+	// ========================================================
+	// New Target
+	USHORT NewTarget = NO_TARGET;
+	float fDist = ANIMAL_VIEW_RANGE;
+
+	InRangePlayer(loginList, rangeList, Animal_Index);
+	for (auto user : rangeList) {
+		if (!m_pObjectPool->m_cumPlayerPool[user]->GetConnect()) continue;
+		if (m_pObjectPool->m_cumPlayerPool[user]->GetState() == OST_DIE) continue;
+
+		Vec3 vPos1 = Animal->GetLocalPos();
+		Vec3 vPos2 = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
+		if (ObjectRangeCheck(vPos1, vPos2, 2000.f)) {
+			float currDist = CalculationDistance(vPos1, vPos2);
+			if (fDist >= currDist) {
+				fDist = currDist;
+				NewTarget = user;
 			}
 		}
-
-		float fTarget_CurrHp = Target->GetHealth();
-		float fTarget_AfterHp = fTarget_CurrHp;
-
-		float fAnimalDamage = Animal->GetDamage();
-
-		fTarget_AfterHp -= fAnimalDamage;
-
-		if (fTarget_AfterHp <= 0.f)
-		{
-			// - Player
-			fTarget_AfterHp = 0.f;
-			Target->SetHealth(fTarget_AfterHp);
-			Target->SetState(OST_DIE);
-			CPacketMgr::Send_Status_Player_Packet(usTarget);
-
-			// New Target
-			USHORT NewTarget = NO_TARGET;
-			float fDist = PLAYER_VIEW_RANGE;
-			for (auto user : rangeList) {
-				if (m_pObjectPool->m_cumPlayerPool[user]->GetState() == OST_DIE)
-					continue;
-				Vec3 vPos1 = Animal->GetLocalPos();
-				Vec3 vPos2 = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
-				if (ObjectRangeCheck(vPos1, vPos2, 2000.f)) {
-					float currDist = CalculationDistance(vPos1, vPos2);
-					if (fDist >= currDist) {
-						fDist = currDist;
-						NewTarget = user;
-					}
-				}
-			}
-			if (NewTarget == NO_TARGET) {
+	}
+	// ==========================================================
+	if (NewTarget == NO_TARGET) {
+		bool bExit = Animal->GetExit();
+		if (bExit) {
+			int iCount = Animal->GetExitCount();
+			if (iCount == 0) {
+				Animal->SetExit(false);
 				Animal->SetWakeUp(false);
 				Animal->SetTarget(NO_TARGET);
 				return;
 			}
 			else {
-				Animal->SetTarget(NewTarget);
-				PushEvent_Animal_Follow(Animal_Id, NewTarget);
+				Animal->MinusExitCount();
 			}
 		}
-		else
-		{
-			// - Player
-			Target->SetHealth(fTarget_AfterHp);
-			CPacketMgr::Send_Status_Player_Packet(usTarget);
-
-			// - Animal
-			PushEvent_Animal_Behavior(Animal_Id, usTarget);
+		else {
+			Animal->SetExit(true);
+			Animal->SetExitCount(60);
 		}
+
+		//Animal->SetTarget(NO_TARGET);
+		PushEvent_Animal_Behavior(Animal_Index);
 	}
 	else {
-		PushEvent_Animal_Follow(Animal_Id, usTarget);
+		Animal->SetExit(false);
+		Animal->SetExitCount(0);
+		Animal->SetTarget(NewTarget);
+		PushEvent_Animal_Behavior(Animal_Index);
 	}
 }
 
 void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 {
 	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
-	auto& User = m_pObjectPool->m_cumPlayerPool[usTarget];
+	auto& Target = m_pObjectPool->m_cumPlayerPool[usTarget];
+
+	USHORT&	Animal_Index = AnimalId;
+	USHORT& Target_Index = usTarget;
 
 	// ========================== 예외 처리 ==========================
-	bool bWakeUp = Animal->GetWakeUp();
-	if (!bWakeUp) return;
-
-	char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
-	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
-
-	concurrent_unordered_set<USHORT> loginList;
-	concurrent_unordered_set<USHORT> rangeList;
-	CopyBeforeLoginList(loginList);
-	InRangePlayer(loginList, rangeList, AnimalId);
-
-	if (rangeList.empty()) {
-		Animal->SetWakeUp(false);
-		return;
-	}
-	// ==============================================================
-
-	/*for (auto au : rangeList) {
-		if (!m_pObjectPool->m_cumPlayerPool[au]->ExistList(AnimalId)) {
-			CPacketMgr::Send_Pos_Packet(au, AnimalId);
-			CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
-		}
-	}*/
-
-	if (CollisionSphere(Animal, User, 0.2f)) {
-		PushEvent_Animal_Attack(AnimalId, usTarget);
-	}
-	else {
-		Vec3 vAnimalPos = Animal->GetLocalPos();
-		Animal->SetPrevPos(vAnimalPos);
-
-		Vec3 vTargetPos = User->GetLocalPos();
-		float fAnimalSpeed = Animal->GetSpeed();
-		Vec3 vTargetRot = User->GetLocalRot();
-
-		m_pObjectPool->m_cumAnimalPool[AnimalId]->SetPrevPos(vAnimalPos);
-
-		Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
-		vDir.y = 0.f;
-		vAnimalPos += vDir * fAnimalSpeed * 0.03f;
-
-
-		Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
-		Animal->SetLocalPos(vAnimalPos);
-
-		concurrent_unordered_set<USHORT> loginList;
-		CopyBeforeLoginList(loginList);
-		concurrent_unordered_set<USHORT> rangeList;
-		InRangePlayer(loginList, rangeList, AnimalId);
-
-		for (auto& au : rangeList)
-		{
-			CPacketMgr::Send_Pos_Packet(au, AnimalId);
-			CPacketMgr::Send_Animation_Packet(au, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
-		}
-
-		if (rangeList.empty()) {
-			Animal->SetWakeUp(false);
-			Animal->SetTarget(NO_TARGET);
-			return;
-		}
-		PushEvent_Animal_Behavior(AnimalId, usTarget);
-	}
-}
-
-void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
-{
-	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
-	auto& User = m_pObjectPool->m_cumPlayerPool[usTarget];
-
-	// ========================== 예외 처리 ==========================
-	bool bWakeUp = Animal->GetWakeUp();
-	if (!bWakeUp) return;
-
-	char Animal_State = CProcess::m_pObjectPool->m_cumAnimalPool[AnimalId]->GetState();
-	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
-
-	concurrent_unordered_set<USHORT> loginList;
-	concurrent_unordered_set<USHORT> rangeList;
-	CopyBeforeLoginList(loginList);
-	InRangePlayer(loginList, rangeList, AnimalId);
-
-	if (rangeList.empty()) {
-		Animal->SetWakeUp(false);
-		Animal->SetTarget(NO_TARGET);
-		return;
-	}
-	// ==============================================================
-
-	Vec3 vAnimalPos = Animal->GetLocalPos();
-	Animal->SetPrevPos(vAnimalPos);
-
-	Vec3 vTargetPos = User->GetLocalPos();
-
-	float fAnimalSpeed = Animal->GetSpeed();
-	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
-	vDir.y = 0.f;
-	vAnimalPos += - vDir * fAnimalSpeed * 0.03f;
-	Animal->SetLocalRot(Vec3(0.f, atan2( - vDir.x, - vDir.z) + 3.141592f, 0.f));
-	Animal->SetLocalPos(vAnimalPos);
-
-	for (auto user : rangeList) {
-		CPacketMgr::Send_Pos_Packet(user, AnimalId);
-		CPacketMgr::Send_Animation_Packet(user, AnimalId, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
-	}
-
-	if (rangeList.empty()) {
-		Animal->SetWakeUp(false);
-		Animal->SetTarget(NO_TARGET);
-		return;
-	}
-
-	PushEvent_Animal_Behavior(AnimalId, usTarget);
-}
-
-void CMonsterProcess::IdleEvent(USHORT AnimalId)
-{	
-	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
-
-// ========================== 예외 처리 ==========================
 	bool bWakeUp = Animal->GetWakeUp();
 	if (!bWakeUp) return;
 
@@ -323,13 +146,221 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 	concurrent_unordered_set<USHORT> loginList;
 	concurrent_unordered_set<USHORT> rangeList;
 	CopyBeforeLoginList(loginList);
-	InRangePlayer(loginList, rangeList, AnimalId);
+	InRangePlayer(loginList, rangeList, Animal_Index);
 
 	if (rangeList.empty()) {
+		Animal->SetExit(false); 
 		Animal->SetWakeUp(false);
+		Animal->SetTarget(NO_TARGET);
 		return;
 	}
+	// ==============================================================
+	// Follow
+	Vec3 vAnimalPos = Animal->GetLocalPos();
+	Animal->SetPrevPos(vAnimalPos);
 
+	Vec3 vTargetPos = Target->GetLocalPos();
+	float fAnimalSpeed = Animal->GetSpeed();
+	Vec3 vTargetRot = Target->GetLocalRot();
+
+	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetPrevPos(vAnimalPos);
+
+	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
+	vDir.y = 0.f;
+	vAnimalPos += vDir * fAnimalSpeed * 0.05f;
+
+
+	Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+	Animal->SetLocalPos(vAnimalPos);
+	// ==========================================================
+	// New Target
+	USHORT NewTarget = NO_TARGET;
+	float fDist = ANIMAL_VIEW_RANGE;
+
+	InRangePlayer(loginList, rangeList, Animal_Index);
+	for (auto user : rangeList) {
+		if (!m_pObjectPool->m_cumPlayerPool[user]->GetConnect()) continue;
+		if (m_pObjectPool->m_cumPlayerPool[user]->GetState() == OST_DIE) continue;
+
+		CPacketMgr::Send_Pos_Packet(user, Animal_Index);
+		CPacketMgr::Send_Animation_Packet(user, Animal_Index, (UINT)ANIMAL_ANIMATION_TYPE::WALK);
+		
+		Vec3 vPos1 = Animal->GetLocalPos();
+		Vec3 vPos2 = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
+
+		if (ObjectRangeCheck(vPos1, vPos2, 2000.f)) {
+			float currDist = CalculationDistance(vPos1, vPos2);
+			if (fDist >= currDist) {
+				fDist = currDist;
+				NewTarget = user;
+			}
+		}
+	}
+	// ==========================================================
+	if (NewTarget == NO_TARGET) {
+		bool bExit = Animal->GetExit();
+		if (bExit) {
+			int iCount = Animal->GetExitCount();
+			if (iCount == 0) {
+				Animal->SetExit(false);
+				Animal->SetWakeUp(false);
+				Animal->SetTarget(NO_TARGET);
+				return;
+			}
+			else {
+				Animal->MinusExitCount();
+			}
+		}
+		else {
+			Animal->SetExit(true);
+			Animal->SetExitCount(60);
+		}
+		
+		//Animal->SetTarget(NO_TARGET);
+		PushEvent_Animal_Behavior(Animal_Index);
+	}
+	else {
+		Animal->SetExit(false);
+		Animal->SetExitCount(0);
+		Animal->SetTarget(NewTarget);
+		PushEvent_Animal_Behavior(Animal_Index);
+	}
+}
+
+void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
+{
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
+	auto& Target = m_pObjectPool->m_cumPlayerPool[usTarget];
+
+	USHORT&	Animal_Index = AnimalId;
+	USHORT& Target_Index = usTarget;
+
+	// ========================== 예외 처리 ==========================
+	bool bWakeUp = Animal->GetWakeUp();
+	if (!bWakeUp) return;
+
+	char Animal_State = Animal->GetState();
+	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
+
+	concurrent_unordered_set<USHORT> loginList;
+	concurrent_unordered_set<USHORT> rangeList;
+	CopyBeforeLoginList(loginList);
+	InRangePlayer(loginList, rangeList, Animal_Index);
+
+	if (rangeList.empty()) {
+		Animal->SetExit(false); 
+		Animal->SetWakeUp(false);
+		Animal->SetTarget(NO_TARGET);
+		return;
+	}
+	// ==============================================================
+	// Evastion
+	Vec3 vAnimalPos = Animal->GetLocalPos();
+	Animal->SetPrevPos(vAnimalPos);
+
+	Vec3 vTargetPos = Target->GetLocalPos();
+
+	float fAnimalSpeed = Animal->GetSpeed();
+	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
+	vDir.y = 0.f;
+	vAnimalPos += - vDir * fAnimalSpeed * 0.05f;
+	Animal->SetLocalRot(Vec3(0.f, atan2( - vDir.x, - vDir.z) + 3.141592f, 0.f));
+	Animal->SetLocalPos(vAnimalPos);
+
+	// ==========================================================
+	// New Target
+	USHORT NewTarget = NO_TARGET;
+	float fDist = ANIMAL_VIEW_RANGE;
+
+	InRangePlayer(loginList, rangeList, Animal_Index);
+	for (auto user : rangeList) {
+		if (!m_pObjectPool->m_cumPlayerPool[user]->GetConnect()) continue;
+		if (m_pObjectPool->m_cumPlayerPool[user]->GetState() == OST_DIE) continue;
+
+		CPacketMgr::Send_Pos_Packet(user, Animal_Index);
+		CPacketMgr::Send_Animation_Packet(user, Animal_Index, (UINT)ANIMAL_ANIMATION_TYPE::RUN);
+
+		Vec3 vPos1 = Animal->GetLocalPos();
+		Vec3 vPos2 = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
+
+		if (ObjectRangeCheck(vPos1, vPos2, 2000.f)) {
+			float currDist = CalculationDistance(vPos1, vPos2);
+			if (fDist >= currDist) {
+				fDist = currDist;
+				NewTarget = user;
+			}
+		}
+	}
+
+	if (NewTarget == NO_TARGET) {
+		bool bExit = Animal->GetExit();
+		if (bExit) {
+			int iCount = Animal->GetExitCount();
+			if (iCount == 0) {
+				Animal->SetExit(false);
+				Animal->SetWakeUp(false);
+				Animal->SetTarget(NO_TARGET);
+				return;
+			}
+			else {
+				Animal->MinusExitCount();
+			}
+		}
+		else {
+			Animal->SetExit(true);
+			Animal->SetExitCount(60);
+		}
+
+		//Animal->SetTarget(NO_TARGET);
+		PushEvent_Animal_Behavior(Animal_Index);
+	}
+	else {
+		Animal->SetExit(false);
+		Animal->SetExitCount(0);
+		Animal->SetTarget(NewTarget);
+		PushEvent_Animal_Behavior(Animal_Index);
+	}
+}
+
+void CMonsterProcess::IdleEvent(USHORT AnimalId)
+{	
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
+
+	USHORT& Animal_Index = AnimalId;
+
+	// ========================== 예외 처리 ==========================
+	bool bWakeUp = Animal->GetWakeUp();
+	if (!bWakeUp) return;
+
+	char Animal_State = Animal->GetState();
+	if (Animal_State == OBJ_STATE_TYPE::OST_DIE)	return;
+
+	concurrent_unordered_set<USHORT> loginList;
+	concurrent_unordered_set<USHORT> rangeList;
+	CopyBeforeLoginList(loginList);
+	InRangePlayer(loginList, rangeList, Animal_Index);
+
+	bool bExit = Animal->GetExit();
+
+	if (bExit) {
+		int iCount = Animal->GetExitCount();
+		if (iCount == 0) {
+			Animal->SetExit(false);
+			Animal->SetWakeUp(false);
+			Animal->SetTarget(NO_TARGET);
+			return;
+		}
+		else {
+			Animal->MinusBehaviorCount();
+		}
+	}
+	else {
+		if (rangeList.empty()) {
+			Animal->SetWakeUp(false);
+			Animal->SetTarget(NO_TARGET);
+			return;
+		}
+	}
 	// ==============================================================
 
 	int iCount = Animal->GetBehaviorCount();
@@ -339,14 +370,14 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 
 		if (random == 0) {
 			Animal->SetIdle(false);
-			Animal->SetBehaviorCount(rand()%5);
-			Vec3 vDir = Vec3(urd(rd), 0.f, rand() / urd(rd));
+			Animal->SetBehaviorCount(rand() % 50);
+			Vec3 vDir = Vec3(urd(rd), 0.f, urd(rd));
 			vDir = XMVector3Normalize(vDir);
 			Animal->SetDir(vDir);
 		}
 		else if (random == 1) {
 			Animal->SetIdle(true);
-			Animal->SetBehaviorCount(rand() % 5);
+			Animal->SetBehaviorCount(rand() % 50);
 		}
 	}
 	else {
@@ -366,7 +397,7 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 			Animal->SetDir(vDir);*/
 			Vec3 vDir = Animal->GetDir();
 			float fSpeed = Animal->GetSpeed();
-			vPos += vDir * fSpeed * 0.03f;
+			vPos += vDir * fSpeed * 0.05f;
 
 			char eType = Animal->GetKind();
 
@@ -416,7 +447,7 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 	}
 	else {
 		m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(NewTarget);
-		PushEvent_Animal_Behavior(AnimalId, NewTarget);
+		PushEvent_Animal_Behavior(AnimalId);
 	}
 }
 
@@ -465,42 +496,6 @@ void CMonsterProcess::RespawnEvent(USHORT uiMonster)
 		bool isConnect = CProcess::m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
 		if (!isConnect) continue;
 		CPacketMgr::GetInst()->Send_Pos_Packet(au, uiMonster);
-	}
-}
-
-void CMonsterProcess::DamageEvent(USHORT AnimalId, USHORT playerId)
-{
-	float fHealth = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetHealth();
-	char cType = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetType();
-
-
-	if (fHealth > 0.f)
-	{
-		if (BEHAVIOR_TYPE::B_EVASION == cType)
-		{
-			Vec3 vMoveDir = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalDir(DIR_TYPE::FRONT);
-			m_pObjectPool->m_cumAnimalPool[AnimalId]->SetDir(vMoveDir);
-			Vec3 vPlayerPos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
-			Vec3 vAnimalPos = m_pObjectPool->m_cumAnimalPool[AnimalId]->GetLocalPos();
-
-			vMoveDir = XMVector3Normalize(vAnimalPos - vPlayerPos);
-			vMoveDir.y = 0.f;
-		}
-		else if (BEHAVIOR_TYPE::B_EVASION == cType)
-		{
-			m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(playerId);
-		}
-		else if (BEHAVIOR_TYPE::B_EVASION == cType)
-		{
-			m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(playerId);
-
-			Vec3 vMoveDir = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalDir(DIR_TYPE::FRONT);
-			m_pObjectPool->m_cumAnimalPool[AnimalId]->SetDir(vMoveDir);
-		}
-	}
-	else // 체력이 0 이하 일때
-	{
-		PushEvent_Animal_Die(AnimalId, NO_TARGET);
 	}
 }
 

@@ -373,7 +373,6 @@ void CNetwork::Recv_Weather_Packet(char * packet)
 void CNetwork::Recv_Time_Packet(char * packet)
 {
 	sc_time_packet* time_packet = reinterpret_cast<sc_time_packet*>(packet);
-	cout << "DAY : " << time_packet->iday << " HOUR : " << time_packet->ihour << "MIN : " << time_packet->imin << endl;
 
 	CGameObject* pSunshineObject = pScene->GetLayer(0)->FindObject(L"Sunshine");
 

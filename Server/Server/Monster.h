@@ -21,6 +21,9 @@ private:
 	volatile bool	m_bIdle;
 	int				m_iBehaviorCount;
 
+	volatile bool	m_bExit;
+	int				m_iExitCount;
+
 public:
 	shared_mutex m_smAnimalSharedMutex;
 
@@ -41,6 +44,8 @@ public:
 	void SetIdle(bool bIdle) { unique_lock<shared_mutex> lock(m_smAnimalSharedMutex); m_bIdle = bIdle; };
 	void SetBehaviorCount(int count) { unique_lock<shared_mutex> lock(m_smAnimalSharedMutex); m_iBehaviorCount = count; };
 
+	void SetExit(bool bExit) { unique_lock<shared_mutex> lock(m_smAnimalSharedMutex); m_bExit = bExit; };
+	void SetExitCount(int count) { unique_lock<shared_mutex> lock(m_smAnimalSharedMutex); m_iExitCount = count; };
 public:
 	const bool GetWakeUp();
 
@@ -58,6 +63,8 @@ public:
 	const bool GetIdle() { shared_lock<shared_mutex> lock(m_smAnimalSharedMutex); return m_bIdle; };
 	const int	GetBehaviorCount() { shared_lock<shared_mutex> lock(m_smAnimalSharedMutex); return m_iBehaviorCount; };
 
+	const bool GetExit() { shared_lock<shared_mutex> lock(m_smAnimalSharedMutex); return m_bExit; };
+	const int GetExitCount() { shared_lock<shared_mutex> lock(m_smAnimalSharedMutex); return m_iExitCount; };
 public:
 	void MinusBehaviorCount() 
 	{ 
@@ -66,5 +73,13 @@ public:
 			--m_iBehaviorCount;
 		}
 	};
+
+	void MinusExitCount()
+	{
+		unique_lock<shared_mutex> lock(m_smAnimalSharedMutex);
+		if (m_iExitCount > 0) {
+			--m_iExitCount;
+		}
+	}
 };
 

@@ -198,7 +198,6 @@ void CPlayerProcess::PlayerPos(USHORT playerId, char * packet)
 
 	Vec3 vCurrPos = pos_packet->vLocalPos;
 
-	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(pos_packet->type);
 	m_pObjectPool->m_cumPlayerPool[playerId]->SetLocalPos(vCurrPos);
 	UpdateViewList(playerId);
 }
@@ -222,16 +221,17 @@ void CPlayerProcess::PlayerRot(USHORT playerId, char * packet)
 
 void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 {
+	cout << "ATTACK" << endl;
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(packet);
 	UINT	uiType = attack_packet->attack_uiType;
 	USHORT	attack_id = attack_packet->attack_id;
 	char	eType = attack_packet->eType;
 
-	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(attack_packet->type);
 	float	fDamage = GetDamage(eType);
 
 	if ((UINT)ATTACK_TYPE::ANIMAL == uiType)
 	{
+		cout << "ANIMAL" << endl;
 		auto& Animal = m_pObjectPool->m_cumAnimalPool[attack_id];
 
 		Animal->SetHit(true);
@@ -274,29 +274,41 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 	}
 	else if ((UINT)ATTACK_TYPE::NATURAL == uiType)
 	{
+		cout << "NATURAL " << endl;
 		auto& User = m_pObjectPool->m_cumPlayerPool[playerId];
 		auto& Natural = m_pObjectPool->m_cumNaturalPool[attack_id];
 
 		bool bDestroy = Natural->GetDestroy();
-		if (!bDestroy) return;
+		if (bDestroy) return;
 
-		if (eType == N_NONE)
+		char N_eType = Natural->GetType();
+		if (N_eType == N_NONE)
 			return;
-		if (CollisionSphere(User, Natural, 0.2f)) {
-			float fHealth = Natural->GetHealth();
+
+		cout << "¿©±â" << endl;
+		float fHealth = Natural->GetHealth();
+		cout << "NATURAL HP : " << fHealth << endl;
 
 			fHealth -= fDamage;
 
-			if (fHealth <= 0.f) {
+		if (fHealth <= 0.f) {
 				Natural->SetDestroy(true);
 				Natural->SetAngle(0.f);
 
 				fHealth = 0.f;
 				Natural->SetHealth(fHealth);
-				PushEvent_Natural_Die(attack_id);
+
+				concurrent_unordered_set<USHORT> loginList;
+
+				CopyBeforeLoginList(loginList);
+
+				for (auto& user : loginList) {
+					CPacketMgr::Send_Natural_Destroy_Packet(user, attack_id);
+				}
 			}
 			else {
 				Natural->SetHealth(fHealth);
+				cout << Natural->GetHealth() << endl;
 				/*char eItemType = ITEM_END;
 				int iAmount = 1;
 				if (eType == N_TREE) {
@@ -324,7 +336,6 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 					}
 				}
 				CPacketMgr::Send_Add_Item_Packet(playerId, eItemType, iAmount);*/
-			}
 		}
 	}
 }
@@ -337,7 +348,6 @@ void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
 
 	UINT uiType = animation_packet->uiType;
 
-	m_pObjectPool->m_cumPlayerPool[playerId]->SetCount(animation_packet->type);
 
 	concurrent_unordered_set<USHORT>	UserViewList;
 	m_pObjectPool->m_cumPlayerPool[User]->CopyUserViewList(UserViewList);
@@ -464,22 +474,6 @@ void CPlayerProcess::PlayerNaturalAttack(USHORT playerId, char * packet)
 	cs_natural_attack_packet* natural_attack_packet = reinterpret_cast<cs_natural_attack_packet*>(packet);
 }
 
-void CPlayerProcess::AnimalDead(USHORT playerId, char * packet)
-{
-	cs_dead_animal_packet* animal_packet = reinterpret_cast<cs_dead_animal_packet*>(packet);
-	USHORT index = animal_packet->index;
-
-	m_pObjectPool->m_cumAnimalPool[index]->SetState(OST_DIE);
-	m_pObjectPool->m_cumAnimalPool[index]->SetWakeUp(false);
-	concurrent_unordered_set<USHORT> loginList;
-
-	CopyBeforeLoginList(loginList);
-
-	for (auto user : loginList) {
-		CPacketMgr::GetInst()->Send_Remove_Packet(user, index);
-	}
-}
-
 void CPlayerProcess::PlayerChat(USHORT _usID, char * _packet)
 {
 	cs_chat_packet* chat_packet = reinterpret_cast<cs_chat_packet*>(_packet);
@@ -530,13 +524,7 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 
 				au.second->SetTarget(playerId);
 
-				Update_Event ev;
-				ev.m_Do_Object = au.first;
-				ev.m_EventType = EV_MONSTER_UPDATE;
-				ev.m_From_Object = playerId;
-				ev.m_eObjUpdate = AUT_BEHAVIOR;
-				ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
-				PushEventQueue(ev);
+				PushEvent_Animal_Behavior(au.first);
 			}
 			CPacketMgr::Send_Pos_Packet(playerId, au.first);
 		}
@@ -644,13 +632,8 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 				{
 					m_pObjectPool->m_cumAnimalPool[after]->SetWakeUp(true);
 					m_pObjectPool->m_cumAnimalPool[after]->SetTarget(playerId);
-					Update_Event ev;
-					ev.m_Do_Object = after;
-					ev.m_EventType = EV_MONSTER_UPDATE;
-					ev.m_From_Object = playerId;
-					ev.m_eObjUpdate = AUT_BEHAVIOR;
-					ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
-					PushEventQueue(ev);
+					
+					PushEvent_Animal_Behavior(after);
 
 				}
 				CPacketMgr::Send_Pos_Packet(user, after);
@@ -673,13 +656,7 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 
 					m_pObjectPool->m_cumAnimalPool[after]->SetTarget(playerId);
 
-					Update_Event ev;
-					ev.m_Do_Object = after;
-					ev.m_EventType = EV_MONSTER_UPDATE;
-					ev.m_From_Object = playerId;
-					ev.m_eObjUpdate = AUT_BEHAVIOR;
-					ev.wakeup_time = high_resolution_clock::now() + milliseconds(300);
-					PushEventQueue(ev);
+					PushEvent_Animal_Behavior(after);
 				}
 			}
 		}

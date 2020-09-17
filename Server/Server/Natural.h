@@ -18,6 +18,7 @@ public:
 	Vec3			m_vTargetRot;
 	float			m_fAngle;
 
+	wchar_t			m_strPath[33];
 public:
 	shared_mutex m_smNaturalSharedMutex;
 
@@ -30,6 +31,8 @@ public:
 	void SetTargetRot(Vec3 vTargetRot);
 	void SetAngle(float fAngle);
 
+	void SetstrPath(wchar_t* strPath);
+
 public:
 	const bool&			GetDestroy();
 	const NATURAL_TYPE& GetType();
@@ -38,5 +41,7 @@ public:
 	const Vec3&			GetOriginRot();
 	const Vec3&			GetTargetRot();
 	const float&		GetAngle();
+
+	const wchar_t*		GetstrPath();
 };
 

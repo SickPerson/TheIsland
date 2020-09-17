@@ -27,7 +27,6 @@ CPacketMgr::~CPacketMgr()
 
 void CPacketMgr::Send_Login_Packet(string strID)
 {
-	cout << "SEND LOGIN["<< ++count[CS_LOGIN] << " ]" << endl;
 	DWORD size{ 0 }, flag{ 0 };
 
 	cs_login_packet*	login_packet = reinterpret_cast<cs_login_packet*>(m_cSendBuf);
@@ -48,7 +47,6 @@ void CPacketMgr::Send_Login_Packet(string strID)
 
 void CPacketMgr::Send_Move_Packet(Vec3 vWorldDir, bool bRun)
 {
-	cout << "SEND MOVE[" << ++count[CS_MOVE] << " ]" << endl;
 	DWORD size{ 0 }, flag{ 0 };
 
 	cs_move_packet* packet = reinterpret_cast<cs_move_packet*>(m_cSendBuf);
@@ -71,7 +69,6 @@ void CPacketMgr::Send_Move_Packet(Vec3 vWorldDir, bool bRun)
 
 void CPacketMgr::Send_Chat_Packet(string message)
 {
-	cout << "SEND CHAT[" << ++count[CS_CHAT] << " ]" << endl;
 	cs_chat_packet* packet = reinterpret_cast<cs_chat_packet*>(m_cSendBuf);
 	packet->size = sizeof(cs_chat_packet);
 	packet->type = CS_CHAT;
@@ -90,7 +87,6 @@ void CPacketMgr::Send_Chat_Packet(string message)
 
 void CPacketMgr::Send_Logout_Packet()
 {
-	cout << "SEND LOGOUT[" << ++count[CS_LOGOUT] << " ]" << endl;
 	cs_logout_packet*	packet = reinterpret_cast<cs_logout_packet*>(m_cSendBuf);
 	packet->size = sizeof(cs_logout_packet);
 	packet->type = CS_LOGOUT;
@@ -107,7 +103,6 @@ void CPacketMgr::Send_Logout_Packet()
 
 void CPacketMgr::Send_Pos_Player_Packet()
 {
-	cout << "SEND POS[" << ++count[CS_POS] << " ]" << endl;
 	cs_pos_packet* packet = reinterpret_cast<cs_pos_packet*>(m_cSendBuf);
 	packet->size = sizeof(cs_pos_packet);
 	packet->type = CS_POS;
@@ -125,7 +120,6 @@ void CPacketMgr::Send_Pos_Player_Packet()
 
 void CPacketMgr::Send_Rot_player_Packet()
 {
-	cout << "SEND ROT[" << ++count[CS_ROT] << " ]" << endl;
 	cs_rot_packet* packet = reinterpret_cast<cs_rot_packet*>(m_cSendBuf);
 	packet->size = sizeof(cs_rot_packet);
 	packet->type = CS_ROT;
@@ -146,7 +140,6 @@ void CPacketMgr::Send_Rot_player_Packet()
 
 void CPacketMgr::Send_Install_Housing_Packet(UINT uiType, Vec3 vLocalPos, Vec3 vLocalRot, Vec3 vLocalScale, Vec3 vOffsetPos, Vec3 vOffsetScale)
 {
-	cout << "SEND INSTALL[" << ++count[CS_HOUSING_INSTALL] << " ]" << endl;
 	cs_install_housing_packet* install_housing_packet = reinterpret_cast<cs_install_housing_packet*>(m_cSendBuf);
 	install_housing_packet->size = sizeof(cs_install_housing_packet);
 	install_housing_packet->type = CS_HOUSING_INSTALL;
@@ -186,7 +179,6 @@ void CPacketMgr::Send_Remove_Housing_Packet(USHORT houseId)
 
 void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId, char eitemType)
 {
-	cout << "SEND ATTACK[" << ++count[CS_ATTACK] << " ]" << endl;
 	cs_attack_packet* attack_packet = reinterpret_cast<cs_attack_packet*>(m_cSendBuf);
 
 	attack_packet->size = sizeof(cs_attack_packet);
@@ -207,7 +199,6 @@ void CPacketMgr::Send_Attack_Player_Packet(UINT attackType, USHORT attackId, cha
 
 void CPacketMgr::Send_Animation_Player_Packet(UINT uiAnimationType)
 {
-	cout << "SEND ANIMATION[" << ++count[CS_ANIMATION] << " ]" << endl;
 	cs_animation_packet* animation_packet = reinterpret_cast<cs_animation_packet*>(m_cSendBuf);
 	animation_packet->size = sizeof(cs_animation_packet);
 	animation_packet->type = CS_ANIMATION;
@@ -265,23 +256,6 @@ void CPacketMgr::Send_Destroy_Armor_Packet()
 
 	DWORD	size{ 0 }, flag{ 0 };
 	m_SendWsaBuf.len = sizeof(cs_destroy_armor_packet);
-	int retval = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
-
-	if (retval != 0) {
-		int err_no = WSAGetLastError();
-		CNetwork::Err_display("Err while sending pakcet - ", err_no);
-	}
-}
-
-void CPacketMgr::Send_Dead_Animal_Packet(USHORT index)
-{
-	cs_dead_animal_packet* packet = reinterpret_cast<cs_dead_animal_packet*>(m_cSendBuf);
-	packet->size = sizeof(cs_dead_animal_packet);
-	packet->type = CS_DEAD_ANIMAL;
-	packet->index = index;
-
-	DWORD	size{ 0 }, flag{ 0 };
-	m_SendWsaBuf.len = sizeof(cs_dead_animal_packet);
 	int retval = WSASend(CNetwork::GetInst()->GetSocket(), &m_SendWsaBuf, 1, &size, flag, NULL, NULL);
 
 	if (retval != 0) {

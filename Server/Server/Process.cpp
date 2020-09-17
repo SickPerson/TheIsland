@@ -51,78 +51,99 @@ bool CProcess::ObjectRangeCheck(Vec3 & vFirst, Vec3 & vSecond, float fDistance)
 	return false;
 }
 
-void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId, USHORT PlayerId)
+void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId)
 {
+	USHORT&	Animal_Index = AnimalId;
 	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
-	auto& User = m_pObjectPool->m_cumPlayerPool[PlayerId];
+	
+	USHORT Target_Index = Animal->GetTarget();
+	auto& Target = m_pObjectPool->m_cumPlayerPool[Target_Index];
 
-	// 만약 깨어 있지 않다면 return
+
+	// ========================== 예외 처리 ==========================
 	bool bWakeUp = Animal->GetWakeUp();
 	if (!bWakeUp) return;
 
-	Vec3 vPos1 = Animal->GetLocalPos();
-	Vec3 vPos2 = User->GetLocalPos();
+	char cState = Animal->GetState();
+	if (cState == OST_DIE) return;
+	// ==============================================================
 
-	if (ObjectRangeCheck(vPos1, vPos2, 2000.f)) {
+	Vec3 vPos1 = Animal->GetLocalPos();
+	Vec3 vPos2 = Target->GetLocalPos();
+
+	bool bExit = Animal->GetExit();
+
+	if (ObjectRangeCheck(vPos1, vPos2, 2000.f) || bExit == true)
+	{
 		UINT uiType = Animal->GetType();
 
-		if (uiType == (UINT)BEHAVIOR_TYPE::B_WARLIKE)
+		switch (uiType) {
+		case (UINT)BEHAVIOR_TYPE::B_WARLIKE: // 선공
 		{
-			if (CollisionSphere(Animal, User, 0.2f))
-			{
-				PushEvent_Animal_Attack(AnimalId, PlayerId);
-			}
-			else
-			{
-				PushEvent_Animal_Follow(AnimalId, PlayerId);
-			}
-		}
-		else if (uiType == (UINT)BEHAVIOR_TYPE::B_PASSIVE)
-		{
-			if (Animal->GetHit()) {
-				if (CollisionSphere(Animal, User, 0.2f))
-				{
-					PushEvent_Animal_Attack(AnimalId, PlayerId);
+			if (ObjectRangeCheck(vPos1, vPos2, ANIMAL_VIEW_RANGE) || bExit == true) {
+				if (CollisionSphere(Animal, Target, 0.3f)) {
+					PushEvent_Animal_Attack(Animal_Index, Target_Index);
 				}
-				else
-				{
-					PushEvent_Animal_Follow(AnimalId, PlayerId);
+				else {
+					PushEvent_Animal_Follow(Animal_Index, Target_Index);
 				}
 			}
-			else
-				PushEvent_Animal_Idle(AnimalId, NO_TARGET);
+			else {
+				PushEvent_Animal_Idle(Animal_Index, Target_Index);
+			}
 		}
-		else if (uiType == (UINT)BEHAVIOR_TYPE::B_EVASION)
+		break;
+		case (UINT)BEHAVIOR_TYPE::B_PASSIVE: // 비선공
 		{
-			PushEvent_Animal_Evastion(AnimalId, PlayerId);
+			if (ObjectRangeCheck(vPos1, vPos2, ANIMAL_VIEW_RANGE) || bExit == true) {
+				if (Animal->GetHit() == true) {
+					PushEvent_Animal_Follow(Animal_Index, Target_Index);
+				}
+				else {
+					PushEvent_Animal_Idle(Animal_Index, Target_Index);
+				}
+			}
+			else {
+				PushEvent_Animal_Idle(Animal_Index, Target_Index);
+			}
+		}
+		break;
+		case (UINT)BEHAVIOR_TYPE::B_EVASION: // 회피
+		{
+			if (ObjectRangeCheck(vPos1, vPos2, ANIMAL_VIEW_RANGE) || bExit == true) {
+				PushEvent_Animal_Evastion(Animal_Index, Target_Index);
+			}
+			else {
+				PushEvent_Animal_Idle(Animal_Index, Target_Index);
+			}
+		}
+		break;
 		}
 	}
 	else {
-		PushEvent_Animal_Idle(AnimalId, PlayerId);
+		PushEvent_Animal_Idle(Animal_Index, Target_Index);
 	}
 }
 
 void CProcess::PushEvent_Animal_Attack(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_ATTACK;
-	ev.wakeup_time = high_resolution_clock::now() + milliseconds(500);
+	ev.wakeup_time = high_resolution_clock::now() + 2s;
 	PushEventQueue(ev);
 }
 
 void CProcess::PushEvent_Animal_Follow(USHORT AnimalId, USHORT PlayerId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_FOLLOW;
-	ev.wakeup_time = high_resolution_clock::now() + milliseconds(250);
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(50);
 	PushEventQueue(ev);
 }
 
@@ -134,7 +155,7 @@ void CProcess::PushEvent_Animal_Evastion(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_EVASION;
-	ev.wakeup_time = high_resolution_clock::now() + milliseconds(250);
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(50);
 	PushEventQueue(ev);
 }
 
@@ -146,7 +167,7 @@ void CProcess::PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId)
 	ev.m_EventType = EV_MONSTER_UPDATE;
 	ev.m_From_Object = NO_TARGET;
 	ev.m_eObjUpdate = AUT_IDLE;
-	ev.wakeup_time = high_resolution_clock::now() + milliseconds(250);
+	ev.wakeup_time = high_resolution_clock::now() + milliseconds(100);
 	PushEventQueue(ev);
 }
 

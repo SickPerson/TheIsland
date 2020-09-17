@@ -284,11 +284,9 @@ void CIngameScene::Init()
 	pObject->FrustumCheck( false );
 	CNaviMgr::GetInst()->SetLandScape( pObject->LandScape() );
 	m_pScene->FindLayer( L"Default" )->AddGameObject( pObject );
-
-
+	
 	CreateNatural();
 #ifdef NETWORK_ON
-
 #else
 	CreateAnimalSpawner();
 #endif // NETWORK_ON
@@ -387,10 +385,14 @@ void CIngameScene::Init()
 	// =================================
 	// Player Layer 와 Monster Layer 는 충돌 검사 진행
 #ifdef NETWORK_ON
-	/*CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Animal");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Environment");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"House");
-	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Human");*/
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Human");
+
+	//
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Arrow", L"Animal");
+	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Arrow", L"House");
 #else
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Animal");
 	CCollisionMgr::GetInst()->CheckCollisionLayer(L"Player", L"Environment");
@@ -1223,61 +1225,183 @@ void CIngameScene::CreateChatUI()
 
 void CIngameScene::CreateNatural()
 {
+#ifdef NETWORK_ON
+	for (int i = BEGIN_NATURAL; i < BEGIN_NATURAL + 306; ++i) {
+		m_mapNatural.insert(make_pair(i, new CGameObject()));
+	}
 	FILE* pFile = NULL;
 
 	wstring ResPath = CPathMgr::GetResPath();
 	ResPath += L"Data\\Map.dat";
 	string FullPath{ ResPath.begin(), ResPath.end() };
 
-	fopen_s( &pFile, FullPath.c_str(), "r" );
+	fopen_s(&pFile, FullPath.c_str(), "r");
 
 	int iSize = 0;
-	fread( &iSize, sizeof( int ), 1, pFile );
+	fread(&iSize, sizeof(int), 1, pFile);
 
-	for ( int i = BEGIN_NATURAL; i < BEGIN_NATURAL + iSize; ++i )
+	for (int i = BEGIN_NATURAL; i < BEGIN_NATURAL + iSize; ++i)
+	{
+		wchar_t strName[MAX_PATH]{};
+		size_t iLength = 0;
+		fread(&iLength, sizeof(size_t), 1, pFile);
+		fread(strName, sizeof(wchar_t), iLength, pFile);
+
+		bool bNaturalScript;
+		fread(&bNaturalScript, sizeof(bool), 1, pFile);
+
+		if (bNaturalScript)
+		{
+			wchar_t strPath[MAX_PATH]{};
+			fread(&iLength, sizeof(size_t), 1, pFile);
+			fread(strPath, sizeof(wchar_t), iLength, pFile);
+
+			if (iLength == 0)
+				continue;
+
+			Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(strPath, strPath);
+
+			m_mapNatural[i] = pMeshData->Instantiate();
+			m_mapNatural[i]->AddComponent(new CNaturalScript(NATURAL_TREE));
+			m_mapNatural[i]->GetScript<CNaturalScript>()->LoadFromScene(pFile);
+			m_mapNatural[i]->GetScript<CNaturalScript>()->SetIndex(i);
+
+#ifdef CHECK_COLLISION
+			m_mapNatural[i]->AddComponent(new CCollider2D);
+			m_mapNatural[i]->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 60.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(1.7f, 1.7f, 1.7f));
+#endif
+		}
+
+		m_mapNatural[i]->Transform()->LoadFromScene(pFile);
+		m_mapNatural[i]->MeshRender()->SetDynamicShadow(true);
+
+		string str1;
+		wstring str2 = strName;
+		str1.assign(str2.begin(), str2.end());
+
+		m_mapNatural[i]->SetName(str2);
+		if (str1 == "sprucea" || str1 == "sprucec")
+		{
+			m_mapNatural[i]->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
+		}
+		else if (str1 == "spruceb")
+		{
+			m_mapNatural[i]->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 1);
+		}
+		else if (str1 == "plainsgrass")
+		{
+			m_mapNatural[i]->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
+#ifdef CHECK_COLLISION
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
+			//pObject->FrustumCheck(false);
+#endif
+		}
+#ifdef CHECK_COLLISION
+		else if (str1 == "mountainsrocks01")
+		{
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(350.f, 350.f, 350.f));
+		}
+		else if (str1 == "mountainsrocks02")
+		{
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(20.f, 0.f, 0.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
+		}
+		else if (str1 == "genericcliffa")
+		{
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(10.f, 10.f, 10.f));
+		}
+		else if (str1 == "mountainsrocks01_a")
+		{
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(200.f, 200.f, 200.f));
+		}
+		else if (str1 == "mountainsrocks01_b")
+		{
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, -60.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(220.f, 220.f, 220.f));
+		}
+		else if (str1 == "mountainsrocks01_c")
+		{
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
+		}
+		else if (str1 == "mountainsrocks01_d")
+		{
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 0.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
+		}
+		else
+		{
+			m_mapNatural[i]->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
+			m_mapNatural[i]->Collider2D()->SetOffsetScale(Vec3(4.f, 4.f, 4.f));
+		}
+#endif
+		/*CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+		pScene->AddGameObject(L"Environment", m_mapNatural[i], false);*/
+	}
+
+	fclose(pFile);
+#else
+	FILE* pFile = NULL;
+
+	wstring ResPath = CPathMgr::GetResPath();
+	ResPath += L"Data\\Map.dat";
+	string FullPath{ ResPath.begin(), ResPath.end() };
+
+	fopen_s(&pFile, FullPath.c_str(), "r");
+
+	int iSize = 0;
+	fread(&iSize, sizeof(int), 1, pFile);
+
+	for (int i = BEGIN_NATURAL; i < BEGIN_NATURAL + iSize; ++i)
 	{
 		CGameObject* pObject = nullptr;
 
 		wchar_t strName[MAX_PATH]{};
 		size_t iLength = 0;
-		fread( &iLength, sizeof( size_t ), 1, pFile );
-		fread( strName, sizeof( wchar_t ), iLength, pFile );
+		fread(&iLength, sizeof(size_t), 1, pFile);
+		fread(strName, sizeof(wchar_t), iLength, pFile);
 
 		bool bNaturalScript;
-		fread( &bNaturalScript, sizeof( bool ), 1, pFile );
+		fread(&bNaturalScript, sizeof(bool), 1, pFile);
 
-		if ( bNaturalScript )
+		if (bNaturalScript)
 		{
 			wchar_t strPath[MAX_PATH]{};
-			fread( &iLength, sizeof( size_t ), 1, pFile );
-			fread( strPath, sizeof( wchar_t ), iLength, pFile );
+			fread(&iLength, sizeof(size_t), 1, pFile);
+			fread(strPath, sizeof(wchar_t), iLength, pFile);
 
-			if ( iLength == 0 )
+			if (iLength == 0)
 				continue;
 
-			Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>( strPath, strPath );
+			Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(strPath, strPath);
 
 			pObject = pMeshData->Instantiate();
-			pObject->AddComponent( new CNaturalScript( NATURAL_TREE ) );
-			pObject->GetScript<CNaturalScript>()->LoadFromScene( pFile );
+			pObject->AddComponent(new CNaturalScript(NATURAL_TREE));
+			pObject->GetScript<CNaturalScript>()->LoadFromScene(pFile);
 			pObject->GetScript<CNaturalScript>()->SetIndex(i);
 
 #ifdef CHECK_COLLISION
-			pObject->AddComponent( new CCollider2D );
+			pObject->AddComponent(new CCollider2D);
 			pObject->Collider2D()->SetCollider2DType(COLLIDER2D_TYPE::SPHERE);
 			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 60.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(1.7f, 1.7f, 1.7f));
 #endif
 		}
 
-		pObject->Transform()->LoadFromScene( pFile );
+		pObject->Transform()->LoadFromScene(pFile);
 		pObject->MeshRender()->SetDynamicShadow(true);
 
 		string str1;
 		wstring str2 = strName;
 		str1.assign(str2.begin(), str2.end());
 
-		pObject->SetName( str2 );
+		pObject->SetName(str2);
 		if (str1 == "sprucea" || str1 == "sprucec")
 		{
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"TreeMtrl"), 0);
@@ -1290,13 +1414,13 @@ void CIngameScene::CreateNatural()
 		{
 			pObject->MeshRender()->SetMaterial(CResMgr::GetInst()->FindRes<CMaterial>(L"BushMtrl"), 0);
 #ifdef CHECK_COLLISION
-			pObject->Collider2D()->SetOffsetPos( Vec3( 0.f, 0.f, 20.f ) );
+			pObject->Collider2D()->SetOffsetPos(Vec3(0.f, 0.f, 20.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(100.f, 100.f, 100.f));
 			//pObject->FrustumCheck(false);
 #endif
 		}
 #ifdef CHECK_COLLISION
-		else if ( str1 == "mountainsrocks01" )
+		else if (str1 == "mountainsrocks01")
 		{
 			pObject->Collider2D()->SetOffsetPos(Vec3(20.f, 20.f, -40.f));
 			pObject->Collider2D()->SetOffsetScale(Vec3(350.f, 350.f, 350.f));
@@ -1338,10 +1462,11 @@ void CIngameScene::CreateNatural()
 		}
 #endif
 		CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
-		pScene->AddGameObject( L"Environment", pObject, false );
+		pScene->AddGameObject(L"Environment", pObject, false);
 	}
 
-	fclose( pFile );
+	fclose(pFile);
+#endif // NETWORK_ON
 }
 
 void CIngameScene::CreateAnimalSpawner()
@@ -1473,8 +1598,6 @@ void CIngameScene::PlayerDestroy(USHORT usId)
 
 void CIngameScene::PlayerAnimationUpdate(USHORT usId, UINT uiType)
 {
-	cout << usId << " | " << uiType << endl;
-
 	auto p = m_mapPlayers.find(usId);
 	if (p == m_mapPlayers.end())
 	{
@@ -1711,6 +1834,7 @@ void CIngameScene::AnimalRotUpdate(USHORT usId, Vec3 vRot)
 
 void CIngameScene::AnimalDestory( USHORT uiId )
 {
+	cout << "ANIMAL DESTROY" << endl;
 	auto p = m_mapAnimals.find( uiId );
 	if ( p == m_mapAnimals.end() )
 	{
@@ -1815,18 +1939,19 @@ void CIngameScene::DestroyHousing( USHORT uiId )
 	m_mapHousing.erase( uiId );
 }
 
-void CIngameScene::InstallNatural( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale, Vec3 vOffsetPos, Vec3 vOffsetScale, float fHealth, bool bDestroy )
+void CIngameScene::InstallNatural(UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale, Vec3 vOffsetPos, Vec3 vOffsetScale, float fHealth, bool bDestroy )
 {
+	CScene* pScene = CSceneMgr::GetInst()->GetCurScene();
+	pScene->AddGameObject(L"Environment", m_mapNatural[uiId], false);
 	auto p = m_mapNatural.find( uiId );
 	if ( p == m_mapNatural.end() )
 	{
-		return;
-
-		// 생성하려면 MeshData 종류를 알아야 함
-
-		// 생성
+		//// 생성하려면 MeshData 종류를 알아야 함
+		//Ptr<CMeshData> pMeshData = CResMgr::GetInst()->Load<CMeshData>(strPath, strPath);
+		//// 생성
 		//CGameObject* pObject = NULL;
 
+		//pObject = pMeshData->Instantiate();
 		//pObject->AddComponent(new CNaturalScript((NATURAL_TYPE)uiType));
 		//pObject->AddComponent(new CCollider2D);
 
@@ -1851,7 +1976,7 @@ void CIngameScene::InstallNatural( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRo
 		vNewPos.y = CNaviMgr::GetInst()->GetY( vPos );
 
 		m_mapNatural[uiId]->Transform()->SetLocalPos( vNewPos );
-		m_mapNatural[uiId]->Transform()->SetLocalRot( vRot );
+		//m_mapNatural[uiId]->Transform()->SetLocalRot( vRot );
 		m_mapNatural[uiId]->Transform()->SetLocalScale( vScale );
 
 		m_mapNatural[uiId]->Collider2D()->SetOffsetPos( vOffsetPos );
@@ -1870,7 +1995,7 @@ void CIngameScene::DestroyNatural( USHORT uiId )
 		// 없는거 삭제하는 경우
 		return;
 	}
-
+	cout << "Natural Destroy : " << uiId << endl;
 	tEvent tEv;
 	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
 	tEv.wParam = ( DWORD_PTR )( m_mapNatural[uiId] );

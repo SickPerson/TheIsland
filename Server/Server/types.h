@@ -14,7 +14,6 @@ enum EVENT_TYPE {
 // [ Update Type ]
 // - Animal
 enum ANIMAL_UPDATE_TYPE{
-	AUT_BEHAVIOR,
 	AUT_ATTACK,
 	AUT_FOLLOW,
 	AUT_EVASION,

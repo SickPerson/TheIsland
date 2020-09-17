@@ -146,8 +146,6 @@ void CPacketMgr::Send_Status_Player_Packet(USHORT playerId)
 	packet.fHungry = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetHungry();
 	packet.fThrist = CProcess::m_pObjectPool->m_cumPlayerPool[playerId]->GetThirst();
 
-	cout << "HP : " << packet.fHealth << "HUNGRY : " << packet.fHungry << "THRIST : " << packet.fThrist << endl;
-
 	Send_Packet(playerId, &packet);
 }
 
@@ -222,6 +220,8 @@ void CPacketMgr::Send_Natural_Destroy_Packet(USHORT PlayerId, USHORT NaturalId)
 	packet.size = sizeof(sc_destroy_natural_packet);
 	packet.type = SC_DESTROY_NATURAL;
 	packet.natural_id = NaturalId;
+
+	cout << "NATURAL DESTROY : " << packet.natural_id << endl;
 	Send_Packet(PlayerId, &packet);
 
 }

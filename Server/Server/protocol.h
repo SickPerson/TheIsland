@@ -8,10 +8,10 @@ constexpr	int	MAX_USER = 100;
 constexpr	int	NO_TARGET = 9999;
 
 constexpr	int	BEGIN_ANIMAL = MAX_USER;
-constexpr	int	ANIMAL_BEAR = 10;
-constexpr	int	ANIMAL_BOAR = 10;
-constexpr	int	ANIMAL_DEER = 20;
-constexpr	int	ANIMAL_WOLF = 20;
+constexpr	int	ANIMAL_BEAR = 0;
+constexpr	int	ANIMAL_BOAR = 0;
+constexpr	int	ANIMAL_DEER = 1;
+constexpr	int	ANIMAL_WOLF = 0;
 constexpr	int	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER + ANIMAL_WOLF;
 constexpr	int	END_ANIMAL = BEGIN_ANIMAL + MAX_ANIMAL;
 
@@ -50,7 +50,6 @@ enum CS_PACKET_TYPE {
 	CS_USE_ITEM,
 	CS_EQUIP_ARMOR,
 	CS_DESTROY_ARMOR,
-	CS_DEAD_ANIMAL,
 	CS_END
 };
 
@@ -86,8 +85,8 @@ enum SC_PACKET_TYPE {
 	SC_END
 };
 // About Player
-constexpr float PLAYER_VIEW_RANGE = 5000.f;
-constexpr float ANIMAL_VIEW_RANGE = 300.f;
+constexpr float PLAYER_VIEW_RANGE = 4000.f;
+constexpr float ANIMAL_VIEW_RANGE = 2000.f;
 
 // enum class
 enum class PLAYER_ANIMATION_TYPE

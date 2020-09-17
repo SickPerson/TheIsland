@@ -5,7 +5,9 @@ CMonster::CMonster() :
 	m_bWakeUp(false),
 	m_bHit(false),
 	m_bIdle(true),
-	m_iBehaviorCount(0)
+	m_iBehaviorCount(0),
+	m_bExit(false),
+	m_iExitCount(0)
 {
 }
 

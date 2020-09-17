@@ -1,6 +1,7 @@
 #include "Natural.h"
 
-CNatural::CNatural()
+CNatural::CNatural():
+	m_bDestroy(false)
 {
 }
 
@@ -63,6 +64,13 @@ void CNatural::SetAngle(float fAngle)
 	m_fAngle = fAngle;
 }
 
+void CNatural::SetstrPath(wchar_t * strPath)
+{
+	unique_lock<shared_mutex>	lock(m_smNaturalSharedMutex);
+	wcscpy_s(m_strPath, strPath);
+	cout << m_strPath << endl;
+}
+
 const NATURAL_TYPE & CNatural::GetType()
 {
 	shared_lock<shared_mutex> lock(m_smNaturalSharedMutex);
@@ -97,4 +105,10 @@ const float & CNatural::GetAngle()
 {
 	shared_lock<shared_mutex>	lock(m_smNaturalSharedMutex);
 	return m_fAngle;
+}
+
+const wchar_t * CNatural::GetstrPath()
+{
+	shared_lock<shared_mutex>	lock(m_smNaturalSharedMutex);
+	return m_strPath;
 }
