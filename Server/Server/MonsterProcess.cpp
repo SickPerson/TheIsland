@@ -172,6 +172,8 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 
 	Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
 	Animal->SetLocalPos(vAnimalPos);
+	// Collision
+	m_pObjectPool->Animal_Collision(Animal_Index);
 	// ==========================================================
 	// New Target
 	USHORT NewTarget = NO_TARGET;
@@ -266,7 +268,8 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 	vAnimalPos += - vDir * fAnimalSpeed * 0.05f;
 	Animal->SetLocalRot(Vec3(0.f, atan2( - vDir.x, - vDir.z) + 3.141592f, 0.f));
 	Animal->SetLocalPos(vAnimalPos);
-
+	// Collision
+	m_pObjectPool->Animal_Collision(Animal_Index);
 	// ==========================================================
 	// New Target
 	USHORT NewTarget = NO_TARGET;
@@ -411,6 +414,9 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 			}
 
 			Animal->SetLocalPos(vPos);
+
+			// Collision
+			m_pObjectPool->Animal_Collision(Animal_Index);
 		}
 	}
 

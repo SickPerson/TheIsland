@@ -52,8 +52,7 @@ public: // - Collision
 		Vec3 vColScale1 = pFirst.second->GetLocalScale() * fOffset;
 		Vec3 vColScale2 = pSecond.second->GetLocalScale();
 
-		float fDist = powf(vPos1.x - vPos2.x, 2) + powf(vPos1.z - vPos2.z, 2);
-		fDist = sqrtf(fDist);
+		float fDist = CalculationDistance(vPos1, vPos2);
 
 		if (fDist > fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x))
 			return false;

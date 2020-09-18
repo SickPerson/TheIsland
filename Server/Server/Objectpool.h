@@ -32,6 +32,16 @@ private:
 	void Release_HousingPool();
 
 public:
+	template <typename T1, typename T2>
+	float CalculationDistance(T1* pFirst, T2* pSecond) {
+		Vec3 vPos1 = pFirst->GetLocalPos();
+		Vec3 vPos2 = pSecond->GetLocalPos();
+
+		float fDist = powf(vPos2.z - vPos1.z, 2) + powf(vPos2.x - vPos1.x, 2);
+		fDist = sqrtf(fDist);
+
+		return fDist;
+	}
 	template<typename T>
 	bool CollisionHouse(std::pair<const USHORT, T*> pFirst, CHousing* pSecond) {
 		Vec3 vPos1 = pFirst.second->GetLocalPos();
@@ -97,6 +107,67 @@ public:
 
 		return true;
 	}
+	template	<typename T1, typename T2>
+	bool CollisionSphere(std::pair<const USHORT, T1*> pFirst, std::pair<const USHORT, T2*> pSecond, float fOffset = 1.f)
+	{
+		Vec3 vPos1 = pFirst.second->GetLocalPos();
+		Vec3 vPos2 = pSecond.second->GetLocalPos();
+
+		Vec3 vScale1 = pFirst.second->GetLocalScale();
+		Vec3 vScale2 = pSecond.second->GetLocalScale();
+
+		Vec3 vColScale1 = pFirst.second->GetLocalScale() * fOffset;
+		Vec3 vColScale2 = pSecond.second->GetLocalScale();
+
+		float fDist = CalculationDistance(vPos1, vPos2);
+		fDist = sqrtf(fDist);
+
+		if (fDist > fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x))
+			return false;
+		return true;
+
+	}
+	template <typename T1, typename T2>
+	bool CollisionSphere(T1* pFirst, T2* pSecond, float fOffset = 1.f)
+	{
+		Vec3 vPos1 = pFirst->GetLocalPos();
+		Vec3 vPos2 = pSecond->GetLocalPos();
+
+		Vec3 vScale1 = pFirst->GetLocalScale();
+		Vec3 vScale2 = pSecond->GetLocalScale();
+
+		Vec3 vColScale1 = pFirst->GetOffsetScale() * fOffset;
+		Vec3 vColScale2 = pSecond->GetOffsetScale();
+
+		float fDist = sqrtf(powf(vPos2.z - vPos1.z, 2) + powf(vPos2.x - vPos1.x, 2));
+
+		float f = fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x);
+		if (fDist > f)
+			return false;
+		return true;
+
+	}
+	template <typename T1, typename T2>
+	bool CollisionSphere(T1* pFirst, std::pair<const USHORT, T2*> pSecond, float fOffset = 1.f)
+	{
+		Vec3 vPos1 = pFirst->GetLocalPos();
+		Vec3 vPos2 = pSecond.second->GetLocalPos();
+
+		Vec3 vScale1 = pFirst->GetLocalScale();
+		Vec3 vScale2 = pSecond.second->GetLocalScale();
+
+		Vec3 vColScale1 = pFirst->GetOffsetScale() * fOffset;
+		Vec3 vColScale2 = pSecond.second->GetOffsetScale();
+
+		float fDist = sqrtf(powf(vPos2.z - vPos1.z, 2) + powf(vPos2.x - vPos1.x, 2));
+
+		float f = fabsf(vScale1.x * vColScale1.x) + fabsf(vScale2.x * vColScale2.x);
+		if (fDist > f)
+			return false;
+		return true;
+
+	}
+
 public:
 	static concurrent_unordered_map<USHORT, CPlayer*> m_cumPlayerPool;
 	static concurrent_unordered_map<USHORT, CMonster*> m_cumAnimalPool;
@@ -108,4 +179,7 @@ public:
 	void Install_House(CHousing* pHouse, USHORT usIndex);
 	void Remove_House(USHORT usIndex);
 	void Upgrade_House(USHORT usIndex);
+
+public:
+	void Animal_Collision(USHORT usIndex);
 };

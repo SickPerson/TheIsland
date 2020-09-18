@@ -188,8 +188,6 @@ void CObjectpool::Init_NaturalPool()
 	int iSize = 0;
 	fread(&iSize, sizeof(int), 1, pFile);
 
-	size_t maxL = 0;
-
 	for (int i = BEGIN_NATURAL; i < BEGIN_NATURAL + iSize; ++i)
 	{
 		wchar_t strName[MAX_PATH]{};
@@ -204,8 +202,6 @@ void CObjectpool::Init_NaturalPool()
 			wchar_t strPath[33]{};
 			fread(&iLength, sizeof(size_t), 1, pFile);
 			fread(strPath, sizeof(wchar_t), iLength, pFile);
-
-			m_cumNaturalPool[i]->SetstrPath(strPath);
 
 			if (iLength == 0)
 				continue;
@@ -395,4 +391,30 @@ void CObjectpool::Upgrade_House(USHORT usIndex)
 {
 	if(m_cumHousingPool.count(usIndex))
 		m_cumHousingPool[usIndex]->SetUpgrade();
+}
+
+void CObjectpool::Animal_Collision(USHORT usIndex)
+{
+	auto&	Animal = m_cumAnimalPool[usIndex];
+
+	if (!Animal->GetWakeUp()) return;
+	if (!Animal->GetState() == OST_DIE) return;
+
+	// NATURAL COLLISION
+	for (auto& natural : m_cumNaturalPool) {
+		char eType = natural.second->GetType();
+
+		if (NATURAL_TYPE::N_BUSH == eType)
+			continue;
+
+		if (CollisionSphere(Animal, natural)) {
+			Vec3 vNaturalPos = natural.second->GetLocalPos();
+			Vec3 vAnimalPos = Animal->GetLocalPos();
+			Vec3 vDir = XMVector3Normalize(vAnimalPos - vNaturalPos);
+			float fSpeed = Animal->GetSpeed();
+			vDir.y = 0.f;
+			vAnimalPos += vDir * fSpeed * 0.05f;
+			Animal->SetLocalPos(vAnimalPos);
+		}
+	}
 }
