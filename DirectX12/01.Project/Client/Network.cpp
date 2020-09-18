@@ -207,6 +207,7 @@ void CNetwork::Recv_Remove_Packet(char * packet)
 	sc_remove_packet* remove_packet = reinterpret_cast<sc_remove_packet*>(packet);
 	USHORT usId = remove_packet->usId;
 
+	cout << usId << endl;
 	if(usId < MAX_USER)
 		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerDestroy(usId);
 	else if(usId < END_ANIMAL)

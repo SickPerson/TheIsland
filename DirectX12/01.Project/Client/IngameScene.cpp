@@ -1834,19 +1834,16 @@ void CIngameScene::AnimalRotUpdate(USHORT usId, Vec3 vRot)
 
 void CIngameScene::AnimalDestory( USHORT uiId )
 {
-	cout << "ANIMAL DESTROY" << endl;
 	auto p = m_mapAnimals.find( uiId );
 	if ( p == m_mapAnimals.end() )
 	{
 		// 없는거 삭제하는 경우
 		return;
 	}
-
 	tEvent tEv;
 	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
 	tEv.wParam = ( DWORD_PTR )( m_mapAnimals[uiId] );
 	CEventMgr::GetInst()->AddEvent( tEv );
-
 	m_mapAnimals.erase( uiId );
 }
 
