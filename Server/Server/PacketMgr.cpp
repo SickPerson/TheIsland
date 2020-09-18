@@ -161,7 +161,13 @@ void CPacketMgr::Send_Chat_Packet(USHORT playerId, USHORT OtherId, char message[
 
 void CPacketMgr::Send_Death_Player_Packet(USHORT playerId)
 {
-
+	sc_death_player_packet packet;
+	packet.size = sizeof(sc_death_player_packet);
+	packet.type = SC_DEATH_PLAYER;
+	packet.fHealth = 100.f;
+	packet.fHungry = 100.f;
+	packet.fStamina = 100.f;
+	packet.vLocalPos;
 }
 
 void CPacketMgr::Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id)
@@ -197,6 +203,16 @@ void CPacketMgr::Send_Check_Housing_Packet(USHORT player_Id, USHORT housing_Id, 
 	packet.house_id = housing_Id;
 	packet.bCheck = bCheck;
 	Send_Packet(player_Id, &packet);
+}
+
+void CPacketMgr::Send_Upgrade_Housing_Packet(USHORT PlayerId, USHORT house_Id)
+{
+	sc_upgrade_housing_packet packet;
+	packet.size = sizeof(sc_upgrade_housing_packet);
+	packet.type = SC_UPGRADE_HOUSE;
+	packet.house_id = house_Id;
+
+	Send_Packet(PlayerId, &packet);
 }
 
 void CPacketMgr::Send_Put_Natural_Packet(USHORT PlayerId, USHORT NaturalId)

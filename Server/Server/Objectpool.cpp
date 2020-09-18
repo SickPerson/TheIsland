@@ -384,3 +384,15 @@ void CObjectpool::Install_House(CHousing * pHouse, USHORT usIndex)
 {
 	m_cumHousingPool.insert(make_pair(usIndex, pHouse));
 }
+
+void CObjectpool::Remove_House(USHORT usIndex)
+{
+	if (m_cumHousingPool.count(usIndex))
+		m_cumHousingPool.unsafe_erase(usIndex); // lock ÇÊ¿ä
+}
+
+void CObjectpool::Upgrade_House(USHORT usIndex)
+{
+	if(m_cumHousingPool.count(usIndex))
+		m_cumHousingPool[usIndex]->SetUpgrade();
+}

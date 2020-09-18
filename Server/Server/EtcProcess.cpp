@@ -6,7 +6,7 @@
 CEtcProcess::CEtcProcess()
 {
 	//PushEvent_Etc_DB_Update();
-	//PushEvent_Etc_Animal_Collision();
+	PushEvent_Etc_Animal_Collision();
 	PushEvent_Rot();
 	PushEvent_Etc_Weather();
 	PushEvent_Etc_Time();

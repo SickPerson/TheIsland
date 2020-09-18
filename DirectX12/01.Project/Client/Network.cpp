@@ -347,6 +347,12 @@ void CNetwork::Recv_Check_Housing_Packet(char * packet)
 	m_bHousingCheck = bCheck;
 }
 
+void CNetwork::Recv_Upgrade_Housing_Packet(char * packet)
+{
+	sc_upgrade_housing_packet*	upgrade_housing_packet = reinterpret_cast<sc_upgrade_housing_packet*>(packet);
+	USHORT house_id = upgrade_housing_packet->house_id;
+}
+
 void CNetwork::Recv_Add_Item_Packet(char * packet)
 {
 	sc_add_item_packet* add_item_packet = reinterpret_cast<sc_add_item_packet*>(packet);

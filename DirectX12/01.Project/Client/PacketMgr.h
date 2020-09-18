@@ -32,6 +32,5 @@ public:
 	void Send_Use_Item_Packet(char eType);
 	void Send_Equip_Armor_Packet(char eType);
 	void Send_Destroy_Armor_Packet();
-	void Send_Dead_Animal_Packet(USHORT index);
 };
 
