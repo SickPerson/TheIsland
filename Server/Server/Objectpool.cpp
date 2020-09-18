@@ -81,7 +81,7 @@ void CObjectpool::Init_AnimalPool()
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
 
-			//Animal->SetLocalPos(vPos);
+			Animal->SetLocalPos(vPos);
 		}
 		else if (i < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR)
 		{
@@ -111,7 +111,7 @@ void CObjectpool::Init_AnimalPool()
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
 
-			//Animal->SetLocalPos(vPos);
+			Animal->SetLocalPos(vPos);
 		}
 		else if (i < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER)
 		{
@@ -138,7 +138,7 @@ void CObjectpool::Init_AnimalPool()
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
 
-			//Animal->SetLocalPos(vPos);
+			Animal->SetLocalPos(vPos);
 		}
 		else if (i < END_ANIMAL)
 		{
@@ -164,9 +164,9 @@ void CObjectpool::Init_AnimalPool()
 			Vec3 vPos = Passive_Pawner;
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
-			//Animal->SetLocalPos(vPos);
+			Animal->SetLocalPos(vPos);
 		}
-		Animal->SetLocalPos(Vec3(16000.f, 200.f, 2000.f));
+		//Animal->SetLocalPos(Vec3(16000.f, 200.f, 2000.f));
 		//Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
 		m_cumAnimalPool.insert(make_pair(i, Animal));
 	}

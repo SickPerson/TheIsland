@@ -72,6 +72,7 @@ void CNetwork::BindfpPacket()
 	m_fpPacketProcess[SC_INSTALL_HOUSE] = [&](char* packet) {Recv_Install_Housing_Packet(packet); };
 	m_fpPacketProcess[SC_REMOVE_HOUSE] = [&](char* packet) {Recv_Remove_Housing_Packet(packet); };
 	m_fpPacketProcess[SC_CHECK_HOUSE] = [&](char* packet) {Recv_Check_Housing_Packet(packet); };
+	m_fpPacketProcess[SC_UPGRADE_HOUSE] = [&](char* packet) {Recv_Upgrade_Housing_Packet(packet); };
 	// - Item
 	m_fpPacketProcess[SC_ADD_ITEM] = [&](char* packet) {};
 	m_fpPacketProcess[SC_REMOVE_ITEM] = [&](char* packet) {};
