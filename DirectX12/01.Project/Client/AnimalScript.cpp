@@ -53,9 +53,7 @@ CAnimalScript::~CAnimalScript()
 
 void CAnimalScript::Update()
 {
-#ifdef NETWORK_ON
-	return;
-#endif // NETWORK_ON
+	// Particle Update
 	if (m_pParticleObj != NULL)
 	{
 		m_fParticleTime -= DT;
@@ -68,6 +66,9 @@ void CAnimalScript::Update()
 			m_pParticleObj = NULL;
 		}
 	}
+#ifdef NETWORK_ON
+	return;
+#endif // NETWORK_ON
 	if (m_bAnimalDead)
 	{
 		// »ç¸Á
