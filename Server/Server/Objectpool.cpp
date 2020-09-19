@@ -434,17 +434,43 @@ void CObjectpool::Init_Animal(USHORT usIndex)
 		break;
 	case ANIMAL_TYPE::A_BOAR:
 	{
+		{
+			tAnimalStatus tStatus;
+			tStatus.fHealth = 200.f;
+			tStatus.fStamina = 100.f;
+			tStatus.fDamage = 20.f;
+			tStatus.fSpeed = 150.f;
+			tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
+			tStatus.eKind = ANIMAL_TYPE::A_BOAR;
 
+			Animal->SetAnimalStatus(tStatus);
+		}
 	}
 		break;
 	case ANIMAL_TYPE::A_DEER:
 	{
+		tAnimalStatus tStatus;
+		tStatus.fHealth = 100.f;
+		tStatus.fStamina = 100.f;
+		tStatus.fDamage = 0.f;
+		tStatus.fSpeed = 250.f;
+		tStatus.eType = BEHAVIOR_TYPE::B_EVASION;
+		tStatus.eKind = ANIMAL_TYPE::A_DEER;
 
+		Animal->SetAnimalStatus(tStatus);
 	}
 		break;
 	case ANIMAL_TYPE::A_WOLF:
 	{
+		tAnimalStatus tStatus;
+		tStatus.fHealth = 200.f;
+		tStatus.fStamina = 100.f;
+		tStatus.fDamage = 20.f;
+		tStatus.fSpeed = 200.f;
+		tStatus.eType = BEHAVIOR_TYPE::B_PASSIVE;
+		tStatus.eKind = ANIMAL_TYPE::A_WOLF;
 
+		Animal->SetAnimalStatus(tStatus);
 	}
 		break;
 	}

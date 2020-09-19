@@ -532,29 +532,34 @@ void CMonsterProcess::RemoveEvent(USHORT AnimalId)
 	PushEvent_Animal_Respawn(AnimalId);
 }
 
-void CMonsterProcess::RespawnEvent(USHORT uiMonster)
+void CMonsterProcess::RespawnEvent(USHORT Animal_Id)
 {
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[Animal_Id];
+	USHORT& Animal_Index = Animal_Id;
+
+	m_pObjectPool->Init_Animal(Animal_Index);
+
 	concurrent_unordered_set<USHORT> login_list;
 	concurrent_unordered_set<USHORT> range_list;
 
 	CopyBeforeLoginList(login_list);
-	InRangePlayer(login_list, range_list, uiMonster);
+	InRangePlayer(login_list, range_list, Animal_Index);
 
-	if (range_list.empty())
+	if (range_list.empty()) {
 		return;
+	}
 
-	CProcess::m_pObjectPool->m_cumAnimalPool[uiMonster]->SetWakeUp(true);
-	USHORT monster_id = uiMonster;
+	Animal->SetWakeUp(true);
 
-	Vec3 monster_pos = CProcess::m_pObjectPool->m_cumAnimalPool[uiMonster]->GetLocalPos();
-
-	PushEvent_Animal_Idle(uiMonster, NO_TARGET);
+	Vec3 monster_pos = Animal->GetLocalPos();
 
 	for (auto& au : range_list) {
 		bool isConnect = CProcess::m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
 		if (!isConnect) continue;
-		CPacketMgr::GetInst()->Send_Pos_Packet(au, uiMonster);
+		CPacketMgr::GetInst()->Send_Pos_Packet(au, Animal_Index);
 	}
+
+	PushEvent_Animal_Behavior(Animal_Index);
 }
 
 void CMonsterProcess::InRangePlayer(concurrent_unordered_set<USHORT>& cusLogin, concurrent_unordered_set<USHORT>& cusList, USHORT uiMonster)
