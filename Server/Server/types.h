@@ -158,6 +158,7 @@ enum ITEM_TYPE {
 enum OBJ_STATE_TYPE {
 	OST_LIVE,
 	OST_DIE,
+	OST_REMOVE,
 	OST_END
 };
 

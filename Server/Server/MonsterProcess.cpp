@@ -45,6 +45,20 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 		return;
 	}
 	// ==============================================================
+	Vec3 vAnimalPos = Animal->GetLocalPos();
+	Animal->SetPrevPos(vAnimalPos);
+
+	Vec3 vTargetPos = Target->GetLocalPos();
+	float fAnimalSpeed = Animal->GetSpeed();
+	Vec3 vTargetRot = Target->GetLocalRot();
+
+	Vec3 vDir = XMVector3Normalize(vTargetPos - vAnimalPos);
+	vDir.y = 0.f;
+	vAnimalPos += vDir * fAnimalSpeed * 0.05f;
+
+
+	Animal->SetLocalRot(Vec3(-3.141592654f / 2.f, atan2(vDir.x, vDir.z) + 3.141592f, 0.f));
+
 	for (auto& user : rangeList) {
 		bool bConnect = m_pObjectPool->m_cumPlayerPool[user]->GetConnect();
 		if (!bConnect) continue;
@@ -473,7 +487,7 @@ void CMonsterProcess::DieEvent(USHORT Animal_Id)
 		Vec3 PlayerPos = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
 		if (ObjectRangeCheck(PlayerPos, AnimalPos, PLAYER_VIEW_RANGE)) {
 			CPacketMgr::Send_Animation_Packet(user, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::DIE);
-			CPacketMgr::Send_Remove_Packet(user, Animal_Id);
+			//CPacketMgr::Send_Remove_Packet(user, Animal_Id);
 		}
 	}
 

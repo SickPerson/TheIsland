@@ -97,7 +97,12 @@ void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId)
 		{
 			if (ObjectRangeCheck(vPos1, vPos2, ANIMAL_VIEW_RANGE) || bExit == true) {
 				if (Animal->GetHit() == true) {
-					PushEvent_Animal_Follow(Animal_Index, Target_Index);
+					if (CollisionSphere(Animal, Target, 0.3f)) {
+						PushEvent_Animal_Attack(Animal_Index, Target_Index);
+					}
+					else {
+						PushEvent_Animal_Follow(Animal_Index, Target_Index);
+					}
 				}
 				else {
 					PushEvent_Animal_Idle(Animal_Index, Target_Index);
@@ -213,20 +218,6 @@ void CProcess::PushEvnet_Animal_Damage(USHORT AnimalId, USHORT PlayerId)
 	ev.m_From_Object = PlayerId;
 	ev.m_eObjUpdate = AUT_DAMAGE;
 	ev.wakeup_time = high_resolution_clock::now() + 16ms;
-	PushEventQueue(ev);
-}
-
-void CProcess::PushEvent_Natural_Die(USHORT NaturalId)
-{
-	bool Destroy = m_pObjectPool->m_cumNaturalPool[NaturalId]->GetDestroy();
-	if (!Destroy) return;
-
-	Update_Event ev;
-	ev.m_Do_Object = NaturalId;
-	ev.m_EventType = EV_NATURAL_UPDATE;
-	ev.m_From_Object = NO_TARGET;
-	ev.m_eObjUpdate = NUT_DIE;
-	ev.wakeup_time = high_resolution_clock::now() + 1s;
 	PushEventQueue(ev);
 }
 
