@@ -80,8 +80,11 @@ void CObjectpool::Init_AnimalPool()
 			Vec3 vPos = Warlike_Pawner;
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
+#ifdef ANIMAL_TEST
 
+#else
 			Animal->SetLocalPos(vPos);
+#endif // ANIMAL_TEST
 		}
 		else if (i < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR)
 		{
@@ -111,7 +114,11 @@ void CObjectpool::Init_AnimalPool()
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
 
+#ifdef ANIMAL_TEST
+
+#else
 			Animal->SetLocalPos(vPos);
+#endif // ANIMAL_TEST
 		}
 		else if (i < BEGIN_ANIMAL + ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER)
 		{
@@ -164,10 +171,17 @@ void CObjectpool::Init_AnimalPool()
 			Vec3 vPos = Passive_Pawner;
 			vPos.x += cos(fRadian) * fDistance;
 			vPos.z += sin(fRadian) * fDistance;
+
+#ifdef ANIMAL_TEST
+#else
 			Animal->SetLocalPos(vPos);
+#endif // ANIMAL_TEST
 		}
-		//Animal->SetLocalPos(Vec3(16000.f, 200.f, 2000.f));
-		//Animal->SetLocalRot(Vec3(0.f, 0.f, 0.f));
+#ifdef ANIMAL_TEST
+		Animal->SetLocalPos(Vec3(16000.f, 200.f, 2000.f));
+#else
+
+#endif // ANIMAL_TEST
 		m_cumAnimalPool.insert(make_pair(i, Animal));
 	}
 	cout << "Aniaml : " << END_ANIMAL - BEGIN_ANIMAL << endl;

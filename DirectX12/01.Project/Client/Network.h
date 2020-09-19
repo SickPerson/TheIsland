@@ -49,7 +49,6 @@ public:
 	bool ConnectServer(string ipAddr);
 	void DisConnect(SOCKET socket);
 	void RecvPacket();
-	void ProcessPacket(char* _packet);
 
 public:
 	// - Player, Animal Common

@@ -274,7 +274,6 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 	}
 	else if ((UINT)ATTACK_TYPE::NATURAL == uiType)
 	{
-		cout << "NATURAL " << endl;
 		auto& User = m_pObjectPool->m_cumPlayerPool[playerId];
 		auto& Natural = m_pObjectPool->m_cumNaturalPool[attack_id];
 
@@ -285,7 +284,6 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 		if (N_eType == N_NONE)
 			return;
 
-		cout << "¿©±â" << endl;
 		float fHealth = Natural->GetHealth();
 		cout << "NATURAL HP : " << fHealth << endl;
 
@@ -298,6 +296,10 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 				fHealth = 0.f;
 				Natural->SetHealth(fHealth);
 
+				Vec3 OriginRot = User->GetLocalRot();
+
+				Natural->SetOriginRot(OriginRot);
+
 				concurrent_unordered_set<USHORT> loginList;
 
 				CopyBeforeLoginList(loginList);
@@ -305,6 +307,8 @@ void CPlayerProcess::PlayerAttack(USHORT playerId, char * packet)
 				for (auto& user : loginList) {
 					CPacketMgr::Send_Natural_Destroy_Packet(user, attack_id);
 				}
+
+				PushEvent_Natural_Respawn(attack_id);
 			}
 			else {
 				Natural->SetHealth(fHealth);
@@ -347,7 +351,6 @@ void CPlayerProcess::PlayerAnimation(USHORT playerId, char * packet)
 	cs_animation_packet* animation_packet = reinterpret_cast<cs_animation_packet*>(packet);
 
 	UINT uiType = animation_packet->uiType;
-
 
 	concurrent_unordered_set<USHORT>	UserViewList;
 	m_pObjectPool->m_cumPlayerPool[User]->CopyUserViewList(UserViewList);

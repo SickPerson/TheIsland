@@ -314,6 +314,7 @@ void CNetwork::Recv_Destroy_Natural_Packet(char * packet)
 {
 	sc_destroy_natural_packet* destroy_natural_packet = reinterpret_cast<sc_destroy_natural_packet*>(packet);
 	USHORT natural_id = destroy_natural_packet->natural_id;
+	Vec3	Rot = destroy_natural_packet->vOriginRot;
 
 	// Á¦°Å
 	dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->DestroyNatural(natural_id);

@@ -236,8 +236,8 @@ void CPacketMgr::Send_Natural_Destroy_Packet(USHORT PlayerId, USHORT NaturalId)
 	packet.size = sizeof(sc_destroy_natural_packet);
 	packet.type = SC_DESTROY_NATURAL;
 	packet.natural_id = NaturalId;
+	packet.vOriginRot = CProcess::m_pObjectPool->m_cumNaturalPool[NaturalId]->GetOriginRot();
 
-	cout << "NATURAL DESTROY : " << packet.natural_id << endl;
 	Send_Packet(PlayerId, &packet);
 
 }
