@@ -192,6 +192,8 @@ struct sc_install_housing_packet
 	char	type;
 	USHORT	house_id;
 
+	UINT	house_grade;
+
 	UINT	housing_type;
 
 	Vec3	vLocalPos;
@@ -222,6 +224,7 @@ struct sc_upgrade_housing_packet
 	char	size;
 	char	type;
 	USHORT	house_id;
+	UINT	house_grade;
 };
 // [ Natural ]
 struct sc_put_natural_packet

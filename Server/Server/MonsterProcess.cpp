@@ -45,6 +45,10 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 		return;
 	}
 	// ==============================================================
+	// Animation
+	Animal->SetAnimation((UINT)ANIMAL_ANIMATION_TYPE::ATTACK);
+	
+
 	Vec3 vAnimalPos = Animal->GetLocalPos();
 	Animal->SetPrevPos(vAnimalPos);
 
@@ -83,7 +87,7 @@ void CMonsterProcess::AttackEvent(USHORT Animal_Id, USHORT usTarget)
 		Target->SetHealth(fTarget_AfterHp);
 		Target->SetState(OST_DIE);
 		CPacketMgr::Send_Status_Player_Packet(Target_Index);
-		//CPacketMgr::Send_Death_Player_Packet(Target_Index);
+		CPacketMgr::Send_Death_Player_Packet(Target_Index);
 	}
 	else
 	{
@@ -169,6 +173,8 @@ void CMonsterProcess::FollowEvent(USHORT AnimalId, USHORT usTarget)
 		return;
 	}
 	// ==============================================================
+	// Animation
+	Animal->SetAnimation((UINT)ANIMAL_ANIMATION_TYPE::WALK);
 	// Follow
 	Vec3 vAnimalPos = Animal->GetLocalPos();
 	Animal->SetPrevPos(vAnimalPos);
@@ -270,6 +276,8 @@ void CMonsterProcess::EvastionEvent(USHORT AnimalId, USHORT usTarget)
 		return;
 	}
 	// ==============================================================
+	// Animation
+	Animal->SetAnimation((UINT)ANIMAL_ANIMATION_TYPE::RUN);
 	// Evastion
 	Vec3 vAnimalPos = Animal->GetLocalPos();
 	Animal->SetPrevPos(vAnimalPos);
@@ -403,9 +411,13 @@ void CMonsterProcess::IdleEvent(USHORT AnimalId)
 		bool bIdle = Animal->GetIdle();
 
 		if (bIdle) {
-
+			// Animation
+			Animal->SetAnimation((UINT)ANIMAL_ANIMATION_TYPE::IDLE);
 		}
 		else {
+			// Animation
+			Animal->SetAnimation((UINT)ANIMAL_ANIMATION_TYPE::WALK);
+
 			Vec3	vPos = Animal->GetLocalPos();
 			Animal->SetPrevPos(vPos);
 
@@ -478,6 +490,9 @@ void CMonsterProcess::DieEvent(USHORT Animal_Id)
 	if (Animal->GetState() == OST_LIVE)
 		return;
 
+	// Animation
+	Animal->SetAnimation((UINT)ANIMAL_ANIMATION_TYPE::DIE);
+
 	Vec3 AnimalPos = Animal->GetLocalPos();
 	Animal->SetPrevPos(AnimalPos);
 
@@ -487,11 +502,34 @@ void CMonsterProcess::DieEvent(USHORT Animal_Id)
 		Vec3 PlayerPos = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
 		if (ObjectRangeCheck(PlayerPos, AnimalPos, PLAYER_VIEW_RANGE)) {
 			CPacketMgr::Send_Animation_Packet(user, Animal_Id, (UINT)ANIMAL_ANIMATION_TYPE::DIE);
-			//CPacketMgr::Send_Remove_Packet(user, Animal_Id);
 		}
 	}
 
-	PushEvent_Animal_Respawn(Animal_Id);
+	PushEvent_Animal_Remove(Animal_Id);
+}
+
+void CMonsterProcess::RemoveEvent(USHORT AnimalId)
+{
+	auto& Animal = m_pObjectPool->m_cumAnimalPool[AnimalId];
+
+	char eState = Animal->GetState();
+	if (eState == OST_LIVE || eState == OST_REMOVE)
+		return;
+
+	Vec3 AnimalPos = Animal->GetLocalPos();
+	Animal->SetState(OST_REMOVE);
+
+	concurrent_unordered_set<USHORT> login_list;
+	CopyBeforeLoginList(login_list);
+	for (auto& user : login_list) {
+		bool bConnect = m_pObjectPool->m_cumPlayerPool[user]->GetConnect();
+		if (!bConnect) continue;
+		Vec3 PlayerPos = m_pObjectPool->m_cumPlayerPool[user]->GetLocalPos();
+		if (ObjectRangeCheck(PlayerPos, AnimalPos, PLAYER_VIEW_RANGE)) {
+			CPacketMgr::Send_Remove_Packet(user, AnimalId);
+		}
+	}
+	PushEvent_Animal_Respawn(AnimalId);
 }
 
 void CMonsterProcess::RespawnEvent(USHORT uiMonster)

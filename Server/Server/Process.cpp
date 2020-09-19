@@ -208,16 +208,14 @@ void CProcess::PushEvent_Animal_Respawn(USHORT AnimalId)
 	PushEventQueue(ev);
 }
 
-void CProcess::PushEvnet_Animal_Damage(USHORT AnimalId, USHORT PlayerId)
+void CProcess::PushEvent_Animal_Remove(USHORT AnimalId)
 {
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetState(AUT_DAMAGE);
-	m_pObjectPool->m_cumAnimalPool[AnimalId]->SetTarget(PlayerId);
 	Update_Event ev;
 	ev.m_Do_Object = AnimalId;
 	ev.m_EventType = EV_MONSTER_UPDATE;
-	ev.m_From_Object = PlayerId;
-	ev.m_eObjUpdate = AUT_DAMAGE;
-	ev.wakeup_time = high_resolution_clock::now() + 16ms;
+	ev.m_From_Object = NO_TARGET;
+	ev.m_eObjUpdate = AUT_REMOVE;
+	ev.wakeup_time = high_resolution_clock::now() + 10s;
 	PushEventQueue(ev);
 }
 

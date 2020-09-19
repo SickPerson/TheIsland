@@ -2,6 +2,8 @@
 #include "NaturalScript.h"
 
 #include <Engine/ParticleSystem.h>
+#include <Engine/MeshRender.h>
+#include <Engine/GameObject.h>
 
 #include <iostream>
 

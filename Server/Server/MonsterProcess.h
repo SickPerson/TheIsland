@@ -24,9 +24,10 @@ public:
 			IdleEvent(AnimalId); };
 		m_fpMonsterUpdate[AUT_DIE] = [&](USHORT AnimalId, USHORT uiTarget) {
 			DieEvent(AnimalId); };
+		m_fpMonsterUpdate[AUT_REMOVE] = [&](USHORT AnimalId, USHORT usTarget) {
+			RemoveEvent(AnimalId);};
 		m_fpMonsterUpdate[AUT_RESPAWN] = [&](USHORT AnimalId, USHORT usTarget) {
-			RespawnEvent(AnimalId);
-		};
+			RespawnEvent(AnimalId);};
 	}
 
 public:
@@ -40,6 +41,7 @@ public:
 	void EvastionEvent(USHORT AnimalId, USHORT uiTarget);
 	void IdleEvent(USHORT AnimalId);
 	void DieEvent(USHORT AnimalId);
+	void RemoveEvent(USHORT AnimalId);
 	void RespawnEvent(USHORT AnimalId);
 
 

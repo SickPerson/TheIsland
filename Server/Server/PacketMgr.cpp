@@ -167,7 +167,9 @@ void CPacketMgr::Send_Death_Player_Packet(USHORT playerId)
 	packet.fHealth = 100.f;
 	packet.fHungry = 100.f;
 	packet.fStamina = 100.f;
-	packet.vLocalPos;
+	packet.id = playerId;
+	packet.vLocalPos = Vec3(18000.f, 200.f, 2000.f);
+	Send_Packet(playerId, &packet);
 }
 
 void CPacketMgr::Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id)
@@ -177,6 +179,7 @@ void CPacketMgr::Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id
 	packet.size = sizeof(sc_install_housing_packet);
 	packet.type = SC_INSTALL_HOUSE;
 	packet.house_id = housing_Id;
+	packet.house_grade = CProcess::m_pObjectPool->m_cumHousingPool[housing_Id]->GetUpgrade();
 
 	packet.housing_type =	CProcess::m_pObjectPool->m_cumHousingPool[housing_Id]->GetType();
 	packet.vLocalPos =		CProcess::m_pObjectPool->m_cumHousingPool[housing_Id]->GetLocalPos();
@@ -211,6 +214,7 @@ void CPacketMgr::Send_Upgrade_Housing_Packet(USHORT PlayerId, USHORT house_Id)
 	packet.size = sizeof(sc_upgrade_housing_packet);
 	packet.type = SC_UPGRADE_HOUSE;
 	packet.house_id = house_Id;
+	packet.house_grade = CProcess::m_pObjectPool->m_cumHousingPool[house_Id]->GetUpgrade();
 
 	Send_Packet(PlayerId, &packet);
 }

@@ -170,10 +170,9 @@ public: // Animal
 	void PushEvent_Animal_Idle(USHORT AnimalId, USHORT PlayerId);
 	void PushEvent_Animal_Die(USHORT AnimalId, USHORT PlayerId);
 	void PushEvent_Animal_Respawn(USHORT AnimalId);
-	void PushEvnet_Animal_Damage(USHORT AnimalId, USHORT PlayerId);
+	void PushEvent_Animal_Remove(USHORT AnimalId);
 
 public: // Natural
-	void PushEvent_Natural_Die(USHORT NaturalId, USHORT playerId);
 	void PushEvent_Natural_Respawn(USHORT NaturalId);
 
 public: // Etc

@@ -42,9 +42,9 @@ void CObjectpool::Init_PlayerPool()
 
 void CObjectpool::Init_AnimalPool()
 {
-	Vec3 Evastion_Pawner = Vec3(10000.f, 0.f, 10000.f);
-	Vec3 Warlike_Pawner = Vec3(8100.f, 0.f, 16200.f);
-	Vec3 Passive_Pawner = Vec3(6900.f, 0.f, 5285.f);
+	Evastion_Pawner = Vec3(10000.f, 0.f, 10000.f);
+	Warlike_Pawner = Vec3(8100.f, 0.f, 16200.f);
+	Passive_Pawner = Vec3(6900.f, 0.f, 5285.f);
 
 	float fRadius;
 
@@ -407,6 +407,49 @@ void CObjectpool::Upgrade_House(USHORT usIndex)
 		m_cumHousingPool[usIndex]->SetUpgrade();
 }
 
+void CObjectpool::Init_Animal(USHORT usIndex)
+{
+	auto& Animal = m_cumAnimalPool[usIndex];
+	Animal->SetWakeUp(false);
+	Animal->SetState(OBJ_STATE_TYPE::OST_LIVE);
+
+	char eType = Animal->GetKind();
+
+	switch (eType)
+	{
+	case ANIMAL_TYPE::A_BEAR:
+	{
+		{
+			tAnimalStatus tStatus;
+			tStatus.fHealth = 200.f;
+			tStatus.fStamina = 100.f;
+			tStatus.fDamage = 20.f;
+			tStatus.fSpeed = 150.f;
+			tStatus.eType = BEHAVIOR_TYPE::B_WARLIKE;
+			tStatus.eKind = ANIMAL_TYPE::A_BEAR;
+
+			Animal->SetAnimalStatus(tStatus);
+		}
+	}
+		break;
+	case ANIMAL_TYPE::A_BOAR:
+	{
+
+	}
+		break;
+	case ANIMAL_TYPE::A_DEER:
+	{
+
+	}
+		break;
+	case ANIMAL_TYPE::A_WOLF:
+	{
+
+	}
+		break;
+	}
+}
+
 void CObjectpool::Animal_Collision(USHORT usIndex)
 {
 	auto&	Animal = m_cumAnimalPool[usIndex];
@@ -431,4 +474,24 @@ void CObjectpool::Animal_Collision(USHORT usIndex)
 			Animal->SetLocalPos(vAnimalPos);
 		}
 	}
+}
+
+void CObjectpool::Player_Collision(USHORT usIndex)
+{
+	auto& User = m_cumPlayerPool[usIndex];
+
+	//// NATURAL COLLISION
+	//for (auto& natural : m_cumNaturalPool) {
+	//	char eType = natural.second->GetType();
+	//	if (NATURAL_TYPE::N_BUSH == eType) {
+	//		continue;
+	//	}
+	//	bool bDestroy = natural.second->GetDestroy();
+	//	if (bDestroy) continue;
+
+	//	if (CollisionSphere(User, natural)) {
+	//		Vec3 vNaturalPos = natural.second->GetLocalPos();
+	//		Vec3 vPlayerPos = User->GetLocalPos();
+	//	}
+	//}
 }

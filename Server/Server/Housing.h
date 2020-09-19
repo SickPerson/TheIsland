@@ -13,7 +13,7 @@ public:
 	USHORT			m_usIndex;
 	HOUSING_TYPE	m_eType;
 	bool			m_bInstall;
-	UINT			m_iGrade;
+	UINT			m_uiGrade;
 
 private:
 	shared_mutex m_smHousingSharedMutex;
