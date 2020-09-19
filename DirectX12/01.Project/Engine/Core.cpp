@@ -134,12 +134,12 @@ void CCore::Progress()
 	CTimeMgr::GetInst()->Update();
 	CSound::g_pFMOD->update();
 
-	CEventMgr::GetInst()->clear();
 	{
 		CSceneMgr::GetInst()->Update();
 		CRenderMgr::GetInst()->Render();
 	}
 	CEventMgr::GetInst()->Update();
+	CEventMgr::GetInst()->clear(); // 이벤트 작동후 이벤트큐 초기화
 
 	// 인스턴싱 버퍼 클리어
 	CInstancingMgr::GetInst()->Clear();

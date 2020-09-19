@@ -1834,7 +1834,6 @@ void CIngameScene::AnimalRotUpdate(USHORT usId, Vec3 vRot)
 
 void CIngameScene::AnimalDestory( USHORT uiId )
 {
-	cout << "ANIMAL DESTROY" << endl;
 	auto p = m_mapAnimals.find( uiId );
 	if ( p == m_mapAnimals.end() )
 	{
@@ -1844,10 +1843,11 @@ void CIngameScene::AnimalDestory( USHORT uiId )
 
 	tEvent tEv;
 	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
-	tEv.wParam = ( DWORD_PTR )( m_mapAnimals[uiId] );
+	tEv.wParam = ( DWORD_PTR )( p->second );
+	// p->second = m_mapAnimals[uiId]
 	CEventMgr::GetInst()->AddEvent( tEv );
 
-	m_mapAnimals.erase( uiId );
+	m_mapAnimals.erase( p );
 }
 
 void CIngameScene::AnimalAnimationUpdate( USHORT uiId, UINT uiType )

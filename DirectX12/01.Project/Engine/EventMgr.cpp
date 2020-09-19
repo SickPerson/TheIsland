@@ -37,7 +37,7 @@ void CEventMgr::Execute(tEvent & _event)
 {
 	switch (_event.eType)
 	{
-	case EVENT_TYPE::CREATE_OBJECT:		
+	case EVENT_TYPE::CREATE_OBJECT:
 		CSceneMgr::GetInst()->GetCurScene()->AddGameObject((int)_event.lParam, (CGameObject*)_event.wParam, true);
 		break;
 
@@ -57,13 +57,13 @@ void CEventMgr::Execute(tEvent & _event)
 		((CGameObject*)_event.wParam)->ClearParent();
 		break;
 
-	case EVENT_TYPE::TRANSFER_LAYER:		
+	case EVENT_TYPE::TRANSFER_LAYER:
 	{
 		bool bMoveAll = LOWORD(_event.lParam);
-		int iLayerIdx = HIWORD(_event.lParam);		
-		CSceneMgr::GetInst()->GetCurScene()->AddGameObject(iLayerIdx, ((CGameObject*)_event.wParam), bMoveAll);		
+		int iLayerIdx = HIWORD(_event.lParam);
+		CSceneMgr::GetInst()->GetCurScene()->AddGameObject(iLayerIdx, ((CGameObject*)_event.wParam), bMoveAll);
 	}
-		break;
+	break;
 
 	case EVENT_TYPE::ACTIVATE_GAMEOBJECT:
 		((CGameObject*)_event.wParam)->enable();

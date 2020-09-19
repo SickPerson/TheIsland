@@ -80,21 +80,20 @@ void CSceneMgr::Init()
 }
 
 void CSceneMgr::Update()
-{		
+{	
+
 	m_pCurScene->Update();
 	m_pCurScene->LateUpdate();
 
 	// Rendermgr 카메라 초기화
 	CRenderMgr::GetInst()->ClearCamera();
 
-	m_pCurScene->FinalUpdate();
-	   
+	m_pCurScene->FinalUpdate(); 
 #ifdef CHECK_COLLISION
 	// 충돌 처리
 	CCollisionMgr::GetInst()->Update();
 #else
 #endif // CHECK_COLLISION
-
 }
 
 void CSceneMgr::Update_tool()
