@@ -469,6 +469,24 @@ void CPlayerProcess::PlayerRemoveHousing(USHORT playerId, char * packet)
 	}
 }
 
+void CPlayerProcess::PlayerUpgradeHousing(USHORT playerId, char * packet)
+{
+	cs_upgrade_housing_packet* upgrade_housing_packet = reinterpret_cast<cs_upgrade_housing_packet*>(packet);
+
+	USHORT& house_id = upgrade_housing_packet->house_id;
+
+	concurrent_unordered_set<USHORT>	loginList;
+
+	CopyBeforeLoginList(loginList);
+
+	for (auto& au : loginList) {
+		bool bConnect = m_pObjectPool->m_cumPlayerPool[au]->GetConnect();
+		if (!bConnect) continue;
+		if (au == playerId)	continue;
+		CPacketMgr::Send_Upgrade_Housing_Packet(au, house_id);
+	}
+}
+
 void CPlayerProcess::PlayerNaturalAttack(USHORT playerId, char * packet)
 {
 	cs_natural_attack_packet* natural_attack_packet = reinterpret_cast<cs_natural_attack_packet*>(packet);

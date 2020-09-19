@@ -1840,13 +1840,11 @@ void CIngameScene::AnimalDestory( USHORT uiId )
 		// 없는거 삭제하는 경우
 		return;
 	}
-
 	tEvent tEv;
 	tEv.eType = EVENT_TYPE::DELETE_OBJECT;
 	tEv.wParam = ( DWORD_PTR )( p->second );
 	// p->second = m_mapAnimals[uiId]
 	CEventMgr::GetInst()->AddEvent( tEv );
-
 	m_mapAnimals.erase( p );
 }
 

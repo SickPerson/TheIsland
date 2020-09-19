@@ -19,44 +19,44 @@ CEtcProcess::~CEtcProcess()
 	
 }
 
-void CEtcProcess::Animal_Collision_Event()
-{
-	for (auto& animal : m_pObjectPool->m_cumAnimalPool) {
-		bool bWakeUp = animal.second->GetWakeUp();
-		if (!bWakeUp) continue;
-		// - Player Collision
-		// - Natural Collision
-		for (auto& natural : m_pObjectPool->m_cumNaturalPool) {
-			char eType = natural.second->GetType();
-
-			if (NATURAL_TYPE::N_BUSH == eType)
-				continue;
-
-			if (CollisionSphere(animal, natural)) {
-				Vec3 vNaturalPos = natural.second->GetLocalPos();
-				Vec3 vAnimalPos = animal.second->GetLocalPos();
-				Vec3 vDir = XMVector3Normalize(vAnimalPos - vNaturalPos);
-				float fSpeed = animal.second->GetSpeed();
-				vDir.y = 0.f;
-				vAnimalPos += vDir * fSpeed * 0.05f;
-				animal.second->SetLocalPos(vAnimalPos);
-			}
-		}
-		// - House Collision
-		for (auto& house : m_pObjectPool->m_cumHousingPool) {
-			char eType = house.second->GetType();
-			if (eType >= HOUSING_TYPE::HOUSING_FOUNDATION && eType < HOUSING_TYPE::HOUSING_END) {
-				bool bCollision = false;
-				bCollision = CollisionHouse(animal, house, eType);
-				if (bCollision){
-					Vec3 vPrevPos = animal.second->GetPrevPos();
-					animal.second->SetLocalPos(vPrevPos);
-				}
-			}
-		}
-	}
-	PushEvent_Etc_Animal_Collision();
-}
+//void CEtcProcess::Animal_Collision_Event()
+//{
+//	for (auto& animal : m_pObjectPool->m_cumAnimalPool) {
+//		bool bWakeUp = animal.second->GetWakeUp();
+//		if (!bWakeUp) continue;
+//		// - Player Collision
+//		// - Natural Collision
+//		for (auto& natural : m_pObjectPool->m_cumNaturalPool) {
+//			char eType = natural.second->GetType();
+//
+//			if (NATURAL_TYPE::N_BUSH == eType)
+//				continue;
+//
+//			if (CollisionSphere(animal, natural)) {
+//				Vec3 vNaturalPos = natural.second->GetLocalPos();
+//				Vec3 vAnimalPos = animal.second->GetLocalPos();
+//				Vec3 vDir = XMVector3Normalize(vAnimalPos - vNaturalPos);
+//				float fSpeed = animal.second->GetSpeed();
+//				vDir.y = 0.f;
+//				vAnimalPos += vDir * fSpeed * 0.05f;
+//				animal.second->SetLocalPos(vAnimalPos);
+//			}
+//		}
+//		// - House Collision
+//		for (auto& house : m_pObjectPool->m_cumHousingPool) {
+//			char eType = house.second->GetType();
+//			if (eType >= HOUSING_TYPE::HOUSING_FOUNDATION && eType < HOUSING_TYPE::HOUSING_END) {
+//				bool bCollision = false;
+//				bCollision = CollisionHouse(animal, house, eType);
+//				if (bCollision){
+//					Vec3 vPrevPos = animal.second->GetPrevPos();
+//					animal.second->SetLocalPos(vPrevPos);
+//				}
+//			}
+//		}
+//	}
+//	PushEvent_Etc_Animal_Collision();
+//}
 
 void CEtcProcess::Rot_Event()
 {

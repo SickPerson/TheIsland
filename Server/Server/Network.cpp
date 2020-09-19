@@ -271,8 +271,9 @@ void CNetwork::WorkerThread()
 			{
 			case EUT_USERINFO_SAVE:
 				m_pEtcProcess->UserInfo_Save_Event();
-			case EUT_ANIMAL_COLLISION:
-				m_pEtcProcess->Animal_Collision_Event();
+				break;
+			//case EUT_ANIMAL_COLLISION:
+				//m_pEtcProcess->Animal_Collision_Event();
 			case EUT_ROT:
 				m_pEtcProcess->Rot_Event();
 				break;

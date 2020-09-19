@@ -53,6 +53,9 @@ public:
 		m_fpPacketProcess[CS_HOUSING_REMOVE] = [&](USHORT playerId, char* packet) {
 			PlayerRemoveHousing(playerId, packet);
 		};
+		m_fpPacketProcess[CS_HOUSING_UPGRADE] = [&](USHORT playerId, char* packet) {
+			PlayerUpgradeHousing(playerId, packet);
+		};
 		m_fpPacketProcess[CS_ATTACK] = [&](USHORT playerId, char* packet) {
 			PlayerAttack(playerId, packet);
 		};
@@ -87,6 +90,8 @@ public:
 
 	void PlayerInstallHousing(USHORT playerId, char* packet);
 	void PlayerRemoveHousing(USHORT playerId, char* packet);
+	void PlayerUpgradeHousing(USHORT playerId, char* packet);
+
 	void PlayerNaturalAttack(USHORT playerId, char* packet);
 public:
 	void InitViewList(USHORT playerId);

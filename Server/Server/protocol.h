@@ -8,10 +8,10 @@ constexpr	int	MAX_USER = 100;
 constexpr	int	NO_TARGET = 9999;
 
 constexpr	int	BEGIN_ANIMAL = MAX_USER;
-constexpr	int	ANIMAL_BEAR = 0;
-constexpr	int	ANIMAL_BOAR = 0;
-constexpr	int	ANIMAL_DEER = 1;
-constexpr	int	ANIMAL_WOLF = 0;
+constexpr	int	ANIMAL_BEAR = 10;
+constexpr	int	ANIMAL_BOAR = 5;
+constexpr	int	ANIMAL_DEER = 10;
+constexpr	int	ANIMAL_WOLF = 5;
 constexpr	int	MAX_ANIMAL = ANIMAL_BEAR + ANIMAL_BOAR + ANIMAL_DEER + ANIMAL_WOLF;
 constexpr	int	END_ANIMAL = BEGIN_ANIMAL + MAX_ANIMAL;
 
@@ -43,6 +43,7 @@ enum CS_PACKET_TYPE {
 	CS_COLLISION,
 	CS_HOUSING_INSTALL,
 	CS_HOUSING_REMOVE,
+	CS_HOUSING_UPGRADE,
 	CS_ATTACK,
 	CS_ANIMATION,
 	CS_GET_ITEM,
@@ -68,6 +69,7 @@ enum SC_PACKET_TYPE {
 	// - Player
 	SC_STATUS_PLAYER,
 	SC_CHAT,
+	SC_DEATH_PLAYER,
 	// - Natural
 	SC_PUT_NATURAL,
 	SC_DESTROY_NATURAL,
@@ -75,6 +77,7 @@ enum SC_PACKET_TYPE {
 	SC_INSTALL_HOUSE,
 	SC_REMOVE_HOUSE,
 	SC_CHECK_HOUSE,
+	SC_UPGRADE_HOUSE,
 	// - Item
 	SC_ADD_ITEM,
 	SC_REMOVE_ITEM,
@@ -163,7 +166,6 @@ struct sc_death_player_packet {
 	float	fHungry;
 
 	Vec3	vLocalPos;
-	Vec3	vLocalRot;
 };
 
 struct sc_status_player_packet{
@@ -215,6 +217,12 @@ struct sc_check_housing_packet
 	bool	bCheck;
 };
 
+struct sc_upgrade_housing_packet
+{
+	char	size;
+	char	type;
+	USHORT	house_id;
+};
 // [ Natural ]
 struct sc_put_natural_packet
 {
@@ -344,6 +352,13 @@ struct cs_install_housing_packet
 };
 
 struct cs_remove_housing_packet
+{
+	char	size;
+	char	type;
+	USHORT	house_id;
+};
+
+struct cs_upgrade_housing_packet
 {
 	char	size;
 	char	type;

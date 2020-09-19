@@ -72,6 +72,7 @@ void CNetwork::BindfpPacket()
 	m_fpPacketProcess[SC_INSTALL_HOUSE] = [&](char* packet) {Recv_Install_Housing_Packet(packet); };
 	m_fpPacketProcess[SC_REMOVE_HOUSE] = [&](char* packet) {Recv_Remove_Housing_Packet(packet); };
 	m_fpPacketProcess[SC_CHECK_HOUSE] = [&](char* packet) {Recv_Check_Housing_Packet(packet); };
+	m_fpPacketProcess[SC_UPGRADE_HOUSE] = [&](char* packet) {Recv_Upgrade_Housing_Packet(packet); };
 	// - Item
 	m_fpPacketProcess[SC_ADD_ITEM] = [&](char* packet) {};
 	m_fpPacketProcess[SC_REMOVE_ITEM] = [&](char* packet) {};
@@ -207,6 +208,7 @@ void CNetwork::Recv_Remove_Packet(char * packet)
 	sc_remove_packet* remove_packet = reinterpret_cast<sc_remove_packet*>(packet);
 	USHORT usId = remove_packet->usId;
 
+	cout << usId << endl;
 	if(usId < MAX_USER)
 		dynamic_cast<CIngameScene*>(pScene->GetSceneScript())->PlayerDestroy(usId);
 	else if(usId < END_ANIMAL)
@@ -344,6 +346,12 @@ void CNetwork::Recv_Check_Housing_Packet(char * packet)
 	sc_check_housing_packet* check_housing_packet = reinterpret_cast<sc_check_housing_packet*>(packet);
 	bool bCheck = check_housing_packet->bCheck;
 	m_bHousingCheck = bCheck;
+}
+
+void CNetwork::Recv_Upgrade_Housing_Packet(char * packet)
+{
+	sc_upgrade_housing_packet*	upgrade_housing_packet = reinterpret_cast<sc_upgrade_housing_packet*>(packet);
+	USHORT house_id = upgrade_housing_packet->house_id;
 }
 
 void CNetwork::Recv_Add_Item_Packet(char * packet)

@@ -27,7 +27,7 @@ public:
 	static void Send_Install_Housing_Packet(USHORT player_Id, USHORT housing_Id);
 	static void Send_Remove_Housing_Packet(USHORT player_Id, USHORT housing_Id);
 	static void Send_Check_Housing_Packet(USHORT player_Id, USHORT housing_Id, bool bCheck);
-
+	static void Send_Upgrade_Housing_Packet(USHORT player_Id, USHORT house_Id);
 public:
 	static void Send_Put_Natural_Packet(USHORT PlayerId, USHORT NaturalId);
 	static void Send_Natural_Destroy_Packet(USHORT PlayerId, USHORT NaturalId);
