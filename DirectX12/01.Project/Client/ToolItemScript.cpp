@@ -248,11 +248,11 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 		{
 			if (!pObj->GetScript<CAnimalScript>()->GetAnimalDead())
 			{
-				pObj->GetScript<CAnimalScript>()->Damage(pHost, m_fDamage);
-
 #ifdef NETWORK_ON	
 				CPacketMgr::GetInst()->Send_Attack_Player_Packet(0, pObj->GetScript<CAnimalScript>()->GetIndex(), m_eItemType);
+				pObj->GetScript<CAnimalScript>()->Damage(pHost, 0);
 #else
+				pObj->GetScript<CAnimalScript>()->Damage(pHost, m_fDamage);
 #endif NETWORK_ON
 			}
 			else
@@ -288,10 +288,11 @@ UINT CToolItemScript::Use_Left(CGameObject* pHost, CGameObject* pObj, int num)
 				{
 					return 0;
 				}
-				pObj->GetScript<CNaturalScript>()->Damage(pHost, m_fDamage);
 #ifdef NETWORK_ON	
 				CPacketMgr::GetInst()->Send_Attack_Player_Packet( 1, pObj->GetScript<CNaturalScript>()->GetIndex(), m_eItemType);
+				pObj->GetScript<CNaturalScript>()->Damage(pHost, 0);
 #else
+				pObj->GetScript<CNaturalScript>()->Damage(pHost, m_fDamage);
 #endif NETWORK_ON
 				if (eType == NATURAL_TREE)
 				{
