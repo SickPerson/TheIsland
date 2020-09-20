@@ -29,7 +29,7 @@ void CHousing::SetInstall(bool bInstall)
 void CHousing::SetUpgrade()
 {
 	unique_lock<shared_mutex>	lock(m_smHousingSharedMutex);
-	++m_iGrade;
+	++m_uiGrade;
 }
 
 const HOUSING_TYPE & CHousing::GetType()
@@ -47,5 +47,5 @@ const bool & CHousing::GetInstall()
 const int & CHousing::GetUpgrade()
 {
 	shared_lock<shared_mutex>	lock(m_smHousingSharedMutex);
-	return m_iGrade;
+	return m_uiGrade;
 }

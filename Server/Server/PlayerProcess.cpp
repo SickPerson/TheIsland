@@ -457,7 +457,7 @@ void CPlayerProcess::PlayerRemoveHousing(USHORT playerId, char * packet)
 
 	USHORT house_id = remove_housing_packet->house_id;
 
-	//m_pObjectPool->Remove_House(house_id);
+	m_pObjectPool->m_cumHousingPool[house_id]->SetInstall(false);
 
 	concurrent_unordered_set<USHORT> loginList;
 
@@ -477,6 +477,8 @@ void CPlayerProcess::PlayerUpgradeHousing(USHORT playerId, char * packet)
 	cs_upgrade_housing_packet* upgrade_housing_packet = reinterpret_cast<cs_upgrade_housing_packet*>(packet);
 
 	USHORT& house_id = upgrade_housing_packet->house_id;
+
+	m_pObjectPool->m_cumHousingPool[house_id]->SetUpgrade();
 
 	concurrent_unordered_set<USHORT>	loginList;
 
@@ -531,14 +533,12 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 	// [ Add Animal List ]
 	for (auto& au : m_pObjectPool->m_cumAnimalPool) {
 		char eType = au.second->GetState();
-		if (eType == OBJ_STATE_TYPE::OST_DIE) continue;
+		if (eType == OBJ_STATE_TYPE::OST_REMOVE) continue;
 
 		Vec3 Animal_Pos = au.second->GetLocalPos();
 
 		if (ObjectRangeCheck(player_pos, Animal_Pos, PLAYER_VIEW_RANGE))
 		{
-			if (au.second->GetState() == OST_DIE)
-				continue;
 			if (!au.second->GetWakeUp())
 			{
 				au.second->SetWakeUp(true);
@@ -548,6 +548,11 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 				PushEvent_Animal_Behavior(au.first);
 			}
 			CPacketMgr::Send_Pos_Packet(playerId, au.first);
+			//
+			UINT uiAni = au.second->GetAnimation();
+			if (uiAni != (UINT)ANIMAL_ANIMATION_TYPE::IDLE)
+				CPacketMgr::Send_Animation_Packet(playerId, au.first, uiAni);
+
 		}
 	}
 
@@ -571,16 +576,17 @@ void CPlayerProcess::InitViewList(USHORT playerId)
 void CPlayerProcess::UpdateViewList(USHORT playerId)
 {
 	// [ Initalize ]
-	USHORT user = playerId;
+	USHORT& User_Index = playerId;
+	auto& user = m_pObjectPool->m_cumPlayerPool[User_Index];
 
 	concurrent_unordered_set<USHORT>	loginList;
 	concurrent_unordered_set<USHORT>	beforeViewList; // 이동하기 전의 ViewList
 	concurrent_unordered_set<USHORT>	afterViewList; // 이동 후의 ViewList
 
 	CopyBeforeLoginList(loginList);
-	m_pObjectPool->m_cumPlayerPool[user]->CopyViewList(beforeViewList);
+	m_pObjectPool->m_cumPlayerPool[User_Index]->CopyViewList(beforeViewList);
 
-	Vec3 vPlayer_Pos = m_pObjectPool->m_cumPlayerPool[playerId]->GetLocalPos();
+	Vec3 vPlayer_Pos = user->GetLocalPos();
 
 	// [ Update Player List ]
 	// Player ViewList Update
@@ -600,7 +606,7 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 	for (auto& animal : m_pObjectPool->m_cumAnimalPool)
 	{
 		char eType = animal.second->GetState();
-		if (eType == OBJ_STATE_TYPE::OST_DIE) 
+		if (eType == OBJ_STATE_TYPE::OST_REMOVE) 
 			continue;
 		Vec3 Other_Pos = animal.second->GetLocalPos();
 		if (ObjectRangeCheck(vPlayer_Pos, Other_Pos, PLAYER_VIEW_RANGE))
@@ -610,7 +616,7 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 	}
 
 	// - Player Pos Send
-	CPacketMgr::Send_Pos_Packet(user, user);
+	CPacketMgr::Send_Pos_Packet(User_Index, User_Index);
 
 	// [ Before ViewList Obejct Remove ]
 	for (auto before : beforeViewList)
@@ -619,12 +625,12 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 		{
 			if (before < MAX_USER) // Object가 플레이어일 경우
 			{
-				CPacketMgr::Send_Remove_Packet(user, before);
-				CPacketMgr::Send_Remove_Packet(before, user);
+				CPacketMgr::Send_Remove_Packet(User_Index, before);
+				CPacketMgr::Send_Remove_Packet(before, User_Index);
 			}
 			else if (before < END_ANIMAL) // Object가 동물일 경우
 			{
-				CPacketMgr::Send_Remove_Packet(user, before);
+				CPacketMgr::Send_Remove_Packet(User_Index, before);
 			}
 			else
 			{
@@ -641,12 +647,12 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 		{
 			if (after < MAX_USER)
 			{
-				CPacketMgr::Send_Pos_Packet(user, after);
-				CPacketMgr::Send_Pos_Packet(after, user);
+				CPacketMgr::Send_Pos_Packet(User_Index, after);
+				CPacketMgr::Send_Pos_Packet(after, User_Index);
 			}
 			else
 			{
-				if (OST_DIE == m_pObjectPool->m_cumAnimalPool[after]->GetState())
+				if (OST_REMOVE == m_pObjectPool->m_cumAnimalPool[after]->GetState())
 					continue;
 				bool bWakeUp = m_pObjectPool->m_cumAnimalPool[after]->GetWakeUp();
 				if (!bWakeUp)
@@ -657,18 +663,18 @@ void CPlayerProcess::UpdateViewList(USHORT playerId)
 					PushEvent_Animal_Behavior(after);
 
 				}
-				CPacketMgr::Send_Pos_Packet(user, after);
+				CPacketMgr::Send_Pos_Packet(User_Index, after);
 			}
 		}
 		else // 기존의 ViewList 인 경우
 		{
 			if (after < MAX_USER){
-				CPacketMgr::Send_Pos_Packet(user, after);
-				CPacketMgr::Send_Pos_Packet(after, user);
+				CPacketMgr::Send_Pos_Packet(User_Index, after);
+				CPacketMgr::Send_Pos_Packet(after, User_Index);
 			}
 			else {
-				if (OST_DIE == m_pObjectPool->m_cumAnimalPool[after]->GetState()) {
-					CPacketMgr::Send_Remove_Packet(user, after);
+				if (OST_REMOVE == m_pObjectPool->m_cumAnimalPool[after]->GetState()) {
+					CPacketMgr::Send_Remove_Packet(User_Index, after);
 				}
 				bool bWakeUp = m_pObjectPool->m_cumAnimalPool[after]->GetWakeUp();
 				if (!bWakeUp)

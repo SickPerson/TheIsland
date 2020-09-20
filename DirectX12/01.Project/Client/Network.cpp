@@ -324,6 +324,7 @@ void CNetwork::Recv_Install_Housing_Packet(char * packet)
 {
 	sc_install_housing_packet* install_housing_packet = reinterpret_cast<sc_install_housing_packet*>(packet);
 	USHORT house_id = install_housing_packet->house_id;
+	UINT grade = install_housing_packet->house_grade;
 	UINT type = install_housing_packet->housing_type;
 	Vec3 vPos = install_housing_packet->vLocalPos;
 	Vec3 vRot = install_housing_packet->vLocalRot;
@@ -354,6 +355,7 @@ void CNetwork::Recv_Upgrade_Housing_Packet(char * packet)
 {
 	sc_upgrade_housing_packet*	upgrade_housing_packet = reinterpret_cast<sc_upgrade_housing_packet*>(packet);
 	USHORT house_id = upgrade_housing_packet->house_id;
+	UINT uiGrade = upgrade_housing_packet->house_grade;
 }
 
 void CNetwork::Recv_Add_Item_Packet(char * packet)

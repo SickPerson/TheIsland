@@ -14,6 +14,11 @@ public:
 	~CObjectpool();
 
 private:
+	Vec3 Evastion_Pawner;
+	Vec3 Warlike_Pawner;
+	Vec3 Passive_Pawner;
+
+private:
 	mutex mu;
 
 private:
@@ -181,5 +186,9 @@ public:
 	void Upgrade_House(USHORT usIndex);
 
 public:
+	void Init_Animal(USHORT usIndex);
+
+public:
 	void Animal_Collision(USHORT usIndex);
+	void Player_Collision(USHORT usIndex);
 };
