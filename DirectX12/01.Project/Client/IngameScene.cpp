@@ -1877,20 +1877,20 @@ void CIngameScene::AnimalAnimationUpdate( USHORT uiId, UINT uiType )
 	}
 }
 
-void CIngameScene::InstallHousing( UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale )
+void CIngameScene::InstallHousing( UINT uiType, UINT uiGrade, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale )
 {
 	CGameObject* pObject = nullptr;
 
 	if ( ( HOUSING_TYPE )uiType != HOUSING_ETC )
 	{
-		pObject = CHousingMgr::GetInst()->GetHousingMeshData( ( HOUSING_TYPE )uiType )->Instantiate();
+		pObject = CHousingMgr::GetInst()->GetHousingMeshData( ( HOUSING_TYPE )uiType, uiGrade )->Instantiate();
 	}
 	else
 	{
 		Ptr<CMeshData> pTex = CResMgr::GetInst()->Load<CMeshData>( L"Campfire.mdat", L"MeshData\\campfire.mdat" );
 		pObject = pTex->Instantiate();
 	}
-	pObject->AddComponent( new CBuildScript( ( HOUSING_TYPE )uiType ) );
+	pObject->AddComponent( new CBuildScript( ( HOUSING_TYPE )uiType, uiGrade ) );
 
 #ifdef CHECK_COLLISION
 	pObject->AddComponent( new CCollider2D );
