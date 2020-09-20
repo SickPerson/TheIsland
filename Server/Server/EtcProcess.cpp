@@ -153,6 +153,7 @@ void CEtcProcess::PlayerUpdate_Event()
 	float ThirstValue = 0.35f;
 
 	for (auto& user : m_pObjectPool->m_cumPlayerPool) {
+		if (user.first == NO_TARGET) continue;
 		bool bConnect = user.second->GetConnect();
 		if (!bConnect) continue;
 

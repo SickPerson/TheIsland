@@ -10,9 +10,12 @@ private:
 	Vec3	m_vLocalRot;
 	Vec3	m_vLocalDir[(UINT)DIR_TYPE::END];
 
-	// Collider
 	Vec3	m_vOffsetPos;
 	Vec3	m_vOffsetScale;
+
+	// Collider
+	Vec3	m_vColOffsetPos;
+	Vec3	m_vColOffsetScale;
 
 	shared_mutex m_ObjMutex;
 
@@ -32,6 +35,9 @@ public:
 	void SetOffsetPos(Vec3 vPos);
 	void SetOffsetScale(Vec3 vScale);
 
+	void SetColOffsetPos(Vec3 vPos);
+	void SetColOffsetScale(Vec3 vPos);
+
 public:
 	const Vec3&	GetLocalPos();
 	const Vec3&	GetLocalScale();
@@ -41,4 +47,7 @@ public:
 
 	const Vec3&	GetOffsetPos();
 	const Vec3&	GetOffsetScale();
+
+	const Vec3&	GetColOffsetPos();
+	const Vec3& GetColOffsetScale();
 };
