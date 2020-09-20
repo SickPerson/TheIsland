@@ -863,7 +863,7 @@ void CIngameScene::CreatePlayerStatusUI()
 	pChildObject->AddComponent(new CMeshRender);
 
 	// Transform 설정
-	pChildObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 1200.f));
+	pChildObject->Transform()->SetLocalPos(Vec3(0.f, 0.f, 2000.f));
 	pChildObject->Transform()->SetLocalScale(Vec3(vResolution.fWidth, vResolution.fHeight, 1.f));
 
 	// MeshRender 설정
@@ -1871,6 +1871,7 @@ void CIngameScene::AnimalAnimationUpdate( USHORT uiId, UINT uiType )
 	}
 	else if ( uiType == ( UINT )ANIMAL_ANIMATION_TYPE::DIE ) {
 		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation( L"Die" );
+		m_mapAnimals[uiId]->GetScript<CAnimalScript>()->SetAnimalDead(true);
 	}
 	else if ( uiType == ( UINT )ANIMAL_ANIMATION_TYPE::ATTACK ) {
 		m_mapAnimals[uiId]->Animator3D()->ChangeAnimation( L"Attack" );
