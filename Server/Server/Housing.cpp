@@ -4,7 +4,8 @@
 
 CHousing::CHousing():
 	m_eType(HOUSING_END),
-	m_bInstall(false)
+	m_bInstall(false),
+	m_uiGrade(0)
 
 {
 }
