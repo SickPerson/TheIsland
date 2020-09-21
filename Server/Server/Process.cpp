@@ -66,6 +66,7 @@ void CProcess::PushEvent_Animal_Behavior(USHORT AnimalId)
 
 	char cState = Animal->GetState();
 	if (cState == OST_DIE) return;
+
 	// ==============================================================
 
 	if (Target_Index != NO_TARGET) {

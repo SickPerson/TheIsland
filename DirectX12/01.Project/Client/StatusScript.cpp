@@ -136,6 +136,11 @@ void CStatusScript::SetScreenDamage(CGameObject * pObject)
 	m_pScreenDamage = pObject;
 }
 
+void CStatusScript::SetGameOver(bool bGameOver)
+{
+	m_bGameOver = bGameOver;
+}
+
 bool CStatusScript::GetGameOver()
 {
 	return m_bGameOver;

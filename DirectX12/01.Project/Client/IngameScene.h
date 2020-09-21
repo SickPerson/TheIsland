@@ -65,7 +65,8 @@ public:
 	void UpdateHousing(char eType, USHORT usId, UINT uiGrade);
 
 	void InstallNatural(UINT uiType, USHORT uiId, Vec3 vPos, Vec3 vRot, Vec3 vScale, Vec3 vOffsetPos, Vec3 vOffsetScale, float fHealth, bool bDestroy );
-	void DestroyNatural( USHORT uiId );
+	void DestroyNatural( USHORT uiId, Vec3 vRot );
+	void RespawnNatural(USHORT usId);
 
 	void DecreaseItem(char eItemType, int iCount);
 

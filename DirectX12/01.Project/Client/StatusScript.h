@@ -40,6 +40,8 @@ public:
 
 	void SetScreenDamage(CGameObject* pObject);
 
+	void SetGameOver(bool bGameOver);
+
 	bool GetGameOver();
 
 	void EquipArmor(CGameObject* pArmor, float fArmor);
