@@ -217,6 +217,8 @@ struct sc_check_housing_packet
 	char	type;
 	USHORT	house_id;
 	bool	bCheck;
+	char	eItemType;
+	int		iCount;
 };
 
 struct sc_upgrade_housing_packet
@@ -225,6 +227,7 @@ struct sc_upgrade_housing_packet
 	char	type;
 	USHORT	house_id;
 	UINT	house_grade;
+	char	house_type;
 };
 // [ Natural ]
 struct sc_put_natural_packet
@@ -367,6 +370,8 @@ struct cs_upgrade_housing_packet
 	char	size;
 	char	type;
 	USHORT	house_id;
+
+	UINT	house_type;
 };
 
 struct cs_natural_attack_packet

@@ -401,10 +401,17 @@ void CObjectpool::Remove_House(USHORT usIndex)
 		m_cumHousingPool.unsafe_erase(usIndex); // lock ÇÊ¿ä
 }
 
-void CObjectpool::Upgrade_House(USHORT usIndex)
+bool CObjectpool::Upgrade_House(USHORT usIndex)
 {
-	if(m_cumHousingPool.count(usIndex))
+	if (m_cumHousingPool.count(usIndex)) {
+		UINT uiGrade = m_cumHousingPool[usIndex]->GetUpgrade();
+		if (uiGrade >= MAX_GRADE - 1)
+			return false;
 		m_cumHousingPool[usIndex]->SetUpgrade();
+		return true;
+	}
+	else
+		return false;
 }
 
 void CObjectpool::Init_Animal(USHORT usIndex)
