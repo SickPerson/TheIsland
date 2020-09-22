@@ -387,7 +387,6 @@ void CNaturalScript::SetDestroy(bool bDestroy)
 	m_bDestroy = bDestroy;
 }
 
-#ifdef NETWORK_ON
 void CNaturalScript::SetTargetRot(Vec3 vRot)
 {
 	m_vTargetRot = vRot;
@@ -416,5 +415,3 @@ void CNaturalScript::DestroyNatural(Vec3 vRot)
 		MeshRender()->SetDynamicShadow(false);
 	}
 }
-
-#endif // NETWORK_ON

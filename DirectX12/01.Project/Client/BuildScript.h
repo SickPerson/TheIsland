@@ -36,5 +36,9 @@ public:
 
 	void SetIndex(UINT index) { m_iIndex = index; }
 	UINT GetIndex() { return m_iIndex; }
+
+	bool Upgrade(char eType, UINT uiGrade);
+
+	UINT GetMaterialCount() { return MeshRender()->GetMaterialCount(); }
 };
 
